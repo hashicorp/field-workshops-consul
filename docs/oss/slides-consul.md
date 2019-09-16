@@ -370,7 +370,7 @@ Remember those ever complex networking scenarios? Consul can help us bridge our 
 name: Chapter-4
 class: center,middle
 .section[
-Chapter 3
+Chapter 4
 Lab Environment
 ]
 
@@ -378,7 +378,7 @@ Lab Environment
 name: Chapter-5
 class: center,middle
 .section[
-Chapter 3
+Chapter 5
 Interacting with Consul (CLI, GUI, API)
 ]
 
@@ -386,7 +386,7 @@ Interacting with Consul (CLI, GUI, API)
 name: Chapter-6
 class: center,middle
 .section[
-Chapter 3
+Chapter 6
 Service Discovery
 ]
 
@@ -394,6 +394,6 @@ Service Discovery
 name: Chapter-7
 class: center,middle
 .section[
-Chapter 3
+Chapter 7
 Service Segmentation
 ]
