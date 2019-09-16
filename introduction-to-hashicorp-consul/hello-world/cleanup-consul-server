@@ -1,0 +1,5 @@
+#!/bin/sh
+# cleanup
+echo "Cleaning up after the challenge"
+
+rm /tmp/completed
