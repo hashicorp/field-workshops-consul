@@ -271,7 +271,7 @@ Consensus - A Visualization
 
 ---
 name: Consensus-Modes
-Consensus - Consistentcy Modes
+Consensus - Consistency Modes
 -------------------------
 
 While it's not required you understand Consensus under the hood, you should understand the various  consistency  modes so you can optimize for your workload.
