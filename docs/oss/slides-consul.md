@@ -17,8 +17,7 @@ The Slide Deck
 .center[
 Follow along on your own computer at this link:
 
-https://bit.ly/hashiaws
-=========================
+### [hashicorp.github.io/field-workshops-consul/oss](https://hashicorp.github.io/field-workshops-consul/oss)
 ]
 
 ---
@@ -267,7 +266,7 @@ Consensus - A Visualization
 -------------------------
 
 <iframe  width="100%" height="85%"
-  src="http://thesecretlivesofdata.com/raft/">
+  src="https//thesecretlivesofdata.com/raft/">
 </iframe>
 
 ---
