@@ -81,8 +81,8 @@ HashiCorp Consul is an API-driven, service networking solution to connect and se
 
 
 For additional descriptions or instructions that expand on this workshop, please see the docs, API guide, and learning site:
-* https://www.consulproject.io/docs/
-* https://www.consulproject.io/api/
+* https://www.consul.io/docs/
+* https://www.consul.io/api/
 * https://learn.hashicorp.com/consul/
 
 ---
