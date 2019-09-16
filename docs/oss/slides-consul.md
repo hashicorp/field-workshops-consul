@@ -367,8 +367,33 @@ Consul Use Cases
 Remember those ever complex networking scenarios? Consul can help us bridge our multi-cloud service networking platforms by connecting and securing them.
 
 ---
-name: Consul-Use-Cases
-Consul Use Cases
--------------------------
+name: Chapter-4
+class: center,middle
+.section[
+Chapter 3
+Lab Environment
+]
 
-<iframe width="700" height="500" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" src="https://instruqt.com/embed/hashicorp/tf-aws-demo" style="border: 0;"></iframe>
+---
+name: Chapter-5
+class: center,middle
+.section[
+Chapter 3
+Interacting with Consul (CLI, GUI, API)
+]
+
+---
+name: Chapter-6
+class: center,middle
+.section[
+Chapter 3
+Service Discovery
+]
+
+---
+name: Chapter-7
+class: center,middle
+.section[
+Chapter 3
+Service Segmentation
+]
