@@ -1,0 +1,23 @@
+version: 2
+jobs:
+  install-instruqt:
+    docker:
+      - image: alpine:latest
+    steps:
+      - checkout
+      - run:
+          name: Install Instruqt
+          command: >
+            #!/bin/sh
+            apk add wget
+            wget https://github.com/instruqt/cli/releases/download/1270-4cde42d/instruqt-linux-1270-4cde42d.zip -O /tmp/instruqt.zip
+            cd /tmp
+            unzip instruqt.zip
+            mv /tmp/instruqt /usr/local/bin/instruqt
+            chmod +x /usr/local/bin/instruqt
+            instruqt --version
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - install-instruqt
