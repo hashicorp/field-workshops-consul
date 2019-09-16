@@ -266,7 +266,7 @@ Consensus - A Visualization
 -------------------------
 
 <iframe  width="100%" height="85%"
-  src="https//thesecretlivesofdata.com/raft/">
+  src="http://thesecretlivesofdata.com/raft/">
 </iframe>
 
 ---
