@@ -8,7 +8,9 @@ jobs:
       - run:
           name: Install Instruqt
           command: |
-            curl https://github.com/instruqt/cli/releases/download/1270-4cde42d/instruqt-linux-1270-4cde42d.zip -o /tmp/instruqt.zip
+            apt -y update
+            apt -y install wget
+            wget https://github.com/instruqt/cli/releases/download/1270-4cde42d/instruqt-linux-1270-4cde42d.zip -O /tmp/instruqt.zip
             cd /tmp
             unzip instruqt.zip
             cp instruqt /usr/local/bin/instruqt
