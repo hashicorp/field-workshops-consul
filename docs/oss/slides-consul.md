@@ -266,7 +266,7 @@ name: Consensus-Visualization
 Consensus - A Visualization
 -------------------------
 
-<iframe  width="800" height="500"
+<iframe  width="100%" height="85%"
   src="http://thesecretlivesofdata.com/raft/">
 </iframe>
 
