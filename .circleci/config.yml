@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: Install Instruqt
-          command: >
+          command: |
             apk add wget
             wget https://github.com/instruqt/cli/releases/download/1270-4cde42d/instruqt-linux-1270-4cde42d.zip -O /tmp/instruqt.zip
             cd /tmp
