@@ -74,7 +74,6 @@ HashiCorp Consul Overview
 name: HashiCorp-Consul-Overview
 Consul Overview
 -------------------------
-<br>
 .center[
 ![:scale 30%](images/consul_logo.png)
 ]
@@ -114,7 +113,7 @@ Introduction of Client & Server
 name: Introduction-of-VMs
 Introduction of the VM
 -------------------------
-.center[![:scale 60%](images/vm_flow.png)]
+.center[![:scale 50%](images/vm_flow.png)]
 .center[Improvements from Virtualization]
 
 * Better HW utilization
@@ -217,7 +216,7 @@ Within each datacenter, we have a mixture of clients and servers. It is expected
 name: Introduction-to-Consul-Gossip
 Introduction to Consul - Gossip
 -------------------------
-.center[![:scale 40%](images/consul_ref_arch.png)]
+<img align="right" width="60%" src="images/consul_ref_arch.png">
 
 All the agents that are in a datacenter participate in a gossip protocol. This means there is a gossip pool that contains all the agents for a given datacenter. This serves a few purposes: first, there is no need to configure clients with the addresses of servers; discovery is done automatically. Second, the work of detecting agent failures is not placed on the servers but is distributed. This makes failure detection much more scalable than naive heartbeating schemes. It also provides failure detection for the nodes; if the agent is not reachable, then the node may have experienced a failure.
 

@@ -1,5 +1,6 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto);
 @import url(https://fonts.googleapis.com/css?family=Press+Start+2P);
+@import url(https://fonts.googleapis.com/css?family=Audiowide);
 @import url(https://fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic);
 @import url(https://fonts.googleapis.com/css?family=Inconsolata:400,700,400italic);
 
@@ -13,6 +14,13 @@ h1, h2, h3, h4, h5, h6 {
   font-family: Roboto;
 }
 
+.remark-slide-content {
+  padding-top: 0px;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-bottom: 50px;
+}
+
 .remark-slide-content h1 { font-size: 2.4em; }
 .remark-slide-content h2 { font-size: 2.0em; }
 .remark-slide-content h3 { font-size: 1.6em; }
@@ -20,7 +28,7 @@ h1, h2, h3, h4, h5, h6 {
 .remark-code, .remark-inline-code { font-family: 'Inconsolata'; }
 
 .remark-container {
-  background-color: #7C8797;
+  background-color: #CA2171;
 }
 
 .title-slide .remark-slide-number {
@@ -28,7 +36,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .section {
-  font-family: 'Press Start 2P';
+  font-family: 'Audiowide';
   text-shadow: -1px 1px 2px rgb(56, 79, 122);
   font-weight: normal;
   font-size: 2.0em;
