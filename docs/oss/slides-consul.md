@@ -397,3 +397,5 @@ class: center,middle
 Chapter 7
 Service Segmentation
 ]
+
+<iframe width="700" height="500" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" src="https://instruqt.com/embed/hashicorp/consul-k8s-l7-observability" style="border: 0;"></iframe>
