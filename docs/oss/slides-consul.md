@@ -398,4 +398,11 @@ Chapter 7
 Service Segmentation
 ]
 
+---
+name: Segmentation-Hands-On-Lab
+Hands-On Labs
+-------------------------
+
 <iframe width="700" height="500" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" src="https://instruqt.com/embed/hashicorp/consul-k8s-l7-observability" style="border: 0;"></iframe>
+
+Link:[Deploy Consul Connect Using Helm](https://instruqt.com/hashicorp/tracks/consul-k8s-l7-observability/challenges/install-consul/assignment)
