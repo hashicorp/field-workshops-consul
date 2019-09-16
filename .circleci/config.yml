@@ -12,9 +12,9 @@ jobs:
             wget https://github.com/instruqt/cli/releases/download/1270-4cde42d/instruqt-linux-1270-4cde42d.zip -O /tmp/instruqt.zip
             cd /tmp
             unzip instruqt.zip
-            mv /tmp/instruqt /usr/bin/instruqt
-            chmod +x /usr/bin/instruqt
-            /usr/bin/instruqt version | grep 1270-4cde42d
+            mv /tmp/instruqt /bin/instruqt
+            chmod +x /bin/instruqt
+            /bin/instruqt version | grep 1270-4cde42d
 workflows:
   version: 2
   build-and-deploy:
