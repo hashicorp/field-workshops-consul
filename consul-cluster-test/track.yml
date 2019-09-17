@@ -10,7 +10,7 @@ owner: hashicorp
 developers:
 - scarolan@hashicorp.com
 private: true
-published: false
+published: true
 challenges:
 - slug: configure-cluster
   id: w9ogddebhwd1
@@ -37,6 +37,14 @@ challenges:
   - title: Database
     type: terminal
     hostname: database
+  - title: App Config
+    type: code editor
+    hostname: database
+    path: /var/www/html
+  - title: Blog
+    type: service
+    hostname: app
+    port: 80
   difficulty: basic
   timelimit: 1800
-checksum: "16496240816421953698"
+checksum: "5451701301597307437"
