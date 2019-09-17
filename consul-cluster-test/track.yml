@@ -31,20 +31,20 @@ challenges:
   - title: Consul Server 2
     type: terminal
     hostname: consul-server-2
-  - title: Application
+  - title: App Server
     type: terminal
     hostname: app
   - title: Database
     type: terminal
     hostname: database
   - title: App Config
-    type: code editor
-    hostname: database
+    type: code
+    hostname: app
     path: /var/www/html
-  - title: Blog
+  - title: Website
     type: service
     hostname: app
     port: 80
   difficulty: basic
   timelimit: 1800
-checksum: "5451701301597307437"
+checksum: "15550137131111587999"
