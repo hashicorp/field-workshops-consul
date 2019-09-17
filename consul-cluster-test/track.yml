@@ -1,0 +1,42 @@
+slug: consul-cluster-test
+id: ra8tutqctrni
+type: track
+title: consul-cluster-test
+teaser: Test track for consul cluster.
+description: This is the long description.
+icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+tags: []
+owner: hashicorp
+developers:
+- scarolan@hashicorp.com
+private: true
+published: false
+challenges:
+- slug: configure-cluster
+  id: w9ogddebhwd1
+  type: challenge
+  title: Configure a Consul Cluster
+  teaser: Three servers is better than one
+  assignment: Configure the consul cluster
+  notes:
+  - type: text
+    contents: This is the first note.
+  tabs:
+  - title: Consul Server 0
+    type: terminal
+    hostname: consul-server-0
+  - title: Consul Server 1
+    type: terminal
+    hostname: consul-server-1
+  - title: Consul Server 2
+    type: terminal
+    hostname: consul-server-2
+  - title: Application
+    type: terminal
+    hostname: app
+  - title: Database
+    type: terminal
+    hostname: database
+  difficulty: basic
+  timelimit: 1800
+checksum: "16496240816421953698"
