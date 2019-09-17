@@ -31,6 +31,10 @@ challenges:
   - title: Consul Server 2
     type: terminal
     hostname: consul-server-2
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
   - title: App Server
     type: terminal
     hostname: app
@@ -47,4 +51,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 1800
-checksum: "15550137131111587999"
+checksum: "17637398435902203788"

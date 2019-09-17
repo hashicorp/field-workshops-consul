@@ -1,0 +1,51 @@
+version: "2"
+containers:
+- name: consul-server-0
+  image: consul
+  ports:
+  - 8300
+  - 8301
+  - 8302
+  - 8500
+  - 8600
+  memory: 128
+- name: consul-server-1
+  image: consul
+  ports:
+  - 8300
+  - 8301
+  - 8302
+  - 8500
+  - 8600
+  memory: 128
+- name: consul-server-2
+  image: consul
+  ports:
+  - 8300
+  - 8301
+  - 8302
+  - 8500
+  - 8600
+  memory: 128
+- name: app
+  image: wordpress
+  ports:
+  - 80
+  - 443
+  environment:
+    WORDPRESS_DB_HOST: database
+    WORDPRESS_DB_NAME: wordpress
+    WORDPRESS_DB_PASSWORD: HashiCorp123
+    WORDPRESS_DB_USER: root
+    WORDPRESS_TABLE_PREFIX: wp
+  memory: 128
+- name: database
+  image: mariadb:latest
+  ports:
+  - 3306
+  environment:
+    MYSQL_DATABASE: wordpress
+    MYSQL_PASS: HashiCorp123
+    MYSQL_ROOT_PASSWORD: HashiCorp123
+    MYSQL_USER: wp-user
+  memory: 128

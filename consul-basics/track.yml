@@ -1,0 +1,40 @@
+slug: consul-basics
+id: flhasumrfmgq
+type: track
+title: consul-basics
+teaser: Consul Basics
+description: This is the long description about Consul Basics.
+icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+tags: []
+owner: hashicorp
+developers:
+- scarolan@hashicorp.com
+private: true
+published: true
+challenges:
+- slug: meet-consul
+  id: bgfx8nbzqnjv
+  type: challenge
+  title: Get to Known Consul
+  teaser: My first Consul
+  assignment: View the Consul UI and run some basic commands
+  notes:
+  - type: text
+    contents: This is the first note.
+  tabs:
+  - title: Consul0
+    type: terminal
+    hostname: consul-server-0
+  - title: Consul1
+    type: terminal
+    hostname: consul-server-1
+  - title: Consul2
+    type: terminal
+    hostname: consul-server-2
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
+  difficulty: basic
+  timelimit: 1800
+checksum: "5495116133648578499"
