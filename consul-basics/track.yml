@@ -15,13 +15,23 @@ challenges:
 - slug: meet-consul
   id: bgfx8nbzqnjv
   type: challenge
-  title: Get to Known Consul
+  title: Get to Know Consul
   teaser: My first Consul
-  assignment: View the Consul UI and run some basic commands
+  assignment: |
+    Welcome to Consul Basics! In this lab you'll start up a three-node Consul cluster. Once all three nodes have joined the server cluster you should see the Consul UI become healthy.
+
+    Start the Consul server process on each cluster node with the following command. You can simply copy and paste it into the terminal for each server.
+    ```
+    start_consul.sh
+    ```
   notes:
   - type: text
-    contents: This is the first note.
+    contents: "\U0001F578️You are about to enter the Consul Zone\U0001F47D"
   tabs:
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
   - title: Consul0
     type: terminal
     hostname: consul-server-0
@@ -31,10 +41,6 @@ challenges:
   - title: Consul2
     type: terminal
     hostname: consul-server-2
-  - title: Consul UI
-    type: service
-    hostname: consul-server-0
-    port: 8500
   difficulty: basic
   timelimit: 1800
-checksum: "5495116133648578499"
+checksum: "808676747669784809"
