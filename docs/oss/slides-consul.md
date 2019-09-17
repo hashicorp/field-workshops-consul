@@ -81,8 +81,8 @@ HashiCorp Consul is an API-driven, service networking solution to connect and se
 
 
 For additional descriptions or instructions that expand on this workshop, please see the docs, API guide, and learning site:
-* https://www.consulproject.io/docs/
-* https://www.consulproject.io/api/
+* https://www.consul.io/docs/
+* https://www.consul.io/api/
 * https://learn.hashicorp.com/consul/
 
 ---
@@ -367,8 +367,42 @@ Consul Use Cases
 Remember those ever complex networking scenarios? Consul can help us bridge our multi-cloud service networking platforms by connecting and securing them.
 
 ---
-name: Consul-Use-Cases
-Consul Use Cases
+name: Chapter-4
+class: center,middle
+.section[
+Chapter 4
+Lab Environment
+]
+
+---
+name: Chapter-5
+class: center,middle
+.section[
+Chapter 5
+Interacting with Consul (CLI, GUI, API)
+]
+
+---
+name: Chapter-6
+class: center,middle
+.section[
+Chapter 6
+Service Discovery
+]
+
+---
+name: Chapter-7
+class: center,middle
+.section[
+Chapter 7
+Service Segmentation
+]
+
+---
+name: Segmentation-Hands-On-Lab
+Hands-On Labs
 -------------------------
 
-<iframe width="700" height="500" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" src="https://instruqt.com/embed/hashicorp/tf-aws-demo" style="border: 0;"></iframe>
+<iframe width="700" height="500" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" src="https://instruqt.com/embed/hashicorp/consul-k8s-l7-observability" style="border: 0;"></iframe>
+
+<a href="https://instruqt.com/hashicorp/tracks/consul-k8s-l7-observability/challenges/install-consul/assignment" target="_blank">Link: Deploy Consul Connect Using Helm</a>
