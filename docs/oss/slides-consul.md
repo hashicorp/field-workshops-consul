@@ -383,6 +383,15 @@ Interacting with Consul (CLI, GUI, API)
 ]
 
 ---
+name: Interacting-Hands-On-Lab
+Interacting with Consul Hands-On Labs
+-------------------------
+
+<iframe width="700" height="500" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" src="https://instruqt.com/embed/hashicorp/consul-basics" style="border: 0;"></iframe>
+
+<a href="https://instruqt.com/embed/hashicorp/consul-basics" target="_blank">Link: Interacting with Consul</a>
+
+---
 name: Chapter-6
 class: center,middle
 .section[
@@ -402,7 +411,3 @@ Service Segmentation
 name: Segmentation-Hands-On-Lab
 Hands-On Labs
 -------------------------
-
-<iframe width="700" height="500" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" src="https://instruqt.com/embed/hashicorp/consul-k8s-l7-observability" style="border: 0;"></iframe>
-
-<a href="https://instruqt.com/hashicorp/tracks/consul-k8s-l7-observability/challenges/install-consul/assignment" target="_blank">Link: Deploy Consul Connect Using Helm</a>
