@@ -384,7 +384,7 @@ Interacting with Consul (CLI, GUI, API)
 
 ---
 name: Interacting-Hands-On-Lab
-Interacting with Consul Hands-On Labs
+Hands-On Lab - Interacting with Consul 
 -------------------------
 
 <iframe width="700" height="500" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" src="https://instruqt.com/embed/hashicorp/consul-basics" style="border: 0;"></iframe>
