@@ -40,7 +40,7 @@ containers:
     WORDPRESS_TABLE_PREFIX: wp
   memory: 128
 - name: database
-  image: mariadb:latest
+  image: gcr.io/instruqt-hashicorp/hashidb:latest
   ports:
   - 3306
   environment:

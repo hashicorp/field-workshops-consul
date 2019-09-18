@@ -1,0 +1,53 @@
+slug: service-discovery-with-consul
+id: nyzxxfyzce4a
+type: track
+title: service-discovery-with-consul
+teaser: Learn about Service Discovery with HashiCorp Consul
+description: This is the long description about Service Discovery.
+icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+tags: []
+owner: hashicorp
+developers:
+- scarolan@hashicorp.com
+private: true
+published: true
+challenges:
+- slug: fix-the-website
+  id: lxxrrq17fcxz
+  type: challenge
+  title: Use Consul to find the IP address of the database server
+  teaser: Where's the database server?
+  assignment: |
+    The website is DOWN! Your application server is not working correctly. You've determined that the app can't connect to the database.
+
+    Edit the `wp-config.php` file in the App Config tab. On line 32 you'll find the configuration for the database server.
+
+    Use the Consul UI to find the database server's IP and put it into the config file. Then on the App Server tab you can restart the application like so:
+
+    ```
+    service apache2 restart
+    ```
+
+    Verify that the application setup page is loading in the Website tab.
+  notes:
+  - type: text
+    contents: "\U0001F578️You are about to enter the Consul Zone\U0001F47D"
+  tabs:
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
+  - title: App Config
+    type: code
+    hostname: app
+    path: /var/www/html
+  - title: App Server
+    type: terminal
+    hostname: app
+  - title: Website
+    type: service
+    hostname: app
+    port: 80
+  difficulty: basic
+  timelimit: 1800
+checksum: "6171133053081529370"

@@ -20,7 +20,7 @@ challenges:
   assignment: Configure the consul cluster
   notes:
   - type: text
-    contents: This is the first note.
+    contents: "\U0001F578️You are about to enter the Consul Zone\U0001F47D"
   tabs:
   - title: Consul Server 0
     type: terminal
@@ -51,4 +51,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 1800
-checksum: "15253197372656696412"
+checksum: "4394288057250453152"

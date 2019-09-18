@@ -1,0 +1,10 @@
+#!/bin/sh
+
+status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/wp-admin/install.php)
+
+if [ "$status" != "200" ]; then
+  fail-message "The website is still down. Try again."
+  exit 1
+fi
+
+exit 0

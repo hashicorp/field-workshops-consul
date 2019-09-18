@@ -38,3 +38,6 @@ echo "Consul server startup complete."
 EOF
 
 chmod +x /bin/start_consul.sh
+
+echo "Starting Consul in Server Mode..."
+nohup sh -c "/bin/start_consul.sh &" && sleep 4
