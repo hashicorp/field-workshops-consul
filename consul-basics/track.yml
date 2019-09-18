@@ -9,6 +9,7 @@ tags: []
 owner: hashicorp
 developers:
 - scarolan@hashicorp.com
+- lance@hashicorp.com
 private: true
 published: true
 challenges:
@@ -43,4 +44,4 @@ challenges:
     hostname: consul-server-2
   difficulty: basic
   timelimit: 1800
-checksum: "1647426303956463281"
+checksum: "5632746534835172887"

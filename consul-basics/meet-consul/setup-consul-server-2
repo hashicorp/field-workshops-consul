@@ -1,4 +1,5 @@
 #!/bin/sh
+
 # Configures the Consul server
 cat <<-EOF > /consul/config/server.json
 {
@@ -38,3 +39,5 @@ echo "Consul server startup complete."
 EOF
 
 chmod +x /bin/start_consul.sh
+
+exit 0
