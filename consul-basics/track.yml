@@ -5,6 +5,7 @@ title: Consul Basics
 teaser: Back to basics with Consul
 description: |-
   The track will give you a crash course in operating Consul. You will acomplish the following:
+
   * Set Up a 3 Node Consul Cluster
   * Use the Consul UI
   * Use the Consul CLI
@@ -12,6 +13,8 @@ description: |-
   * Add an App Node to Your Cluster
   * Test Consul's High Avaiablity
   * Add Basic Security with Consul's ACLs
+
+  We'll leverage these fundamentals, and build on them in our workshop.
 icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
 tags: []
 owner: hashicorp
@@ -35,26 +38,18 @@ challenges:
     You can view the config for one of the Consul server in the code editor.
     You don't need to understand all the options, just notice that we are starting Consul in `server` mode <br>
 
-    Our start script is simple and runs Consul as a background process.
-    In production this would daemonized or managed by an orchestrator.
-
     ```
     /bin/start_consul.sh
     ```
+
+    Our start script is simple and runs Consul as a background process.
+    In production this would daemonized or managed by an orchestrator. <br>
 
     Once you have a healthy cluster, the Consul UI will become available.
   notes:
   - type: text
     contents: "\U0001F578️You are about to enter the Consul Zone\U0001F47D"
   tabs:
-  - title: Consul UI
-    type: service
-    hostname: consul-server-0
-    port: 8500
-  - title: Server0 - Config
-    type: code
-    hostname: consul-server-0
-    path: /consul/config/server.json
   - title: Consul0
     type: terminal
     hostname: consul-server-0
@@ -64,6 +59,14 @@ challenges:
   - title: Consul2
     type: terminal
     hostname: consul-server-2
+  - title: Server0 - Config
+    type: code
+    hostname: consul-server-0
+    path: /consul/config/server.json
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
   difficulty: basic
   timelimit: 300
 - slug: consul-cli
@@ -75,7 +78,7 @@ challenges:
     Consul is already preconfigured for communication with the lab workstations.
     Remember that all interactions with Consul, whether through the GUI, or command line always have an underlying API call. <br>
 
-    You can run the following command to see this value: `echo $CONSUL_HTTP_ADDR`
+    You can run the following command to see this value: `echo $CONSUL_HTTP_ADDR`.  This is API server endpoint for  Consul.
 
     Let's run some useful commands and introspect our healthy cluster. Try a few from below: <br>
 
@@ -117,9 +120,9 @@ challenges:
     Let's try some of the commands from our last assignment with the API.
 
     * List members:
-      - `curl http://127.0.0.1:8500/v1/agent/members | jq`
+      - `curl -s http://127.0.0.1:8500/v1/agent/members | jq`
     * Get Leader:
-      - `curl http://127.0.0.1:8500/v1/status/leader | jq`
+      - `curl -s http://127.0.0.1:8500/v1/status/leader | jq`
   notes:
   - type: text
     contents: |-
@@ -201,7 +204,7 @@ challenges:
     * API
       -  `curl http://127.0.0.1:8500/v1/status/leader | jq`
 
-    <br> Go to the tab of your current server and run `pkill consul`.
+    <br> Go to the tab of your current leader and run `pkill consul`.
     If your leader happens to be `Consul0` you will temporarily lose the UI for this assignment. <br>
 
     Next, repeat the steps above to find your new leader. You should see a new IP address.
@@ -249,7 +252,7 @@ challenges:
 
     We've gone ahead and ran this command for you and saved the output. You can see it in the editor. <br>
 
-    Let's go ahead and finish this example by applying an ACL token for our `App` Consul agent.
+    Now we can apply an ACL token for our `App` Consul agent.
     You can use the token in the bootstrap.txt file to perform this privileged action. <br>
 
     We've also applied the base policies and tokens to the Consul servers, which you can see in the Consul UI in the `ACL` tab.
@@ -287,7 +290,6 @@ challenges:
 
     ```
     consul acl set-agent-token agent <your_app_agent_token>
-    ACL token "agent" set successfully
     ```
 
     You can now verify that the `App` agent logs are no longer logging errors.
@@ -300,9 +302,10 @@ challenges:
       ACLs are a must for all Consul production enviornments. <br>
 
       Vault is an excellent solution for managing Consul ACL tokens.
-      You can read more about the integration [here](https://www.vaultproject.io/docs/secrets/consul/index.html). <br>
+      You can read more about the integration [here](https://www.vaultproject.io/docs/secrets/consul/index.html).
+      For a detailed explanation of the ACL system, check out this [guide](https://learn.hashicorp.com/consul/security-networking/production-acls). <br>
 
-      For a detailed explanation of the ACL system, check out this [guide](https://learn.hashicorp.com/consul/security-networking/production-acls).
+      This challenge will take 1-2 minutes to spin up. Please be patient.
   tabs:
   - title: Consul UI
     type: service
@@ -324,10 +327,10 @@ challenges:
   - title: Consul2
     type: terminal
     hostname: consul-server-2
-  - title: Bootstrap
+  - title: ACL Bootstrap
     type: code
     hostname: consul-server-2
     path: /tmp/bootstrap.txt
   difficulty: basic
-  timelimit: 1200
-checksum: "1986931967345714128"
+  timelimit: 600
+checksum: "4249491827923509690"
