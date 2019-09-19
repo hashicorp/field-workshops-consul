@@ -1,0 +1,66 @@
+#!/bin/sh
+
+pkill -15 consul
+sleep  5
+
+cat <<-EOF > /consul/config/acl.json
+{
+  "primary_datacenter": "dc1",
+  "acl": {
+    "enabled": true,
+    "default_policy": "deny",
+    "enable_token_persistence": true
+  }
+}
+EOF
+
+mkdir /consul/policies
+
+cat <<-EOF > /consul/policies/server.hcl
+# server.hcl
+node_prefix "ConsulServer" {
+  policy = "write"
+}
+EOF
+
+cat <<-EOF > /consul/policies/app.hcl
+# app.hcl
+node "App" {
+  policy = "write"
+}
+EOF
+
+/bin/start_consul.sh
+
+#ACL Setup
+echo "Sleeping for ACL Bootstrap"
+sleep 120
+consul acl bootstrap > /tmp/bootstrap.txt
+
+#Get the bootstrap token
+echo $(cat /tmp/bootstrap.txt | grep SecretID | cut -d':' -f2 | xargs) > /tmp/token
+export CONSUL_HTTP_TOKEN=$(cat /tmp/bootstrap.txt | grep SecretID | cut -d':' -f2 | xargs)
+
+#Consul server policy
+consul acl policy create \
+ -name consul-server \
+ -rules @/consul/policies/server.hcl
+
+#Consul server agent token
+consul acl token create -description "consul server agent token" \
+  -policy-name consul-server > /tmp/server_token.txt
+export CONSUL_SERVER_TOKEN=$(cat /tmp/server_token.txt | grep SecretID | cut -d':' -f2 | xargs)
+
+#Apply the tokens
+export CONSUL_HTTP_ADDR=http://consul-server-0:8500
+consul acl set-agent-token agent $CONSUL_SERVER_TOKEN
+
+export CONSUL_HTTP_ADDR=http://consul-server-1:8500
+consul acl set-agent-token agent $CONSUL_SERVER_TOKEN
+
+export CONSUL_HTTP_ADDR=http://consul-server-2:8500
+consul acl set-agent-token agent $CONSUL_SERVER_TOKEN
+
+export CONSUL_HTTP_ADDR=http://127.0.0.1:8500
+
+exit 0

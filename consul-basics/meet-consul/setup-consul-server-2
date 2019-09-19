@@ -8,7 +8,6 @@ cat <<-EOF > /consul/config/server.json
   "client_addr": "0.0.0.0",
   "data_dir": "/consul/data",
   "log_level": "INFO",
-  "encrypt": "I+An5idzRV6DUN3nkApdiovwUOD3345eu1RU7u25Z04=",
   "node_name": "ConsulServer2",
   "server": true,
   "ui": true,
@@ -32,8 +31,8 @@ cat <<-EOF > /bin/start_consul.sh
 #!/bin/sh
 echo "Starting HashiCorp Consul in Server Mode..."
 sleep 1
-nohup consul agent -config-dir=/consul/config 2>/dev/null &
-echo "Log output will appear in nohup.out..."
+nohup consul agent -config-dir=/consul/config > /consul.out &
+echo "Log output will appear in consul.out..."
 sleep 1
 echo "Consul server startup complete."
 EOF

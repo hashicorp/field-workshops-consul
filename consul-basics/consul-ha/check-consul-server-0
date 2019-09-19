@@ -1,0 +1,10 @@
+#!/bin/sh
+
+leader=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8500/v1/operator/raft/configuration)
+
+if [ "$leader" = "200" ]; then
+  fail-message "It looks like your cluster is still working. You should break that."
+  exit 1
+fi
+
+exit 0
