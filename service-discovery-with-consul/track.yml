@@ -12,11 +12,12 @@ developers:
 private: true
 published: true
 challenges:
-- slug: fix-the-website
+- slug: the-website-is-down
   id: lxxrrq17fcxz
   type: challenge
-  title: Use Consul to find the IP address of the database server
-  teaser: Where's the database server?
+  title: "The website is DOWN! \U0001F631"
+  teaser: The company website is down and it's up to you to fix it. Use your Consul
+    superpowers to find the database server and reconnect it to the app.
   assignment: |
     The website is DOWN! Your application server is not working correctly. You've determined that the app can't connect to the database.
 
@@ -31,7 +32,7 @@ challenges:
     Verify that the application setup page is loading in the Website tab.
   notes:
   - type: text
-    contents: "\U0001F578️You are about to enter the Consul Zone\U0001F47D"
+    contents: "\U0001F578️ Entering the Consul Zone \U0001F47D"
   tabs:
   - title: Consul UI
     type: service
@@ -50,4 +51,47 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 1800
-checksum: "14558390248712233350"
+- slug: automate-your-job
+  id: m99lb94yn3ac
+  type: challenge
+  title: "Automate Your Job \U0001F916"
+  teaser: Now that you have the website back up and running, it's time to automate
+    this so you don't get woken up at 2 am again.
+  assignment: |
+    The IP address of the database server has changed again and you're tired of updating it manually.
+
+    In this challenge you'll use consul-template to ensure that the application config always has the correct IP address.
+
+    On the App Config tab you'll notice a new file called `wp-config.php.tpl`. This is a Consul Template config file. Consul template can update your `wp-config.php` file whenever the database IP address changes.
+
+    Run the following commands on in the App Server terminal to activate Consul Template. Reload the `wp-config.php` file to see the updated IP address. The website should be loading again.
+
+    ```
+    cd /var/www/html
+
+    consul-template -template "wp-config.php.tpl:wp-config.php"
+    ```
+
+    NOTE: We stripped all the comments out of the wp-config.php file for clarity.
+  notes:
+  - type: text
+    contents: "\U0001F5A7 All Your Services Are Belong To Us \U0001F469‍\U0001F4BB"
+  tabs:
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
+  - title: App Config
+    type: code
+    hostname: app
+    path: /var/www/html
+  - title: App Server
+    type: terminal
+    hostname: app
+  - title: Website
+    type: service
+    hostname: app
+    port: 80
+  difficulty: basic
+  timelimit: 1800
+checksum: "16524939635960280173"

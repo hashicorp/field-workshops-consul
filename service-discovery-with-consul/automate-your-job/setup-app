@@ -1,0 +1,108 @@
+#!/bin/bash
+# Installs Consul template and prepares a template file
+
+echo "Installing Consul template..."
+wget https://releases.hashicorp.com/consul-template/0.22.0/consul-template_0.22.0_linux_amd64.tgz -O /tmp/consul-template.tgz
+cd /usr/local/bin/
+tar -zxvf /tmp/consul-template.tgz
+chmod +x /usr/local/bin/consul-template
+
+echo "Creating the Consul template file for the app."
+cat <<-EOF > /var/www/html/wp-config.php.tpl
+<?php
+/**
+ * The base configuration for WordPress
+ *
+ * The wp-config.php creation script uses this file during the
+ * installation. You don't have to use the web site, you can
+ * copy this file to "wp-config.php" and fill in the values.
+ *
+ * This file contains the following configurations:
+ *
+ * * MySQL settings
+ * * Secret keys
+ * * Database table prefix
+ * * ABSPATH
+ *
+ * @link https://codex.wordpress.org/Editing_wp-config.php
+ *
+ * @package WordPress
+ */
+
+// ** MySQL settings - You can get this info from your web host ** //
+/** The name of the database for WordPress */
+define( 'DB_NAME', 'wordpress');
+
+/** MySQL database username */
+define( 'DB_USER', 'root');
+
+/** MySQL database password */
+define( 'DB_PASSWORD', 'HashiCorp123');
+
+/** MySQL hostname */
+define( 'DB_HOST', '{{ with node "Database@dc1" }}{{ .Node.Address }}{{ end }}');
+
+/** Database Charset to use in creating database tables. */
+define( 'DB_CHARSET', 'utf8');
+
+/** The Database Collate type. Don't change this if in doubt. */
+define( 'DB_COLLATE', '');
+
+/**#@+
+ * Authentication Unique Keys and Salts.
+ *
+ * Change these to different unique phrases!
+ * You can generate these using the {@link https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org secret-key service}
+ * You can change these at any point in time to invalidate all existing cookies. This will force all users to have to log in again.
+ *
+ * @since 2.6.0
+ */
+define( 'AUTH_KEY',         '1511e0cd63487bc00c6ebb2f5bf67bbdaf849ae6');
+define( 'SECURE_AUTH_KEY',  '83ff34f6d60b980541a3efd7d62aa36474a47cae');
+define( 'LOGGED_IN_KEY',    '874511971efec6c850122af848d5b4b587e59e10');
+define( 'NONCE_KEY',        '9a433e1eb2695798d7411505ac6bfbf49387f9e6');
+define( 'AUTH_SALT',        '8cd8412fe14c984a8104ddbede7490f2c9b63506');
+define( 'SECURE_AUTH_SALT', '17f7510f547b324d1633e6c3973001efe4f165f2');
+define( 'LOGGED_IN_SALT',   'f2965918ae5c10ce7deaa5c65ae60e8f290fed53');
+define( 'NONCE_SALT',       '8cd918b3d6886574405bf3e5db1b147a8daaadc5');
+
+/**#@-*/
+
+/**
+ * WordPress Database Table prefix.
+ *
+ * You can have multiple installations in one database if you give each
+ * a unique prefix. Only numbers, letters, and underscores please!
+ */
+\$table_prefix = 'wp';
+
+/**
+ * For developers: WordPress debugging mode.
+ *
+ * Change this to true to enable the display of notices during development.
+ * It is strongly recommended that plugin and theme developers use WP_DEBUG
+ * in their development environments.
+ *
+ * For information on other constants that can be used for debugging,
+ * visit the Codex.
+ *
+ * @link https://codex.wordpress.org/Debugging_in_WordPress
+ */
+define( 'WP_DEBUG', false );
+
+// If we're behind a proxy server and using HTTPS, we need to alert Wordpress of that fact
+// see also http://codex.wordpress.org/Administration_Over_SSL#Using_a_Reverse_Proxy
+if (isset(\$_SERVER['HTTP_X_FORWARDED_PROTO']) && \$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+	\$_SERVER['HTTPS'] = 'on';
+}
+
+/* That's all, stop editing! Happy publishing. */
+
+/** Absolute path to the WordPress directory. */
+if ( ! defined( 'ABSPATH' ) ) {
+	define( 'ABSPATH', dirname( __FILE__ ) . '/' );
+}
+
+/** Sets up WordPress vars and included files. */
+require_once( ABSPATH . 'wp-settings.php' );
+EOF

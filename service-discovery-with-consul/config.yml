@@ -39,8 +39,16 @@ containers:
     WORDPRESS_DB_PASSWORD: HashiCorp123
     WORDPRESS_DB_USER: root
     WORDPRESS_TABLE_PREFIX: wp
-  memory: 128
-- name: database
+- name: database0
+  image: gcr.io/instruqt-hashicorp/hashidb:latest
+  ports:
+  - 3306
+  environment:
+    MYSQL_DATABASE: wordpress
+    MYSQL_PASS: HashiCorp123
+    MYSQL_ROOT_PASSWORD: HashiCorp123
+    MYSQL_USER: wp-user
+- name: database1
   image: gcr.io/instruqt-hashicorp/hashidb:latest
   ports:
   - 3306
