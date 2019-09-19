@@ -33,3 +33,6 @@ EOF
 
 echo "Starting Consul in Client Mode..."
 nohup sh -c "/usr/local/bin/consul agent -config-dir /consul/config &" && sleep 4
+
+echo "Making a backup of the Wordpress config file..."
+cp /var/www/html/wp-config.php /tmp/wp-config.php.backup

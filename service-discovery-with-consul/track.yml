@@ -71,8 +71,6 @@ challenges:
 
     consul-template -template "wp-config.php.tpl:wp-config.php"
     ```
-
-    NOTE: We stripped all the comments out of the wp-config.php file for clarity.
   notes:
   - type: text
     contents: "\U0001F5A7 All Your Services Are Belong To Us \U0001F469‍\U0001F4BB"
@@ -94,4 +92,35 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 1800
-checksum: "16524939635960280173"
+- slug: seamless-service-discovery
+  id: icwdlsw0pseb
+  type: challenge
+  title: "Seamless Service Discovery \U0001F5A7"
+  teaser: Consul can provide seamless access to all nodes and services in the catalog,
+    without rewriting your apps.
+  assignment: |
+    In this exercise you'll configure Consul to act as a local DNS server, providing seamless access to your service catalog via simple DNS hostnames.
+
+    Edit the `wp-config.php` file again, but this time instead of using an IP address use the Consul DNS name for your database server node, `database.node.consul`.
+  notes:
+  - type: text
+    contents: "\U0001F5A7 All Your Services Are Belong To Us \U0001F469‍\U0001F4BB"
+  tabs:
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
+  - title: App Config
+    type: code
+    hostname: app
+    path: /var/www/html
+  - title: App Server
+    type: terminal
+    hostname: app
+  - title: Website
+    type: service
+    hostname: app
+    port: 80
+  difficulty: basic
+  timelimit: 1800
+checksum: "2139349991193313238"
