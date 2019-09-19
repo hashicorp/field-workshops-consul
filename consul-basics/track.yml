@@ -219,8 +219,6 @@ challenges:
       Consul servers work together to elect a single leader, which is a selected server with extra duties.
       To ensure HA within the system, we recommened deploying Consul with 3 or 5 server nodes.
       Quorum requires at least (n/2)+1 members. You need quorum for a healthy cluster. <br>
-
-      For a detailed explanation of the ACL system, check out this [guide](https://learn.hashicorp.com/consul/security-networking/production-acls).
   tabs:
   - title: Consul UI
     type: service
@@ -247,14 +245,17 @@ challenges:
   teaser: Set up basic Consul ACLs
   assignment: |-
     Let's finish an ACL bootstrap for the lab cluster.
-    You can boostrap ACLs with the `consul acl boostrap` command. <br>
+    You can bootstrap ACLs with the `consul acl bootstrap` command. <br>
 
     We've gone ahead and ran this command for you and saved the output. You can see it in the editor. <br>
 
     Let's go ahead and finish this example by applying an ACL token for our `App` Consul agent.
-    You can use the token in the bootstrap.txt file to perform this privileged action.
+    You can use the token in the bootstrap.txt file to perform this privileged action. <br>
+
     We've also applied the base policies and tokens to the Consul servers, which you can see in the Consul UI in the `ACL` tab.
-    You can also use the Consul UI if you prefer to create policies and tokens that way. <br>
+    You can use the Consul UI if you prefer to create policies and tokens that way. Enter the token in the `ACL` tab of the UI for access. <br>
+
+    If you are using the cli, set the below variable with your token. <br>
 
     ```
     export CONSUL_HTTP_TOKEN=<your_bootstrap_token_here>
@@ -289,6 +290,7 @@ challenges:
     ACL token "agent" set successfully
     ```
 
+    You can now verify that the `App` agent logs are no longer logging errors.
     Nice work!!! You just secured your first Consul agent!
   notes:
   - type: text
@@ -297,8 +299,10 @@ challenges:
       At the core, ACLs operate by grouping rules into policies, then associating one or more policies with a token.
       ACLs are a must for all Consul production enviornments. <br>
 
-      Another option is Vault, which is an excellent solution for managing Consul ACL tokens.
-      You can read more about the integration [here](https://www.vaultproject.io/docs/secrets/consul/index.html).
+      Vault is an excellent solution for managing Consul ACL tokens.
+      You can read more about the integration [here](https://www.vaultproject.io/docs/secrets/consul/index.html). <br>
+
+      For a detailed explanation of the ACL system, check out this [guide](https://learn.hashicorp.com/consul/security-networking/production-acls).
   tabs:
   - title: Consul UI
     type: service
@@ -326,4 +330,4 @@ challenges:
     path: /tmp/bootstrap.txt
   difficulty: basic
   timelimit: 1200
-checksum: "10785836096544624079"
+checksum: "1986931967345714128"
