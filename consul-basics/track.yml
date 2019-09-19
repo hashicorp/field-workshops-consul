@@ -271,14 +271,14 @@ challenges:
     export CONSUL_HTTP_TOKEN=<your_bootstrap_token_here>
     ```
 
-    This lab has a deny by default policy, so your app node will be logging ACL errors.
+    This lab has a deny by default policy, so your `App` node will be logging ACL errors.
     You can view them in the `consul monitor` once your token env var is set.
 
     ```
     2019/09/18 20:42:06 [WARN] agent: Coordinate update blocked by ACLs
     ```
 
-    Let's create the policy for our app node. Do this from the App node.
+    Let's create the policy for our app node. Do this from the `App` node tab.
 
     ```
     consul acl policy create \
@@ -340,4 +340,4 @@ challenges:
     path: /tmp/bootstrap.txt
   difficulty: basic
   timelimit: 600
-checksum: "15636611701648200173"
+checksum: "12385545032380065124"
