@@ -248,7 +248,7 @@ challenges:
   teaser: Set up basic Consul ACLs
   assignment: |-
     Let's finish an ACL bootstrap for the lab cluster.
-    Consul clusters can be ACL bootstraped by running `consul acl bootstrap`. <br>
+    Consul clusters can be ACL bootstrapped by running `consul acl bootstrap`. <br>
 
     We've gone ahead and ran this command for you and saved the output. You can see it in the editor.
     You can find the initial bootstrap token in the `SecretID` field of this output. <br>
@@ -334,4 +334,4 @@ challenges:
     path: /tmp/bootstrap.txt
   difficulty: basic
   timelimit: 600
-checksum: "12137566225951770248"
+checksum: "9768496476148025390"
