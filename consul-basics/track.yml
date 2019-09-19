@@ -87,7 +87,9 @@ challenges:
     * List Members:
       - `consul members`
     * List Peers:
-      - `consul operator raft list-peers` <br>
+      - `consul operator raft list-peers`
+    * Agent Info:
+      - `consul info` <br>
 
     You can check out the same info in the Consul UI.
   notes:
@@ -119,10 +121,14 @@ challenges:
   assignment: |-
     Let's try some of the commands from our last assignment with the API.
 
-    * List members:
+    * Logs:
+      - `curl -s http://127.0.0.1:8500/v1/agent/monitor | jq`
+    * List Members:
       - `curl -s http://127.0.0.1:8500/v1/agent/members | jq`
     * Get Leader:
       - `curl -s http://127.0.0.1:8500/v1/status/leader | jq`
+    * Agent Info:
+      - `curl -s http://127.0.0.1:8500/v1/agent/self | jq` <br>
   notes:
   - type: text
     contents: |-
@@ -334,4 +340,4 @@ challenges:
     path: /tmp/bootstrap.txt
   difficulty: basic
   timelimit: 600
-checksum: "9768496476148025390"
+checksum: "2686484755062446917"
