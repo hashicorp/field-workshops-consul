@@ -29,6 +29,7 @@ containers:
   memory: 128
 - name: app
   image: wordpress
+  shell: /bin/bash
   ports:
   - 80
   - 443
