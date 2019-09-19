@@ -202,7 +202,7 @@ challenges:
     * CLI
       - `consul operator raft list-peers`
     * API
-      -  `curl http://127.0.0.1:8500/v1/status/leader | jq`
+      -  `curl -s http://127.0.0.1:8500/v1/status/leader | jq`
 
     <br> Go to the tab of your current leader and run `pkill consul`.
     If your leader happens to be `Consul0` you will temporarily lose the UI for this assignment. <br>
