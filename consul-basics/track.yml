@@ -122,7 +122,7 @@ challenges:
     Let's try some of the commands from our last assignment with the API.
 
     * Logs:
-      - `curl -s http://127.0.0.1:8500/v1/agent/monitor | jq`
+      - `curl -s http://127.0.0.1:8500/v1/agent/monitor`
     * List Members:
       - `curl -s http://127.0.0.1:8500/v1/agent/members | jq`
     * Get Leader:
@@ -340,4 +340,4 @@ challenges:
     path: /tmp/bootstrap.txt
   difficulty: basic
   timelimit: 600
-checksum: "2686484755062446917"
+checksum: "15636611701648200173"
