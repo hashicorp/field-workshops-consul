@@ -4,13 +4,16 @@ type: track
 title: Service Discovery with Consul
 teaser: Learn about Service Discovery with HashiCorp Consul
 description: |
-  Join us for an adventure of service discovery. In this track you'll learn how to connect a web application with its database using Consul. Topics covered include service registration, service discovery, automated config management, and seamless DNS integration.
+  Join us on an adventure of service discovery. In this track you'll learn how to connect a web application with its database using Consul. Topics covered include service registration, health checks, service discovery, automated config management, and seamless DNS integration.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
-tags: ['service discovery','health checks','dns','service registry','service catalog']
+tags:
+- service discovery
+- health checks
+- dns
+- service registry
+- service catalog
 owner: hashicorp
-developers:
-- sean@hashicorp.com
-- lance@hashicorp.com
+developers: []
 private: true
 published: true
 challenges:
@@ -23,9 +26,11 @@ challenges:
   assignment: |
     The website is DOWN! Your application server is not working correctly. You've determined that the app can't connect to the database.
 
-    Edit the `wp-config.php` file in the App Config tab. On line 32 you'll find the configuration for the database server.
+    Click on the *Nodes* tab in the Consul UI to find the database server's IP address.
 
-    Use the Consul UI to find the database server's IP and put it into the config file. Then on the App Server tab you can restart the application like so:
+    Edit the `wp-config.php` file in the App Config tab. On line 32 you'll find the configuration for the database server. Update the IP address in the file and save it with *CTRL-S*.
+
+    Run the following command on the app server to reload your config:
 
     ```
     service apache2 restart
@@ -33,6 +38,15 @@ challenges:
 
     Verify that the application setup page is loading in the Website tab.
   notes:
+  - type: text
+    contents: |
+      Consul has a complete and up-to-date map of all the hosts in your network.
+
+      Gone are the days of cumbersome, error-prone spreadsheets and Configuration Management Database (CMDB) systems.
+
+      The current IP address of each host is easy to find in the Consul UI.
+
+      Visit the *Nodes* tab of the Consul UI to see the IP addresses of all your machines.
   - type: text
     contents: "\U0001F578️ Entering the Consul Zone \U0001F47D"
   tabs:
@@ -53,6 +67,51 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 1800
+- slug: register-service-check
+  id: qy8zgg6pz8mv
+  type: challenge
+  title: Register a Service Check ✔️
+  teaser: In this challenge you'll attach a health check to the database service so
+    we can monitor its status.
+  assignment: |
+    In this challenge you'll create a service check that will register the database service in Consul's catalog. You'll need to copy a service definition file into the Consul config directory to activate the service.
+
+    Click on the database server tab and have a look inside the service definition file:
+    ```
+    cat /database_service.json
+    ```
+
+    Next copy the file into the Consul config directory:
+    ```
+    cp /database_service.json /consul/config/database_service.json
+    ```
+
+    Then go ahead and reload the Consul service:
+
+    ```
+    consul reload
+    ```
+
+    Look at the services tab in the Consul UI. You should now see a service name and health check for your database.
+
+    To find the health check in the UI click on *Services* and then *mysql*.
+
+    NOTE: It may take a moment for the health check to show up as healthy.
+  notes:
+  - type: text
+    contents: "✔️ Check Yourself Before you Wreck Yourself \U0001F468‍\U0001F4BB"
+  - type: video
+    url: https://www.youtube.com/embed/CIv65T172mU?modestbranding=1&rel=0
+  tabs:
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
+  - title: Database Server
+    type: terminal
+    hostname: database1
+  difficulty: basic
+  timelimit: 1800
 - slug: automate-your-job
   id: m99lb94yn3ac
   type: challenge
@@ -60,13 +119,17 @@ challenges:
   teaser: Now that you have the website back up and running, it's time to automate
     this so you don't get woken up at 2 am again.
   assignment: |
-    The IP address of the database server has changed again and you're tired of updating it manually.
+    In this challenge you'll use consul-template to ensure that the application config always has the correct IP address. Run the following command on the App Server terminal tab to query the Consul service catalog for your database server:
 
-    In this challenge you'll use consul-template to ensure that the application config always has the correct IP address.
+    ```
+    dig @localhost -p 8600 mysql.service.consul
+    ```
+
+    Consul template can automatically insert this IP address into your application config file.
 
     On the App Config tab you'll notice a new file called `wp-config.php.tpl`. This is a Consul Template config file. Consul template can update your `wp-config.php` file whenever the database IP address changes.
 
-    Run the following commands on in the App Server terminal to activate Consul Template. Reload the `wp-config.php` file to see the updated IP address. The website should be loading again.
+    Run the following commands on in the *App Server* terminal to activate Consul Template. Reload the `wp-config.php` file to see the updated IP address. The website should be loading again.
 
     ```
     cd /var/www/html
@@ -74,6 +137,13 @@ challenges:
     consul-template -template "wp-config.php.tpl:wp-config.php"
     ```
   notes:
+  - type: text
+    contents: |
+      Now that you've got your database service registered in the Consul catalog, you can always find your database server and know whether it's healthy or not.
+
+      In the next challenge you'll automate the configuration of your wp-config.php file using Consul Template.
+
+      Consul Template is a small agent that can manage files and populate them with data from the Consul catalog.
   - type: text
     contents: "\U0001F5A7 All Your Services Are Belong To Us \U0001F469‍\U0001F4BB"
   tabs:
@@ -86,6 +156,9 @@ challenges:
     hostname: app
     path: /var/www/html
   - title: App Server
+    type: terminal
+    hostname: app
+  - title: DB Server
     type: terminal
     hostname: app
   - title: Website
@@ -101,12 +174,41 @@ challenges:
   teaser: Consul can provide seamless access to all nodes and services in the catalog,
     without rewriting your apps.
   assignment: |
-    In this exercise you'll configure Consul to act as a local DNS server, providing seamless access to your service catalog via simple DNS hostnames.
+    In this exercise you'll configure Consul to act as a local DNS server, providing seamless access to your service catalog via simple DNS hostnames. The Linux dnsmasq service is running on your application server.
 
-    Edit the `wp-config.php` file again, but this time instead of using an IP address use the Consul DNS name for your database server node, `database.node.consul`.
+    Run the following command to see the dnsmasq configuration:
+
+    ```
+    cat /etc/dnsmasq.d/consul
+    ```
+
+    Now look at the `/etc/resolv.conf` file. This is the file that controls where DNS queries are routed.
+
+    ```
+    cat /etc/resolv.conf
+    ```
+
+    Note that we are now routing all DNS queries through our local system, but only *.consul queries are handled by Consul. All other DNS traffic is passed upstream to the corporate DNS server. Try it yourself with the `dig` command:
+
+    ```
+    dig mysql.service.consul
+    ```
+
+    Edit the `wp-config.php` file again, but this time instead of using an IP address use the Consul DNS name for your database server node: `mysql.service.consul`.
+
+    Visit the Website tab and verify that the app has connected to the database using Consul DNS.
   notes:
   - type: text
-    contents: "\U0001F5A7 All Your Services Are Belong To Us \U0001F469‍\U0001F4BB"
+    contents: |
+      The Consul catalog can be seamlessly integrated with your current application infrastructure without changing any of your code.
+
+      Imagine giving all your applications and services easy access to configuration data, health checks, and network info.
+
+      This is the magic of Consul DNS integration. With this configuration any application that speaks DNS can take advantage of the powerful Consul service catalog.
+
+      In the next challenge we'll use dnsmasq to route all local queries for *.consul addresses to the Consul service. Our application will now be able to use a simple Consul-managed DNS name for connecting to the database.
+  - type: text
+    contents: "🌐 Consul - A Powerful DNS-based Service Catalog 🕸️"
   tabs:
   - title: Consul UI
     type: service
@@ -125,4 +227,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 1800
-checksum: "2139349991193313238"
+checksum: "1334177490890027653"

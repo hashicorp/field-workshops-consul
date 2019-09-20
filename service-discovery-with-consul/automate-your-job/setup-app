@@ -40,7 +40,7 @@ define( 'DB_USER', 'root');
 define( 'DB_PASSWORD', 'HashiCorp123');
 
 /** MySQL hostname */
-define( 'DB_HOST', '{{ with node "Database@dc1" }}{{ .Node.Address }}{{ end }}');
+define( 'DB_HOST', '{{ range service "mysql" }}{{ .Address }}{{ end }}');
 
 /** Database Charset to use in creating database tables. */
 define( 'DB_CHARSET', 'utf8');
