@@ -396,7 +396,7 @@ You will accomplish the following in this lab:
 * Test Consul's High Availability
 * Add Basic Security with Consul's ACLs
 
-<a href="https://instruqt.com/embed/hashicorp/consul-basics" target="_blank">Go to the lab</a>
+<a href="https://instruqt.com/hashicorp/tracks/consul-basics" target="_blank">Go to the lab</a>
 
 ---
 name: Chapter-6
