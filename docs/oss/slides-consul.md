@@ -407,6 +407,20 @@ Service Discovery
 ]
 
 ---
+name: Interacting-Hands-On-Lab
+Hands-On Lab - Service Discovery with Consul
+-------------------------
+You will accomplish the following in this lab:
+
+* Service Registration
+* Health Checks
+* Service Discovery
+* Automated Config Management
+* Seamless DNS integration
+
+<a href="https://instruqt.com/hashicorp/tracks/service-discovery-with-consul" target="_blank">Go to the lab</a>
+
+---
 name: Chapter-7
 class: center,middle
 .section[
