@@ -15,11 +15,11 @@ description: |-
   * Add Basic Security with Consul's ACLs
 
   We'll leverage these fundamentals, and build on them in our workshop.
-icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags: []
 owner: hashicorp
 developers:
-- scarolan@hashicorp.com
+- sean@hashicorp.com
 - lance@hashicorp.com
 private: false
 published: true
