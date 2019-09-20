@@ -11,7 +11,7 @@ description: |-
   * Use the Consul CLI
   * Use the Consul API
   * Add an App Node to Your Cluster
-  * Test Consul's High Avaiablity
+  * Test Consul's High Availability
   * Add Basic Security with Consul's ACLs
 
   We'll leverage these fundamentals, and build on them in our workshop.
@@ -19,8 +19,8 @@ icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/c
 tags: []
 owner: hashicorp
 developers:
-- sean@hashicorp.com
 - lance@hashicorp.com
+- scarolan@hashicorp.com
 private: false
 published: true
 challenges:
@@ -308,8 +308,6 @@ challenges:
       At the core, ACLs operate by grouping rules into policies, then associating one or more policies with a token.
       ACLs are a must for all Consul production enviornments. <br>
 
-      Vault is an excellent solution for managing Consul ACL tokens.
-      You can read more about the integration [here](https://www.vaultproject.io/docs/secrets/consul/index.html).
       For a detailed explanation of the ACL system, check out this [guide](https://learn.hashicorp.com/consul/security-networking/production-acls). <br>
 
       This challenge will take 1-2 minutes to spin up. Please be patient.
@@ -340,4 +338,4 @@ challenges:
     path: /tmp/bootstrap.txt
   difficulty: basic
   timelimit: 600
-checksum: "12385545032380065124"
+checksum: "8756134899172109392"
