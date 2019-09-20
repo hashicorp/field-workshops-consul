@@ -1,5 +1,26 @@
 version: "2"
 containers:
+- name: consul-server-2
+  image: consul
+  ports:
+  - 8300
+  - 8301
+  - 8302
+  - 8500
+  - 8600
+  memory: 128
+- name: app
+  image: wordpress
+  shell: /bin/bash
+  ports:
+  - 80
+  - 443
+  environment:
+    WORDPRESS_DB_HOST: 10.94.99.99
+    WORDPRESS_DB_NAME: wordpress
+    WORDPRESS_DB_PASSWORD: HashiCorp123
+    WORDPRESS_DB_USER: root
+    WORDPRESS_TABLE_PREFIX: wp
 - name: database0
   image: gcr.io/instruqt-hashicorp/hashidb:latest
   ports:
@@ -37,24 +58,3 @@ containers:
   - 8500
   - 8600
   memory: 128
-- name: consul-server-2
-  image: consul
-  ports:
-  - 8300
-  - 8301
-  - 8302
-  - 8500
-  - 8600
-  memory: 128
-- name: app
-  image: wordpress
-  shell: /bin/bash
-  ports:
-  - 80
-  - 443
-  environment:
-    WORDPRESS_DB_HOST: 10.94.99.99
-    WORDPRESS_DB_NAME: wordpress
-    WORDPRESS_DB_PASSWORD: HashiCorp123
-    WORDPRESS_DB_USER: root
-    WORDPRESS_TABLE_PREFIX: wp

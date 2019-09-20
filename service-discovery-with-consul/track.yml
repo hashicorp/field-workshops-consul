@@ -12,6 +12,7 @@ tags:
 - dns
 - service registry
 - service catalog
+- consul
 owner: hashicorp
 developers: []
 private: true
@@ -66,7 +67,7 @@ challenges:
     hostname: app
     port: 80
   difficulty: basic
-  timelimit: 1800
+  timelimit: 900
 - slug: register-service-check
   id: qy8zgg6pz8mv
   type: challenge
@@ -99,9 +100,16 @@ challenges:
     NOTE: It may take a moment for the health check to show up as healthy.
   notes:
   - type: text
-    contents: "✔️ Check Yourself Before you Wreck Yourself \U0001F468‍\U0001F4BB"
+    contents: "Now that you've got the website back up and running, it's time to put
+      a health check on that database service. \n\nApplication health checks are easy
+      to build and can check a wide array of conditions. \n\nOnce you have this rich
+      data it is easy to build automation around it.\n\nIn this challenge you'll configure
+      a service health check on the database server so that you'll always know where
+      the database service is, and whether it is healthy.\n"
   - type: video
     url: https://www.youtube.com/embed/CIv65T172mU?modestbranding=1&rel=0
+  - type: text
+    contents: "✔️ Check Yourself Before you Wreck Yourself \U0001F468‍\U0001F4BB"
   tabs:
   - title: Consul UI
     type: service
@@ -111,7 +119,7 @@ challenges:
     type: terminal
     hostname: database1
   difficulty: basic
-  timelimit: 1800
+  timelimit: 900
 - slug: automate-your-job
   id: m99lb94yn3ac
   type: challenge
@@ -139,13 +147,13 @@ challenges:
   notes:
   - type: text
     contents: |
-      Now that you've got your database service registered in the Consul catalog, you can always find your database server and know whether it's healthy or not.
+      The database service is now registered in the Consul catalog. You can always find your the database service IP address and know whether it's healthy or not.
 
       In the next challenge you'll automate the configuration of your wp-config.php file using Consul Template.
 
       Consul Template is a small agent that can manage files and populate them with data from the Consul catalog.
   - type: text
-    contents: "\U0001F5A7 All Your Services Are Belong To Us \U0001F469‍\U0001F4BB"
+    contents: "\U0001F5A7 All Your Service Are Belong To Us \U0001F469‍\U0001F4BB"
   tabs:
   - title: Consul UI
     type: service
@@ -158,15 +166,12 @@ challenges:
   - title: App Server
     type: terminal
     hostname: app
-  - title: DB Server
-    type: terminal
-    hostname: app
   - title: Website
     type: service
     hostname: app
     port: 80
   difficulty: basic
-  timelimit: 1800
+  timelimit: 900
 - slug: seamless-service-discovery
   id: icwdlsw0pseb
   type: challenge
@@ -200,7 +205,7 @@ challenges:
   notes:
   - type: text
     contents: |
-      The Consul catalog can be seamlessly integrated with your current application infrastructure without changing any of your code.
+      The Consul catalog can seamlessly integrate with your current application infrastructure without changing any of your code.
 
       Imagine giving all your applications and services easy access to configuration data, health checks, and network info.
 
@@ -208,7 +213,7 @@ challenges:
 
       In the next challenge we'll use dnsmasq to route all local queries for *.consul addresses to the Consul service. Our application will now be able to use a simple Consul-managed DNS name for connecting to the database.
   - type: text
-    contents: "🌐 Consul - A Powerful DNS-based Service Catalog 🕸️"
+    contents: "\U0001F310 Consul - A Powerful DNS-based Service Catalog \U0001F578️"
   tabs:
   - title: Consul UI
     type: service
@@ -226,5 +231,5 @@ challenges:
     hostname: app
     port: 80
   difficulty: basic
-  timelimit: 1800
-checksum: "1334177490890027653"
+  timelimit: 900
+checksum: "1398961590793459573"
