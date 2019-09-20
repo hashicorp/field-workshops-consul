@@ -14,7 +14,9 @@ tags:
 - service catalog
 - consul
 owner: hashicorp
-developers: []
+developers:
+- scarolan@hashicorp.com
+- lance@hashicorp.com
 private: true
 published: true
 challenges:
@@ -232,4 +234,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 900
-checksum: "1398961590793459573"
+checksum: "1698519060455971979"
