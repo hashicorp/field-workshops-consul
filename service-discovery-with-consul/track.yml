@@ -1,14 +1,16 @@
 slug: service-discovery-with-consul
 id: nyzxxfyzce4a
 type: track
-title: service-discovery-with-consul
+title: Service Discovery with Consul
 teaser: Learn about Service Discovery with HashiCorp Consul
-description: This is the long description about Service Discovery.
-icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
-tags: []
+description: |
+  Join us for an adventure of service discovery. In this track you'll learn how to connect a web application with its database using Consul. Topics covered include service registration, service discovery, automated config management, and seamless DNS integration.
+icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
+tags: ['service discovery','health checks','dns','service registry','service catalog']
 owner: hashicorp
 developers:
-- scarolan@hashicorp.com
+- sean@hashicorp.com
+- lance@hashicorp.com
 private: true
 published: true
 challenges:
@@ -16,8 +18,8 @@ challenges:
   id: lxxrrq17fcxz
   type: challenge
   title: "The website is DOWN! \U0001F631"
-  teaser: The company website is down and it's up to you to fix it. Use your Consul
-    superpowers to find the database server and reconnect it to the app.
+  teaser: |
+    The company website is down and it's up to you to fix it. Use your Consul superpowers to find the database server and reconnect it to the app.
   assignment: |
     The website is DOWN! Your application server is not working correctly. You've determined that the app can't connect to the database.
 
