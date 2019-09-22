@@ -386,10 +386,17 @@ Interacting with Consul (CLI, GUI, API)
 name: Interacting-Hands-On-Lab
 Hands-On Lab - Interacting with Consul
 -------------------------
+You will accomplish the following in this lab:
 
-<iframe width="700" height="500" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" src="https://instruqt.com/embed/hashicorp/consul-basics" style="border: 0;"></iframe>
+* Set Up a 3 Node Consul Cluster
+* Use the Consul UI
+* Use the Consul CLI
+* Use the Consul API
+* Add an App Node to Your Cluster
+* Test Consul's High Availability
+* Add Basic Security with Consul's ACLs
 
-<a href="https://instruqt.com/embed/hashicorp/consul-basics" target="_blank">Link: Full Screen</a>
+<a href="https://instruqt.com/hashicorp/tracks/consul-basics" target="_blank">Go to the lab</a>
 
 ---
 name: Chapter-6
@@ -398,6 +405,20 @@ class: center,middle
 Chapter 6
 Service Discovery
 ]
+
+---
+name: Interacting-Hands-On-Lab
+Hands-On Lab - Service Discovery with Consul
+-------------------------
+You will accomplish the following in this lab:
+
+* Service Registration
+* Health Checks
+* Service Discovery
+* Automated Config Management
+* Seamless DNS integration
+
+<a href="https://instruqt.com/hashicorp/tracks/service-discovery-with-consul" target="_blank">Go to the lab</a>
 
 ---
 name: Chapter-7

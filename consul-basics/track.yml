@@ -5,19 +5,22 @@ title: Consul Basics
 teaser: Back to basics with Consul
 description: |-
   The track will give you a crash course in operating Consul. You will acomplish the following:
+
   * Set Up a 3 Node Consul Cluster
   * Use the Consul UI
   * Use the Consul CLI
   * Use the Consul API
   * Add an App Node to Your Cluster
-  * Test Consul's High Avaiablity
+  * Test Consul's High Availability
   * Add Basic Security with Consul's ACLs
-icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+
+  We'll leverage these fundamentals, and build on them in our workshop.
+icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags: []
 owner: hashicorp
 developers:
-- scarolan@hashicorp.com
 - lance@hashicorp.com
+- scarolan@hashicorp.com
 private: false
 published: true
 challenges:
@@ -35,26 +38,18 @@ challenges:
     You can view the config for one of the Consul server in the code editor.
     You don't need to understand all the options, just notice that we are starting Consul in `server` mode <br>
 
-    Our start script is simple and runs Consul as a background process.
-    In production this would daemonized or managed by an orchestrator.
-
     ```
     /bin/start_consul.sh
     ```
+
+    Our start script is simple and runs Consul as a background process.
+    In production this would daemonized or managed by an orchestrator. <br>
 
     Once you have a healthy cluster, the Consul UI will become available.
   notes:
   - type: text
     contents: "\U0001F578️You are about to enter the Consul Zone\U0001F47D"
   tabs:
-  - title: Consul UI
-    type: service
-    hostname: consul-server-0
-    port: 8500
-  - title: Server0 - Config
-    type: code
-    hostname: consul-server-0
-    path: /consul/config/server.json
   - title: Consul0
     type: terminal
     hostname: consul-server-0
@@ -64,6 +59,14 @@ challenges:
   - title: Consul2
     type: terminal
     hostname: consul-server-2
+  - title: Server0 - Config
+    type: code
+    hostname: consul-server-0
+    path: /consul/config/server.json
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
   difficulty: basic
   timelimit: 300
 - slug: consul-cli
@@ -75,7 +78,7 @@ challenges:
     Consul is already preconfigured for communication with the lab workstations.
     Remember that all interactions with Consul, whether through the GUI, or command line always have an underlying API call. <br>
 
-    You can run the following command to see this value: `echo $CONSUL_HTTP_ADDR`
+    You can run the following command to see this value: `echo $CONSUL_HTTP_ADDR`.  This is API server endpoint for  Consul.
 
     Let's run some useful commands and introspect our healthy cluster. Try a few from below: <br>
 
@@ -84,7 +87,9 @@ challenges:
     * List Members:
       - `consul members`
     * List Peers:
-      - `consul operator raft list-peers` <br>
+      - `consul operator raft list-peers`
+    * Agent Info:
+      - `consul info` <br>
 
     You can check out the same info in the Consul UI.
   notes:
@@ -116,10 +121,14 @@ challenges:
   assignment: |-
     Let's try some of the commands from our last assignment with the API.
 
-    * List members:
-      - `curl http://127.0.0.1:8500/v1/agent/members | jq`
+    * Logs:
+      - `curl -s http://127.0.0.1:8500/v1/agent/monitor`
+    * List Members:
+      - `curl -s http://127.0.0.1:8500/v1/agent/members | jq`
     * Get Leader:
-      - `curl http://127.0.0.1:8500/v1/status/leader | jq`
+      - `curl -s http://127.0.0.1:8500/v1/status/leader | jq`
+    * Agent Info:
+      - `curl -s http://127.0.0.1:8500/v1/agent/self | jq` <br>
   notes:
   - type: text
     contents: |-
@@ -187,8 +196,8 @@ challenges:
 - slug: consul-ha
   id: twklmkkkdxlb
   type: challenge
-  title: Consul HA
-  teaser: Test Consul's HA capabilities
+  title: Consul High Availability
+  teaser: Test Consul's High Availability capabilities
   assignment: |-
     We have 3 servers in our lab enviornment. This means we can lose one server and still have a healthy cluster.
     Let's kill off a few of these servers and see what happens on our App node. <br>
@@ -199,9 +208,9 @@ challenges:
     * CLI
       - `consul operator raft list-peers`
     * API
-      -  `curl http://127.0.0.1:8500/v1/status/leader | jq`
+      -  `curl -s http://127.0.0.1:8500/v1/status/leader | jq`
 
-    <br> Go to the tab of your current server and run `pkill consul`.
+    <br> Go to the tab of your current leader and run `pkill consul`.
     If your leader happens to be `Consul0` you will temporarily lose the UI for this assignment. <br>
 
     Next, repeat the steps above to find your new leader. You should see a new IP address.
@@ -245,30 +254,31 @@ challenges:
   teaser: Set up basic Consul ACLs
   assignment: |-
     Let's finish an ACL bootstrap for the lab cluster.
-    You can bootstrap ACLs with the `consul acl bootstrap` command. <br>
+    Consul clusters can be ACL bootstrapped by running `consul acl bootstrap`. <br>
 
-    We've gone ahead and ran this command for you and saved the output. You can see it in the editor. <br>
+    We've gone ahead and ran this command for you and saved the output. You can see it in the editor.
+    You can find the initial bootstrap token in the `SecretID` field of this output. <br>
 
-    Let's go ahead and finish this example by applying an ACL token for our `App` Consul agent.
-    You can use the token in the bootstrap.txt file to perform this privileged action. <br>
+    Now we can apply an ACL token for our `App` Consul agent.
+    You can use the token from the boostrap output to perform this privileged action. <br>
 
     We've also applied the base policies and tokens to the Consul servers, which you can see in the Consul UI in the `ACL` tab.
     You can use the Consul UI if you prefer to create policies and tokens that way. Enter the token in the `ACL` tab of the UI for access. <br>
 
-    If you are using the cli, set the below variable with your token. <br>
+    If you are using the CLI, set the below variable with your token. <br>
 
     ```
     export CONSUL_HTTP_TOKEN=<your_bootstrap_token_here>
     ```
 
-    This lab has a deny by default policy, so your app node will be logging ACL errors.
+    This lab has a deny by default policy, so your `App` node will be logging ACL errors.
     You can view them in the `consul monitor` once your token env var is set.
 
     ```
     2019/09/18 20:42:06 [WARN] agent: Coordinate update blocked by ACLs
     ```
 
-    Let's create the policy for our app node. Do this from the App node.
+    Let's create the policy for our app node. Do this from the `App` node tab.
 
     ```
     consul acl policy create \
@@ -287,7 +297,6 @@ challenges:
 
     ```
     consul acl set-agent-token agent <your_app_agent_token>
-    ACL token "agent" set successfully
     ```
 
     You can now verify that the `App` agent logs are no longer logging errors.
@@ -299,10 +308,9 @@ challenges:
       At the core, ACLs operate by grouping rules into policies, then associating one or more policies with a token.
       ACLs are a must for all Consul production enviornments. <br>
 
-      Vault is an excellent solution for managing Consul ACL tokens.
-      You can read more about the integration [here](https://www.vaultproject.io/docs/secrets/consul/index.html). <br>
+      For a detailed explanation of the ACL system, check out this [guide](https://learn.hashicorp.com/consul/security-networking/production-acls). <br>
 
-      For a detailed explanation of the ACL system, check out this [guide](https://learn.hashicorp.com/consul/security-networking/production-acls).
+      This challenge will take 1-2 minutes to spin up. Please be patient.
   tabs:
   - title: Consul UI
     type: service
@@ -324,10 +332,10 @@ challenges:
   - title: Consul2
     type: terminal
     hostname: consul-server-2
-  - title: Bootstrap
+  - title: ACL Bootstrap
     type: code
     hostname: consul-server-2
     path: /tmp/bootstrap.txt
   difficulty: basic
-  timelimit: 1200
-checksum: "1986931967345714128"
+  timelimit: 600
+checksum: "8756134899172109392"

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Configures the App server
 apt -y update
-apt -y install unzip wget
+apt -y install unzip wget dnsutils
 wget https://releases.hashicorp.com/consul/1.6.1/consul_1.6.1_linux_amd64.zip -O /tmp/consul.zip
 cd /usr/local/bin
 unzip /tmp/consul.zip
