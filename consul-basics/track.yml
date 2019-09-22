@@ -4,7 +4,7 @@ type: track
 title: Consul Basics
 teaser: Back to basics with Consul
 description: |-
-  The track will give you a crash course in operating Consul. You will acomplish the following:
+  The track is a crash course in Consul operations. You will accomplish the following:
 
   * Set Up a 3 Node Consul Cluster
   * Use the Consul UI
@@ -14,9 +14,9 @@ description: |-
   * Test Consul's High Availability
   * Add Basic Security with Consul's ACLs
 
-  We'll leverage these fundamentals, and build on them in our workshop.
+  Once you've learned these fundamentals you can proceed to intermediate and advanced topics like Service Discovery and Consul Connect.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
-tags: []
+tags: ["introduction to consul","consul basics","serf","cluster"]
 owner: hashicorp
 developers:
 - lance@hashicorp.com
@@ -28,7 +28,7 @@ challenges:
   id: bgfx8nbzqnjv
   type: challenge
   title: Get to Know Consul
-  teaser: My first Consul cluster
+  teaser: My First Consul cluster
   assignment: |
     Welcome to Consul Basics! In this lab you'll start up a three-node Consul cluster.
     Once all three nodes have joined the server cluster you should see the Consul UI become healthy.
@@ -75,15 +75,18 @@ challenges:
   title: Consul CLI
   teaser: Take the Consul CLI for a spin
   assignment: |-
-    Consul is already preconfigured for communication with the lab workstations.
-    Remember that all interactions with Consul, whether through the GUI, or command line always have an underlying API call. <br>
+    The Consul binary can act as a server, client, or command line tool. We've preconfigured the command line settings for you with the `CONSUL_HTTP_ADDR` environment variable.
 
-    You can run the following command to see this value: `echo $CONSUL_HTTP_ADDR`.  This is API server endpoint for  Consul.
+    You can run the following command to see this value: `echo $CONSUL_HTTP_ADDR`. This is API server endpoint for Consul.
 
-    Let's run some useful commands and introspect our healthy cluster. Try a few from below: <br>
+    All interactions with Consul, whether through the GUI, or command line always have an underlying API call. <br>
 
-    * Logs:
-      - `consul monitor`
+    Try these commands and view the results: <br>
+
+    * Get Help:
+      - `consul help` or `consul subcommand -help`
+    * View Logs:
+      - `consul monitor` (CTRL-C to escape)
     * List Members:
       - `consul members`
     * List Peers:
@@ -119,7 +122,7 @@ challenges:
   title: Consul API
   teaser: Use the Consul API
   assignment: |-
-    Let's try some of the commands from our last assignment with the API.
+    Let's try some of the same commands from our last assignment with the API. We'll use the Unix `curl` command to interact with the API.
 
     * Logs:
       - `curl -s http://127.0.0.1:8500/v1/agent/monitor`
@@ -156,20 +159,21 @@ challenges:
   title: Add an Agent
   teaser: Add a Consul client agent to your Consul cluster.
   assignment: |-
-    We've added an additional node to your lab enviornment that will represent an `app server`.
-    Run the start script and join this agent to the cluster.
-    You can see in the code editor that we are not running this agent in `server ` mode.
+    We've added an `App Server` to your lab environment. The app server is configured to run in `client` mode.
+
+    Run the Consul startup script and join this agent to the cluster.
 
     ```
     /bin/start_consul.sh
     ```
 
-    You can then verify the join with `consul members` or look at the node list in the Consul UI.
+    Look at the node list in the Consul UI or run the `consul members` command to verify that the app server has joined the cluster.
   notes:
   - type: text
     contents: |-
-      Remember, nodes that provide services to Consul run a Consul agent.  A node could be a physical server, VM, or container.
-      The agent is responsible for services it runs as well as the node itself.  Agents report this information to the Consul servers, where we have a central view of this information.
+      The Consul agent runs on every node where you want to keep track of services. A node could be a physical server, VM, or container.
+      
+      The agent tracks information about the node and its associated services. Agents report this information to the Consul servers, where we have a central view of node and service status.
   tabs:
   - title: Consul UI
     type: service
@@ -197,13 +201,12 @@ challenges:
   id: twklmkkkdxlb
   type: challenge
   title: Consul High Availability
-  teaser: Test Consul's High Availability capabilities
+  teaser: Test Consul's High Availability Capabilities
   assignment: |-
     We have 3 servers in our lab enviornment. This means we can lose one server and still have a healthy cluster.
-    Let's kill off a few of these servers and see what happens on our App node. <br>
+    Let's disable the leader and observe what happens. <br>
 
-    First, find your current leader from the agent node.
-    You can do this in the Consul UI, or with the CLI or API. <br>
+    First, find your current leader. You can do this in the Consul UI, or with the CLI or API. <br>
 
     * CLI
       - `consul operator raft list-peers`
@@ -213,21 +216,29 @@ challenges:
     <br> Go to the tab of your current leader and run `pkill consul`.
     If your leader happens to be `Consul0` you will temporarily lose the UI for this assignment. <br>
 
-    Next, repeat the steps above to find your new leader. You should see a new IP address.
-    Repeat this process, and try again. You should see something along the lines of below:
+    Next, repeat the steps above to find your new leader. You should see a different IP address.
+
+    Repeat this process and kill the new leader. Run `consul operator raft list-peers` on the last server.
+
+    You should see something like this:
 
     ```
     rpc error making call: No cluster leader
     ```
 
     Good job! You've officially nuked your cluster!!
-    We'll bring it back for you before you start the next challenge.
+    We'll bring it back before you start the next challenge.
   notes:
   - type: text
     contents: |-
-      Consul servers work together to elect a single leader, which is a selected server with extra duties.
-      To ensure HA within the system, we recommened deploying Consul with 3 or 5 server nodes.
-      Quorum requires at least (n/2)+1 members. You need quorum for a healthy cluster. <br>
+      Consul servers work together to elect a single leader, which becomes the primary source of truth for the cluster. All updates are forwarded to the cluster leader. If the leader goes down one of the other servers can immediately take its place.
+
+      To ensure high availability within the system, we recommened deploying Consul with 3 or 5 server nodes.
+  - type: text
+    contents: |-
+      Quorum requires at least (n/2)+1 members. You need quorum for a healthy cluster.
+            
+      A three-node cluster can tolerate the loss of a single member. A five-node cluster can tolerate the loss of two members and continue to operate.<br>
   tabs:
   - title: Consul UI
     type: service
@@ -253,47 +264,44 @@ challenges:
   title: Consul ACLs
   teaser: Set up basic Consul ACLs
   assignment: |-
-    Let's finish an ACL bootstrap for the lab cluster.
-    Consul clusters can be ACL bootstrapped by running `consul acl bootstrap`. <br>
+    Let's apply some access controls to our Consul cluster to prevent unauthorized access. In this challenge you'll use the master or bootstrap token to restrict what your app server can do.
 
-    We've gone ahead and ran this command for you and saved the output. You can see it in the editor.
-    You can find the initial bootstrap token in the `SecretID` field of this output. <br>
+    Consul ACLs are enabled by running the `consul acl bootstrap` command.
 
-    Now we can apply an ACL token for our `App` Consul agent.
-    You can use the token from the boostrap output to perform this privileged action. <br>
+    We've already run this command for you and saved the output in the `ACL Bootstrap` code editor tab. The initial bootstrap token is the `SecretID` field of this output. This special token is used to configure your cluster and to generate other tokens. Copy the bootstrap token by highlighting it and pressing CTRL-C.<br>
 
-    We've also applied the base policies and tokens to the Consul servers, which you can see in the Consul UI in the `ACL` tab.
-    You can use the Consul UI if you prefer to create policies and tokens that way. Enter the token in the `ACL` tab of the UI for access. <br>
+    If you are using the UI, click on the ACL tab and enter your token into the text field.
 
-    If you are using the CLI, set the below variable with your token. <br>
+    If you are using the CLI, set an environment variable with your token: <br>
 
     ```
     export CONSUL_HTTP_TOKEN=<your_bootstrap_token_here>
     ```
 
-    This lab has a deny by default policy, so your `App` node will be logging ACL errors.
-    You can view them in the `consul monitor` once your token env var is set.
+    This lab has a deny by default policy, so your `App` node will be logging ACL errors. You can view them with `consul monitor` once your token environmennt variable is set.
 
     ```
     2019/09/18 20:42:06 [WARN] agent: Coordinate update blocked by ACLs
     ```
 
-    Let's create the policy for our app node. Do this from the `App` node tab.
+    The app server is currently blocked from making any consul updates or queries.
+
+    Let's create a policy to enable limited access for our app node. Run these commands from the `App` tab.
 
     ```
     consul acl policy create \
      -name app \
      -rules @/consul/policies/app.hcl
-     ```
+    ```
 
-     Now create a token for that policy.
+    Next, create a token for that policy.
 
     ```
     consul acl token create -description "app agent token" \
       -policy-name app
     ```
 
-    Last apply the token.
+    Finally apply the token to make it active.
 
     ```
     consul acl set-agent-token agent <your_app_agent_token>
@@ -305,7 +313,7 @@ challenges:
   - type: text
     contents: |-
       Consul uses Access Control Lists (ACLs) to secure the UI, API, CLI, service communications, and agent communications.
-      At the core, ACLs operate by grouping rules into policies, then associating one or more policies with a token.
+      ACLs operate by grouping rules into policies, then associating one or more policies with a token.
       ACLs are a must for all Consul production enviornments. <br>
 
       For a detailed explanation of the ACL system, check out this [guide](https://learn.hashicorp.com/consul/security-networking/production-acls). <br>
