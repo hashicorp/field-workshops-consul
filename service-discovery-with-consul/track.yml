@@ -31,7 +31,7 @@ challenges:
 
     Click on the *Nodes* tab in the Consul UI to find the database server's IP address.
 
-    Edit the `wp-config.php` file in the App Config tab. On line 32 you'll find the configuration for the database server. Update the IP address in the file and save it with *CTRL-S*.
+    Edit the `wp-config.php` file in the *App Config* tab. On line 32 you'll find the configuration for the database server. Update the IP address in the file and save it with *CTRL-S*.
 
     Run the following command on the app server to reload your config:
 
@@ -39,7 +39,9 @@ challenges:
     service apache2 restart
     ```
 
-    Verify that the application setup page is loading in the Website tab.
+    Verify that the application setup page is loading in the *Website* tab.
+
+    OPTIONAL: You can install WordPress and customize the theme if you like!
   notes:
   - type: text
     contents: |
@@ -51,7 +53,7 @@ challenges:
 
       Visit the *Nodes* tab of the Consul UI to see the IP addresses of all your machines.
   - type: text
-    contents: "\U0001F578️ Entering the Consul Zone \U0001F47D"
+    contents: "\U0001F441️ Next Stop...the Consul Zone \U0001F570️"
   tabs:
   - title: Consul UI
     type: service
@@ -60,7 +62,7 @@ challenges:
   - title: App Config
     type: code
     hostname: app
-    path: /var/www/html
+    path: /var/www/html/wp-config.php
   - title: App Server
     type: terminal
     hostname: app
@@ -119,7 +121,7 @@ challenges:
     port: 8500
   - title: Database Server
     type: terminal
-    hostname: database1
+    hostname: database
   difficulty: basic
   timelimit: 900
 - slug: automate-your-job
@@ -129,7 +131,7 @@ challenges:
   teaser: Now that you have the website back up and running, it's time to automate
     this so you don't get woken up at 2 am again.
   assignment: |
-    In this challenge you'll use consul-template to ensure that the application config always has the correct IP address. Run the following command on the App Server terminal tab to query the Consul service catalog for your database server:
+    In this challenge you'll use consul-template to ensure that the application config always has the correct IP address. Run the following command on the *App Server* terminal tab to query the Consul service catalog for your database server:
 
     ```
     dig @localhost -p 8600 mysql.service.consul
@@ -137,20 +139,18 @@ challenges:
 
     Consul template can automatically insert this IP address into your application config file.
 
-    On the App Config tab you'll notice a new file called `wp-config.php.tpl`. This is a Consul Template config file. Consul template can update your `wp-config.php` file whenever the database IP address changes.
+    You should see a new tab called `Consul Template`. This contains the Consul Template config file. Consul template can update your `wp-config.php` file whenever the database IP address changes.
 
-    Run the following commands on in the *App Server* terminal to activate Consul Template. Reload the `wp-config.php` file to see the updated IP address. The website should be loading again.
+    Run the following commands on in the *App Server* terminal to activate Consul Template. Reload the `wp-config.php` file to see the updated IP address.
 
     ```
     cd /var/www/html
-
     consul-template -template "wp-config.php.tpl:wp-config.php"
     ```
+
+     Open the *Website* tab and verify that the web app is loading correctly.
   notes:
   - type: text
-<<<<<<< HEAD
-    contents: "\U0001F5A7 All Your Services Are Belong To Us \U0001F469‍\U0001F4BB"
-=======
     contents: |
       The database service is now registered in the Consul catalog. You can always find your the database service IP address and know whether it's healthy or not.
 
@@ -159,7 +159,6 @@ challenges:
       Consul Template is a small agent that can manage files and populate them with data from the Consul catalog.
   - type: text
     contents: "\U0001F5A7 All Your Service Are Belong To Us \U0001F469‍\U0001F4BB"
->>>>>>> e98b3a1963a6378c22162c65d7781dac2e071527
   tabs:
   - title: Consul UI
     type: service
@@ -168,7 +167,11 @@ challenges:
   - title: App Config
     type: code
     hostname: app
-    path: /var/www/html
+    path: /var/www/html/wp-config.php
+  - title: Consul Template
+    type: code
+    hostname: app
+    path: /var/www/html/wp-config.php.tpl
   - title: App Server
     type: terminal
     hostname: app
@@ -177,11 +180,7 @@ challenges:
     hostname: app
     port: 80
   difficulty: basic
-<<<<<<< HEAD
-  timelimit: 1800
-=======
   timelimit: 900
->>>>>>> e98b3a1963a6378c22162c65d7781dac2e071527
 - slug: seamless-service-discovery
   id: icwdlsw0pseb
   type: challenge
@@ -189,11 +188,6 @@ challenges:
   teaser: Consul can provide seamless access to all nodes and services in the catalog,
     without rewriting your apps.
   assignment: |
-<<<<<<< HEAD
-    In this exercise you'll configure Consul to act as a local DNS server, providing seamless access to your service catalog via simple DNS hostnames.
-
-    Edit the `wp-config.php` file again, but this time instead of using an IP address use the Consul DNS name for your database server node, `database.node.consul`.
-=======
     In this exercise you'll configure Consul to act as a local DNS server, providing seamless access to your service catalog via simple DNS hostnames. The Linux dnsmasq service is running on your application server.
 
     Run the following command to see the dnsmasq configuration:
@@ -217,7 +211,6 @@ challenges:
     Edit the `wp-config.php` file again, but this time instead of using an IP address use the Consul DNS name for your database server node: `mysql.service.consul`.
 
     Visit the Website tab and verify that the app has connected to the database using Consul DNS.
->>>>>>> e98b3a1963a6378c22162c65d7781dac2e071527
   notes:
   - type: text
     contents: |
@@ -230,6 +223,9 @@ challenges:
       In the next challenge we'll use dnsmasq to route all local queries for *.consul addresses to the Consul service. Our application will now be able to use a simple Consul-managed DNS name for connecting to the database.
   - type: text
     contents: "\U0001F310 Consul - A Powerful DNS-based Service Catalog \U0001F578️"
+  - type: text
+    contents: "\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\n\n_It's
+      not DNS_\n\n_There's no way it's DNS_\n\n_It was DNS_\n\n\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\n"
   tabs:
   - title: Consul UI
     type: service
@@ -238,7 +234,7 @@ challenges:
   - title: App Config
     type: code
     hostname: app
-    path: /var/www/html
+    path: /var/www/html/wp-config.php
   - title: App Server
     type: terminal
     hostname: app
@@ -247,10 +243,5 @@ challenges:
     hostname: app
     port: 80
   difficulty: basic
-<<<<<<< HEAD
-  timelimit: 1800
-checksum: "2139349991193313238"
-=======
   timelimit: 900
-checksum: "1698519060455971979"
->>>>>>> e98b3a1963a6378c22162c65d7781dac2e071527
+checksum: "10457834941737291269"

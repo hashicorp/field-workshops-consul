@@ -1,8 +1,0 @@
-#!/bin/bash
-# Cleanup
-
-echo "Stopping Consul..."
-pkill consul
-
-echo "Stopping the database..."
-pkill mysqld

@@ -71,7 +71,7 @@ challenges:
     hostname: consul-server-0
     port: 8500
   difficulty: basic
-  timelimit: 300
+  timelimit: 600
 - slug: consul-cli
   id: ur5wsyiizlac
   type: challenge
@@ -118,7 +118,7 @@ challenges:
     hostname: consul-server-0
     port: 8500
   difficulty: basic
-  timelimit: 300
+  timelimit: 600
 - slug: consul-api
   id: 6mh7z4axuiix
   type: challenge
@@ -155,7 +155,7 @@ challenges:
     hostname: consul-server-0
     port: 8500
   difficulty: basic
-  timelimit: 300
+  timelimit: 600
 - slug: consul-agents
   id: unxdsxuwburk
   type: challenge
@@ -192,7 +192,7 @@ challenges:
     hostname: consul-server-0
     port: 8500
   difficulty: basic
-  timelimit: 300
+  timelimit: 600
 - slug: consul-ha
   id: twklmkkkdxlb
   type: challenge
@@ -244,7 +244,7 @@ challenges:
     type: terminal
     hostname: consul-agent-0
   difficulty: basic
-  timelimit: 300
+  timelimit: 600
 - slug: consul-acls
   id: qlfdatwayytc
   type: challenge
@@ -330,4 +330,4 @@ challenges:
     path: /tmp/bootstrap.txt
   difficulty: basic
   timelimit: 600
-checksum: "10966056443860235486"
+checksum: "8519904501701342546"
