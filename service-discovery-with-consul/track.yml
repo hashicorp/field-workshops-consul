@@ -148,6 +148,9 @@ challenges:
     ```
   notes:
   - type: text
+<<<<<<< HEAD
+    contents: "\U0001F5A7 All Your Services Are Belong To Us \U0001F469‍\U0001F4BB"
+=======
     contents: |
       The database service is now registered in the Consul catalog. You can always find your the database service IP address and know whether it's healthy or not.
 
@@ -156,6 +159,7 @@ challenges:
       Consul Template is a small agent that can manage files and populate them with data from the Consul catalog.
   - type: text
     contents: "\U0001F5A7 All Your Service Are Belong To Us \U0001F469‍\U0001F4BB"
+>>>>>>> e98b3a1963a6378c22162c65d7781dac2e071527
   tabs:
   - title: Consul UI
     type: service
@@ -173,7 +177,11 @@ challenges:
     hostname: app
     port: 80
   difficulty: basic
+<<<<<<< HEAD
+  timelimit: 1800
+=======
   timelimit: 900
+>>>>>>> e98b3a1963a6378c22162c65d7781dac2e071527
 - slug: seamless-service-discovery
   id: icwdlsw0pseb
   type: challenge
@@ -181,6 +189,11 @@ challenges:
   teaser: Consul can provide seamless access to all nodes and services in the catalog,
     without rewriting your apps.
   assignment: |
+<<<<<<< HEAD
+    In this exercise you'll configure Consul to act as a local DNS server, providing seamless access to your service catalog via simple DNS hostnames.
+
+    Edit the `wp-config.php` file again, but this time instead of using an IP address use the Consul DNS name for your database server node, `database.node.consul`.
+=======
     In this exercise you'll configure Consul to act as a local DNS server, providing seamless access to your service catalog via simple DNS hostnames. The Linux dnsmasq service is running on your application server.
 
     Run the following command to see the dnsmasq configuration:
@@ -204,6 +217,7 @@ challenges:
     Edit the `wp-config.php` file again, but this time instead of using an IP address use the Consul DNS name for your database server node: `mysql.service.consul`.
 
     Visit the Website tab and verify that the app has connected to the database using Consul DNS.
+>>>>>>> e98b3a1963a6378c22162c65d7781dac2e071527
   notes:
   - type: text
     contents: |
@@ -233,5 +247,10 @@ challenges:
     hostname: app
     port: 80
   difficulty: basic
+<<<<<<< HEAD
+  timelimit: 1800
+checksum: "2139349991193313238"
+=======
   timelimit: 900
 checksum: "1698519060455971979"
+>>>>>>> e98b3a1963a6378c22162c65d7781dac2e071527
