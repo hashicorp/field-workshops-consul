@@ -46,7 +46,7 @@ challenges:
 
     You can simply copy and paste it into the terminal for each server. You may also view the config for one of the Consul servers in the code editor. You don't need to understand all the options, just notice that we are starting Consul in `server` mode. (This is on line 8 in the config file.)
 
-    Our start script is simple and runs Consul as a background process. In production this would daemonized or managed by an orchestrator.
+    Our startup script is simple and runs Consul as a background process. In production this would daemonized or managed by an orchestrator.
 
     Once you have a healthy cluster, the Consul UI will become available.
   notes:
@@ -164,7 +164,7 @@ challenges:
   assignment: |-
     We've added an `App Server` to your lab environment. The app server is configured to run in `client` mode.
 
-    Look in the `App Config` tab. If there is no `"server": true` flag in the config file, the agent defaults to client mode.
+    Look in the `App Config` tab. Note that the *server* flag is set to false.
 
     Run the Consul startup script in the `App` tab and join this agent to the cluster.
 
@@ -253,7 +253,7 @@ challenges:
   assignment: |-
     Let's apply some access controls to our Consul cluster to prevent unauthorized access. In this challenge you'll use the master bootstrap token to access the UI and to enable a policy for your app server.
 
-    You may notice that you're locked out of the UI. None of the nodes and services are available because of a default *deny* policy.
+    You may notice that you're locked out of the UI. None of the nodes and services are showing up because of a default *deny* policy.
 
     Consul ACLs are enabled by running the `consul acl bootstrap` command.
 
@@ -261,13 +261,17 @@ challenges:
 
     To re-enable the UI, click on the ACL tab and enter your token into the text field.
 
-    On the command line you should set an environment variable with your token. Run the following command with your token:
+    On the command line you should set an environment variable with your token. Run the following command on the `App` tab:
 
     ```
     export CONSUL_HTTP_TOKEN=<your_token_here>
     ```
 
-    This lab has a deny by default policy, so your `App` node will be logging ACL errors. You can view them with `consul monitor` once your token environment variable is set.
+    This lab has a deny by default policy, so your `App` node will be logging ACL errors. Run the following command to view the ACL errors (CTRL-C to exit):
+
+    ```
+    consul monitor
+    ```
 
     ```
     2019/09/18 20:42:06 [WARN] agent: Coordinate update blocked by ACLs
@@ -320,19 +324,10 @@ challenges:
     type: code
     hostname: consul-server-2
     path: /consul/policies/app.hcl
-  - title: Consul0
-    type: terminal
-    hostname: consul-server-0
-  - title: Consul1
-    type: terminal
-    hostname: consul-server-1
-  - title: Consul2
-    type: terminal
-    hostname: consul-server-2
   - title: ACL Bootstrap
     type: code
     hostname: consul-server-2
     path: /tmp/bootstrap.txt
   difficulty: basic
   timelimit: 600
-checksum: "14757668907782136301"
+checksum: "10966056443860235486"
