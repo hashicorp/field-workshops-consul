@@ -40,8 +40,6 @@ challenges:
     ```
 
     Verify that the application setup page is loading in the *Website* tab.
-
-    OPTIONAL: You can install WordPress and customize the theme if you like!
   notes:
   - type: text
     contents: |
