@@ -47,8 +47,9 @@ nohup sh -c "/usr/local/bin/consul agent -config-dir /consul/config &" && sleep 
 echo "Configuring user and theme..."
 sleep 10 # wait for DB server to be up
 URL="app-80-${INSTRUQT_PARTICIPANT_ID}.prod-env.instruqt.com"
-/usr/local/bin/wp core install --url="$URL" --title="Consul Thoughts" --admin_user=consul --admin_password=consul --admin_email=consul@example.com --skip-email --allow-root --path=/var/www/html
+/usr/local/bin/wp core install --url="$URL" --title="Consul Service Discovery" --admin_user=consul --admin_password=consul --admin_email=consul@example.com --skip-email --allow-root --path=/var/www/html
 /usr/local/bin/wp theme activate twentyseventeen --allow-root --path=/var/www/html
+/usr/local/bin/wp option update blogdescription "Dynamically locate any service or app on your network" --allow-root --path=/var/www/html
 
 echo "Breaking the Wordpress connection..."
 perl -p -i -e "s/'Database'/'10.94.99.99'/" /var/www/html/wp-config.php
