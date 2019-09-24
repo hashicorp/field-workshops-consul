@@ -137,9 +137,9 @@ challenges:
 
     Consul template can automatically insert this IP address into your application config file.
 
-    You should see a new tab called `Consul Template`. This contains the Consul Template config file. Consul template can update your `wp-config.php` file whenever the database IP address changes.
+    You should see a new tab called *Consul Template*. This contains the Consul Template config file. Consul template can update your `wp-config.php` file whenever the database IP address changes. Notice the template configuration for DB_HOST on line 32 of the file.
 
-    Run the following commands on in the *App Server* terminal to activate Consul Template. Reload the `wp-config.php` file to see the updated IP address.
+    Run the following commands on in the *App Server* terminal to activate Consul Template. Reload the `wp-config.php` file in your *App Config* tab to see the updated IP address.
 
     ```
     cd /var/www/html
@@ -242,4 +242,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 900
-checksum: "5654607016195461674"
+checksum: "15239191488294889213"
