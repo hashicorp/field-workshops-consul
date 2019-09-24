@@ -39,7 +39,7 @@ challenges:
     service apache2 restart
     ```
 
-    Verify that the application setup page is loading in the *Website* tab.
+    Verify that the application is loading in the *Website* tab.
   notes:
   - type: text
     contents: |
@@ -83,6 +83,8 @@ challenges:
     ```
     cat /database_service.json
     ```
+
+    The config file contains a service check named mysql with a health check that monitors port 3306. If the database ever goes down Consul can immediately mark it as unhealthy. Consul can automatically route traffic to healthy nodes.
 
     Next copy the file into the Consul config directory:
     ```
@@ -135,18 +137,22 @@ challenges:
     dig @localhost -p 8600 mysql.service.consul
     ```
 
-    Consul template can automatically insert this IP address into your application config file.
+    In the output you'll see a line called `ANSWER SECTION`. Right below it is the current IP address of your database server. Consul template can automatically insert this IP address into your application config file.
 
-    You should see a new tab called *Consul Template*. This contains the Consul Template config file. Consul template can update your `wp-config.php` file whenever the database IP address changes. Notice the template configuration for DB_HOST on line 32 of the file.
+    Click on the *Consul Template* tab and look inside the file. Consul template can update your `wp-config.php` file whenever the database IP address changes. Notice the template configuration for DB_HOST on line 32 of the file. This part is automatically replaced with the address of your healthy database server.
 
-    Run the following commands on in the *App Server* terminal to activate Consul Template. Reload the `wp-config.php` file in your *App Config* tab to see the updated IP address.
+    Run the following commands on in the *App Server* terminal to activate Consul Template.
 
     ```
     cd /var/www/html
     consul-template -template "wp-config.php.tpl:wp-config.php"
     ```
 
-     Open the *Website* tab and verify that the web app is loading correctly.
+    Reload the `wp-config.php` file in your *App Config* tab to see the updated IP address.
+
+    Open the *Website* tab and verify that the web app is loading correctly.
+
+    Consul Template will continuously watch for changes and update your configuration files automatically.
   notes:
   - type: text
     contents: |
@@ -185,30 +191,21 @@ challenges:
   title: "Seamless Service Discovery \U0001F5A7"
   teaser: Consul can provide seamless access to all nodes and services in the catalog,
     without rewriting your apps.
-  assignment: |
-    In this exercise you'll configure Consul to act as a local DNS server, providing seamless access to your service catalog via simple DNS hostnames. The Linux dnsmasq service is running on your application server.
-
-    Run the following command to see the dnsmasq configuration:
-
-    ```
-    cat /etc/dnsmasq.d/consul
-    ```
-
-    Now look at the `/etc/resolv.conf` file. This is the file that controls where DNS queries are routed.
-
-    ```
-    cat /etc/resolv.conf
-    ```
-
-    Note that we are now routing all DNS queries through our local system, but only *.consul queries are handled by Consul. All other DNS traffic is passed upstream to the corporate DNS server. Try it yourself with the `dig` command:
-
-    ```
-    dig mysql.service.consul
-    ```
-
-    Edit the `wp-config.php` file again, but this time instead of using an IP address use the Consul DNS name for your database server node: `mysql.service.consul`.
-
-    Visit the Website tab and verify that the app has connected to the database using Consul DNS.
+  assignment: "In this exercise you'll configure Consul to act as a local DNS server,
+    providing seamless access to your service catalog via simple DNS hostnames. The
+    Linux dnsmasq service is running on your application server.\n\nRun the following
+    command to see the dnsmasq configuration:\n\n```\ncat /etc/dnsmasq.d/consul\n```\n\nThe
+    server config lines say \"Direct all traffic for .consul queries to Consul on
+    local port 8600, everything else to our normal DNS server.\"\n\nNow look at the
+    `/etc/resolv.conf` file. This is the file that controls where DNS queries are
+    routed.\n\n```\ncat /etc/resolv.conf\n```\n\nWe are now routing all DNS queries
+    through our local system, but only *.consul queries are handled by Consul. All
+    other DNS traffic is passed upstream to the corporate DNS server. Try it yourself
+    with the `dig` command:\n\n```\ndig mysql.service.consul\n```\n\nEdit line 32
+    of the `wp-config.php` file again, but this time instead of using an IP address
+    use the Consul DNS name for your database server node: \n\n```\nmysql.service.consul\n```\n\nVisit
+    the Website tab and verify that the app has connected to the database using Consul
+    DNS.\n"
   notes:
   - type: text
     contents: |
@@ -219,6 +216,11 @@ challenges:
       This is the magic of Consul DNS integration. With this configuration any application that speaks DNS can take advantage of the powerful Consul service catalog.
 
       In the next challenge we'll use dnsmasq to route all local queries for *.consul addresses to the Consul service. Our application will now be able to use a simple Consul-managed DNS name for connecting to the database.
+  - type: text
+    contents: |-
+      There are several different ways to integrate Consul into your system DNS. Check out the HashiCorp Learn guide to learn more about DNS forwarding.
+
+      https://learn.hashicorp.com/consul/security-networking/forwarding
   - type: text
     contents: "\U0001F310 Consul - A Powerful DNS-based Service Catalog \U0001F578️"
   - type: text
@@ -242,4 +244,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 900
-checksum: "15239191488294889213"
+checksum: "14200423202725350258"
