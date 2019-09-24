@@ -1,13 +1,23 @@
 #!/bin/bash
 # Configures the App server
+
+echo "Fixing our path..."
+export PATH=$PATH:/usr/local/bin
+
+echo "Installing utilities..."
 apt -y update
 apt -y install unzip wget dnsutils
+echo "Installing consul..."
 wget https://releases.hashicorp.com/consul/1.6.1/consul_1.6.1_linux_amd64.zip -O /tmp/consul.zip
 cd /usr/local/bin
 unzip /tmp/consul.zip
 chmod +x /usr/local/bin/consul
 mkdir -p /consul/config
 mkdir -p /consul/data
+
+echo "Installing the WP-CLI tool..."
+wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/local/bin/wp
+chmod +x /usr/local/bin/wp
 
 cat <<-EOF > /consul/config/client.json
 {
@@ -33,6 +43,15 @@ EOF
 
 echo "Starting Consul in Client Mode..."
 nohup sh -c "/usr/local/bin/consul agent -config-dir /consul/config &" && sleep 4
+
+echo "Configuring user and theme..."
+sleep 10 # wait for DB server to be up
+URL="app-80-${INSTRUQT_PARTICIPANT_ID}.prod-env.instruqt.com"
+/usr/local/bin/wp core install --url="$URL" --title="Consul Thoughts" --admin_user=consul --admin_password=consul --admin_email=consul@example.com --skip-email --allow-root --path=/var/www/html
+/usr/local/bin/wp theme activate twentyseventeen --allow-root --path=/var/www/html
+
+echo "Breaking the Wordpress connection..."
+perl -p -i -e "s/'Database'/'10.94.99.99'/" /var/www/html/wp-config.php
 
 echo "Making a backup of the Wordpress config file..."
 cp /var/www/html/wp-config.php /tmp/wp-config.php.backup

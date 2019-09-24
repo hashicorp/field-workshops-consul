@@ -7,7 +7,7 @@ containers:
   - 80
   - 443
   environment:
-    WORDPRESS_DB_HOST: 10.94.99.99
+    WORDPRESS_DB_HOST: Database
     WORDPRESS_DB_NAME: wordpress
     WORDPRESS_DB_PASSWORD: HashiCorp123
     WORDPRESS_DB_USER: root
