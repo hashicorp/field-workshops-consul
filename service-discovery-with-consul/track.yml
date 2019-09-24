@@ -79,7 +79,7 @@ challenges:
   assignment: |
     In this challenge you'll create a service check that will register the database service in Consul's catalog. You'll need to copy a service definition file into the Consul config directory to activate the service.
 
-    Click on the database server tab and have a look inside the service definition file:
+    Click on the database server tab and use the `cat` command to have a look inside the service definition file:
     ```
     cat /database_service.json
     ```
@@ -227,6 +227,10 @@ challenges:
     contents: "\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\n\n_It's
       not DNS_\n\n_There's no way it's DNS_\n\n_It was DNS_\n\n\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\n"
   tabs:
+  - title: Website
+    type: service
+    hostname: app
+    port: 80
   - title: Consul UI
     type: service
     hostname: consul-server-0
@@ -238,10 +242,6 @@ challenges:
   - title: App Server
     type: terminal
     hostname: app
-  - title: Website
-    type: service
-    hostname: app
-    port: 80
   difficulty: basic
   timelimit: 900
-checksum: "14200423202725350258"
+checksum: "11243520518707824975"
