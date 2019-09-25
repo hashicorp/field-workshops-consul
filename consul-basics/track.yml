@@ -46,6 +46,8 @@ challenges:
 
     You can simply copy and paste it into the terminal for each server. You may also view the config for one of the Consul servers in the code editor. You don't need to understand all the options, just notice that we are starting Consul in `server` mode. (This is on line 8 in the config file.)
 
+    Try reloading the UI after starting each server.
+
     Our startup script is simple and runs Consul as a background process. In production this would daemonized or managed by an orchestrator.
 
     Once you have a healthy cluster, the Consul UI will become available.
