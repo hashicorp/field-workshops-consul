@@ -86,7 +86,7 @@ challenges:
 
     All interactions with Consul, whether through the GUI, or command line always have an underlying API call.
 
-    Try these commands and view the results: <br>
+    Try these commands and view the results. You may run the commands on any server: <br>
 
     * Get Help:
       - `consul help` or `consul subcommand -help`
