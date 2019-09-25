@@ -50,7 +50,7 @@ challenges:
 
     Our startup script is simple and runs Consul as a background process. In production this would daemonized or managed by an orchestrator.
 
-    Once you have a healthy cluster, the Consul UI will become available.
+    Once you have a healthy cluster, the Consul UI will become available. Click on the Nodes tab in the Consul UI to see your three servers. The leader is marked with a star. ⭐
   notes:
   - type: text
     contents: "\U0001F578️You are about to enter the Consul Zone\U0001F47D"
