@@ -32,17 +32,12 @@ Introductions
 * Your Name
 * Job Title
 * Automation Experience
-* Favorite Text Editor
 ]
 
 ???
 Use this slide to introduce yourself, give a little bit of your background story, then go around the room and have all your participants introduce themselves.
 
-The favorite text editor question is a good ice breaker, but perhaps more importantly it gives you an immediate gauge of how technical your users are.  
 
-**There are no wrong answers to this question. Unless you say Notepad. Friends don't let friends write code in Notepad.**
-
-**If you don't have a favorite text editor, that's okay! We've brought prebuilt cloud workstations that have Visual Studio Code already preinstalled. VSC is a free programmer's text editor for Microsoft, and it has great Terraform support. Most of this workshop will be simply copying and pasting code, so if you're not a developer don't fret. Terraform is easy to learn and fun to work with.**
 
 ---
 name: Table-of-Contents
