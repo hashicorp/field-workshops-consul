@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo "Creating application service and health check definition file..."
+cat <<-EOF > /app_service.json
+{ "service":
+  { "name": "http",
+    "tags": ["application","production"],
+    "port": 80,
+    "check": {
+      "id": "http",
+      "name": "Web traffic on port 80",
+      "tcp": "localhost:80",
+      "interval": "10s",
+      "timeout": "1s"
+    }
+  }
+}
+EOF
