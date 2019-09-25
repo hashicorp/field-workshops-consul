@@ -6,7 +6,13 @@ remark.macros.scale = function (percentage) {
 // Place all of your files here
 sourceUrls = [
   '0.md',
-  '1.md'
+  '1.md',
+  '2.md',
+  '3.md',
+  '4.md',
+  '5.md',
+  '6.md',
+  '7.md'
   ]
 
 var xmlhttp = new XMLHttpRequest();
