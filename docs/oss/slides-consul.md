@@ -7,7 +7,7 @@ Consul OSS Workshop]
 Connect and Secure Services across any platform.
 
 ???
-Welcome to the beginner's guide to Consul OSS.
+Welcome to the beginner's guide to Consul OSS. This slide deck and accompanying labs can be presented as an instructor-led or self-guided workshop. If you're presenting this workshop be sure to read through all the speaker notes and the associated Instruqt tracks. This content is suitable for a 3-4 hour workshop.
 
 ---
 name: Link-to-Slide-Deck
@@ -19,6 +19,9 @@ Follow along on your own computer at this link:
 
 ### [hashicorp.github.io/field-workshops-consul/oss](https://hashicorp.github.io/field-workshops-consul/oss)
 ]
+
+???
+These slides are published using the RemarkJS framework and Github Pages. View the source code for both the slide deck and the Instruqt labs here: https://www.github.com/hashicorp/field-workshops-consul. You may need to be invited to get access to this private code repo.
 
 ---
 name: Introductions
