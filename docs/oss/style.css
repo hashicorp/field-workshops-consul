@@ -100,3 +100,10 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
+
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+.tg .tg-3z1b{border-color:#000000;text-align:right;vertical-align:top}
+.tg .tg-2i6h{background-color:#efefef;border-color:#000000;text-align:right;vertical-align:top}
+.tg .tg-feht{background-color:#ffccc9;border-color:#000000;text-align:left;vertical-align:top}
