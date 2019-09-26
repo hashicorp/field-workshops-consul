@@ -2,7 +2,9 @@ slug: service-discovery-with-consul
 id: nyzxxfyzce4a
 type: track
 title: Service Discovery with Consul
-teaser: Learn about Service Discovery with HashiCorp Consul
+teaser: Tired of manually updating IP addresses in config files? Is your network CMDB
+  or spreadsheet woefully out of date? Learn how Consul can automatically keep your
+  service catalog up to date and current.
 description: |
   Join us on an adventure of service discovery. In this track you'll learn how to connect a web application with its database using Consul. Topics covered include service registration, health checks, service discovery, automated config management, and seamless DNS integration.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
@@ -17,7 +19,7 @@ owner: hashicorp
 developers:
 - lance@hashicorp.com
 - scarolan@hashicorp.com
-private: true
+private: false
 published: true
 challenges:
 - slug: the-website-is-down
@@ -290,4 +292,4 @@ challenges:
     hostname: app
   difficulty: basic
   timelimit: 900
-checksum: "6704416387016807081"
+checksum: "8956671847125601523"
