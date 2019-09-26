@@ -1,7 +1,0 @@
-#!/bin/sh
-# check
-echo "Checking for the /tmp/completed file..."
-
-if [ ! -f "/tmp/completed" ]; then
-  fail-message "Sorry, try again."
-fi

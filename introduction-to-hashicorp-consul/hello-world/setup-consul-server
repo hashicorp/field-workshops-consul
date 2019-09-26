@@ -1,5 +1,0 @@
-#!/bin/sh
-# setup
-echo "Preparing for Hello World"
-
-# Setup steps (like configuring a Consul cluster) can go here
