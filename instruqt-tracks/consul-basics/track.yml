@@ -2,7 +2,7 @@ slug: consul-basics
 id: flhasumrfmgq
 type: track
 title: Consul Basics
-teaser: Back to basics with Consul
+teaser: Learn how to use the world's most popular service discovery tool.
 description: |-
   The track is a crash course in Consul operations. You will accomplish the following:
 
@@ -332,4 +332,4 @@ challenges:
     path: /tmp/bootstrap.txt
   difficulty: basic
   timelimit: 600
-checksum: "8519904501701342546"
+checksum: "9348750879193781119"
