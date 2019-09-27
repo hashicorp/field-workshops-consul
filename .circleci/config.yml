@@ -25,6 +25,7 @@ jobs:
               echo "Instruqt Version $VERSION is installed."
               exit 0
             fi
+            cd ~/instruqt-tracks/consul-basics && instruqt track validate
 workflows:
   version: 2
   build-and-deploy:
