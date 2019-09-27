@@ -1,6 +1,5 @@
-# Introduction to HashiCorp Consul
-## Instructor Guide
-This guide will prepare you to deliver a half-day Introduction to HashiCorp Consul workshop. This workshop content is suitable for HashiCorp community members, prospects and customers. The workshop is a combination of lecture slides and hands-on labs that introduce new users to Consul features. This workshop focuses on open-source features and is targeted toward new users. The workshop may be presented in-person, over the web, or as a self-guided tutorial.
+# Intro to Consul - Instructor Guide
+This guide will prepare you to deliver a half-day [Introduction to Consul workshop](https://hashicorp.github.io/field-workshops-consul/oss). This workshop content is suitable for HashiCorp community members, prospects and customers. The workshop is a combination of lecture slides and hands-on labs that introduce new users to Consul features. This workshop focuses on open-source features and is targeted toward new users. The workshop may be presented in-person, over the web, or as a self-guided tutorial.
 
 The workshop alternates between lectures with accompanying slides and hands-on lab exercises. New concepts that are introduced in the slides are reinforced in the labs. Participants will learn both the theory and practice of Consul. As an instructor you should be well familiar with the slide deck and training labs. Go through the course and make sure you understand all of the major concepts and lab exercises. 
 
@@ -12,6 +11,7 @@ Prerequisites are minimal. All that is required to participate in the workshop i
 ### Email invitation
 Here is some boilerplate text you can use or customize when inviting or announcing your workshop:
 
+```
 Introduction to HashiCorp Consul
 A hands-on technical workshop
 
@@ -27,6 +27,7 @@ Topics covered in the workshop include:
 * Service Segmentation
 
 The only prerequisites for this workshop are a web browser and willingness to learn.
+```
 
 ### Markdown Slide Deck
 The slide deck for this training is published here:
@@ -46,7 +47,7 @@ The slide deck for this training is written completely in [Markdown](https://gui
 https://github.com/hashicorp/field-workshops-consul/projects/1
 
 ### Hands-on Labs
-At certain points in the slide deck there are links to the lab exercises. [Instruqt](https://instruqt.com/hashicorp) is our lab platform. Lab exercises can be completed anonymously, but if users want to keep track of their progress they can create accounts on the Instruqt website. There are currently three labs referenced in the slide deck:
+At certain points in the slide deck there are links to the lab exercises. [Instruqt](https://instruqt.com/hashicorp) is our lab platform. Lab exercises can be completed anonymously, but if users want to keep track of their progress they should create accounts on the Instruqt website. There are currently three labs referenced in the slide deck:
 
 https://instruqt.com/hashicorp/tracks/consul-basics
 https://instruqt.com/hashicorp/tracks/service-discovery-with-consul
@@ -57,20 +58,19 @@ Go through each of these tracks from start to finish and make sure you understan
 ### Timing
 The following schedule assumes you have a group of participants who are brand new to Consul and service discovery. You should budget between three and four hours for this workshop. This is meant as a guideline, you can adjust as needed.
 
-*Timing*
-0:00 - 0:15 - Wait for attendees to arrive, intros, coffee
-0:15 - 0:30 - The history of networking
-0:30 - 1:00 - Consul architecture
-1:00 - 1:30 - Consul use cases
-1:30 - 1:45 - Break
-1:45 - 2:15 - Instruqt Lab Track #1 - Consul Basics
-2:15 - 2:30 - Service discovery lecture
-2:30 - 3:00 - Instruqt Lab Track #2 - Service Discovery
-3:00 - 3:15 - Service mesh lecture
-3:15 - 3:45 - Instruqt Lab Track #3 - Consul Connect
-3:45 - 4:00 - Wrap-up, summary, next steps
+0:00 - 0:15 - Wait for attendees to arrive, intros, coffee  
+0:15 - 0:30 - The history of networking  
+0:30 - 1:00 - Consul architecture  
+1:00 - 1:30 - Consul use cases  
+1:30 - 1:45 - Break  
+1:45 - 2:15 - Instruqt Lab Track #1 - Consul Basics  
+2:15 - 2:30 - Service discovery lecture  
+2:30 - 3:00 - Instruqt Lab Track #2 - Service Discovery  
+3:00 - 3:15 - Service mesh lecture  
+3:15 - 3:45 - Instruqt Lab Track #3 - Consul Connect  
+3:45 - 4:00 - Wrap-up, summary, next steps  
 
-BONUS TRACKS - these are useful for intermediate users. You may be able to skip some of the introductory material and dive straight into use cases and labs. If you omit some of the lectures at the beginning these extra labs should fit into a half-day training.
+*BONUS TRACKS* - these are intended for intermediate users. You may be able to skip some of the introductory material and dive straight into use cases and labs. If you omit some of the lectures at the beginning these extra labs should fit into a half-day training.
 
 Instruqt Lab Track #4 - Consul Connect Walk - Telemetry, metrrics, k8s, grpc,  oh my
 Instruqt Lab Track #5 - Consul Connect Run  - Brining it  all together - connecting your K8s mesh 
