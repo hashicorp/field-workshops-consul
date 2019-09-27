@@ -1,12 +1,12 @@
 version: 2
 jobs:
-  install-instruqt:
+  instruqt-validate:
     docker:
       - image: ubuntu:latest
     steps:
       - checkout
       - run:
-          name: Install Instruqt
+          name: Run Instruqt Validate
           command: |
             VERSION=1270-4cde42d
             apt -y update
@@ -24,11 +24,11 @@ jobs:
             else
               echo "Instruqt Version $VERSION is installed."
             fi
-            echo "Running instruqt track validate tests..."
+            echo "Running instruqt track validate..."
             cd /root/projects/instruqt-tracks/consul-basics && instruqt track validate
             cd /root/projects/instruqt-tracks/consul-service-discovery && instruqt track validate
 workflows:
   version: 2
   build-and-deploy:
     jobs:
-      - install-instruqt
+      - instruqt-validate
