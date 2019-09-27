@@ -72,5 +72,5 @@ The following schedule assumes you have a group of participants who are brand ne
 
 *BONUS TRACKS* - these are intended for intermediate users. You may be able to skip some of the introductory material and dive straight into use cases and labs. If you omit some of the lectures at the beginning these extra labs should fit into a half-day training.
 
-Instruqt Lab Track #4 - Consul Connect Walk - Telemetry, metrrics, k8s, grpc,  oh my
-Instruqt Lab Track #5 - Consul Connect Run  - Brining it  all together - connecting your K8s mesh 
+Instruqt Lab Track #4 - Consul Connect Walk - Telemetry, metrics, k8s, grpc, oh my!   
+Instruqt Lab Track #5 - Consul Connect Run  - Bringing it  all together - connecting your K8s mesh
