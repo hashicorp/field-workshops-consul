@@ -76,7 +76,7 @@ dig -p8600 +short http.service.consul
 dig -p8600 +short mysql.service.consul
 ```
 
-If you have multiple instances of a thing, Consul will automatically rotate between them. It's like having a free load balancer with built in health checks:
+> If you have multiple instances of a thing, Consul will automatically rotate between them. It's like having a free load balancer with built in health checks:
 
 ```
 dig -p8600 +short consul.service.consul
