@@ -32,7 +32,7 @@ for (var i = 0; i < sourceUrls.length; i++) {
 };
 
 var slideshow = remark.create({
-  ratio: '4:3',
+  ratio: '16:9',
   highlightStyle: 'tomorrow-night-bright',
   highlightLines: 'true',
   source: source
