@@ -25,8 +25,9 @@ jobs:
               echo "Instruqt Version $VERSION is installed."
             fi
             echo "Running instruqt track validate..."
-            cd /root/project/instruqt-tracks/consul-basics && instruqt track validate
-            cd /root/project/instruqt-tracks/service-discovery-with-consul && instruqt track validate
+            for dir in $(ls -d /root/project/instruqt-tracks/*); do
+              cd $dir && instruqt track validate
+            done
 workflows:
   version: 2
   build-and-deploy:
