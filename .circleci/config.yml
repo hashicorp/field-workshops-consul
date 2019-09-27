@@ -26,7 +26,7 @@ jobs:
             fi
             echo "Running instruqt track validate..."
             cd /root/project/instruqt-tracks/consul-basics && instruqt track validate
-            cd /root/project/instruqt-tracks/consul-service-discovery && instruqt track validate
+            cd /root/project/instruqt-tracks/service-discovery-with-consul && instruqt track validate
 workflows:
   version: 2
   build-and-deploy:
