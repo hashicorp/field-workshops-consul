@@ -24,6 +24,8 @@ jobs:
             else
               echo "Instruqt Version $VERSION is installed."
             fi
+            pwd
+            ls
             cd ~/instruqt-tracks/consul-basics && instruqt track validate
             cd ~/instruqt-tracks/consul-service-discovery && instruqt track validate
 workflows:
