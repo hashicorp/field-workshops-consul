@@ -26,7 +26,7 @@ jobs:
               exit 0
             fi
             cd ~/instruqt-tracks/consul-basics && instruqt track validate
-            cd ~/instruqt-tracks/consul-service-discovery && instruqt track validate
+            cd ~/instruqt-tracks/consul-service-discovery2 && instruqt track validate
 workflows:
   version: 2
   build-and-deploy:
