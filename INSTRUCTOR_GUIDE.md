@@ -55,6 +55,35 @@ https://instruqt.com/hashicorp/tracks/TBD
 
 Go through each of these tracks from start to finish and make sure you understand them. Students may have questions during the labs. When presenting a workshop be sure to give enough time for all your participants to go through the labs. Remember that this is probably their first time working a tool like Consul.
 
+### The Live Demo
+Between Chapters 1 and 2 there is a slide that says *Live Demo*. You can use an instruqt track to do a brief Consul demo for your participants. Follow these steps to do the demo:
+
+#### Setup
+1. Right before you start the training, visit https://instruqt.com/hashicorp/tracks/service-discovery-with-consul and work up to the 'Seamless Service Discovery' challenge. Or if needbe let your participants take a break after chapter 1 while you set this up. Setup should not take more than 7-8 minutes.
+2. Walk through the demo scenario:
+> Welcome to Initech. We're trying to expand into the cloud and still manage our legacy infrastructure. We have this gigantic spreadsheet that contains mappings of all our IP addresses and hosts. The spreadsheet is sometimes out of date or not accurate. Hard-coding IPs into config files has been troublesome, slow and error prone.
+
+> What if I could show you a way to automatically fetch the IP address of any service on your network. Imagine a service discovery system that is always up to date, and can even monitor the health of your services, preventing connections to services that are down. Let's take a look at Consul and see how it can help us solve our service discovery problem.
+
+> (Open Consul UI) Here is the Consul UI which shows all the services that consul knows about. I can also see the health status of services along with any tags that are attached to them. You can use tags to separate production environments or create dynamic rules around which services are used. In our demo story the application is having trouble connecting to the database because it's IP address keeps changing.
+
+> If I click through on the mysql service I can see that it is running on the Database node. And here's the IP address, which is always going to be accurate and up to date. With Consul I no longer have to maintain that big excel spreadsheet with IP addresses and ports in it. It's all automatically stored in Consul and kept up to date by our fleet of agents.
+
+> Let's take a peek on the command line and see what we can do with some simple Consul DNS queries:
+
+```
+dig -p8600 +short http.service.consul
+dig -p8600 +short mysql.service.consul
+```
+
+If you have multiple instances of a thing, Consul will automatically rotate between them. It's like having a free load balancer with built in health checks:
+
+```
+dig -p8600 +short consul.service.consul
+```
+
+> (Open website tab) As you can see our website is down. This is because the hard-coded IP address in our config file is wrong. Let's fix that with a Consul DNS address instead. (Open App Config Tab) I'm going to replace this IP address here on line 32 with `mysql.service.consul` which will automatically return the current IP address of a healthy database instance. (Click on the website tab) Now you can see the website has become healthy again, and I'll never have to worry about updating that hard-coded IP address in the future. This is the power of Consul. Now lets talk about some of the most common use cases for consul... (Back to deck for Chapter 2)
+
 ### Timing
 The following schedule assumes you have a group of participants who are brand new to Consul and service discovery. You should budget between three and four hours for this workshop. This is meant as a guideline, you can adjust as needed.
 
