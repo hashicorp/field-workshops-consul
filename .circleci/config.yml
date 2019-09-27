@@ -12,6 +12,8 @@ jobs:
             apt -y update
             apt -y install wget unzip
             wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
+            pwd
+            ls
             cd /tmp
             unzip instruqt.zip
             cp instruqt /usr/local/bin/instruqt
@@ -24,8 +26,6 @@ jobs:
             else
               echo "Instruqt Version $VERSION is installed."
             fi
-            pwd
-            ls
             cd ~/instruqt-tracks/consul-basics && instruqt track validate
             cd ~/instruqt-tracks/consul-service-discovery && instruqt track validate
 workflows:
