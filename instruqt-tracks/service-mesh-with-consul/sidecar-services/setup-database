@@ -1,0 +1,79 @@
+#!/bin/sh
+
+#Get Curl
+echo "Fixing our path..."
+export PATH=/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+apt-get install -y curl
+
+#Get enovy for us
+wget https://s3.amazonaws.com/llarsen-envoy-binaries/envoy-1.9.0-linux-amd64
+mv envoy-1.9.0-linux-amd64 /usr/local/bin/envoy
+chmod +x /usr/local/bin/envoy
+
+# Creating the Consul client config
+cat <<-EOF > /consul/config/client.json
+{
+  "datacenter": "dc1",
+  "bind_addr": "0.0.0.0",
+  "client_addr": "0.0.0.0",
+  "data_dir": "/consul/data",
+  "log_level": "INFO",
+  "node_name": "Database",
+  "server": false,
+  "ui": false,
+  "leave_on_terminate": false,
+  "skip_leave_on_interrupt": true,
+  "rejoin_after_leave": true,
+  "connect": {
+    "enabled": true
+  },
+  "ports": {
+    "grpc": 8502
+  },
+  "retry_join": [
+    "consul-server-0:8301",
+    "consul-server-1:8301",
+    "consul-server-2:8301"
+  ]
+}
+EOF
+
+cat <<-EOF > /consul/config/database_service.json
+{
+  "service": {
+    "name": "mysql",
+    "tags": [
+      "database",
+      "production"
+    ],
+    "port": 3306,
+    "check": {
+      "id": "mysql",
+      "name": "MySQL TCP on port 3306",
+      "tcp": "localhost:3306",
+      "interval": "10s",
+      "timeout": "1s"
+    }
+  }
+}
+EOF
+
+echo "Killing the currently running Consul agent..."
+pkill consul
+
+echo "Creating Consul startup script..."
+cat <<-EOF > /bin/start_consul.sh
+#!/bin/sh
+echo "Starting HashiCorp Consul in client Mode..."
+sleep 1
+echo "CMD: nohup consul agent -config-dir=/consul/config > /consul.out &"
+nohup /usr/local/bin/consul agent -config-dir=/consul/config > /consul.out &
+echo "Log output will appear in consul.out..."
+sleep 1
+echo "Consul client startup complete."
+EOF
+
+chmod +x /bin/start_consul.sh
+/bin/start_consul.sh
+
+exit 0

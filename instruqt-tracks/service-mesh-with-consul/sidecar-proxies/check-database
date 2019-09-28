@@ -1,0 +1,10 @@
+#!/bin/sh
+
+sidecar=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8500/v1/agent/health/service/name/mysql-sidecar-proxy)
+
+if [ "$sidecar" != "200" ]; then
+  fail-message "Check your mysql-sidecar-proxy service. It should be running with a passing health check."
+  exit 1
+fi
+
+exit 0

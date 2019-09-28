@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if nc -w1 -z 127.0.0.1 3306; then
+  echo "Port is up"
+else
+  fail-message "Check your upstream defititon. The listener is not running."
+  exit 1
+fi
+
+exit 0
