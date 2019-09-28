@@ -3,16 +3,15 @@ id: bok4pw0xdfdr
 type: track
 title: Service Mesh with Consul
 teaser: Evolve from service discovery to service mesh. No more mapping IP addresses
-  and ports across load balancers and firewalls. Consul Connect ensures fast, secure
-  connections between services wherever they run.
+  and ports across load balancers and firewalls. Consul Connect ensures secure connections
+  between services wherever they run.
 description: |-
   This track will build on what you learned in the service discovery track and take our application from service discovery to service mesh.
   We'll dive into mesh fundamentals and use an Envoy proxy to connect our application to its database.
 icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
 tags: []
 owner: hashicorp
-developers:
-- null
+developers: []
 private: false
 published: true
 challenges:
@@ -156,7 +155,7 @@ challenges:
 - slug: fix-the-app
   id: tymg5yhlxjgb
   type: challenge
-  title: Fix the app
+  title: Fix the App
   teaser: Use Consul and Envoy to connect our application to a backend database
   assignment: "In the last assignment we created an Envoy listener for our database
     service through a Connect upstream defintion.\nLet's use that defintion to allow
@@ -256,4 +255,4 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-checksum: "1467098334225943881"
+checksum: "4939169098511933934"
