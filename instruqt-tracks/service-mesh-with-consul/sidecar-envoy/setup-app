@@ -1,0 +1,21 @@
+#!/bin/sh
+
+#Save out cert
+curl -s localhost:19000/config_dump | jq '[.. |."certificate_chain"? | select(. != null)][0]' | jq -r .inline_string > /tmp/app.crt
+openssl x509 -in /tmp/app.crt -text -noout > /tmp/crt.txt
+
+#Create the payload for testing intentions
+spiffe=$(curl -s localhost:19000/certs | jq -r '.certificates[0].cert_chain[0].subject_alt_names[0].uri')
+fingerprint=$(openssl x509 -in /tmp/app.crt -fingerprint -noout | awk -F "=" '{print $2}')
+
+cat <<-EOF > /tmp/payload.json
+{
+  "Target": "mysql",
+  "ClientCertURI": "${spiffe}",
+  "ClientCertSerial": "${fingerprint}"
+}
+EOF
+
+curl -s -X POST -d @/tmp/payload.json http://127.0.0.1:8500/v1/agent/connect/authorize |  jq
+
+exit 0

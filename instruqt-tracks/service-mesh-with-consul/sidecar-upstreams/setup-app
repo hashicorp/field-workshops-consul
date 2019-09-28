@@ -13,6 +13,7 @@ echo "Installing utilities..."
 apt -y update
 apt -y install unzip wget dnsutils
 apt -y install netcat
+apt -y install jq
 echo "Installing consul..."
 wget https://releases.hashicorp.com/consul/1.6.1/consul_1.6.1_linux_amd64.zip -O /tmp/consul.zip
 cd /usr/local/bin

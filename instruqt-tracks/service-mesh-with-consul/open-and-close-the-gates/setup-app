@@ -1,5 +1,7 @@
 #!/bin/sh
 
-consul intention create -deny wordpress mysql
+#create intention
+/usr/local/bin/consul intention create -deny * *
 
-service apache2 restart
+#restart web server
+/usr/sbin/service apache2 restart
