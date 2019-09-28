@@ -18,7 +18,7 @@ challenges:
 - slug: sidecar-services
   id: 4zvgi4rkfawl
   type: challenge
-  title: Sidecar Services
+  title: "Get Into My Sidecar \U0001F697"
   teaser: Create a sidecar service defintion for your application proxy
   assignment: "In this challenge we'll add a sidecar service to our existing service
     defintion. <br>\n\nThe `sidecar_service` field is a nested service definition
@@ -28,31 +28,27 @@ challenges:
     such as `Kubernetes` or `Nomad`, this is highly abstract and can be configured
     with simple metadata i.e. annotations. We'll explore this more in the next topic
     track.\n\nUpdate the defintion by adding the the `connect` block as seen below.
-    You can do this in the editor tab. You can copy and paste what's below over the
-    entire file.\n\n```\n{\n  \"service\": {\n    \"name\": \"mysql\",\n    \"tags\":
-    [\n      \"database\",\n      \"production\"\n    ],\n    \"port\": 3306,\n    \"connect\":
-    { \"sidecar_service\": {} },\n    \"check\": {\n      \"id\": \"mysql\",\n      \"name\":
-    \"MySQL TCP on port 3306\",\n      \"tcp\": \"localhost:3306\",\n      \"interval\":
-    \"10s\",\n      \"timeout\": \"1s\"\n    }\n  }\n}\n```\n\nNext, reload Consul:\n\n```\nconsul
-    reload\n```\n\nYou should see a failing service called `mysql-sidecar-proxy` in
-    Consul. This is expected!  \n\nWe will start a proxy and register it with Connect
-    in our next challenge.  "
+    Copy and paste what's below over the entire file in the *Database Service* tab.
+    Use CTRL-S to save the file.\n\n```\n{\n  \"service\": {\n    \"name\": \"mysql\",\n
+    \   \"tags\": [\n      \"database\",\n      \"production\"\n    ],\n    \"port\":
+    3306,\n    \"connect\": { \"sidecar_service\": {} },\n    \"check\": {\n      \"id\":
+    \"mysql\",\n      \"name\": \"MySQL TCP on port 3306\",\n      \"tcp\": \"localhost:3306\",\n
+    \     \"interval\": \"10s\",\n      \"timeout\": \"1s\"\n    }\n  }\n}\n```\n\nNext,
+    reload Consul:\n\n```\nconsul reload\n```\n\nYou should see a failing service
+    called `mysql-sidecar-proxy` in Consul. This is expected!  \n\nWe will start a
+    proxy and register it with Connect in our next challenge.  "
   notes:
   - type: text
     contents: "Connect proxies are typically deployed as \"sidecars\" to an instance
-      that they handle traffic for.  \n\nThey might be on the same bare metal server,
-      virtual machine, or Kubernetes daemonset.  \n\nConnect has a plugable proxy
-      architecture, with awesome first-class support for Envoy.  \n\nWe'll use Envoy
-      as our proxy for the entirety of this workshop.\nVisit the [Connect docs](https://www.consul.io/docs/connect/proxies.html)
+      that they handle traffic for. They might be on the same bare metal server, virtual
+      machine, or Kubernetes daemonset. Connect has a plugable proxy architecture,
+      with awesome first-class support for Envoy. We'll use Envoy as our proxy for
+      the entirety of this workshop. \n\nVisit the [Connect docs](https://www.consul.io/docs/connect/proxies.html)
       for more info on proxy integration.  \n\nIn this challenge, we'll set up a sidecar
-      defintion.  \n\nWe will use this defintion later in this track to bootstrap
-      our Envoy proxy with the correct service information.  "
+      defintion."
   - type: image
     url: https://github.com/hashicorp/field-workshops-consul/blob/master/docs/oss/images/connect_sidecar.png?raw=true
   tabs:
-  - title: Consul0
-    type: terminal
-    hostname: consul-server-0
   - title: Consul UI
     type: service
     hostname: consul-server-0
@@ -69,7 +65,7 @@ challenges:
 - slug: sidecar-proxies
   id: l8hfdudhif7b
   type: challenge
-  title: Sidecar Proxies
+  title: "Introducing the Envoy Proxy \U0001F5A7"
   teaser: Run your first Connect sidecar proxy with Envoy
   assignment: "Now that we've registered a proxy service in Consul for our MySQL database,
     let's start the proxy server so the health check will pass.\nConsul will bootstrap
@@ -89,9 +85,6 @@ challenges:
       run a proxy, we can use the Consul agent to boostrap the proxy and send it dynamic
       \ configuraiton.  \n\nWe'll take a deeper look at this configuration later."
   tabs:
-  - title: Consul0
-    type: terminal
-    hostname: consul-server-0
   - title: Consul UI
     type: service
     hostname: consul-server-0
@@ -108,7 +101,7 @@ challenges:
 - slug: sidecar-upstreams
   id: 7vynj1nfnnan
   type: challenge
-  title: Sidecar Upstreams
+  title: "Connect Upstream with Envoy \U0001F517"
   teaser: Add an upstream defintion for our Envoy app proxy
   assignment: "We've brought back our application server for this assignment.  \n\nIt
     has an empty sidecar_service defintion, which you can see in the code editior.
@@ -136,9 +129,6 @@ challenges:
       service and add an upstream defintion that will allow our application to connect
       to its database."
   tabs:
-  - title: Consul0
-    type: terminal
-    hostname: consul-server-0
   - title: Consul UI
     type: service
     hostname: consul-server-0
@@ -152,17 +142,17 @@ challenges:
     path: /consul/config/application_service.json
   difficulty: basic
   timelimit: 300
-- slug: fix-the-app
+- slug: enable-localhost-proxy
   id: tymg5yhlxjgb
   type: challenge
-  title: Fix the App
+  title: "Enter the Meshtrix \U0001F469\U0001F3FB‍\U0001F4BB"
   teaser: Use Consul and Envoy to connect our application to a backend database
   assignment: "In the last assignment we created an Envoy listener for our database
     service through a Connect upstream defintion.\nLet's use that defintion to allow
     our application to connect to the database.  \n\nRemember, our listener is configured
     on localhost, so we can just update our properties file to `127.0.0.1`, and establish
-    connectivity.\nHow cool is that?  \n\nGo ahead and do this now. Check the app
-    tab. Our service mesh blog just loaded!!!"
+    connectivity. \n\nGo ahead and do this now. Check the app tab. Our service mesh
+    blog is back online!"
   notes:
   - type: text
     contents: In this section will use Envoy to connect the application to the database.
@@ -187,10 +177,10 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 300
-- slug: break-the-app
+- slug: open-and-close-the-gates
   id: d3mqrfaegmle
   type: challenge
-  title: Break the App
+  title: "Open and Close the Gates \U0001F511\U0001F6AA"
   teaser: Use Consul intentions to allow or deny proxy traffic based on application
     service identity.
   assignment: "We've added a simple deny intention at the start of this assignment.
@@ -202,15 +192,17 @@ challenges:
     how this works in the next challenge."
   notes:
   - type: text
-    contents: "Intentions define access control for services via Consul Connect and
-      are used to control which services may establish connections.  \n\nYou can manage
-      Intentions via the API, CLI, or UI.  \n\nIntentions are enforced by the proxy
-      on inbound connections.  \n\nAfter verifying the TLS client certificate, the
-      authorized API endpoint is called which verifies the connection.  \n\nIf authorize
-      returns false the connection must be terminated.  \n\nIntentions are quite powerful
-      as we no longer have to manage security with pesky IPs and never ending lists
-      of firewalls, and can manage traffic in simple terms by what an application
-      is or does.  \n\nLet's use intentions to restrict connectivity from our applciaiton
+    contents: Intentions define access control for services via Consul Connect and
+      are used to control which services may establish connections. You can manage
+      Intentions via the API, CLI, or UI. Intentions are enforced by the proxy on
+      inbound connections.
+  - type: text
+    contents: "After verifying the TLS client certificate, the authorized API endpoint
+      is called which verifies the connection.  \n\nIf authorize returns false the
+      connection must be terminated.  \n\nIntentions are powerful because they free
+      you from having to manage endless lists of IP address and port mappings.\n\n
+      Instead, we can manage traffic in simple terms by what an application is or
+      does. \n\nLet's use intentions to restrict connectivity from our applciaiton
       to the database."
   tabs:
   - title: Consul UI
@@ -232,8 +224,8 @@ challenges:
 - slug: sidecar-envoy
   id: ntf48xx67xaz
   type: challenge
-  title: Sidecar Envoy
-  teaser: Look under the hood at some Envoy & Consul magic
+  title: Pop Open the Hood ⚙️
+  teaser: Peek inside and learn some Envoy & Consul magic
   assignment: |-
     The assignment the participant needs to complete in order to proceed.
 
@@ -255,4 +247,4 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-checksum: "4939169098511933934"
+checksum: "13975545378578677888"

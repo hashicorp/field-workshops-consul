@@ -1,5 +1,26 @@
 version: "2"
 containers:
+- name: consul-server-2
+  image: consul
+  ports:
+  - 8300
+  - 8301
+  - 8302
+  - 8500
+  - 8600
+  environment:
+    CONSUL_HTTP_ADDR: http://127.0.0.1:8500
+  memory: 128
+- name: database
+  image: gcr.io/instruqt-hashicorp/hashidb:latest
+  shell: /bin/bash
+  ports:
+  - 3306
+  environment:
+    MYSQL_DATABASE: wordpress
+    MYSQL_PASS: HashiCorp123
+    MYSQL_ROOT_PASSWORD: HashiCorp123
+    MYSQL_USER: wp-user
 - name: app
   image: wordpress
   shell: /bin/bash
@@ -35,24 +56,3 @@ containers:
   environment:
     CONSUL_HTTP_ADDR: http://127.0.0.1:8500
   memory: 128
-- name: consul-server-2
-  image: consul
-  ports:
-  - 8300
-  - 8301
-  - 8302
-  - 8500
-  - 8600
-  environment:
-    CONSUL_HTTP_ADDR: http://127.0.0.1:8500
-  memory: 128
-- name: database
-  image: gcr.io/instruqt-hashicorp/hashidb:latest
-  shell: /bin/bash
-  ports:
-  - 3306
-  environment:
-    MYSQL_DATABASE: wordpress
-    MYSQL_PASS: HashiCorp123
-    MYSQL_ROOT_PASSWORD: HashiCorp123
-    MYSQL_USER: wp-user
