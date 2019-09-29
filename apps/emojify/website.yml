@@ -32,6 +32,8 @@ spec:
     metadata:
       labels:
         app: emojify-website
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
     spec:
       volumes:
       - name: config

@@ -15,6 +15,7 @@ spec:
       labels:
         app: emojify-facebox
       annotations:
+        "consul.hashicorp.com/connect-inject": "true"
     spec:
       containers:
       - name: emojify-facebox
