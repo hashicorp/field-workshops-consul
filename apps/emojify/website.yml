@@ -1,0 +1,66 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: emojify-website-configmap
+data:
+  config: |
+    window.env = {};
+    window.env.config = {
+      AUTH_URL: '/auth',
+      API_URL: '/api/',
+      HOME_URL: '/',
+      PAYMENT_URL: '/api/payments',
+      PAYMENT_ENABLED: false,
+      OAUTH_ENABLED: false,
+      AUTH_DISABLED: true
+    };
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emojify-website
+  labels:
+    app: emojify-website
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emojify-website
+  template:
+    metadata:
+      labels:
+        app: emojify-website
+    spec:
+      volumes:
+      - name: config
+        configMap:
+          name: emojify-website-configmap
+          items:
+          - key: config
+            path: env.js
+      containers:
+      - name: emojify-website
+        image: "nicholasjackson/emojify-website:v0.8.0"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: config
+          mountPath: /usr/share/nginx/html/config
+          readOnly: true
+
+      - name: prometheus-statsd
+        image: "prom/statsd-exporter:latest"
+        ports:
+          - name: metrics
+            containerPort: 9102
+          - name: statsd
+            containerPort: 9125
+        resources:
+          limits:
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi

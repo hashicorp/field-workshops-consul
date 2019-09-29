@@ -1,0 +1,104 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: emojify-ingress
+spec:
+  type: NodePort
+  selector:
+    app: emojify-ingress
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80
+    nodePort: 30000
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: emojify-ingress-configmap
+data:
+  config: |
+    events {
+      worker_connections  1024;
+    }
+
+    http {
+      upstream emojify-website {
+        keepalive 100;
+        server localhost:8000;
+      }
+      upstream emojify-api {
+        keepalive 100;
+        server localhost:8001;
+      }
+
+      server {
+        location / {
+          proxy_http_version 1.1;
+          proxy_pass http://emojify-website;
+          proxy_set_header Host $host;
+        }
+
+        location ~ ^/api(/.*)?$ {
+          proxy_http_version 1.1;
+          proxy_pass http://emojify-api$1$is_args$args;
+          proxy_pass_request_headers on;
+        }
+      }
+    }
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emojify-ingress
+  labels:
+    app: emojify-ingress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emojify-ingress
+  template:
+    metadata:
+      name: emojify-ingress
+      labels:
+        app: emojify-ingress
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
+        "consul.hashicorp.com/connect-service-upstreams": "emojify-website:8000,emojify-api:8001"
+    spec:
+      volumes:
+      - name: config
+        configMap:
+          name: emojify-ingress-configmap
+          items:
+          - key: config
+            path: nginx.conf
+      containers:
+      - name: emojify-ingress
+        image: nginx:alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+
+        volumeMounts:
+        - name: config
+          mountPath: /etc/nginx/
+
+      - name: prometheus-statsd
+        image: "prom/statsd-exporter:latest"
+        ports:
+          - name: metrics
+            containerPort: 9102
+          - name: statsd
+            containerPort: 9125
+        resources:
+          limits:
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
