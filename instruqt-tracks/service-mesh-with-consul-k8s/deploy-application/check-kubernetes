@@ -1,0 +1,10 @@
+#!/bin/sh
+
+app=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:30000)
+
+if [ "$app" != "200" ]; then
+  fail-message "The emojify app does not appear to be running."
+  exit 1
+fi
+
+exit 0

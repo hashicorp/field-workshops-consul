@@ -1,0 +1,274 @@
+slug: service-mesh-with-consul-k8s
+id: ygz7z7sj3nyn
+type: track
+title: Service mesh with Consul K8s
+teaser: Unlesh the full power of Consul's service mesh on the world's most popular
+  container orchestrator.
+description: |-
+  A long description of the track.
+
+  You can use any GitHub flavoured markdown.
+icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+tags: []
+owner: hashicorp
+developers:
+- lance@hashicorp.com
+private: false
+published: false
+challenges:
+- slug: deploy-connect
+  id: iyea2sohruxq
+  type: challenge
+  title: Deploy Connect
+  teaser: Your first Consul cluster on K8s
+  assignment: |-
+    Let's use Helm to push Consul into the K8s cluster, and enable Connect. <br>
+
+    We've pulled the helm chart down from Git placed it in the lab environment.
+    Some defaults for you that you can see in the code editor. <br>
+
+    Let's go ahead and install Consul into  K8s. <br>
+
+    ```
+    helm install -f consul-vaules.yaml --name lab ./consul-helm
+    ```
+
+    The Consul UI will become available once the Consul server pods are running.<br>
+
+    We've also included the K8s dashboard for the duration of this lab if you want to introspect workloads through the K8s UI.
+    You can use the K8s token to authenticate to the dashboard.
+  notes:
+  - type: text
+    contents: |-
+      Connect can be used with Kubernetes to secure pod communication with other pods and external Kubernetes services.
+      The Connect sidecar running Envoy can be automatically injected into pods in your cluster, making configuration for Kubernetes automatic. <br>
+
+      This functionality is provided by the consul-k8s project and can be automatically installed and configured using the Consul Helm chart.<br>
+  - type: image
+    url: https://d33wubrfki0l68.cloudfront.net/949e085caf846f7e512f420bcbd0d1a2935e27bb/4c93c/static/img/k8s-consul-simple.png
+  tabs:
+  - title: Helm Config
+    type: code
+    hostname: kubernetes
+    path: /root/consul-vaules.yaml
+  - title: K8s
+    type: terminal
+    hostname: kubernetes
+  - title: Consul UI
+    type: service
+    hostname: kubernetes
+    path: /ui/
+    port: 30085
+  - title: K8s - UI
+    type: service
+    hostname: kubernetes
+    port: 30443
+  - title: K8s - Token
+    type: code
+    hostname: kubernetes
+    path: /root/token.txt
+  difficulty: basic
+  timelimit: 300
+- slug: deploy-application
+  id: 71ekxt1ehjg5
+  type: challenge
+  title: Deploy Application
+  teaser: A short description of the challenge.
+  assignment: |-
+    Let's start by investigating our config for the Emojify app in the code editor.
+    You'll notice each of our services has the following annotations.
+
+    ```
+    consul.hashicorp.com/connect-inject
+    consul.hashicorp.com/connect-service-upstreams
+    ```
+
+    These annotations tell Consul that the pod should get an Envoy sidecar to  route traffic,
+    and listeners for the requested service on the specified upstream port.
+
+    We can deploy our application with the following command.
+
+    ```
+    kubectl apply -f emojify
+    ```
+
+    We have a deny by default rule in place that is disallowing all traffic.
+    Let's go ahead and update our intentions so our microservices can serve traffic. <br>
+
+    ```
+    consul intention create -allow emojify-api emojify-facebox
+    consul intention create -allow emojify-api emojify-cache
+    consul intention create -allow emojify-ingress emojify-api
+    consul intention create -allow emojify-ingress emojify-website
+    ```
+
+    Now you should be able to access the website through our Nginx ingress container!
+  notes:
+  - type: text
+    contents: |-
+      In this section, we will deploy a more complex microservice application called [Emojify](https://github.com/emojify-app). <br>
+
+      The application has five distinct components that provide functionality:
+
+      * Ingress - Nginx container that gives us access to the API & Website.
+      * Website - Serves static content for the Emojify website.
+      * API - Provides API to machine learning backend.
+      * Cache - Cache layer for API.
+      * Facebox - Provides machine learning for detecting and identifies faces in photos.
+
+      In this section we'll explore how these services can be easily connected with Connect.
+  tabs:
+  - title: Emojify - Config
+    type: code
+    hostname: kubernetes
+    path: /root/emojify
+  - title: K8s
+    type: terminal
+    hostname: kubernetes
+  - title: Emojify - Website
+    type: service
+    hostname: kubernetes
+    path: /
+    port: 30000
+  - title: K8s - Token
+    type: code
+    hostname: kubernetes
+    path: /root/token.txt
+  - title: K8s - UI
+    type: service
+    hostname: kubernetes
+    port: 30443
+  - title: Consul UI
+    type: service
+    hostname: kubernetes
+    path: /ui/dc1/intentions
+    port: 30085
+  difficulty: basic
+  timelimit: 600
+- slug: emojify-some-faces
+  id: ude8vm6frk3v
+  type: challenge
+  title: Emojify some faces
+  teaser: A short description of the challenge.
+  assignment: |-
+    We can enter a URL into our website to `emojify` the image. If you don't have an image you'd like to use try the one below of our founders.
+
+    ```
+    https://i.ytimg.com/vi/PP8-TRQeC_4/maxresdefault.jpg
+    ```
+
+    Let's take a look at the service defintion Consul was able to generate based on our K8s annotations.
+    We've played it in the editor tab for you. You can also view it below.
+
+    ```
+    kubectl exec $(kubectl get pod --selector=app=emojify-api -o name) -c consul-connect-envoy-sidecar -- cat  /consul/connect-inject/service.hcl
+    ```
+
+    You might have remembered creating those Consul service definitions by hand.
+    In K8s, all we needed was the following to generate all the necessary configurations.
+
+    ```
+    template:
+      metadata:
+        labels:
+          app: emojify-api
+        annotations:
+          "consul.hashicorp.com/connect-inject": "true"
+          "consul.hashicorp.com/connect-service-upstreams": "emojify-facebox:8003,emojify-cache:8005"
+    ```
+
+    Pretty cool!
+  notes:
+  - type: text
+    contents: |-
+      Now that our app is working we can Emojify some faces.
+      Feel free to use your colleagues, or our sample image. <br>
+  tabs:
+  - title: Emojify - Website
+    type: service
+    hostname: kubernetes
+    path: /
+    port: 30000
+  - title: Api -  Service
+    type: code
+    hostname: kubernetes
+    path: /tmp/api-service.hcl
+  - title: K8s
+    type: terminal
+    hostname: kubernetes
+  difficulty: basic
+  timelimit: 300
+- slug: scale-the-app
+  id: r2vgop1q59ix
+  type: challenge
+  title: Scale the app
+  teaser: A short description of the challenge.
+  assignment: |-
+    Let's revisit the emojify app specs from eariler, and scale up the number of Facebook services providing our ML capabilities. <br>
+
+    Go in the code editor and change the number of replicas for the facebook service to `2`.
+
+    ```
+    spec:
+      replicas: 2
+    ```
+
+    Now we can scale up the service.
+
+    ```
+    kubectl apply -f emojify/facebox.yml
+    ```
+
+    Now we can verify in the Consul catalog that we have two healthy services. You can also do this in the Consul UI.
+
+    ```
+    curl -s localhost:30085/v1/catalog/service/emojify-facebox | jq '[.. |."ServiceAddress"? | select(. != null)]'
+    ```
+
+    We can do the same validation for our Envoy sidecar proxy.
+
+    ```
+    kubectl exec $(kubectl get pod --selector=app=emojify-api -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/clusters | grep facebox
+    ```
+
+    Nice work! You just leveraged dyanmic service discovery inside your service mesh
+  notes:
+  - type: text
+    contents: |-
+      Now that everyone has seen the power of Emojify, users are flocking the  application! <br>
+
+      In this assignment we'll scale up our backend services and preserve continuity in the mesh.
+  tabs:
+  - title: Facebox - Config
+    type: code
+    hostname: kubernetes
+    path: /root/emojify/facebox.yml
+  - title: K8s
+    type: terminal
+    hostname: kubernetes
+  - title: Consul UI
+    type: service
+    hostname: kubernetes
+    path: /ui/
+    port: 30085
+  difficulty: basic
+  timelimit: 300
+- slug: get-some-metrics
+  id: hwu25pwhbljf
+  type: challenge
+  title: Get some metrics
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: TO DO
+  tabs:
+  - title: K8s
+    type: terminal
+    hostname: kubernetes
+  difficulty: basic
+  timelimit: 300
+checksum: "16442974309950545819"

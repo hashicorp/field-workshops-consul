@@ -1,0 +1,13 @@
+#!/bin/sh
+
+#Get the emojify app files
+git clone https://github.com/hashicorp/field-workshops-consul.git
+cp -r field-workshops-consul/apps/emojify .
+rm -rf field-workshops-consul
+
+sleep 15
+
+#Set up deny by default
+/usr/local/bin/consul intention create -deny '*' '*'
+
+exit 0

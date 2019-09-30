@@ -1,0 +1,65 @@
+#!/bin/sh
+
+#Get the consul binary
+wget https://releases.hashicorp.com/consul/1.6.1/consul_1.6.1_linux_amd64.zip
+unzip consul_1.6.1_linux_amd64.zip
+mv consul /usr/local/bin/consul
+chmod +x /usr/local/bin/consul
+rm -f consul_1.6.1_linux_amd64.zip
+
+#Grab the helm chart
+git clone https://github.com/hashicorp/consul-helm.git
+
+#Get the K8s token for dashboard
+/usr/bin/kubectl get secret -o json -n kube-system $(kubectl get secret -n kube-system | grep admin-user | awk '{ print $1 }') | jq -r '.data.token' | base64 --decode > /root/token.txt
+
+#Set up the consul default values
+cat <<-EOF > /root/consul-vaules.yaml
+global:
+  datacenter: dc1
+  image: "consul:1.6.1"
+
+server:
+  replicas: 1
+  bootstrapExpect: 1
+
+client:
+  enabled: true
+  grpc: true
+
+ui:
+  enabled: true
+
+connectInject:
+  enabled: true
+  default: true
+  centralConfig:
+    enabled: true
+    defaultProtocol: "http"
+    proxyDefaults: |
+      {
+      "envoy_dogstatsd_url": "udp://127.0.0.1:9125"
+      }
+EOF
+
+#Set up the UI for Consul
+cat <<EOF | /usr/bin/kubectl apply -f -
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul-service
+spec:
+  type: NodePort
+  selector:
+    app: consul
+    component: server
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8500
+    targetPort: 8500
+    nodePort: 30085
+EOF
+
+exit 0
