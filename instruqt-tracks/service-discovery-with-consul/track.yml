@@ -35,13 +35,7 @@ challenges:
 
     Edit the `wp-config.php` file in the *App Config* tab. On line 32 you'll find the configuration for the database server. Update the IP address in the file and save it with *CTRL-S*.
 
-    Run the following command on the app server to reload your config:
-
-    ```
-    service apache2 restart
-    ```
-
-    Verify that the application is loading in the *Website* tab.
+    Verify that the application is loading in the *Website* tab. You may need to hit the refresh button for the site to load.
   notes:
   - type: text
     contents: |
@@ -292,4 +286,4 @@ challenges:
     hostname: app
   difficulty: basic
   timelimit: 900
-checksum: "8956671847125601523"
+checksum: "8472092372125079913"

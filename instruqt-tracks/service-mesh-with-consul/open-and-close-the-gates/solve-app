@@ -1,0 +1,9 @@
+#!/bin/sh
+
+#create intention
+/usr/local/bin/consul intention create -allow wordpress mysql
+
+#restart web server
+/usr/sbin/service apache2 restart
+
+exit 0

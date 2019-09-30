@@ -1,0 +1,37 @@
+#!/bin/sh
+
+cat <<-EOF > /consul/config/application_service.json
+{
+  "service": {
+    "name": "wordpress",
+    "tags": [
+      "wordpress",
+      "production"
+    ],
+    "port": 80,
+    "connect": {
+      "sidecar_service": {
+        "proxy": {
+          "upstreams": [
+            {
+              "destination_name": "mysql",
+              "local_bind_port": 3306
+            }
+          ]
+        }
+      }
+    },
+    "check": {
+      "id": "wordpress",
+      "name": "wordpress TCP on port 80",
+      "tcp": "localhost:80",
+      "interval": "10s",
+      "timeout": "1s"
+    }
+  }
+}
+EOF
+
+/usr/local/bin/consul reload
+
+exit 0

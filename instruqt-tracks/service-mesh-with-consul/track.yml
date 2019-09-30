@@ -12,8 +12,8 @@ icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/c
 tags: []
 owner: hashicorp
 developers:
-- scarolan@hashicorp.com
 - lance@hashicorp.com
+- scarolan@hashicorp.com
 private: false
 published: true
 challenges:
@@ -63,7 +63,7 @@ challenges:
     hostname: database
     path: /consul/config/database_service.json
   difficulty: basic
-  timelimit: 600
+  timelimit: 900
 - slug: sidecar-proxies
   id: l8hfdudhif7b
   type: challenge
@@ -99,7 +99,7 @@ challenges:
     hostname: database
     path: /consul/config/database_service.json
   difficulty: basic
-  timelimit: 300
+  timelimit: 900
 - slug: sidecar-upstreams
   id: 7vynj1nfnnan
   type: challenge
@@ -143,7 +143,7 @@ challenges:
     hostname: app
     path: /consul/config/application_service.json
   difficulty: basic
-  timelimit: 300
+  timelimit: 900
 - slug: enable-localhost-proxy
   id: tymg5yhlxjgb
   type: challenge
@@ -175,7 +175,7 @@ challenges:
     hostname: app
     port: 80
   difficulty: basic
-  timelimit: 300
+  timelimit: 900
 - slug: open-and-close-the-gates
   id: d3mqrfaegmle
   type: challenge
@@ -184,11 +184,12 @@ challenges:
     service identity.
   assignment: "Traffic is denied by default at the start of this assignment, so our
     application is now broken.  \nLet's create an allow rule to bring back our application.
-    \ \n\n```\nconsul intention create -allow wordpress mysql\n```\n\nYou can also
-    view it in the `Intentions` tab of the Consul UI.  \n\nLet's use the Consul UI
-    to modify this intention. Click on the intention, and change it to `allow`.  \n\nWith
-    connectivity from the database restored, your application should be serving traffic
-    once again!!!  \n\nWe'll dive deeper into how this works in the next challenge."
+    Copy the following command into the *app* tab.  \n\n```\nconsul intention create
+    -allow wordpress mysql\n```\n\nYou can also manage Intentions in the `Intentions`
+    tab of the Consul UI.  \n\nClick on the intention, and change it to `deny`.  What
+    happens?\n\nChange it back to `allow` to restore service. With connectivity from
+    the database restored, your application should be serving traffic once again!!!
+    \ \n\nWe'll dive deeper into how this works in the next challenge."
   notes:
   - type: text
     contents: Intentions define access control for services via Consul Connect and
@@ -216,7 +217,7 @@ challenges:
     hostname: app
     port: 80
   difficulty: basic
-  timelimit: 300
+  timelimit: 900
 - slug: sidecar-envoy
   id: ntf48xx67xaz
   type: challenge
@@ -294,5 +295,5 @@ challenges:
     hostname: app
     port: 80
   difficulty: basic
-  timelimit: 300
-checksum: "365053571220569379"
+  timelimit: 900
+checksum: "6602753151128351107"

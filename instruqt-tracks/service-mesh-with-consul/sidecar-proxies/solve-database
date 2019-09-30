@@ -1,0 +1,11 @@
+#!/bin/sh
+
+sleep 10
+
+echo "Starting Envoy..."
+nohup /usr/local/bin/consul connect envoy -sidecar-for mysql > /envoy.out &
+
+echo "Reloading Consul..."
+/usr/local/bin/consul reload
+
+exit 0

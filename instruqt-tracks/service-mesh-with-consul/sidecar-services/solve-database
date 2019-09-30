@@ -1,0 +1,26 @@
+#!/bin/sh
+
+cat <<-EOF > /consul/config/database_service.json
+{
+  "service": {
+    "name": "mysql",
+    "tags": [
+      "database",
+      "production"
+    ],
+    "port": 3306,
+    "connect": { "sidecar_service": {} },
+    "check": {
+      "id": "mysql",
+      "name": "MySQL TCP on port 3306",
+      "tcp": "localhost:3306",
+      "interval": "10s",
+      "timeout": "1s"
+    }
+  }
+}
+EOF
+
+/usr/local/bin/consul reload
+
+exit 0
