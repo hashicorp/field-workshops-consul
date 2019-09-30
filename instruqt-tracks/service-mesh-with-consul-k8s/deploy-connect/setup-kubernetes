@@ -32,7 +32,11 @@ ui:
 
 connectInject:
   enabled: true
-  default: true
+  imageEnvoy: envoyproxy/envoy:v1.9.1
+
+  #true will inject by default, otherwise requires annotation
+  default: false
+
   centralConfig:
     enabled: true
     defaultProtocol: "http"

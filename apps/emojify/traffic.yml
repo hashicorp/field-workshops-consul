@@ -1,0 +1,29 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emojify-traffic
+  labels:
+    app: emojify-traffic
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emojify-traffic
+  template:
+    metadata:
+      labels:
+        app: emojify-traffic
+    spec:
+      containers:
+      - name: load-test
+        image: nicholasjackson/emojify-traffic:v0.2.1
+        env:
+        - name: BASE_URI
+          value: http://emojify-ingress
+        - name: DURATION
+          value: "24h"
+        - name: SHOW_PROGRESS
+          value: "false"
+        - name: USERS
+          value: "3"
