@@ -26,16 +26,25 @@ data:
     }
 
     http {
+
       upstream emojify-website {
-        keepalive 100;
+        keepalive_timeout 0;
         server localhost:8000;
       }
+
       upstream emojify-api {
-        keepalive 100;
+        keepalive_timeout 0;
         server localhost:8001;
       }
 
+      upstream emojify-payments {
+        keepalive_timeout 0;
+        server localhost:8002;
+      }
+
+
       server {
+
         location / {
           proxy_http_version 1.1;
           proxy_pass http://emojify-website;
@@ -47,6 +56,13 @@ data:
           proxy_pass http://emojify-api$1$is_args$args;
           proxy_pass_request_headers on;
         }
+
+        location = /api/payments {
+          proxy_http_version 1.1;
+          proxy_pass http://emojify-payments/;
+          proxy_pass_request_headers on;
+        }
+
       }
     }
 
@@ -69,7 +85,7 @@ spec:
         app: emojify-ingress
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
-        "consul.hashicorp.com/connect-service-upstreams": "emojify-website:8000,emojify-api:8001"
+        "consul.hashicorp.com/connect-service-upstreams": "emojify-website:8000,emojify-api:8001,emojify-payments:8002"
     spec:
       volumes:
       - name: config

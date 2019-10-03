@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emojify-payments
+  labels:
+    app: emojify-payments
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emojify-payments
+  template:
+    metadata:
+      labels:
+        app: emojify-payments
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
+    spec:
+      containers:
+      - name: emojify-payments
+        image: nicholasjackson/emojify-payments:0.5.4
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+      - name: prometheus-statsd
+        image: "prom/statsd-exporter:latest"
+        ports:
+          - name: metrics
+            containerPort: 9102
+          - name: statsd
+            containerPort: 9125
+        resources:
+          limits:
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
