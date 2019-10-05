@@ -18,6 +18,7 @@ cat <<-EOF > /root/consul-vaules.yaml
 global:
   datacenter: dc1
   image: "consul:1.6.1"
+  imageK8S: "lanceplarsen/consul-k8s-dev"
 
 server:
   replicas: 1

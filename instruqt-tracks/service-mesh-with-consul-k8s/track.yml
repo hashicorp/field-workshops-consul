@@ -68,10 +68,6 @@ challenges:
   - type: image
     url: https://d33wubrfki0l68.cloudfront.net/949e085caf846f7e512f420bcbd0d1a2935e27bb/4c93c/static/img/k8s-consul-simple.png
   tabs:
-  - title: K8s - Token
-    type: code
-    hostname: kubernetes
-    path: /root/token.txt
   - title: Helm Config
     type: code
     hostname: kubernetes
@@ -88,6 +84,10 @@ challenges:
     type: service
     hostname: kubernetes
     port: 30443
+  - title: K8s - Token
+    type: code
+    hostname: kubernetes
+    path: /root/token.txt
   difficulty: basic
   timelimit: 300
 - slug: deploy-application
@@ -117,7 +117,7 @@ challenges:
 
     ```
     kubectl apply -f emojify/ingress.yml
-    kubectl apply -f emojify/website.yml
+    kubectl apply -f emojify/website_v1.yml
     kubectl apply -f emojify/api.yml
     kubectl apply -f emojify/cache.yml
     kubectl apply -f emojify/facebox.yml
@@ -182,7 +182,7 @@ challenges:
 - slug: emojify-some-faces
   id: ude8vm6frk3v
   type: challenge
-  title: Emojify some faces
+  title: Emojify some Faces
   teaser: A short description of the challenge.
   assignment: |-
     We can enter a URL into our website to `emojify` the image. If you don't have an image you'd like to use try the one below of our founders.
@@ -245,7 +245,7 @@ challenges:
 - slug: scale-the-app
   id: r2vgop1q59ix
   type: challenge
-  title: Scale the app
+  title: Scale the App
   teaser: A short description of the challenge.
   assignment: |-
     Let's revisit the emojify app specs from eariler, and scale up the number of Facebook services providing our ML capabilities. <br>
@@ -366,4 +366,193 @@ challenges:
     path: /root/token.txt
   difficulty: basic
   timelimit: 300
-checksum: "15567744717088246594"
+- slug: ship-a-new-feature
+  id: w95srj56cyzm
+  type: challenge
+  title: Ship a New Feature
+  teaser: A short description of the challenge.
+  assignment: |-
+    We have a few more files in our `emojify` folder.
+    The new service we introduce will allow users to optionally purchase their photograph after its emojfied. <br>
+
+    You'll notice in our deployment spec for the `website` we used a Consul defintion called `consul.hashicorp.com/service-tags`.
+    This metadata will allow us send traffic  to either `v1` or `v2` of the website based on certain conditions. <br>
+
+    Let's start by pushing Connect's L7 routing config for this service. Each of these configurations does a few things for us. <br>
+
+    * Resolver - Creates subsets of the website service. In our example, we use the service tags.
+
+    ```
+    kind           = "service-resolver"
+    name           = "emojify-website"
+    default_subset = "v1"
+    subsets = {
+      "v1" = {
+        filter = "v1 in Service.Tags"
+      }
+      "v2" = {
+        filter = "v2 in Service.Tags"
+      }
+    }
+    ```
+
+    * Spliter - Contains our traffic shaping rules. We're pretty confident in our app, so we're going to send 80% of the traffic to the new service.
+
+    ```
+    kind = "service-splitter"
+    name = "emojify-website"
+    splits = [
+      {
+        weight         = 20
+        service_subset = "v1"
+      },
+      {
+        weight         = 80
+        service_subset = "v2"
+      },
+    ]
+    ```
+
+    * Router   - Allows us to do some version specific testing by supplying query params.
+
+    ```
+    kind = "service-router"
+    name = "emojify-website"
+    routes = [
+      {
+        match {
+          http {
+            query_param = [
+              {
+                name  = "x-version"
+                exact = "1"
+              },
+            ]
+          }
+        }
+        destination {
+          service        = "emojify-website"
+          service_subset = "v1"
+        }
+      },
+      {
+        match {
+          http {
+            query_param = [
+              {
+                name  = "x-version"
+                exact = "2"
+              },
+            ]
+          }
+        }
+        destination {
+          service        = "emojify-website"
+          service_subset = "v2"
+        }
+      }
+    ]
+    ```
+
+    Now let's apply them. <br>
+
+    ```
+    consul config write emojify/resolver.hcl
+    consul config write emojify/splitter.hcl
+    consul config write emojify/router.hcl
+    ```
+
+    With our new routing rules in place, let's go ahead and push the new version of the website with the payment service.
+
+    ```
+    kubectl  apply -f emojify/website_v2.yml
+    kubectl  apply -f emojify/payments.yml
+    consul intention create -allow emojify-ingress emojify-payments
+    ```
+
+    Once your pods are healthy, we can start our testing.
+    Let's use that header value we set up eariler to look at our different versions of t he website config.
+    Pay attention to the `PAYMENT_ENABLED` value. You can also see this in the `v1` and `v2` tabs.
+
+    ```
+    curl localhost:30000/config/env.js?x-version=1
+    curl localhost:30000/config/env.js?x-version=2
+    ```
+
+    Now, refresh the app a few times, and look for `EmojifyEnterprise` in the top left banner.
+    This is the v2 version of our website. <br>
+
+    Emojify another image, and you will see a new option to purchase the image.
+    Fill in some dummy details and try it now. <br>
+
+    It looks like you don't have enough funds (don't worry, this happens every time), better call your bank! <br>
+
+    You'll notice that Envoy is now  grouping clusters by our subset.
+
+    ```
+    kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/clusters  | grep emojify-website
+    ```
+
+    You can also see Envoy has updated our route definitions for our debug params and traffic weights. <br>
+
+    ```
+    kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
+    ```
+
+    Optionally, you can shift all the traffic to the v2 version of the website now that our new feature is working properly.
+    You can additionally verify Consul has propgated this change to envoy by running the above command again.
+
+    ```
+    cat <<-EOF > /root/emojify/splitter.hcl
+    kind = "service-splitter"
+    name = "emojify-website"
+    splits = [
+      {
+        weight         = 0
+        service_subset = "v1"
+      },
+      {
+        weight         = 100
+        service_subset = "v2"
+      },
+    ]
+    EOF
+    consul config write emojify/splitter.hcl
+    ```
+
+    Nice work! you just used traffic shaping to safely move users to a new version of your application!
+  notes:
+  - type: text
+    contents: |-
+      Now that we scaled our app, and used some metrics to determine it's stable, we can ship a new feature of our application.
+
+      Let's use Connect's L7 routing capabilities to a/b test our application before we roll out to all our users.
+  tabs:
+  - title: K8s
+    type: terminal
+    hostname: kubernetes
+  - title: Emojify - Config
+    type: code
+    hostname: kubernetes
+    path: /root/emojify
+  - title: Emojify - A/B
+    type: service
+    hostname: kubernetes
+    path: /
+    port: 30000
+  - title: Consul UI
+    type: service
+    hostname: kubernetes
+    path: /ui/
+    port: 30085
+  - title: K8s - UI
+    type: service
+    hostname: kubernetes
+    port: 30443
+  - title: K8s - Token
+    type: code
+    hostname: kubernetes
+    path: /root/token.txt
+  difficulty: basic
+  timelimit: 300
+checksum: "3940354818981822214"
