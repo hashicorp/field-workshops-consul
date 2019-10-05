@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hotrod-driver
+  labels:
+    app: hotrod-driver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hotrod-driver
+  template:
+    metadata:
+      labels:
+        app: hotrod-driver
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
+        "consul.hashicorp.com/connect-service-protocol": "tcp"
+    spec:
+      containers:
+      - name: hotrod-driver
+        image: "jaegertracing/example-hotrod:latest"
+        imagePullPolicy: Always
+        command: ["/go/bin/hotrod-linux"]
+        args: ["driver"]
+        ports:
+        - containerPort: 8082
+        env:
+          - name: JAEGER_AGENT_HOST
+            value: "jaeger-agent"
+          - name: JAEGER_AGENT_PORT
+            value: "6831"
