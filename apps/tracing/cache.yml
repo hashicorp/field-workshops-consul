@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-cache
+  labels:
+    app: app-cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-cache
+  template:
+    metadata:
+      labels:
+        app: app-cache
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
+    spec:
+      containers:
+      - name: app-cache
+        image: "nicholasjackson/fake-service:v0.5.2"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9092
+        env:
+          - name: LISTEN_ADDR
+            value: "0.0.0.0:9092"
+          - name: MESSAGE
+            value: "Cache response"
+          - name: NAME
+            value: "cache"
+          - name: SERVER_TYPE
+            value: "http"
+          - name: TIMING_50_PERCENTILE
+            value: "1ms"
+          - name: TIMING_90_PERCENTILE
+            value: "2ms"
+          - name: TIMING_90_PERCENTILE
+            value: "3ms"
+          - name: TIMING_VARIANCE
+            value: "10"
+          - name: TRACING_ZIPKIN
+            value: "http://jaeger-collector:9411"

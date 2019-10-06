@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-currency
+  labels:
+    app: app-currency
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-currency
+  template:
+    metadata:
+      labels:
+        app: app-currency
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
+    spec:
+      containers:
+      - name: app-currency
+        image: "nicholasjackson/fake-service:v0.5.2"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9094
+        env:
+          - name: LISTEN_ADDR
+            value: "0.0.0.0:9094"
+          - name: UPSTREAM_URIS
+            value:
+          - name: MESSAGE
+            value: "Currency response"
+          - name: NAME
+            value: "currency"
+          - name: SERVER_TYPE
+            value: "http"
+          - name: ERROR_RATE
+            value: "0.5"
+          - name: ERROR_CODE
+            value: "500"
+          - name: ERROR_TYPE
+            value: "http_error"
+          - name: TRACING_ZIPKIN
+            value: "http://jaeger-collector:9411"

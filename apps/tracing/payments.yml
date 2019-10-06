@@ -1,0 +1,41 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-payments
+  labels:
+    app: app-payments
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-payments
+  template:
+    metadata:
+      labels:
+        app: app-payments
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
+        "consul.hashicorp.com/connect-service-upstreams": "app-currency:9094"
+    spec:
+      containers:
+      - name: app-payments
+        image: "nicholasjackson/fake-service:v0.5.2"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9093
+        env:
+          - name: LISTEN_ADDR
+            value: "0.0.0.0:9093"
+          - name: UPSTREAM_URIS
+            value: "http://127.0.0.1:9094/12434/jackson?auth=true"
+          - name: MESSAGE
+            value: "Payments response"
+          - name: NAME
+            value: "payments"
+          - name: SERVER_TYPE
+            value: "http"
+          - name: HTTP_CLIENT_APPEND_REQUEST
+            value: "true"
+          - name: TRACING_ZIPKIN
+            value: "http://jaeger-collector:9411"
