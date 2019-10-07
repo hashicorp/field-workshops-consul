@@ -1,0 +1,5 @@
+#!/bin/bash
+
+helm install -f consul-vaules.yaml --name lab ./consul-helm  --wait
+
+exit 0

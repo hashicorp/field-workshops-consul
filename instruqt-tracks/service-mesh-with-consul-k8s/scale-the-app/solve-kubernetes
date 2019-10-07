@@ -1,0 +1,6 @@
+#!/bin/bash
+
+sed -i 's/replicas: 1/replicas: 2/g' emojify/facebox.yml
+kubectl apply -f emojify/facebox.yml
+
+exit 0

@@ -18,7 +18,7 @@ cat <<-EOF > /root/consul-vaules.yaml
 global:
   datacenter: dc1
   image: "consul:1.6.1"
-  imageK8S: "lanceplarsen/consul-k8s-dev"
+  imageK8S: "hashicorp/consul-k8s:0.9.2"
 
 server:
   replicas: 1
@@ -66,5 +66,7 @@ spec:
     targetPort: 8500
     nodePort: 30085
 EOF
+
+/usr/bin/kubectl wait pod -n kube-system --selector=app=helm --for=condition=Ready
 
 exit 0

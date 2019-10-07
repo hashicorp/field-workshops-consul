@@ -311,16 +311,27 @@ challenges:
   title: Get Metrics
   teaser: Please observe...
   assignment: |-
-    You can see pods running with Grafana and Prometheus for our monitoring stack.
-    We've installed them for you via their respective helm charts. <br>
+    You can see pods running with Grafana and Prometheus for our monitoring stack. <br>
 
     ```
+    kubectl get pod --selector=app=prometheus
+    kubectl get pod --selector=app=grafana
+    ```
+
+    We've installed them for you via their respective helm charts.
+
     * [Grafana](https://github.com/helm/charts/tree/master/stable/grafana)
     * [Prometheus](https://github.com/helm/charts/tree/master/stable/prometheus)
-    ```
 
-    We have a sample dashboard built for you that can visuliaze metrics for our application stack.
-    Follow [these instructions](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) from Grafana to import your dashboard.<br>
+    You can log into Grafana using the UI tab. The credentials are below:
+
+    * username: `admin`
+    * password: `check the password tab`
+
+    We have a sample dashboard built for you that can visuliaze metrics for our application stack. <br>
+
+    Follow [these instructions](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) from Grafana to import your dashboard.
+    You will need to paste the raw json into Grafana per the above documentation. <br>
 
     ```
     https://raw.githubusercontent.com/hashicorp/consul-k8s-l7-obs-guide/master/overview_dashboard.json
@@ -396,18 +407,19 @@ challenges:
     }
     ```
 
-    * Spliter - Contains our traffic shaping rules. We're pretty confident in our app, so we're going to send 80% of the traffic to the new service.
+    * Spliter - Contains our traffic shaping rules. We're pretty confident in our app,
+    so we're going to send 90% of the traffic to the new service for instructional purposes.
 
     ```
     kind = "service-splitter"
     name = "emojify-website"
     splits = [
       {
-        weight         = 20
+        weight         = 10
         service_subset = "v1"
       },
       {
-        weight         = 80
+        weight         = 90
         service_subset = "v2"
       },
     ]
@@ -555,4 +567,146 @@ challenges:
     path: /root/token.txt
   difficulty: basic
   timelimit: 300
-checksum: "3940354818981822214"
+- slug: tracing
+  id: 8cnsp3ybcrlc
+  type: challenge
+  title: Tracing Distributed Errors
+  teaser: Down the rabbit hole we go.
+  assignment: |-
+    We've deployed a few Jaeger services for you while setting up this lab.
+    They can be seen be running the below command.
+    The Jaeger UI is also exposed in the tab. We will use it shortly to visuliaze some traces. <br>
+
+    ```
+    kubectl get svc --selector=app=jaeger
+    ```
+
+    We will use the following Connect configuration to configure Envoy to route our trace information to our Jaeger instance.
+
+    * [Cluster Bootstrap](https://www.consul.io/docs/connect/proxies/envoy.html#envoy_extra_static_clusters_json)
+    * [Tracing Bootstrap](https://www.consul.io/docs/connect/proxies/envoy.html#envoy_tracing_json)
+
+    ```
+      {
+        "connect_timeout": "3.000s",
+        "dns_lookup_family": "V4_ONLY",
+        "lb_policy": "ROUND_ROBIN",
+        "load_assignment": {
+            "cluster_name": "jaeger_9411",
+            "endpoints": [
+                {
+                    "lb_endpoints": [
+                        {
+                            "endpoint": {
+                                "address": {
+                                    "socket_address": {
+                                        "address": "jaeger-collector",
+                                        "port_value": 9411,
+                                        "protocol": "TCP"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "name": "jaeger_9411",
+        "type": "STRICT_DNS"
+      }
+    ```
+
+    ```
+      {
+        "http": {
+          "name": "envoy.zipkin",
+          "config": {
+            "collector_cluster": "jaeger_9411",
+            "collector_endpoint": "/api/v1/spans",
+            "shared_span_context": false
+          }
+        }
+      }
+    ```
+
+    Let's go ahead and apply that config.
+
+    ```
+    consul config write trace.hcl
+    ```
+
+    Now let's push out the tracing application, and configure our intentions.
+
+    ```
+    kubectl apply -f tracing
+
+    consul intention create -allow app-frontend app-api
+    consul intention create -allow app-api app-cache
+    consul intention create -allow app-api app-payments
+    consul intention create -allow app-payments app-currency
+    ```
+
+    One the pods are running we can test the application throught the Frontend, which we've exposed over a NodePort.
+    We've configured a 50% error rate for one of our backend services, so run this command twice.
+
+    ```
+    curl localhost:30900 | jq
+    ```
+
+    Go to the Jaeger UI and check out the traces for the last two API requests.
+    For the failed API request, it is easy for us to determine where it occurred. <br>
+
+    Trace data sent by Envoy will have `component` span tag with a value of `proxy.`
+    You can see a detailed description of all the data Envoy sends [here](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/observability/tracing#what-data-each-trace-contains). <br>
+
+    Nice work, you just debugged a distributed app with tracing.
+  notes:
+  - type: text
+    contents: |-
+      In this assignment we will take a look at Connect's tracing capabilities. <br>
+
+      Distributed tracing allows developers to obtain visualizations of call flows in large service oriented architectures.
+      It can be invaluable in understanding serialization, parallelism, and sources of latency. <br>
+
+      Envoy helps Connect do this in a few ways:
+
+      * Generates request IDs and trace headers for requests as they flow through the proxies
+      * Sends the generated trace spans to the tracing backends
+      * Forwards the trace headers to the proxied application
+
+      We'll explore this in this challenge using popular tracing solutions Zipkin and Jaeger. <br>
+  - type: text
+    contents: |-
+      Connect sidecars will proxy both inbound and outbound requests, but it  does not automatically know how to correlate them.
+      This correlation is called `header propgation`, and requires instrumentation at the application level. <br>
+
+      Our sample app does this with `zipkin-go` libraries and the OpenTracing API.
+      The application compliments the trace data sent by the proxies with useful span tags and logs for better traceability. <br>
+  - type: text
+    contents: |-
+      We will use a purpose built app called `fake-service` to test our upstreams and trace these errors.
+      The app will deploy a few services in the following configuration: <br>
+
+      * Frontend - Access to our application
+      * API - GRPC API to backend services
+      * Cache - Cache responses for our API
+      * Payments  - Process payments
+      * Currency - Do currency lookups for our payments
+
+      The application code can be found here: https://github.com/nicholasjackson/fake-service
+  tabs:
+  - title: K8s
+    type: terminal
+    hostname: kubernetes
+  - title: Jaeger UI
+    type: service
+    hostname: kubernetes
+    port: 31686
+  - title: Consul UI
+    type: service
+    hostname: kubernetes
+    path: /ui/
+    port: 30085
+  difficulty: basic
+  timelimit: 300
+checksum: "5728689332835548583"

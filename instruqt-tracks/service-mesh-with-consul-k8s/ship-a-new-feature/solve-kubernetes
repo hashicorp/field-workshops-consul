@@ -1,0 +1,26 @@
+#!/bin/bash
+
+cat <<-EOF > /root/emojify/splitter.hcl
+kind = "service-splitter"
+name = "emojify-website"
+splits = [
+  {
+    weight         = 0
+    service_subset = "v1"
+  },
+  {
+    weight         = 100
+    service_subset = "v2"
+  },
+]
+EOF
+
+consul config write emojify/resolver.hcl
+consul config write emojify/splitter.hcl
+consul config write emojify/router.hcl
+
+kubectl  apply -f emojify/website_v2.yml
+kubectl  apply -f emojify/payments.yml
+consul intention create -allow emojify-ingress emojify-payments
+
+exit 0
