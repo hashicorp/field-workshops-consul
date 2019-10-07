@@ -5,13 +5,15 @@ title: Service mesh with Consul K8s
 teaser: Unlesh the full power of Consul's service mesh on the world's most popular
   container orchestrator.
 description: |-
-  A long description of the track.
+  In this track you will use Consul Connect's first-class support on K8s
+  for service mesh.
 
-  You can use any GitHub flavoured markdown.
+  We'll work through scaling, monitoring, tracing, and advanced L7 traffic patterns.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags: []
 owner: hashicorp
 developers:
+- scarolan@hashicorp.com
 - lance@hashicorp.com
 private: false
 published: true
@@ -178,7 +180,7 @@ challenges:
     hostname: kubernetes
     path: /root/token.txt
   difficulty: basic
-  timelimit: 600
+  timelimit: 300
 - slug: emojify-some-faces
   id: ude8vm6frk3v
   type: challenge
@@ -574,7 +576,7 @@ challenges:
     hostname: kubernetes
     path: /root/token.txt
   difficulty: basic
-  timelimit: 300
+  timelimit: 600
 - slug: tracing
   id: 8cnsp3ybcrlc
   type: challenge
@@ -739,5 +741,5 @@ challenges:
     hostname: kubernetes
     path: /root/token.txt
   difficulty: basic
-  timelimit: 300
-checksum: "12020457293278968899"
+  timelimit: 600
+checksum: "1697616459752297662"
