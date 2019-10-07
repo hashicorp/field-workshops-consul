@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: app-payments
-        image: "nicholasjackson/fake-service:v0.5.2"
+        image: "nicholasjackson/fake-service:v0.6.3"
         imagePullPolicy: Always
         ports:
         - containerPort: 9093
