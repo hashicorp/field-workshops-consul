@@ -94,7 +94,7 @@ challenges:
   id: 71ekxt1ehjg5
   type: challenge
   title: Deploy Application
-  teaser: A short description of the challenge.
+  teaser: Bring our application to the world.
   assignment: |-
     Let's start by investigating our config for the Emojify app in the code editor.
     You'll notice each of our services has the following annotations.
@@ -183,7 +183,7 @@ challenges:
   id: ude8vm6frk3v
   type: challenge
   title: Emojify some Faces
-  teaser: A short description of the challenge.
+  teaser: You get an emoji, and you get an emoji, and you get an emoji.
   assignment: |-
     We can enter a URL into our website to `emojify` the image. If you don't have an image you'd like to use try the one below of our founders.
 
@@ -246,7 +246,7 @@ challenges:
   id: r2vgop1q59ix
   type: challenge
   title: Scale the App
-  teaser: A short description of the challenge.
+  teaser: Handle increased demand
   assignment: |-
     Let's revisit the emojify app specs from eariler, and scale up the number of Facebook services providing our ML capabilities. <br>
 
@@ -309,7 +309,7 @@ challenges:
   id: hwu25pwhbljf
   type: challenge
   title: Get Metrics
-  teaser: Please observe...
+  teaser: Please observe
   assignment: |-
     You can see pods running with Grafana and Prometheus for our monitoring stack. <br>
 
@@ -356,6 +356,9 @@ challenges:
       We're spinning up a monitoring stack for you.
       Please be patient. This should take 1-2 minutes.
   tabs:
+  - title: K8s
+    type: terminal
+    hostname: kubernetes
   - title: Grafana - UI
     type: service
     hostname: kubernetes
@@ -364,9 +367,6 @@ challenges:
     type: code
     hostname: kubernetes
     path: /tmp/grafana-pass.txt
-  - title: K8s
-    type: terminal
-    hostname: kubernetes
   - title: K8s - UI
     type: service
     hostname: kubernetes
@@ -381,7 +381,7 @@ challenges:
   id: w95srj56cyzm
   type: challenge
   title: Ship a New Feature
-  teaser: A short description of the challenge.
+  teaser: Selectively bring users to a new version of the applciation.
   assignment: |-
     We have a few more files in our `emojify` folder.
     The new service we introduce will allow users to optionally purchase their photograph after its emojfied. <br>
@@ -483,8 +483,15 @@ challenges:
     ```
 
     Once your pods are healthy, we can start our testing.
+    Let's check Consul for the `Website` service and look at the `ServiceTags` value.
+    We should see two tagged versions of the application. <br>
+
+    ```
+    curl -s http://127.0.0.1:8500/v1/catalog/service/emojify-website | jq
+    ```
+
     Let's use that header value we set up eariler to look at our different versions of t he website config.
-    Pay attention to the `PAYMENT_ENABLED` value. You can also see this in the `v1` and `v2` tabs.
+    Pay attention to the `PAYMENT_ENABLED` value. <br>
 
     ```
     curl localhost:30000/config/env.js?x-version=1
@@ -505,10 +512,11 @@ challenges:
     kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/clusters  | grep emojify-website
     ```
 
-    You can also see Envoy has updated our route definitions for our debug params and traffic weights. <br>
+    You can also see Envoy has updated our route definitions for our debug params and traffic weights. Let's do a quick validation. <br>
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
+    kubectl exec $(kubectl get pod --selector=app=app-api -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/config_dump | jq  '[.. |."tracing"?| select(. != null)][0]
+
     ```
 
     Optionally, you can shift all the traffic to the v2 version of the website now that our new feature is working properly.
@@ -646,18 +654,29 @@ challenges:
     consul intention create -allow app-payments app-currency
     ```
 
-    One the pods are running we can test the application throught the Frontend, which we've exposed over a NodePort.
+    One the pods are running we can test the application throught the `Frontend`, which we've exposed over a NodePort.
     We've configured a 50% error rate for one of our backend services, so run this command twice.
 
     ```
+    curl localhost:30900 | jq
     curl localhost:30900 | jq
     ```
 
     Go to the Jaeger UI and check out the traces for the last two API requests.
     For the failed API request, it is easy for us to determine where it occurred. <br>
 
-    Trace data sent by Envoy will have `component` span tag with a value of `proxy.`
+    Trace data sent by Envoy will have `component` span tag with a value of `proxy`.
     You can see a detailed description of all the data Envoy sends [here](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/observability/tracing#what-data-each-trace-contains). <br>
+
+    The other spans are instrumented with the application client library for tracing.
+    Compared the differences in the  span tags and logs. Notice the granularity of the log events instrumented by the applciation's client library. <br>
+
+    We can do a quick validation that Consul was able to apply the tracing defintion to our Envoy proxy config.
+    Let's check this out for our API service.
+
+    ```
+    kubectl exec $(kubectl get pod --selector=app=app-api -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/config_dump | jq '[.. |."tracing"? | select(. != null)]'
+    ```
 
     Nice work, you just debugged a distributed app with tracing.
   notes:
@@ -702,11 +721,23 @@ challenges:
     type: service
     hostname: kubernetes
     port: 31686
+  - title: App - Config
+    type: code
+    hostname: kubernetes
+    path: /root/tracing
   - title: Consul UI
     type: service
     hostname: kubernetes
     path: /ui/
     port: 30085
+  - title: K8s - UI
+    type: service
+    hostname: kubernetes
+    port: 30443
+  - title: K8s - Token
+    type: code
+    hostname: kubernetes
+    path: /root/token.txt
   difficulty: basic
   timelimit: 300
-checksum: "5728689332835548583"
+checksum: "12020457293278968899"
