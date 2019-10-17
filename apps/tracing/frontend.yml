@@ -2,11 +2,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: app-frontend
+  name: frontend
 spec:
   type: NodePort
   selector:
-    app: app-frontend
+    app: frontend
   ports:
   - name: http
     protocol: TCP
@@ -18,24 +18,24 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-frontend
+  name: frontend
   labels:
-    app: app-frontend
+    app: frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: app-frontend
+      app: frontend
   template:
     metadata:
       labels:
-        app: app-frontend
+        app: frontend
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
-        "consul.hashicorp.com/connect-service-upstreams": "app-api:9091"
+        "consul.hashicorp.com/connect-service-upstreams": "api:9091"
     spec:
       containers:
-      - name: app-frontend
+      - name: frontend
         image: "nicholasjackson/fake-service:v0.6.3"
         imagePullPolicy: Always
         ports:

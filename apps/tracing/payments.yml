@@ -2,24 +2,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-payments
+  name: payments
   labels:
-    app: app-payments
+    app: payments
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: app-payments
+      app: payments
   template:
     metadata:
       labels:
-        app: app-payments
+        app: payments
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
-        "consul.hashicorp.com/connect-service-upstreams": "app-currency:9094"
+        "consul.hashicorp.com/connect-service-upstreams": "currency:9094"
     spec:
       containers:
-      - name: app-payments
+      - name: payments
         image: "nicholasjackson/fake-service:v0.6.3"
         imagePullPolicy: Always
         ports:

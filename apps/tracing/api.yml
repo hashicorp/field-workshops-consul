@@ -2,25 +2,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-api
+  name: api
   labels:
-    app: app-api
+    app: api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: app-api
+      app: api
   template:
     metadata:
       labels:
-        app: app-api
+        app: api
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
         "consul.hashicorp.com/connect-service-protocol": "grpc"
-        "consul.hashicorp.com/connect-service-upstreams": "app-cache:9092,app-payments:9093"
+        "consul.hashicorp.com/connect-service-upstreams": "cache:9092,payments:9093"
     spec:
       containers:
-      - name: app-api
+      - name: api
         image: "nicholasjackson/fake-service:v0.6.3"
         imagePullPolicy: Always
         ports:

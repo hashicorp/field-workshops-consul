@@ -2,23 +2,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-currency
+  name: currency
   labels:
-    app: app-currency
+    app: currency
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: app-currency
+      app: currency
   template:
     metadata:
       labels:
-        app: app-currency
+        app: currency
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
     spec:
       containers:
-      - name: app-currency
+      - name: currency
         image: "nicholasjackson/fake-service:v0.6.3"
         imagePullPolicy: Always
         ports:

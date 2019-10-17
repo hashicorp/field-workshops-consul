@@ -2,23 +2,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-cache
+  name: cache
   labels:
-    app: app-cache
+    app: cache
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: app-cache
+      app: cache
   template:
     metadata:
       labels:
-        app: app-cache
+        app: cache
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
     spec:
       containers:
-      - name: app-cache
+      - name: cache
         image: "nicholasjackson/fake-service:v0.6.3"
         imagePullPolicy: Always
         ports:
