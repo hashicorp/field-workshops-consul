@@ -91,7 +91,7 @@ challenges:
     hostname: kubernetes
     path: /root/token.txt
   difficulty: basic
-  timelimit: 300
+  timelimit: 600
 - slug: deploy-application
   id: 71ekxt1ehjg5
   type: challenge
@@ -180,7 +180,7 @@ challenges:
     hostname: kubernetes
     path: /root/token.txt
   difficulty: basic
-  timelimit: 300
+  timelimit: 600
 - slug: emojify-some-faces
   id: ude8vm6frk3v
   type: challenge
@@ -190,7 +190,7 @@ challenges:
     We can enter a URL into our website to `emojify` the image. If you don't have an image you'd like to use try the one below of our founders.
 
     ```
-    https://i.ytimg.com/vi/PP8-TRQeC_4/maxresdefault.jpg
+    https://cdn.geekwire.com/wp-content/uploads/2017/10/armon-dadgar-and-mitchell-hashimoto-630x419.jpg
     ```
 
     Not perfect, but pretty close! <br>
@@ -243,16 +243,16 @@ challenges:
     hostname: kubernetes
     path: /root/token.txt
   difficulty: basic
-  timelimit: 300
+  timelimit: 600
 - slug: scale-the-app
   id: r2vgop1q59ix
   type: challenge
   title: Scale the App
   teaser: Handle increased demand
   assignment: |-
-    Let's revisit the emojify app specs from eariler, and scale up the number of Facebook services providing our ML capabilities. <br>
+    Let's revisit the emojify app specs from eariler, and scale up the number of Facebox services providing our ML capabilities. <br>
 
-    Go in the code editor and change the number of replicas for the facebook service to `2`.
+    Go in the code editor and change the number of replicas for the facebox service to `2`.
 
     ```
     spec:
@@ -306,7 +306,7 @@ challenges:
     hostname: kubernetes
     path: /root/token.txt
   difficulty: basic
-  timelimit: 300
+  timelimit: 600
 - slug: get-metrics
   id: hwu25pwhbljf
   type: challenge
@@ -378,7 +378,7 @@ challenges:
     hostname: kubernetes
     path: /root/token.txt
   difficulty: basic
-  timelimit: 300
+  timelimit: 600
 - slug: ship-a-new-feature
   id: w95srj56cyzm
   type: challenge
@@ -517,8 +517,7 @@ challenges:
     You can also see Envoy has updated our route definitions for our debug params and traffic weights. Let's do a quick validation. <br>
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=app-api -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/config_dump | jq  '[.. |."tracing"?| select(. != null)][0]
-
+    kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
     ```
 
     Optionally, you can shift all the traffic to the v2 version of the website now that our new feature is working properly.
@@ -576,7 +575,7 @@ challenges:
     hostname: kubernetes
     path: /root/token.txt
   difficulty: basic
-  timelimit: 600
+  timelimit: 900
 - slug: tracing
   id: 8cnsp3ybcrlc
   type: challenge
@@ -650,10 +649,10 @@ challenges:
     ```
     kubectl apply -f tracing
 
-    consul intention create -allow app-frontend app-api
-    consul intention create -allow app-api app-cache
-    consul intention create -allow app-api app-payments
-    consul intention create -allow app-payments app-currency
+    consul intention create -allow web api
+    consul intention create -allow api cache
+    consul intention create -allow api payments
+    consul intention create -allow payments currency
     ```
 
     One the pods are running we can test the application throught the `Frontend`, which we've exposed over a NodePort.
@@ -677,7 +676,7 @@ challenges:
     Let's check this out for our API service.
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=app-api -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/config_dump | jq '[.. |."tracing"? | select(. != null)]'
+    kubectl exec $(kubectl get pod --selector=app=api -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/config_dump | jq '[.. |."tracing"? | select(. != null)]'
     ```
 
     Nice work, you just debugged a distributed app with tracing.
@@ -741,5 +740,5 @@ challenges:
     hostname: kubernetes
     path: /root/token.txt
   difficulty: basic
-  timelimit: 600
-checksum: "1697616459752297662"
+  timelimit: 900
+checksum: "9098259716077809403"
