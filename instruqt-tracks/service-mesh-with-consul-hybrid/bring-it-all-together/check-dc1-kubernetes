@@ -1,0 +1,10 @@
+#!/bin/bash
+
+status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:30900)
+
+if [ $status != "200" ]; then
+  fail-message "Your app did not return a 200."
+  exit 1
+fi
+
+exit 0

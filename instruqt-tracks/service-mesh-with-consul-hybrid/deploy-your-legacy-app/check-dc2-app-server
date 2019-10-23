@@ -1,0 +1,10 @@
+#!/bin/bash
+
+status=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8500/v1/agent/health/service/name/currency)
+
+if [ $status != "200" ]; then
+  fail-message "Your health check is not passing for the legacy service."
+  exit 1
+fi
+
+exit 0

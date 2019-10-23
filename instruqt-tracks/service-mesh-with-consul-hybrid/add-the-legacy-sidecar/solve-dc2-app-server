@@ -1,0 +1,27 @@
+#!/bin/bash
+
+cat <<-EOF > /consul/config/currency-service.json
+{
+  "service": {
+    "name": "currency",
+    "tags": [
+      "production"
+    ],
+    "port": 9094,
+    "connect": { "sidecar_service": {} },
+    "check": {
+      "id": "http",
+      "name": "traffic on port 9094",
+      "http": "http://127.0.0.1:9094/health",
+      "interval": "10s",
+      "timeout": "1s"
+    }
+  }
+}
+EOF
+
+consul reload
+
+nohup consul connect envoy -sidecar-for=currency > /envoy.out &
+
+exit 0

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+kubectl apply -f /root/tracing
+sleep  10
+
+exit 0

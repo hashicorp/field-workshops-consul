@@ -25,13 +25,22 @@ challenges:
     We also have a Kubernetes cluster running with a single worker node.
     This Kubernetes worker node has a Consul agent running on it with a DaemonSet. <br>
 
+    We can see this below. <br>
+
+    ```
+    consul members
+    ```
+
     In DC2, we have a VM running a Consul server.
-    We also have a VM that will run our legacy service. <br>
+    We also have a VM that will run our legacy service.
+    We'll inspect this Consul cluster in the next section. <br>
 
     The lab is preconfigured for connectvity within each Consul DC, but we need to make each datacenter Consul aware of the other datacenter. <br>
 
     Let's do this by connecting our two Consul datacenters with a `wan join`.
     This will allow us to manage our workloads accross the datacenters. <br>
+
+    **Note**: the lab env helps us this with this resolution of short names for our lab servers.  <br>
 
     ```
     consul join -wan dc2-consul-server
@@ -83,9 +92,14 @@ challenges:
   title: Deploy your Legacy App
   teaser: Deploy legacy services to your on-prem datacenter.
   assignment: |-
+    Let's take a quick look at Consul in this DC. <br>
+
+    ```
+    consul members
+    ```
+
     We have the Currency service running for you on the VM in DC2.
-    You can see it running with Docker.
-    We've also added a Consul service definition, which you can see in the code editor. <br>
+    You can see the app running in Docker. <br>
 
     ```
     docker ps -a
@@ -137,14 +151,14 @@ challenges:
 
       Our currency service will represent our legacy workload running on-prem in DC2.
   tabs:
-  - title: DC2 - App
-    type: terminal
-    hostname: dc2-app-server
   - title: DC2 - UI
     type: service
     hostname: dc2-consul-server
     path: /ui/dc2
     port: 8500
+  - title: DC2 - App
+    type: terminal
+    hostname: dc2-app-server
   difficulty: basic
   timelimit: 900
 - slug: deploy-the-modern-app
@@ -156,8 +170,10 @@ challenges:
     We've made a few minor changes to the deploment spec from the last track.
     You'll notice we've removed the spec file for the `currency` service, as it's already running in DC2. <br>
 
-    We've also removed the `sidecar` upstreams from the `payments` service that calls the currency service, replaced it with a Consul DNS definition instead.
-    This is a common transition pattern where service discovery aware apps can become service mesh aware in a phased rollout. <br>
+    We've also removed the `sidecar` upstreams from the `payments` service that calls the currency service, replaced it with a _Consul DNS_ definition instead. <br>
+
+    This is a common transition pattern where service discovery aware apps can become service mesh aware in a phased rollout.
+    You can read more about this integration in K8s [here](https://www.consul.io/docs/platform/k8s/dns.html). <br>
 
     Check this out in the `payments.yml` deployment file. <br>
 
@@ -191,6 +207,14 @@ challenges:
     contents: Now that we have our legacy service running in DC2, let's deploy the
       rest of the application in DC1.
   tabs:
+  - title: DC2 - UI
+    type: service
+    hostname: dc1-consul-server
+    path: /ui/dc2
+    port: 8500
+  - title: DC1 - K8s
+    type: terminal
+    hostname: dc1-kubernetes
   - title: DC1 - App Config
     type: code
     hostname: dc1-kubernetes
@@ -200,14 +224,6 @@ challenges:
     hostname: dc1-consul-server
     path: /ui/dc1
     port: 8500
-  - title: DC2 - UI
-    type: service
-    hostname: dc1-consul-server
-    path: /ui/dc2
-    port: 8500
-  - title: DC1 - K8s
-    type: terminal
-    hostname: dc1-kubernetes
   difficulty: basic
   timelimit: 900
 - slug: find-the-issue
@@ -217,7 +233,8 @@ challenges:
   teaser: A short description of the challenge.
   assignment: |-
     Let's revisit our Jaeger UI and take a look at the latest trace data.
-    You should see a message similar to this  in the payents trace.
+    You should see a message similar to this  in the payments trace.
+    You can get to this message quickly by clicking on the `expand all` button in Jaeger for the trace. <br>
 
     ```
     "error:Error communicating with upstream service: Get http://currency.service.dc2.consul:9094/: dial tcp <ip>:9094: connect: connection timed out"
@@ -225,11 +242,10 @@ challenges:
 
     It seems even though we could discover the service in the datacenter, we don't actually have a route to that service, or the network is blocking it.
 
-    Let's explore this further with a basic connectivity check between our K8s node and our server runing in the other DC. <br>
+    Let's explore this further with a basic connectivity check between our K8s node and our server runing in the other DC.
+    We can use a tool called `nmap` to help us with this verification. <br>
 
     We know that IP is our Currency service running on our DC2 app server, so we can test with the below command. <br>
-
-    **Note**: the lab env helps us this with this resolution. <br>
 
     ```
     ip=$(getent ahostsv4 dc2-app-server |  awk '{print $1}' | head -1)
@@ -308,7 +324,7 @@ challenges:
     path: /ui/dc2
     port: 8500
   difficulty: basic
-  timelimit: 300
+  timelimit: 900
 - slug: deploy-the-dc2-gateway
   id: gl8vtewtwevq
   type: challenge
@@ -421,9 +437,6 @@ challenges:
   - title: DC1 - Gateway
     type: terminal
     hostname: dc1-consul-gateway
-  - title: DC2 - Gateway
-    type: terminal
-    hostname: dc2-consul-gateway
   - title: DC1 - UI
     type: service
     hostname: dc1-consul-server
@@ -435,7 +448,7 @@ challenges:
     path: /ui/dc2
     port: 8500
   difficulty: basic
-  timelimit: 300
+  timelimit: 900
 - slug: bring-it-all-together
   id: z1mn5uy8ougt
   type: challenge
@@ -454,6 +467,14 @@ challenges:
 
     ```
     tcpdump -i ens4 port 443 -nnXX -vv -A
+    ```
+
+
+    You'll notice the upstream definition has an a datacenter tag appended to the upstream, for `dc2`. You can see this in the code editor.
+    We've set the gateways up in [local](https://www.consul.io/docs/connect/mesh_gateway.html#local) mode so this will send all cross DC traffic through our gateways. <br>
+
+    ```
+    "consul.hashicorp.com/connect-service-upstreams": "currency:9094:dc2"
     ```
 
     Now we can redeploy our app on the `DC1 - K8s` tab.
@@ -476,7 +497,7 @@ challenges:
     currency.default.dc2.internal.<spiffe_domain>.consul
     ```
 
-    That's the SNI header. It's the **only** piece of infromation the gateway can see, and this value allows it to be sent to the correct gateway. <br>
+    That's the SNI header. It's the **only** piece of infromation the gateway can see, and this value allows it to be sent to the correct destination. <br>
 
     The packet is not decrypted until it reaches the last sidecar proxy, so we have end-to-end encryption across over the WAN between our DCs. <br>
 
@@ -487,6 +508,9 @@ challenges:
       Now that we have gateways to connect our DCs, we can redeploy our application, and route the entire component flow through the sidecars and gateways.
       We'll inspect some of the traffic through the gateways to validate they are being used, and look specifically at the **SNI** headers, as well as trace data. <br>
   tabs:
+  - title: DC2 - Gateway
+    type: terminal
+    hostname: dc2-consul-gateway
   - title: DC1 - App Config
     type: code
     hostname: dc1-kubernetes
@@ -497,14 +521,11 @@ challenges:
   - title: DC1 - Gateway
     type: terminal
     hostname: dc1-consul-gateway
-  - title: DC2 - Gateway
-    type: terminal
-    hostname: dc2-consul-gateway
   - title: Jaeger UI
     type: service
     hostname: dc1-jaeger-server
     path: /search?service=web
     port: 16686
   difficulty: basic
-  timelimit: 300
-checksum: "12585746641652350340"
+  timelimit: 900
+checksum: "15993183631649710580"

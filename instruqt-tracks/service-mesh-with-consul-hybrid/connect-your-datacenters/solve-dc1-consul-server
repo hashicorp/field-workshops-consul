@@ -1,0 +1,5 @@
+#!/bin/bash
+
+consul join -wan dc2-consul-server
+
+exit 0
