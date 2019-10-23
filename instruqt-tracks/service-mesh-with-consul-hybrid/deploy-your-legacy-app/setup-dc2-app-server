@@ -69,6 +69,8 @@ chmod +x /bin/start_consul.sh
 curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
+jaeger_server_ip=$(getent ahostsv4 dc1-jaeger-server |  awk '{print $1}' | head -1)
+
 cat <<-EOF > /docker-compose.yml
 version: '3'
 services:
@@ -79,7 +81,7 @@ services:
       MESSAGE: "Currency response"
       NAME: "currency"
       SERVER_TYPE: "http"
-      TRACING_ZIPKIN: "http://jaeger-collector:30411"
+      TRACING_ZIPKIN: "http://${jaeger_server_ip}:9411"
     image: "nicholasjackson/fake-service:v0.6.3"
 EOF
 

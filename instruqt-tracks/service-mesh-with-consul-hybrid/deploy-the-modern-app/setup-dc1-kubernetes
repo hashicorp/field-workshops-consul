@@ -149,7 +149,7 @@ items:
       app.kubernetes.io/component: all-in-one
 EOF
 
-kubectl apply -f jaeger-all-in-one-template.yml
+#kubectl apply -f jaeger-all-in-one-template.yml
 
 consul_dns=$(kubectl get svc lab-consul-dns -o jsonpath='{.spec.clusterIP}')
 cat <<-EOF > /root/coredns-cm.yaml
@@ -199,5 +199,12 @@ rm -f tracing/currency.yml
 #spec field-workshops-consul
 sed -i '/connect-service-upstreams/d' /root/tracing/payments.yml
 sed -i 's/127.0.0.1/currency.service.dc2.consul/g' /root/tracing/payments.yml
+
+jaeger_server_ip=$(getent ahostsv4 dc1-jaeger-server |  awk '{print $1}' | head -1)
+
+sed -i "s/jaeger-collector/${jaeger_server_ip}/g" /root/tracing/web.yml
+sed -i "s/jaeger-collector/${jaeger_server_ip}/g" /root/tracing/api.yml
+sed -i "s/jaeger-collector/${jaeger_server_ip}/g" /root/tracing/cache.yml
+sed -i "s/jaeger-collector/${jaeger_server_ip}/g" /root/tracing/payments.yml
 
 exit 0

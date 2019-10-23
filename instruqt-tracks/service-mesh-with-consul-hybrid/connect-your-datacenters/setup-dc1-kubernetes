@@ -48,7 +48,7 @@ systemctl status etcd.service
 curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--node-name=dc1-kubernetes --docker --storage-endpoint=http://127.0.0.1:2379 --no-flannel --no-deploy traefik" sh -
 mkdir -p /root/.kube
 cp /etc/rancher/k3s/k3s.yaml /root/.kube/config
-sleep  30
+sleep  10
 
 #Storage
 kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
@@ -60,7 +60,7 @@ sed -i 's/<ETCD_IP>/127.0.0.1/g' calico.yaml
 sed -i 's/<ETCD_PORT>/2379/g' calico.yaml
 kubectl apply -f calico.yaml
 
-sleep 10
+sleep 5
 
 curl -O -L  https://github.com/projectcalico/calicoctl/releases/download/v3.5.8/calicoctl
 chmod +x calicoctl
@@ -84,7 +84,7 @@ chmod 700 get_helm.sh && ./get_helm.sh && rm ./get_helm.sh
 kubectl -n kube-system create serviceaccount tiller
 kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
 helm init --wait --service-account tiller
-sleep 15
+sleep 3
 
 #Get the Consul server IP
 consul_server_ip=$(getent ahostsv4 dc1-consul-server |  awk '{print $1}' | head -1)

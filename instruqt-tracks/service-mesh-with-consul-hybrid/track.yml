@@ -250,9 +250,9 @@ challenges:
     hostname: dc1-kubernetes
   - title: Jaeger UI
     type: service
-    hostname: dc1-kubernetes
+    hostname: dc1-jaeger-server
     path: /search?service=web
-    port: 31686
+    port: 16686
   difficulty: basic
   timelimit: 900
 - slug: add-the-legacy-sidecar
@@ -341,7 +341,7 @@ challenges:
                      -bind-address "public=${local_ipv4}:443" \
                      -admin-bind 127.0.0.1:19000 > /gateway.out &
     ```
-    Now we've got our gateway running we can see we have a few listeners for this traffic.
+    Now we've got our gateway running we can see we have a listener for this traffic.
 
     ```
     curl localhost:19000/listeners
@@ -406,7 +406,7 @@ challenges:
                      -admin-bind 127.0.0.1:19000 > /gateway.out &
     ```
 
-    We can now verify our new listeners.
+    We can now verify our new listener.
 
     ```
     curl localhost:19000/listeners
@@ -476,23 +476,24 @@ challenges:
     currency.default.dc2.internal.<spiffe_domain>.consul
     ```
 
-    That's the SNI header. It's the **only** piece of infromation the gateway can see, and this value allows it to be sent to the correct gateway.
-    The packet is not decrypted until it reaches the last sidecar proxy.  <br>
+    That's the SNI header. It's the **only** piece of infromation the gateway can see, and this value allows it to be sent to the correct gateway. <br>
+
+    The packet is not decrypted until it reaches the last sidecar proxy, so we have end-to-end encryption across over the WAN between our DCs. <br>
 
     Nice work!!! You just ran your first Mesh Gateway workload!!!
   notes:
   - type: text
     contents: |-
       Now that we have gateways to connect our DCs, we can redeploy our application, and route the entire component flow through the sidecars and gateways.
-      We'll expect some of the traffic through the gateways to validate they are being used, and look specifically at the SNI headers.
+      We'll inspect some of the traffic through the gateways to validate they are being used, and look specifically at the **SNI** headers, as well as trace data. <br>
   tabs:
-  - title: DC1 - K8s
-    type: terminal
-    hostname: dc1-kubernetes
   - title: DC1 - App Config
     type: code
     hostname: dc1-kubernetes
-    path: /root/tracing
+    path: /root/tracing/payments.yml
+  - title: DC1 - K8s
+    type: terminal
+    hostname: dc1-kubernetes
   - title: DC1 - Gateway
     type: terminal
     hostname: dc1-consul-gateway
@@ -501,9 +502,9 @@ challenges:
     hostname: dc2-consul-gateway
   - title: Jaeger UI
     type: service
-    hostname: dc1-kubernetes
+    hostname: dc1-jaeger-server
     path: /search?service=web
-    port: 31686
+    port: 16686
   difficulty: basic
   timelimit: 300
-checksum: "778986559462713506"
+checksum: "12585746641652350340"

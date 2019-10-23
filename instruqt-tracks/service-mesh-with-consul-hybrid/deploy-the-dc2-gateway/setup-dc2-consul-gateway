@@ -1,6 +1,8 @@
 #!/bin/bash
 
 #nmap for debug
+sleep 10
+apt update -y
 apt install nmap unzip -y
 
 #envoy
