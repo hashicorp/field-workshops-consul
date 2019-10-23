@@ -1,0 +1,62 @@
+#!/bin/bash
+
+#nmap for debug
+apt install nmap unzip -y
+
+#envoy
+curl -O https://s3.amazonaws.com/llarsen-envoy-binaries/envoy-1.9.0-linux-amd64
+mv envoy-1.9.0-linux-amd64 /usr/local/bin/envoy
+chmod +x /usr/local/bin/envoy
+
+#consul
+wget https://releases.hashicorp.com/consul/1.6.1/consul_1.6.1_linux_amd64.zip -O /tmp/consul.zip
+cd /usr/local/bin
+unzip /tmp/consul.zip
+chmod +x /usr/local/bin/consul
+mkdir -p /consul/config
+mkdir -p /consul/data
+cd /
+
+# Configures the Consul client
+cat <<-EOF > /consul/config/client.json
+{
+  "datacenter": "dc2",
+  "server": false,
+  "bind_addr": "0.0.0.0",
+  "client_addr": "0.0.0.0",
+  "data_dir": "/consul/data",
+  "log_level": "INFO",
+  "node_name": "Gateway",
+  "ui": true,
+  "connect": {
+    "enabled": true
+  },
+  "enable_central_service_config": true,
+  "ports": {
+    "grpc": 8502
+  },
+  "retry_join": [
+    "dc2-consul-server:8301"
+  ]
+}
+EOF
+
+echo "Killing the currently running Consul agent..."
+pkill consul
+
+echo "Creating Consul startup script..."
+cat <<-EOF > /bin/start_consul.sh
+#!/bin/sh
+echo "Starting HashiCorp Consul..."
+sleep 1
+echo "CMD: nohup consul agent -config-dir=/consul/config > /consul.out &"
+nohup consul agent -config-dir=/consul/config > /consul.out &
+echo "Log output will appear in consul.out..."
+sleep 1
+echo "Consul server startup complete."
+EOF
+
+chmod +x /bin/start_consul.sh
+/bin/start_consul.sh
+
+exit 0

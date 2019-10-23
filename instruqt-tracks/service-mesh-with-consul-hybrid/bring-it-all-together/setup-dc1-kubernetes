@@ -1,0 +1,11 @@
+#!/bin/bash
+
+rm -rf tracing
+git clone https://github.com/hashicorp/field-workshops-consul.git
+cp -r field-workshops-consul/apps/tracing .
+rm -rf field-workshops-consul
+rm -f tracing/currency.yml
+
+sed -i 's/currency:9094/currency:9094:dc2/g' /root/tracing/payments.yml
+
+exit 0

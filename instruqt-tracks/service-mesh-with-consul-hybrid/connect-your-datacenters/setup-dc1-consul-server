@@ -1,0 +1,111 @@
+#!/bin/bash
+
+#get ip
+local_ipv4=$(curl -s -H "Metadata-Flavor: Google" http://metadata/computeMetadata/v1/instance/network-interfaces/0/ip)
+
+#utils
+sleep 10
+apt update -y
+apt install -y unzip docker.io
+
+#consul
+wget https://releases.hashicorp.com/consul/1.6.1/consul_1.6.1_linux_amd64.zip -O /tmp/consul.zip
+cd /usr/local/bin
+unzip /tmp/consul.zip
+chmod +x /usr/local/bin/consul
+mkdir -p /consul/config
+mkdir -p /consul/data
+cd /
+
+#calico
+ETCD_ENDPOINTS=http://dc1-kubernetes:2379
+ETCD_CA_CERT_FILE=""
+ETCD_CERT_FILE=""
+ETCD_KEY_FILE=""
+CALICO_NODENAME="consul"
+CALICO_NO_DEFAULT_POOLS=""
+CALICO_IP=""
+CALICO_IP6=""
+CALICO_AS=""
+CALICO_NETWORKING_BACKEND=bird
+
+cat <<-EOF > /etc/systemd/system/calico-node.service
+[Unit]
+Description=calico-node
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker rm -f calico-node
+ExecStart=/usr/bin/docker run --net=host --privileged \
+ --name=calico-node \
+ -e NODENAME=${CALICO_NODENAME} \
+ -e IP=${CALICO_IP} \
+ -e IP6=${CALICO_IP6} \
+ -e CALICO_NETWORKING_BACKEND=${CALICO_NETWORKING_BACKEND} \
+ -e AS=${CALICO_AS} \
+ -e NO_DEFAULT_POOLS=${CALICO_NO_DEFAULT_POOLS} \
+ -e ETCD_ENDPOINTS=${ETCD_ENDPOINTS} \
+ -e ETCD_CA_CERT_FILE=${ETCD_CA_CERT_FILE} \
+ -e ETCD_CERT_FILE=${ETCD_CERT_FILE} \
+ -e ETCD_KEY_FILE=${ETCD_KEY_FILE} \
+ -v /var/log/calico:/var/log/calico \
+ -v /run/docker/plugins:/run/docker/plugins \
+ -v /lib/modules:/lib/modules \
+ -v /var/run/calico:/var/run/calico \
+ calico/node:v3.10.0
+
+ExecStop=-/usr/bin/docker stop calico-node
+
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable calico-node.service
+systemctl start calico-node.service
+
+# Configures the Consul server
+cat <<-EOF > /consul/config/server.json
+{
+  "datacenter": "dc1",
+  "primary_datacenter": "dc1",
+  "bind_addr": "${local_ipv4}",
+  "client_addr": "0.0.0.0",
+  "data_dir": "/consul/data",
+  "log_level": "INFO",
+  "node_name": "ConsulServer",
+  "server": true,
+  "ui": true,
+  "bootstrap_expect": 1,
+  "leave_on_terminate": false,
+  "skip_leave_on_interrupt": true,
+  "rejoin_after_leave": true,
+  "connect": {
+    "enabled": true
+  }
+}
+EOF
+
+echo "Killing the currently running Consul agent..."
+pkill consul
+
+echo "Creating Consul startup script..."
+cat <<-EOF > /bin/start_consul.sh
+#!/bin/sh
+echo "Starting HashiCorp Consul in Server Mode..."
+sleep 1
+echo "CMD: nohup consul agent -config-dir=/consul/config > /consul.out &"
+nohup consul agent -config-dir=/consul/config > /consul.out &
+echo "Log output will appear in consul.out..."
+sleep 1
+echo "Consul server startup complete."
+EOF
+
+chmod +x /bin/start_consul.sh
+/bin/start_consul.sh
+
+exit 0

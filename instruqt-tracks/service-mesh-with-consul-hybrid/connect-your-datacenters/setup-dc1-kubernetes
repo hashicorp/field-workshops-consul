@@ -1,0 +1,126 @@
+#!/bin/bash
+
+#Install docker
+sleep 10
+apt update -y
+apt install docker.io jq unzip -y
+
+#Consul
+wget https://releases.hashicorp.com/consul/1.6.1/consul_1.6.1_linux_amd64.zip -O /tmp/consul.zip
+cd /usr/local/bin
+unzip /tmp/consul.zip
+chmod +x /usr/local/bin/consul
+mkdir -p /consul/config
+mkdir -p /consul/data
+cd /
+
+#Install etcd
+curl -L -O https://github.com/etcd-io/etcd/releases/download/v3.4.1/etcd-v3.4.1-linux-amd64.tar.gz
+tar -xvzf etcd-v3.4.1-linux-amd64.tar.gz
+cp etcd-v3.4.1-linux-amd64/etcd /usr/local/bin/etcd
+
+cat <<-EOF > /etc/systemd/system/etcd.service
+[Unit]
+Description=etcd key-value store
+Documentation=https://github.com/etcd-io/etcd
+After=network.target
+
+[Service]
+Type=notify
+Environment=ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+Environment=ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
+Environment=ETCD_ENABLE_V2=true
+ExecStart=/usr/local/bin/etcd
+Restart=always
+RestartSec=10s
+LimitNOFILE=40000
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable etcd.service
+systemctl start etcd.service
+systemctl status etcd.service
+
+#Install k3s
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--node-name=kubernetes --docker --storage-endpoint=http://127.0.0.1:2379 --no-flannel --no-deploy traefik" sh -
+mkdir -p /root/.kube
+cp /etc/rancher/k3s/k3s.yaml /root/.kube/config
+sleep  15
+
+#Storage
+kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+
+#Install calico
+curl https://docs.projectcalico.org/v3.9/manifests/calico-etcd.yaml -o calico.yaml
+sed -i 's/<ETCD_IP>/127.0.0.1/g' calico.yaml
+sed -i 's/<ETCD_PORT>/2379/g' calico.yaml
+kubectl apply -f calico.yaml
+
+sleep 10
+
+curl -O -L  https://github.com/projectcalico/calicoctl/releases/download/v3.5.8/calicoctl
+chmod +x calicoctl
+mv calicoctl /usr/local/bin/calicoctl
+
+export ETCD_ENDPOINTS="http://127.0.0.1:2379"
+calicoctl apply -f - << EOF
+apiVersion: projectcalico.org/v3
+kind: IPPool
+metadata:
+  name: default-ipv4-ippool
+spec:
+  cidr: 192.168.0.0/16
+  ipipMode: Always
+  natOutgoing: true
+EOF
+
+#install helm
+curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
+chmod 700 get_helm.sh && ./get_helm.sh && rm ./get_helm.sh
+kubectl -n kube-system create serviceaccount tiller
+kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+helm init --wait --service-account tiller
+sleep 15
+
+#Get the Consul server IP
+consul_server_ip=$(getent ahostsv4 dc1-consul-server |  awk '{print $1}' | head -1)
+
+#Set up the consul default values
+cat <<-EOF > /root/consul-values.yaml
+global:
+  datacenter: dc1
+  image: "consul:1.6.1"
+  imageK8S: "hashicorp/consul-k8s:0.9.2"
+
+server:
+  enabled: false
+
+client:
+  enabled: true
+  grpc: true
+  join: [${consul_server_ip}]
+
+ui:
+  enabled: true
+
+dns:
+  enabled: true
+
+connectInject:
+  enabled: true
+  imageEnvoy: envoyproxy/envoy:v1.9.1
+  default: false
+  centralConfig:
+    enabled: true
+EOF
+
+#Apply Consul helm
+cd /root
+git clone https://github.com/hashicorp/consul-helm.git
+helm install -f consul-values.yaml --name lab ./consul-helm
+
+exit 0

@@ -1,0 +1,513 @@
+slug: service-mesh-with-consul-hybrid
+id: akamvplbrcry
+type: track
+title: Service Mesh with Consul Hybrid
+teaser: Connect disparate platforms across datacenters.
+description: In this track you leverage mesh gateways to connect applications and
+  services between K8s and VMs in remote datacenters.
+icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
+tags: []
+owner: hashicorp
+developers:
+- lance@hashicorp.com
+private: false
+published: true
+challenges:
+- slug: connect-your-datacenters
+  id: i8yrscsmhmjx
+  type: challenge
+  title: Connect your Datacenters
+  teaser: A short description of the challenge.
+  assignment: |-
+    Let's take a brief moment to review our environment. <br>
+
+    In DC1, we have a VM running a Consul server.
+    We also have a Kubernetes cluster running with a single worker node.
+    This Kubernetes worker node has a Consul agent running on it with a DaemonSet. <br>
+
+    In DC2, we have a VM running a Consul server.
+    We also have a VM that will run our legacy service. <br>
+
+    The lab is preconfigured for connectvity within each Consul DC, but we need to make each datacenter Consul aware of the other datacenter. <br>
+
+    Let's do this by connecting our two Consul datacenters with a `wan join`.
+    This will allow us to manage our workloads accross the datacenters. <br>
+
+    ```
+    consul join -wan dc2-consul-server
+    ```
+
+    Now let's check our members output
+
+    ```
+    consul members -wan
+    ```
+
+    Great! Now that we have federation between our Consul datacenters, we can start deploying our workloads.
+  notes:
+  - type: text
+    contents: |-
+      In this track we will connect applications across two separate datacenters, with application components in each.
+      Our lab datacenters will reflect a common heterogeneous environment.
+
+      * DC1 - Kubernetes & VM Environment (greenfield)
+      * DC2 - VM Environment (legacy)
+
+      The two most common problems when connecting datacenters in this pattern are:
+
+      1. Overlapping IP spaces
+      2. Firewall complexities
+
+      In this track we will show you how Consul Connect and Mesh Gateways can solve this problem. <br>
+
+      We need a few minutes to spin up your K8s infrastructure.
+  - type: image
+    url: https://d33wubrfki0l68.cloudfront.net/8292712f35fb64c68de96c43d41c7bf320abbe04/e3ccb/static/img/k8s-cluster-consul-datacenter.png
+  tabs:
+  - title: DC1 - Consul
+    type: terminal
+    hostname: dc1-consul-server
+  - title: DC1 - UI
+    type: service
+    hostname: dc1-consul-server
+    path: /ui/dc1/nodes
+    port: 8500
+  - title: DC2 - UI
+    type: service
+    hostname: dc2-consul-server
+    path: /ui/dc2/nodes
+    port: 8500
+  difficulty: basic
+  timelimit: 900
+- slug: deploy-your-legacy-app
+  id: tllzuoxgzfbe
+  type: challenge
+  title: Deploy your Legacy App
+  teaser: Deploy legacy services to your on-prem datacenter.
+  assignment: |-
+    We have the Currency service running for you on the VM in DC2.
+    You can see it running with Docker.
+    We've also added a Consul service definition, which you can see in the code editor. <br>
+
+    ```
+    docker ps -a
+    ```
+
+    Let's add a Consul health check for the service, and reload it.
+
+    ```
+    cat <<-EOF > /consul/config/currency-service.json
+    {
+      "service": {
+        "name": "currency",
+        "tags": [
+          "production"
+        ],
+        "port": 9094,
+        "check": {
+          "id": "http",
+          "name": "traffic on port 9094",
+          "http": "http://127.0.0.1:9094/health",
+          "interval": "10s",
+          "timeout": "1s"
+        }
+      }
+    }
+    EOF
+
+    consul reload
+    ```
+
+    You should see a healthy service in Consul. We can also test this service locally.
+
+    ```
+    curl -s  http://127.0.0.1:9094 | jq
+    ```
+
+    Nice work! Now let's deploy the rest of our application in the other datacenter.
+  notes:
+  - type: text
+    contents: |-
+      We will use our tracing app from the previous track for this lab.
+      As you recall, the app is broken out into five components:
+
+      * Frontend - Access to our application
+      * API - GRPC API to backend services
+      * Cache - Cache responses for our API
+      * Payments  - Process payments
+      * Currency - Do currency lookups for our payments
+
+      Our currency service will represent our legacy workload running on-prem in DC2.
+  tabs:
+  - title: DC2 - App
+    type: terminal
+    hostname: dc2-app-server
+  - title: DC2 - UI
+    type: service
+    hostname: dc2-consul-server
+    path: /ui/dc2
+    port: 8500
+  difficulty: basic
+  timelimit: 900
+- slug: deploy-the-modern-app
+  id: 4ivf5ahd7jwv
+  type: challenge
+  title: Deploy the Modern App
+  teaser: A short description of the challenge.
+  assignment: |-
+    We've made a few minor changes to the deploment spec from the last track.
+    You'll notice we've removed the spec file for the `currency` service, as it's already running in DC2. <br>
+
+    We've also removed the `sidecar` upstreams from the `payments` service that calls the currency service, replaced it with a Consul DNS definition instead.
+    This is a common transition pattern where service discovery aware apps can become service mesh aware in a phased rollout. <br>
+
+    Check this out in the `payments.yml` deployment file. <br>
+
+    ```
+    - name: UPSTREAM_URIS
+      value: "http://currency.service.dc2.consul:9094"
+    ```
+
+    Let's deploy the rest of the application and test it. Our frontend web component is accessible via nodeport.
+
+    ```
+    kubectl apply -f  tracing
+    ```
+
+    Once all the pods are ready, we can send traffic to the frontend.
+
+    ```
+    curl -s localhost:30900 | jq
+    ```
+
+    Hmmm, it looks like something went wrong. You should see a similar timeout message. <br>
+
+    ```
+    rpc error: code = Unavailable desc = upstream request timeout
+    ```
+
+    That error is not particularly helpful.
+    Let's use our tracing infrastructure to run this down in the next assignment.
+  notes:
+  - type: text
+    contents: Now that we have our legacy service running in DC2, let's deploy the
+      rest of the application in DC1.
+  tabs:
+  - title: DC1 - App Config
+    type: code
+    hostname: dc1-kubernetes
+    path: /root/tracing
+  - title: DC1 - UI
+    type: service
+    hostname: dc1-consul-server
+    path: /ui/dc1
+    port: 8500
+  - title: DC2 - UI
+    type: service
+    hostname: dc1-consul-server
+    path: /ui/dc2
+    port: 8500
+  - title: DC1 - K8s
+    type: terminal
+    hostname: dc1-kubernetes
+  difficulty: basic
+  timelimit: 900
+- slug: find-the-issue
+  id: xeiyeagxgrqr
+  type: challenge
+  title: Find the Issue
+  teaser: A short description of the challenge.
+  assignment: |-
+    Let's revisit our Jaeger UI and take a look at the latest trace data.
+    You should see a message similar to this  in the payents trace.
+
+    ```
+    "error:Error communicating with upstream service: Get http://currency.service.dc2.consul:9094/: dial tcp <ip>:9094: connect: connection timed out"
+    ```
+
+    It seems even though we could discover the service in the datacenter, we don't actually have a route to that service, or the network is blocking it.
+
+    Let's explore this further with a basic connectivity check between our K8s node and our server runing in the other DC. <br>
+
+    We know that IP is our Currency service running on our DC2 app server, so we can test with the below command. <br>
+
+    **Note**: the lab env helps us this with this resolution. <br>
+
+    ```
+    ip=$(getent ahostsv4 dc2-app-server |  awk '{print $1}' | head -1)
+    nmap -p 9094 $ip
+    ```
+
+    It looks like that route is indeed blocked. We can see the status as `filtered`. <br>
+
+    Let's look at how Mesh Gateways can help us solve this problem in the next exercise.
+  notes:
+  - type: text
+    contents: |-
+      In this section we will investigate the connectivity issues between
+      DCs. We'll wait a minute or so for our traces to propagate.
+  tabs:
+  - title: DC1 - K8s
+    type: terminal
+    hostname: dc1-kubernetes
+  - title: Jaeger UI
+    type: service
+    hostname: dc1-kubernetes
+    path: /search?service=web
+    port: 31686
+  difficulty: basic
+  timelimit: 900
+- slug: add-the-legacy-sidecar
+  id: rtl3rsmtneic
+  type: challenge
+  title: Add the Legacy Sidecar
+  teaser: A short description of the challenge.
+  assignment: |-
+    Let's start by updating consul with a sidecar service definition. <br>
+
+    ```
+    cat <<-EOF > /consul/config/currency-service.json
+    {
+      "service": {
+        "name": "currency",
+        "tags": [
+          "production"
+        ],
+        "port": 9094,
+        "connect": { "sidecar_service": {} },
+        "check": {
+          "id": "http",
+          "name": "traffic on port 9094",
+          "http": "http://127.0.0.1:9094/health",
+          "interval": "10s",
+          "timeout": "1s"
+        }
+      }
+    }
+    EOF
+
+    consul reload
+    ```
+
+    Now we can start our sidecar.
+
+    ```
+    nohup consul connect envoy -sidecar-for=currency > /envoy.out &
+    ```
+
+    Excellent. Now let's create our gateways.
+  notes:
+  - type: text
+    contents: To make our legacy service work with the mesh gateways, we need to run
+      a proxy next to the service, which we will deploy in this assignment.
+  tabs:
+  - title: DC2 - App
+    type: terminal
+    hostname: dc2-app-server
+  - title: DC2 - UI
+    type: service
+    hostname: dc1-consul-server
+    path: /ui/dc2
+    port: 8500
+  difficulty: basic
+  timelimit: 300
+- slug: deploy-the-dc2-gateway
+  id: gl8vtewtwevq
+  type: challenge
+  title: Deploy the DC2 Gateway
+  teaser: A short description of the challenge.
+  assignment: |-
+    We have introduced a new server that will represent ingress and egress points for DC2.
+    Let's do some basic connectivity checks before we make Consul aware of our gateway nodes. <br>
+
+    Let's first check our gateway in DC2 can reach the local app.
+    We'll use some helpful resolution from the lab env to grab the same IP from our Jaeger trace. <br>
+
+    ```
+    ip=$(getent ahostsv4 dc2-app-server |  awk '{print $1}' | head -1)
+    nmap -p 9094 $ip
+    ```
+
+    It looks like our Gateway server in DC2 has a direct route to our application.
+    We can see this with the state of `open`. Progress!
+
+    Now we can configure the node to be a mesh gateway and bring it into our mesh.
+    There is a Consul agent already running on this machine. <br>
+
+    ```
+    local_ipv4=$(curl -s -H "Metadata-Flavor: Google" http://metadata/computeMetadata/v1/instance/network-interfaces/0/ip)
+    nohup consul connect envoy -mesh-gateway -register \
+                     -service "gateway" \
+                     -address ${local_ipv4}:443 \
+                     -wan-address ${local_ipv4}:443 \
+                     -bind-address "public=${local_ipv4}:443" \
+                     -admin-bind 127.0.0.1:19000 > /gateway.out &
+    ```
+    Now we've got our gateway running we can see we have a few listeners for this traffic.
+
+    ```
+    curl localhost:19000/listeners
+    ```
+
+    Let's repeat this deployment in DC1.
+  notes:
+  - type: text
+    contents: |-
+      In the last assignment we discovered our Kubernetes cluster in DC1 was not able to route to our legacy app running in DC2.
+      This is a common problem, and in general these types of routes can be tricky to set up and secure. <br>
+
+      In this lab we will deploy a Mesh Gateway in DC2 and establish connectivity between the gateway and our service.
+  - type: image
+    url: https://www.consul.io/assets/images/mesh-gateways-a71b1ce3.png
+  tabs:
+  - title: DC2 - Gateway
+    type: terminal
+    hostname: dc2-consul-gateway
+  - title: DC2 - UI
+    type: service
+    hostname: dc1-consul-server
+    path: /ui/dc2
+    port: 8500
+  difficulty: basic
+  timelimit: 900
+- slug: deploy-the-dc1-gateway
+  id: ilvgq6nayfv6
+  type: challenge
+  title: Deploy the DC1 Gateway
+  teaser: A short description of the challenge.
+  assignment: |-
+    First, let's check our connectivity again.
+    We can check this between gateways now that our DC2 gateway is accepting traffic. <br>
+
+    Let's check the gateway to the DC2 app server first.
+
+    ```
+    ip=$(getent ahostsv4 dc2-app-server |  awk '{print $1}' | head -1)
+    nmap -p 9094 $ip
+    ```
+
+    Let's check the gateway in DC1 to the gateway in DC2.
+
+    ```
+    ip=$(getent ahostsv4 dc2-consul-gateway |  awk '{print $1}' | head -1)
+    nmap -p 443 $ip
+    ```
+
+    Our gateway can reach the other gateway, but not the app server.
+    This is the behavior we expect based on our lab environment.
+    The gateways will handle all the cross DC traffic, so we don't have to worry about it. <br>
+
+    Now let's start up the Gateway in DC1.
+    There is a preconfigured Consul agent on this box. <br>
+
+    ```
+    local_ipv4=$(curl -s -H "Metadata-Flavor: Google" http://metadata/computeMetadata/v1/instance/network-interfaces/0/ip)
+    nohup consul connect envoy -mesh-gateway -register \
+                     -service "gateway" \
+                     -address ${local_ipv4}:443 \
+                     -wan-address ${local_ipv4}:443 \
+                     -bind-address "public=${local_ipv4}:443" \
+                     -admin-bind 127.0.0.1:19000 > /gateway.out &
+    ```
+
+    We can now verify our new listeners.
+
+    ```
+    curl localhost:19000/listeners
+    ```
+
+    Now that we have gateway to gateway connectivity, let's fix our app and redeploy it to use the sidecars across gateways.
+  notes:
+  - type: text
+    contents: Now that we have a Gateway in DC2 that can talk to our legacy service,
+      we can spin up a gateway in DC1, and connect the two gateways.
+  tabs:
+  - title: DC1 - Gateway
+    type: terminal
+    hostname: dc1-consul-gateway
+  - title: DC2 - Gateway
+    type: terminal
+    hostname: dc2-consul-gateway
+  - title: DC1 - UI
+    type: service
+    hostname: dc1-consul-server
+    path: /ui/dc1
+    port: 8500
+  - title: DC2 - UI
+    type: service
+    hostname: dc1-consul-server
+    path: /ui/dc2
+    port: 8500
+  difficulty: basic
+  timelimit: 300
+- slug: bring-it-all-together
+  id: z1mn5uy8ougt
+  type: challenge
+  title: Bring it all together
+  teaser: A short description of the challenge.
+  assignment: |-
+    First, let's set up some tcpdumps to inspect the traffic on our gateways. <br>
+
+    On the DC1 gateway, run the following. This filter looks specifically at the SSL handshake hello packet. <br>
+
+    ```
+    tcpdump -i ens4 -s 1500 '(tcp[((tcp[12:1] & 0xf0) >> 2)+5:1] = 0x01) and (tcp[((tcp[12:1] & 0xf0) >> 2):1] = 0x16)' -nnXSs0 -ttt
+    ```
+
+    On the DC2 gateway, run the following.  We'll look at all the packets.
+
+    ```
+    tcpdump -i ens4 port 443 -nnXX -vv -A
+    ```
+
+    Now we can redeploy our app on the `DC1 - K8s` tab.
+
+    ```
+    kubectl apply -f tracing
+    ```
+
+    Next, let's simulate some traffic through the `DC1 - K8s` tab.
+
+    ```
+    curl -s localhost:30900 | jq
+    ```
+
+    Awesome. You've fixed the application across DCs!! Go check out the new Jaeger traces!! <br>
+
+    If you look closely at the packets in the `DC1 - Gateway` tab you'll see a a similar value that is not encrypted.
+
+    ```
+    currency.default.dc2.internal.<spiffe_domain>.consul
+    ```
+
+    That's the SNI header. It's the **only** piece of infromation the gateway can see, and this value allows it to be sent to the correct gateway.
+    The packet is not decrypted until it reaches the last sidecar proxy.  <br>
+
+    Nice work!!! You just ran your first Mesh Gateway workload!!!
+  notes:
+  - type: text
+    contents: |-
+      Now that we have gateways to connect our DCs, we can redeploy our applciation, and route the entire component flow through the sidecars and gateways.
+      We'll expect some of the traffic through the gateways to validate they are being used, and look specifically at the SNI headers.
+  tabs:
+  - title: DC1 - K8s
+    type: terminal
+    hostname: dc1-kubernetes
+  - title: DC1 - App Config
+    type: code
+    hostname: dc1-kubernetes
+    path: /root/tracing
+  - title: DC1 - Gateway
+    type: terminal
+    hostname: dc1-consul-gateway
+  - title: DC2 - Gateway
+    type: terminal
+    hostname: dc2-consul-gateway
+  - title: Jaeger UI
+    type: service
+    hostname: dc1-kubernetes
+    path: /search?service=web
+    port: 31686
+  difficulty: basic
+  timelimit: 300
+checksum: "10767002428454536612"

@@ -1,0 +1,57 @@
+#!/bin/bash
+
+#utils
+sleep 10
+apt update -y
+apt install -y unzip
+
+#consul
+wget https://releases.hashicorp.com/consul/1.6.1/consul_1.6.1_linux_amd64.zip -O /tmp/consul.zip
+cd /usr/local/bin
+unzip /tmp/consul.zip
+chmod +x /usr/local/bin/consul
+mkdir -p /consul/config
+mkdir -p /consul/data
+cd /
+
+# Configures the Consul server
+cat <<-EOF > /consul/config/server.json
+{
+  "datacenter": "dc2",
+  "primary_datacenter": "dc1",
+  "bind_addr": "0.0.0.0",
+  "client_addr": "0.0.0.0",
+  "data_dir": "/consul/data",
+  "log_level": "INFO",
+  "node_name": "ConsulServer",
+  "server": true,
+  "ui": true,
+  "bootstrap_expect": 1,
+  "leave_on_terminate": false,
+  "skip_leave_on_interrupt": true,
+  "rejoin_after_leave": true,
+  "connect": {
+    "enabled": true
+  }
+}
+EOF
+
+echo "Killing the currently running Consul agent..."
+pkill consul
+
+echo "Creating Consul startup script..."
+cat <<-EOF > /bin/start_consul.sh
+#!/bin/sh
+echo "Starting HashiCorp Consul in Server Mode..."
+sleep 1
+echo "CMD: nohup consul agent -config-dir=/consul/config > /consul.out &"
+nohup consul agent -config-dir=/consul/config > /consul.out &
+echo "Log output will appear in consul.out..."
+sleep 1
+echo "Consul server startup complete."
+EOF
+
+chmod +x /bin/start_consul.sh
+/bin/start_consul.sh
+
+exit 0

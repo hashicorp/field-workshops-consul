@@ -1,0 +1,88 @@
+#!/bin/bash
+
+#get ip
+local_ipv4=$(curl -H "Metadata-Flavor: Google" http://metadata/computeMetadata/v1/instance/network-interfaces/0/ip)
+
+#utils
+sleep 10
+apt update -y
+apt install -y unzip docker.io jq
+
+#Envoy
+curl -O https://s3.amazonaws.com/llarsen-envoy-binaries/envoy-1.9.0-linux-amd64
+mv envoy-1.9.0-linux-amd64 /usr/local/bin/envoy
+chmod +x /usr/local/bin/envoy
+
+#consul
+wget https://releases.hashicorp.com/consul/1.6.1/consul_1.6.1_linux_amd64.zip -O /tmp/consul.zip
+cd /usr/local/bin
+unzip /tmp/consul.zip
+chmod +x /usr/local/bin/consul
+mkdir -p /consul/config
+mkdir -p /consul/data
+cd /
+
+# Configures the Consul client
+cat <<-EOF > /consul/config/client.json
+{
+  "datacenter": "dc2",
+  "server": false,
+  "bind_addr": "${local_ipv4}",
+  "client_addr": "0.0.0.0",
+  "data_dir": "/consul/data",
+  "log_level": "INFO",
+  "node_name": "Currency",
+  "ui": true,
+  "connect": {
+    "enabled": true
+  },
+  "enable_central_service_config": true,
+  "ports": {
+    "grpc": 8502
+  },
+  "retry_join": [
+    "dc2-consul-server:8301"
+  ]
+}
+EOF
+
+echo "Killing the currently running Consul agent..."
+pkill consul
+
+echo "Creating Consul startup script..."
+cat <<-EOF > /bin/start_consul.sh
+#!/bin/sh
+echo "Starting HashiCorp Consul..."
+sleep 1
+echo "CMD: nohup consul agent -config-dir=/consul/config > /consul.out &"
+nohup consul agent -config-dir=/consul/config > /consul.out &
+echo "Log output will appear in consul.out..."
+sleep 1
+echo "Consul server startup complete."
+EOF
+
+chmod +x /bin/start_consul.sh
+/bin/start_consul.sh
+
+#run the app
+
+curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+cat <<-EOF > /docker-compose.yml
+version: '3'
+services:
+  currency:
+    network_mode: "host"
+    environment:
+      LISTEN_ADDR: 0.0.0.0:9094
+      MESSAGE: "Currency response"
+      NAME: "currency"
+      SERVER_TYPE: "http"
+      TRACING_ZIPKIN: "http://jaeger-collector:30411"
+    image: "nicholasjackson/fake-service:v0.6.3"
+EOF
+
+/usr/local/bin/docker-compose up -d
+
+exit 0
