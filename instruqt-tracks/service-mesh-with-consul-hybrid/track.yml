@@ -61,8 +61,6 @@ challenges:
       In this track we will show you how Consul Connect and Mesh Gateways can solve this problem. <br>
 
       We need a few minutes to spin up your K8s infrastructure.
-  - type: image
-    url: https://d33wubrfki0l68.cloudfront.net/8292712f35fb64c68de96c43d41c7bf320abbe04/e3ccb/static/img/k8s-cluster-consul-datacenter.png
   tabs:
   - title: DC1 - Consul
     type: terminal
@@ -357,8 +355,6 @@ challenges:
       This is a common problem, and in general these types of routes can be tricky to set up and secure. <br>
 
       In this lab we will deploy a Mesh Gateway in DC2 and establish connectivity between the gateway and our service.
-  - type: image
-    url: https://www.consul.io/assets/images/mesh-gateways-a71b1ce3.png
   tabs:
   - title: DC2 - Gateway
     type: terminal
@@ -487,7 +483,7 @@ challenges:
   notes:
   - type: text
     contents: |-
-      Now that we have gateways to connect our DCs, we can redeploy our applciation, and route the entire component flow through the sidecars and gateways.
+      Now that we have gateways to connect our DCs, we can redeploy our application, and route the entire component flow through the sidecars and gateways.
       We'll expect some of the traffic through the gateways to validate they are being used, and look specifically at the SNI headers.
   tabs:
   - title: DC1 - K8s
@@ -510,4 +506,4 @@ challenges:
     port: 31686
   difficulty: basic
   timelimit: 300
-checksum: "10767002428454536612"
+checksum: "778986559462713506"

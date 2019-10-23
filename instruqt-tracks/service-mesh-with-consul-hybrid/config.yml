@@ -23,7 +23,7 @@ virtualmachines:
 - name: dc1-kubernetes
   image: ubuntu-1804-lts
   shell: /bin/bash
-  machine_type: n1-standard-1
+  machine_type: n1-standard-2
 - name: dc1-jaeger-server
   image: ubuntu-1804-lts
   shell: /bin/bash

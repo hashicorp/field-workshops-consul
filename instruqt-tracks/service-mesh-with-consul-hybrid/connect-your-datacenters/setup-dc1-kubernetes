@@ -45,10 +45,10 @@ systemctl start etcd.service
 systemctl status etcd.service
 
 #Install k3s
-curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--node-name=kubernetes --docker --storage-endpoint=http://127.0.0.1:2379 --no-flannel --no-deploy traefik" sh -
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--node-name=dc1-kubernetes --docker --storage-endpoint=http://127.0.0.1:2379 --no-flannel --no-deploy traefik" sh -
 mkdir -p /root/.kube
 cp /etc/rancher/k3s/k3s.yaml /root/.kube/config
-sleep  15
+sleep  30
 
 #Storage
 kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
