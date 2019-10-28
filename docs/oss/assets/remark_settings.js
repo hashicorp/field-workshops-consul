@@ -12,6 +12,7 @@ sourceUrls = [
   '4.md',
   '5.md',
   '6.md',
+  '7.md',
   '99.md'
   ]
 
