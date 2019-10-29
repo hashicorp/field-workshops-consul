@@ -1,25 +1,16 @@
 #!/bin/bash
 
-#utils
-sleep 10
-apt update -y
-apt install -y unzip
+#Consul
+service consul stop
+local_ipv4=$(curl -s -H "Metadata-Flavor: Google" http://metadata/computeMetadata/v1/instance/network-interfaces/0/ip)
 
-#consul
-wget https://releases.hashicorp.com/consul/1.6.1/consul_1.6.1_linux_amd64.zip -O /tmp/consul.zip
-cd /usr/local/bin
-unzip /tmp/consul.zip
-chmod +x /usr/local/bin/consul
-mkdir -p /consul/config
 mkdir -p /consul/data
-cd /
 
-# Configures the Consul server
-cat <<-EOF > /consul/config/server.json
+cat <<-EOF > /etc/consul.d/server.json
 {
   "datacenter": "dc2",
   "primary_datacenter": "dc1",
-  "bind_addr": "0.0.0.0",
+  "bind_addr": "${local_ipv4}",
   "client_addr": "0.0.0.0",
   "data_dir": "/consul/data",
   "log_level": "INFO",
@@ -36,22 +27,6 @@ cat <<-EOF > /consul/config/server.json
 }
 EOF
 
-echo "Killing the currently running Consul agent..."
-pkill consul
-
-echo "Creating Consul startup script..."
-cat <<-EOF > /bin/start_consul.sh
-#!/bin/sh
-echo "Starting HashiCorp Consul in Server Mode..."
-sleep 1
-echo "CMD: nohup consul agent -config-dir=/consul/config > /consul.out &"
-nohup consul agent -config-dir=/consul/config > /consul.out &
-echo "Log output will appear in consul.out..."
-sleep 1
-echo "Consul server startup complete."
-EOF
-
-chmod +x /bin/start_consul.sh
-/bin/start_consul.sh
+service consul start
 
 exit 0

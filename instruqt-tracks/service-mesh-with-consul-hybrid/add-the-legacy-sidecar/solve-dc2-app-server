@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cat <<-EOF > /consul/config/currency-service.json
+cat <<-EOF > /etc/consul.d/currency-service.json
 {
   "service": {
     "name": "currency",

@@ -3,7 +3,7 @@ id: akamvplbrcry
 type: track
 title: Service Mesh with Consul Hybrid
 teaser: Connect disparate platforms across datacenters.
-description: In this track you leverage mesh gateways to connect applications and
+description: In this track you leverage Mesh Gateways to connect applications and
   services between K8s and VMs in remote datacenters.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags: []
@@ -17,7 +17,7 @@ challenges:
   id: i8yrscsmhmjx
   type: challenge
   title: Connect your Datacenters
-  teaser: A short description of the challenge.
+  teaser: Connect two DCs across a WAN network.
   assignment: |-
     Let's take a brief moment to review our environment. <br>
 
@@ -108,7 +108,7 @@ challenges:
     Let's add a Consul health check for the service, and reload it.
 
     ```
-    cat <<-EOF > /consul/config/currency-service.json
+    cat <<-EOF > /etc/consul.d/currency-service.json
     {
       "service": {
         "name": "currency",
@@ -165,7 +165,7 @@ challenges:
   id: 4ivf5ahd7jwv
   type: challenge
   title: Deploy the Modern App
-  teaser: A short description of the challenge.
+  teaser: Deploy our application on K8s.
   assignment: |-
     We've made a few minor changes to the deploment spec from the last track.
     You'll notice we've removed the spec file for the `currency` service, as it's already running in DC2. <br>
@@ -186,6 +186,13 @@ challenges:
 
     ```
     kubectl apply -f  tracing
+
+    sleep 15
+
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=web -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=api -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=cache -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=payments -o name)
     ```
 
     Once all the pods are ready, we can send traffic to the frontend.
@@ -197,7 +204,7 @@ challenges:
     Hmmm, it looks like something went wrong. You should see a similar timeout message. <br>
 
     ```
-    rpc error: code = Unavailable desc = upstream request timeout
+    rpc error: code = Internal desc = Error processing upstream request
     ```
 
     That error is not particularly helpful.
@@ -207,6 +214,11 @@ challenges:
     contents: Now that we have our legacy service running in DC2, let's deploy the
       rest of the application in DC1.
   tabs:
+  - title: DC1 - UI
+    type: service
+    hostname: dc1-consul-server
+    path: /ui/dc1
+    port: 8500
   - title: DC2 - UI
     type: service
     hostname: dc1-consul-server
@@ -219,25 +231,20 @@ challenges:
     type: code
     hostname: dc1-kubernetes
     path: /root/tracing
-  - title: DC1 - UI
-    type: service
-    hostname: dc1-consul-server
-    path: /ui/dc1
-    port: 8500
   difficulty: basic
   timelimit: 900
 - slug: find-the-issue
   id: xeiyeagxgrqr
   type: challenge
   title: Find the Issue
-  teaser: A short description of the challenge.
+  teaser: Something is not quite right...
   assignment: |-
     Let's revisit our Jaeger UI and take a look at the latest trace data.
     You should see a message similar to this  in the payments trace.
     You can get to this message quickly by clicking on the `expand all` button in Jaeger for the trace. <br>
 
     ```
-    "error:Error communicating with upstream service: Get http://currency.service.dc2.consul:9094/: dial tcp <ip>:9094: connect: connection timed out"
+    "error:Error communicating with upstream service: Get http://currency.service.dc2.consul:9094/: net/http: request canceled while waiting for connection (Client.Timeout exceeded while awaiting headers)"
     ```
 
     It seems even though we could discover the service in the datacenter, we don't actually have a route to that service, or the network is blocking it.
@@ -259,7 +266,7 @@ challenges:
   - type: text
     contents: |-
       In this section we will investigate the connectivity issues between
-      DCs. We'll wait a minute or so for our traces to propagate.
+      DCs. We'll wait a few moments for our traces to propagate.
   tabs:
   - title: DC1 - K8s
     type: terminal
@@ -275,12 +282,12 @@ challenges:
   id: rtl3rsmtneic
   type: challenge
   title: Add the Legacy Sidecar
-  teaser: A short description of the challenge.
+  teaser: Bring our legacy service into the mesh
   assignment: |-
     Let's start by updating consul with a sidecar service definition. <br>
 
     ```
-    cat <<-EOF > /consul/config/currency-service.json
+    cat <<-EOF > /etc/consul.d/currency-service.json
     {
       "service": {
         "name": "currency",
@@ -329,7 +336,7 @@ challenges:
   id: gl8vtewtwevq
   type: challenge
   title: Deploy the DC2 Gateway
-  teaser: A short description of the challenge.
+  teaser: Connect our Gateway to our legacy app
   assignment: |-
     We have introduced a new server that will represent ingress and egress points for DC2.
     Let's do some basic connectivity checks before we make Consul aware of our gateway nodes. <br>
@@ -386,7 +393,7 @@ challenges:
   id: ilvgq6nayfv6
   type: challenge
   title: Deploy the DC1 Gateway
-  teaser: A short description of the challenge.
+  teaser: Establish gateway connectivity accross datacenters
   assignment: |-
     First, let's check our connectivity again.
     We can check this between gateways now that our DC2 gateway is accepting traffic. <br>
@@ -453,7 +460,7 @@ challenges:
   id: z1mn5uy8ougt
   type: challenge
   title: Bring it all together
-  teaser: A short description of the challenge.
+  teaser: You're first multi-dc mesh
   assignment: |-
     First, let's set up some tcpdumps to inspect the traffic on our gateways. <br>
 
@@ -481,6 +488,8 @@ challenges:
 
     ```
     kubectl apply -f tracing
+    sleep 10
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=payments -o name)
     ```
 
     Next, let's simulate some traffic through the `DC1 - K8s` tab.
@@ -528,4 +537,4 @@ challenges:
     port: 16686
   difficulty: basic
   timelimit: 900
-checksum: "15993183631649710580"
+checksum: "8211262756192983676"

@@ -1,30 +1,30 @@
 version: "2"
 virtualmachines:
-- name: dc2-consul-gateway
-  image: ubuntu-1804-lts
-  shell: /bin/bash
-  machine_type: n1-standard-2
-- name: dc1-consul-server
-  image: ubuntu-1804-lts
-  shell: /bin/bash
-  machine_type: n1-standard-2
-- name: dc1-consul-gateway
-  image: ubuntu-1804-lts
-  shell: /bin/bash
-  machine_type: n1-standard-2
-- name: dc2-consul-server
-  image: ubuntu-1804-lts
-  shell: /bin/bash
-  machine_type: n1-standard-2
-- name: dc2-app-server
-  image: ubuntu-1804-lts
-  shell: /bin/bash
-  machine_type: n1-standard-2
 - name: dc1-kubernetes
   image: ubuntu-1804-lts
   shell: /bin/bash
   machine_type: n1-standard-2
 - name: dc1-jaeger-server
-  image: ubuntu-1804-lts
+  image: instruqt-hashicorp/ubuntu-base
   shell: /bin/bash
-  machine_type: n1-standard-2
+  machine_type: n1-standard-1
+- name: dc2-consul-gateway
+  image: instruqt-hashicorp/consul-1-6-1
+  shell: /bin/bash
+  machine_type: n1-standard-1
+- name: dc1-consul-server
+  image: instruqt-hashicorp/consul-1-6-1
+  shell: /bin/bash
+  machine_type: n1-standard-1
+- name: dc1-consul-gateway
+  image: instruqt-hashicorp/consul-1-6-1
+  shell: /bin/bash
+  machine_type: n1-standard-1
+- name: dc2-consul-server
+  image: instruqt-hashicorp/consul-1-6-1
+  shell: /bin/bash
+  machine_type: n1-standard-1
+- name: dc2-app-server
+  image: instruqt-hashicorp/consul-1-6-1
+  shell: /bin/bash
+  machine_type: n1-standard-1
