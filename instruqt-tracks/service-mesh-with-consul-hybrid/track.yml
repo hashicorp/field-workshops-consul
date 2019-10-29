@@ -12,6 +12,7 @@ developers:
 - lance@hashicorp.com
 private: false
 published: true
+maintenance: false
 challenges:
 - slug: connect-your-datacenters
   id: i8yrscsmhmjx
@@ -537,4 +538,4 @@ challenges:
     port: 16686
   difficulty: basic
   timelimit: 900
-checksum: "8211262756192983676"
+checksum: "1714935905535146948"

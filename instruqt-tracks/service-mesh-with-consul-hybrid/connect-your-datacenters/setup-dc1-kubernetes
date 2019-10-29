@@ -1,22 +1,8 @@
 #!/bin/bash
 
-#Install docker
-sleep 10
-apt update -y
-apt install docker.io jq unzip -y
-
-#Consul
-wget https://releases.hashicorp.com/consul/1.6.1/consul_1.6.1_linux_amd64.zip -O /tmp/consul.zip
-cd /usr/local/bin
-unzip /tmp/consul.zip
-chmod +x /usr/local/bin/consul
-mkdir -p /consul/config
-mkdir -p /consul/data
-cd /
-
 #Install etcd
 curl -L -O https://github.com/etcd-io/etcd/releases/download/v3.4.1/etcd-v3.4.1-linux-amd64.tar.gz
-tar -xvzf etcd-v3.4.1-linux-amd64.tar.gz
+tar -xzf etcd-v3.4.1-linux-amd64.tar.gz --warning=no-unknown-keyword
 cp etcd-v3.4.1-linux-amd64/etcd /usr/local/bin/etcd
 
 cat <<-EOF > /etc/systemd/system/etcd.service
@@ -42,10 +28,9 @@ EOF
 systemctl daemon-reload
 systemctl enable etcd.service
 systemctl start etcd.service
-systemctl status etcd.service
 
 #Install k3s
-curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--node-name=dc1-kubernetes --docker --storage-endpoint=http://127.0.0.1:2379 --no-flannel --no-deploy traefik" sh -
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v0.10.1" INSTALL_K3S_EXEC="--node-name=dc1-kubernetes --docker --storage-endpoint=http://127.0.0.1:2379 --no-flannel --no-deploy traefik" sh -
 mkdir -p /root/.kube
 cp /etc/rancher/k3s/k3s.yaml /root/.kube/config
 sleep  10
