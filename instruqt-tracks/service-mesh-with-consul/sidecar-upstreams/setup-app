@@ -5,8 +5,8 @@ echo "Fixing our path..."
 export PATH=/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 
 #Get Envoy for us
-curl -O https://s3.amazonaws.com/llarsen-envoy-binaries/envoy-1.9.0-linux-amd64
-mv envoy-1.9.0-linux-amd64 /usr/local/bin/envoy
+curl -O https://raw.githubusercontent.com/hashicorp/instruqt-packer/master/consul/resources/envoy
+mv envoy /usr/local/bin/envoy
 chmod +x /usr/local/bin/envoy
 
 echo "Installing utilities..."

@@ -16,6 +16,7 @@ developers:
 - scarolan@hashicorp.com
 private: false
 published: true
+maintenance: false
 challenges:
 - slug: sidecar-services
   id: 4zvgi4rkfawl
@@ -296,4 +297,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 900
-checksum: "6602753151128351107"
+checksum: "4343199991146368977"
