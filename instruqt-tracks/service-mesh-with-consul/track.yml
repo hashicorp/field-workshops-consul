@@ -266,7 +266,7 @@ challenges:
     contents: |-
       In this assignment, we'll take a deeper look at Envoy. We'll focus on three elements that make up the foundation of our mesh. <br>
 
-      * mTLS - How did Connect and Envoy provide end-to-end encrpytion between services ?
+      * mTLS - How did Connect and Envoy provide end-to-end encryption between services ?
       * Service Discovery - How was Consul able to get service discovery information to the Envoy proxy for it's upstreams?
       * Intentions - How were we able to allow or deny traffic based on service identity ?
 
