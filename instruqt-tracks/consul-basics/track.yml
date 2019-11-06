@@ -130,7 +130,7 @@ challenges:
     Let's try some of the same commands from our last assignment with the API. We'll use the Unix `curl` command to interact with the API. Copy and paste each command into the terminal and view the output.
 
     * Logs:
-      - `curl -s http://127.0.0.1:8500/v1/agent/monitor`
+      - `curl -s http://127.0.0.1:8500/v1/agent/monitor` (CTRL-C to escape)
     * List Members:
       - `curl -s http://127.0.0.1:8500/v1/agent/members | jq`
     * Get Leader:
