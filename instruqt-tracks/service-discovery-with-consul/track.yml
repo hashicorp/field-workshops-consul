@@ -57,9 +57,6 @@ challenges:
     type: code
     hostname: app
     path: /var/www/html/wp-config.php
-  - title: App Server
-    type: terminal
-    hostname: app
   - title: Website
     type: service
     hostname: app
@@ -286,4 +283,4 @@ challenges:
     hostname: app
   difficulty: basic
   timelimit: 900
-checksum: "8472092372125079913"
+checksum: "18300291336247939562"
