@@ -277,7 +277,7 @@ challenges:
     kubectl exec $(kubectl get pod --selector=app=emojify-api -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/clusters | grep facebox
     ```
 
-    Nice work! You just leveraged dyanmic service discovery inside your service mesh to scale out a workload.
+    Nice work! You just leveraged dynamic service discovery inside your service mesh to scale out a workload.
   notes:
   - type: text
     contents: |-
