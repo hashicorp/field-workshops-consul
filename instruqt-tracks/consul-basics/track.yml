@@ -48,7 +48,7 @@ challenges:
 
     Try reloading the UI after starting each server.
 
-    Our startup script is simple and runs Consul as a background process. In production this would daemonized or managed by an orchestrator.
+    Our startup script is simple and runs Consul as a background process. In production this would be daemonized or managed by an orchestrator.
 
     Once you have a healthy cluster, the Consul UI will become available. Click on the Nodes tab in the Consul UI to see your three servers. The leader is marked with a star. ⭐
   notes:
@@ -133,7 +133,7 @@ challenges:
       - `curl -s http://127.0.0.1:8500/v1/agent/monitor` (CTRL-C to escape)
     * List Members:
       - `curl -s http://127.0.0.1:8500/v1/agent/members | jq`
-    * Get Leader:
+    * Get Consul Leader:
       - `curl -s http://127.0.0.1:8500/v1/status/leader | jq`
     * Agent Info:
       - `curl -s http://127.0.0.1:8500/v1/agent/self | jq` <br>
@@ -201,23 +201,24 @@ challenges:
   title: Consul High Availability
   teaser: Test Consul's High Availability Capabilities
   assignment: "We have 3 servers in our lab environment. This means we can lose one
-    server and still have a healthy cluster.\nLet's disable the leader and observe
-    what happens.\n\nFirst, find your current leader. You can do this from the UI
-    (look for the star), or on the command line:\n\n```\nconsul operator raft list-peers\n```\n\nGo
-    to the tab of your current leader and run the following command to stop the Consul
-    agent:\n\n```\npkill consul\n```\n\nIf your leader happens to be `Consul0` you
-    will temporarily lose access to the UI.\n\nRepeat the above process and kill the
-    new leader. \n\nRun the following commands on the last server:\n\n```\nconsul
-    members\nconsul operator raft list-peers\nconsul catalog nodes\n```\n\nYou'll
-    see error messages like this:\n\n`Unexpected response code: 500 (No cluster leader)`\n\nNow
-    that two servers have failed your cluster is no longer functional. All API commands
-    will result in errors until at least one of your other servers comes back online.
-    Let's recover by starting Consul back up. Run the following command on one of
-    the failed nodes:\n\n```\n/bin/start_consul.sh\n```\n\nNow run `consul members`
-    to verify that the Consul API is responding again.\n\nBring back your third server
-    with the startup script:\n\n```\n/bin/start_consul.sh\n```\n\nAnd run `consul
-    members` one last time. You should see all three server nodes in alive status.\n\nCongratulations,
-    your Consul cluster is healthy again."
+    server and still have a healthy cluster. You can read more about the Consensus
+    Protocol [here](https://www.consul.io/docs/internals/consensus.html).\nLet's disable
+    the leader and observe what happens.\n\nFirst, find your current leader. You can
+    do this from the UI (look for the star), or on the command line:\n\n```\nconsul
+    operator raft list-peers\n```\n\nGo to the tab of your current leader and run
+    the following command to stop the Consul agent:\n\n```\npkill consul\n```\n\nIf
+    your leader happens to be `Consul0` you will temporarily lose access to the UI.\n\nRepeat
+    the above process by and kill the new leader. \n\nRun the following commands on
+    the last server:\n\n```\nconsul members\nconsul operator raft list-peers\nconsul
+    catalog nodes\n```\n\nYou'll see error messages like this:\n\n`Unexpected response
+    code: 500 (No cluster leader)`\n\nNow that two servers have failed your cluster
+    is no longer functional. All API commands will result in errors until at least
+    one of your other servers comes back online. Let's recover by starting Consul
+    back up. Run the following command on one of the failed nodes:\n\n```\n/bin/start_consul.sh\n```\n\nNow
+    run `consul members` to verify that the Consul API is responding again.\n\nBring
+    back your third server with the startup script:\n\n```\n/bin/start_consul.sh\n```\n\nAnd
+    run `consul members` one last time. You should see all three server nodes in alive
+    status.\n\nCongratulations, your Consul cluster is healthy again."
   notes:
   - type: text
     contents: |-
@@ -261,7 +262,7 @@ challenges:
 
     We've already run this command for you and saved the output in the `ACL Bootstrap` code editor tab. The initial bootstrap token is the `SecretID` field of this output. This special token is used to configure your cluster and to generate other tokens. Copy the bootstrap token by highlighting it and pressing CTRL-C.<br>
 
-    To re-enable the UI, click on the ACL tab and enter your token into the text field.
+    To re-enable the UI, select the Consul UI tab, and click on the ACL tab and enter your token into the text field.
 
     On the command line you should set an environment variable with your token. Run the following command on the `App` tab:
 
@@ -299,7 +300,7 @@ challenges:
     Finally apply the token to make it active.
 
     ```
-    consul acl set-agent-token agent <your_app_agent_token>
+    consul acl set-agent-token agent "<your_app_agent_token>"
     ```
 
     You can now verify that the `App` agent logs are no longer logging errors.
@@ -309,7 +310,7 @@ challenges:
     contents: |-
       Consul uses Access Control Lists (ACLs) to secure the UI, API, CLI, service communications, and agent communications.
       ACLs operate by grouping rules into policies, then associating one or more policies with a token.
-      ACLs are a must for all Consul production environments. <br>
+      ACLs are imperative for all Consul production environments. <br>
 
       For a detailed explanation of the ACL system, check out this [guide](https://learn.hashicorp.com/consul/security-networking/production-acls). <br>
 
@@ -332,4 +333,4 @@ challenges:
     path: /tmp/bootstrap.txt
   difficulty: basic
   timelimit: 600
-checksum: "9348750879193781119"
+checksum: "13871450010605290007"
