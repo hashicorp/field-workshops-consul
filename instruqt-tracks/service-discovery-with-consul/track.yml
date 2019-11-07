@@ -97,12 +97,14 @@ challenges:
     NOTE: It may take a moment for the health check to show up as healthy.
   notes:
   - type: text
-    contents: "Now that you've got the website back up and running, it's time to put
-      a health check on that database service. \n\nApplication health checks are easy
-      to build and can check a wide array of conditions. \n\nOnce you have this rich
-      data it is easy to build automation around it.\n\nIn this challenge you'll configure
-      a service health check on the database server so that you'll always know where
-      the database service is, and whether it is healthy.\n"
+    contents: |-
+      Now that you've got the website back up and running, it's time to put a health check on that database service. <br>
+
+      Application health checks are easy to build and can check a wide array of conditions.
+      Once you have this rich data it is easy to build automation around it. <br>
+
+      In this challenge you'll configure a service health check on the database server,
+      so that you'll always know where the database service is, and whether it is healthy.
   - type: video
     url: https://www.youtube.com/embed/CIv65T172mU?modestbranding=1&rel=0
   - type: text
@@ -230,41 +232,65 @@ challenges:
   title: "Seamless Service Discovery with Consul DNS \U0001F5A7"
   teaser: Consul can provide seamless access to all nodes and services in the catalog,
     without rewriting your apps.
-  assignment: "In this exercise you'll configure Consul to act as a local DNS server,
+  assignment: |-
+    In this exercise you'll configure Consul to act as a local DNS server,
     providing seamless access to your service catalog via simple DNS hostnames. The
-    Linux dnsmasq service is running on your application server.\n\nRun the following
-    command to see the dnsmasq configuration:\n\n```\ncat /etc/dnsmasq.d/consul\n```\n\nThe
-    server config lines say \"Direct all traffic for .consul queries to Consul on
-    local port 8600, everything else to our normal DNS server.\"\n\nNow look at the
-    `/etc/resolv.conf` file. This is the file that controls where DNS queries are
-    routed.\n\n```\ncat /etc/resolv.conf\n```\n\nWe are now routing all DNS queries
-    through our local system, but only *.consul queries are handled by Consul. All
-    other DNS traffic is passed upstream to the corporate DNS server. Try it yourself
-    with the `dig` command:\n\n```\ndig mysql.service.consul\n```\n\nEdit line 32
-    of the `wp-config.php` file again, but this time instead of using an IP address
-    use the Consul DNS name for your database server node: \n\n```\nmysql.service.consul\n```\n\nVisit
-    the Website tab and verify that the app has connected to the database using Consul
-    DNS.\n"
+    Linux dnsmasq service is running on your application server. <br>
+
+    Run the following command to see the dnsmasq configuration: <br>
+
+    ```
+    cat /etc/dnsmasq.d/consul
+    ```
+
+    The server config lines say _Direct all traffic for .consul queries to Consul on local port 8600, everything else to our normal DNS server_. <br>
+
+    Now look at the `/etc/resolv.conf` file.
+    This is the file that controls where DNS queries are routed. <br>
+
+    ```
+    cat /etc/resolv.conf
+    ```
+
+    We are now routing all DNS queries through our local system, but only *.consul queries are handled by Consul.
+    All other DNS traffic is passed upstream to the corporate DNS server.
+    Try it yourself with the `dig` command: <br>
+
+    ```
+    dig mysql.service.consul
+    ```
+
+    Edit line 32 of the `wp-config.php` file again, but this time instead of using an IP address
+    use the Consul DNS name for your database server node: <br>
+
+    ```
+    mysql.service.consul
+    ```
+
+    Visit the Website tab and verify that the app has connected to the database using Consul DNS.
   notes:
   - type: text
     contents: |
       The Consul catalog can seamlessly integrate with your current application infrastructure without changing any of your code.
-
-      Imagine giving all your applications and services easy access to configuration data, health checks, and network info.
+      Imagine giving all your applications and services easy access to configuration data, health checks, and network info. <br>
 
       This is the magic of Consul DNS integration. With this configuration any application that speaks DNS can take advantage of the powerful Consul service catalog.
-
       In the next challenge we'll use dnsmasq to route all local queries for *.consul addresses to the Consul service. Our application will now be able to use a simple Consul-managed DNS name for connecting to the database.
   - type: text
     contents: |-
-      There are several different ways to integrate Consul into your system DNS. Check out the HashiCorp Learn guide to learn more about DNS forwarding.
-
-      https://learn.hashicorp.com/consul/security-networking/forwarding
+      There are several different ways to integrate Consul into your system DNS. <br>
+      Check out the HashiCorp Learn guide to learn more about DNS forwarding: https://learn.hashicorp.com/consul/security-networking/forwarding
   - type: text
     contents: "\U0001F310 Consul - A Powerful DNS-based Service Catalog \U0001F578️"
   - type: text
-    contents: "\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\n\n_It's
-      not DNS_\n\n_There's no way it's DNS_\n\n_It was DNS_\n\n\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\n"
+    contents: |-
+      \U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338 <br>
+
+      _It's not DNS_ <br>
+      _There's no way it's DNS_ <br>
+      _It was DNS_ <br>
+
+      \U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338
   tabs:
   - title: Website
     type: service
@@ -283,4 +309,4 @@ challenges:
     hostname: app
   difficulty: basic
   timelimit: 900
-checksum: "14010202557101430545"
+checksum: "13185615548126404487"
