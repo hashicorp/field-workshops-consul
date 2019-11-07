@@ -184,7 +184,7 @@ challenges:
 
     ```
     cd /var/www/html
-    consul-template -template "wp-config.php.tpl:wp-config.php"
+    consul-template  -log-level debug -template "wp-config.php.tpl:wp-config.php"
     ```
 
     Reload the `wp-config.php` file in your *App Config* tab to see the updated IP address.
@@ -283,4 +283,4 @@ challenges:
     hostname: app
   difficulty: basic
   timelimit: 900
-checksum: "7965332724492791899"
+checksum: "6551261173279111237"
