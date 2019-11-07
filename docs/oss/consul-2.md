@@ -1,9 +1,7 @@
 name: Chapter-2
-class: center,middle
-.section[
-Chapter 2
-HashiCorp Consul Architecture
-]
+class: title
+# Chapter 2
+## HashiCorp Consul Architecture
 
 ---
 name: Introduction-to-Consul
@@ -18,11 +16,10 @@ In the next sections, we will dive deeper into how  Consul works.
 
 ---
 name: Introduction-to-Consul-Overview
+class: img-right
 Introduction to Consul - Overview
 -------------------------
-
-<br><br>
-<img align="right" width="40%" src="images/multi-datacenter-federation.png">
+.center[![:scale 100%](images/multi-datacenter-federation.png)]
 
 * A consul cluster is refered to as a datacenter
 * A consul datacenter is made up of server nodes and client nodes
@@ -34,10 +31,10 @@ Within each datacenter, we have a mixture of clients and servers. It is expected
 
 ---
 name: Introduction-to-Consul-Gossip
+class: img-right
 Introduction to Consul - Gossip
 -------------------------
-<br><br>
-<img align="right" width="40%" src="images/multi-datacenter-federation.png">
+.center[![:scale 100%](images/multi-datacenter-federation.png)]
 
 * All agent communication is done via the Gossip Protocol
 * Automatic configuration and datacenter discovery for Consul agents
@@ -47,10 +44,10 @@ Introduction to Consul - Gossip
 
 ---
 name: Introduction-to-Consul-Consensus
+class: img-right
 Introduction to Consul - Consensus
 -------------------------
-<br><br>
-<img align="right" width="40%" src="images/multi-datacenter-federation.png">
+.center[![:scale 100%](images/multi-datacenter-federation.png)]
 
 * Every Consul datacenter has a group of server nodes that work together to manage connected agents
 * Using Raft the server nodes elect a leader
@@ -63,10 +60,10 @@ The servers in each datacenter are all part of a single Raft peer set. This mean
 
 ---
 name: Introduction-to-Consul-Multi-DC
+class: img-right
 Introduction to Consul - Multi-DC
 -------------------------
-<br><br>
-<img align="right" width="40%" src="images/multi-datacenter-federation.png">
+.center[![:scale 100%](images/multi-datacenter-federation.png)]
 
 * Gossip over a WAN connection is also possible
 * Allows for request from one datacenter to be forwarded to another

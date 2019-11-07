@@ -1,16 +1,14 @@
 name: Chapter-5
-class: center,middle
-.section[
-Chapter 5  
-Service Discovery
-]
+class: title
+# Chapter 5
+## Service Discovery
 
 ---
 name: Service-Discovery-Intro
+class: img-right compact
 Service Discovery - Intro
 -------------------------
-<br><br>
-<img align="right" width="40%" src="images/service_registration_catalog.png">
+.center[![:scale 100%](images/service_registration_catalog.png)]
 
 The starting point for networking with Consul is typically a common service registry. This would integrate health checks and provide DNS and API interfaces to enable any service to discover and be discovered by other services.
 
@@ -18,27 +16,23 @@ Consul can be integrated with other services that manage existing north-south tr
 
 ---
 name: Service-Discovery-Lab-Servers
+class: img-right compact
 Service Discovery - Servers
 -------------------------
-<br><br>
-<img align="right" width="50%" src="images/consul_dataflow_lan.png">
+.center[![:scale 100%](images/consul_dataflow_lan.png)]
 
-Consul's service discovery is backed by a service catalog. This catalog is formed by aggregating information submitted by the agents. The catalog maintains the high-level view of the cluster, including which services are available, which nodes run those services, health information, and more. The catalog is used to expose this information via the various interfaces Consul provides, including DNS and HTTP.
-
-Services and checks within the context of the catalog have a much more limited set of fields when compared with the agent. This is because the catalog is only responsible for recording and returning information about services, nodes, and health.
+Consul's service discovery is backed by a service catalog. The catalog maintains the high-level view of the cluster. The catalog is used to expose this information via the various interfaces Consul provides, including DNS and HTTP.
 
 The catalog is maintained only by server nodes. This is because the catalog is replicated via the Raft log to provide a consolidated and consistent view of the cluster.
 
 ---
 name: Service-Discovery-Lab-Clients
+class: img-right compact
 Service Discovery - Clients
 -------------------------
-<br><br>
-<img align="right" width="40%" src="images/consul_health_checks.png">
+.center[![:scale 100%](images/consul_health_checks.png)]
 
 Each Consul agent maintains its own set of service and check registrations as well as health information. The agents are responsible for executing their own health checks and updating their local state.
-
-Services and checks within the context of an agent have a rich set of configuration options available. This is because the agent is responsible for generating information about its services and their health through the use of health checks:
 
 * Clients check local services
 * Node health checked via gossip
@@ -76,10 +70,10 @@ Service Registry - UI Interface
 
 ---
 name: Service-Registry-Integration-Consul-Template
+class: img-right compact
 Integrations - Consul Template
 -------------------------
-<br><br>
-<img align="right" width="40%" src="images/consul_template_example.png">
+.center[![:scale 100%](images/consul_template_example.png)]
 
 Consul Template is a standalone application that populates values from Consul and dynamically renders updates to any third party configurations.  
 
@@ -89,10 +83,10 @@ It is an ideal for replacing complicated API queries that often require custom f
 
 ---
 name: Service-Registry-Integration-DNS
+class: img-right compact
 Integrations - DNS
 -------------------------
-<br><br>
-<img align="right" width="40%" src="images/consul_example_dns.png">
+.center[![:scale 100%](images/consul_example_dns.png)]
 
  Using DNS is a simple way to integrate Consul into an existing infrastructure without any high-touch integration:
 
@@ -102,21 +96,23 @@ Integrations - DNS
 
 ---
 name: Service-Registry-Integration-Native
+class: img-right compact
 Integrations - API/Native
 -------------------------
-<br><br>
-<img align="right" width="40%" src="images/consul_ecosystem_diagram.png">
+.center[![:scale 100%](images/consul_ecosystem_diagram.png)]
 
 By leveraging Consul’s RESTful HTTP API system, the community and vendors are able to integrate with Consul's service registry capabilities.
 
-These integrations include load balancers, proxies, API gateways, monitoring tools, and more!
+These integrations include SDKs, load balancers, proxies, API gateways, monitoring tools, and more.
+
+If your application is Consul aware, it can connect directly to the API!
 
 ---
 name: Service-Registry-Integration-Native
+class: img-right compact
 Example - Native Consul Integration with F5 BIG-IP
 -------------------------
-<br><br>
-<img align="right" width="60%" src="images/f5_consul_integration.png">
+.center[![:scale 100%](images/f5_consul_integration.png)]
 
 The F5 BIG-IP AS3 service discovery integration with Consul queries Consul's catalog on a regular, configurable basis to get updates about changes for a given service, and adjusts the node pools dynamically without operator intervention.
 
@@ -134,8 +130,7 @@ The F5 BIG-IP AS3 service discovery integration with Consul queries Consul's cat
 
 ---
 name: Service-Discovery-Lab
-.center[.lab-header[👩🏽‍💻 Lab Exercise: Service Discovery]]
-<br><br><br>
+# 👩‍💻 Lab Exercise: Service Discovery
 .blocklist[
 You will accomplish the following in this lab:
 

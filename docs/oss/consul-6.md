@@ -1,27 +1,40 @@
 name: Chapter-6
-class: center,middle
-.section[
-Chapter 6  
-Service Segmentation
-]
+class: title
+# Chapter 6
+## Service Segmentation
 
 ---
-name: Segmentation-Intro
+name: Segmentation-Intro-Routing
+class: img-right compact
 Service Segmentation - Intro
 -------------------------
-<br><br>
-<img align="right" width="40%" src="images/consul_segmentation_intro.png">
+.center[![:scale 100%](images/consul_segmentation_intro.png)]
 
-In a sophisticated environment, Consul provides a distributed service mesh to connect, secure, and configure services across any runtime platform and cloud. Consul provides an API driven control plane, which integrates with proxies for the data plane. This allows critical functionality like naming, segmentation and authorization, and routing to be handled by proxies at the edge rather than using centralized middleware.
+In a sophisticated environment, Consul provides a distributed service mesh to connect, secure, and configure services across any runtime platform and cloud.
 
-Consul enables fine grained service segmentation to secure service-to-service communication with automatic TLS encryption and identity-based authorization. Consul can be integrated with Vault for centralized PKI and certificate management. Service configuration is achieved through API-driven Key/Value store that can be used to easily configure services at runtime in any environment.
+Consul provides an API driven control plane, which integrates with proxies for the data plane.
+
+This allows critical functionality like naming, segmentation and authorization, and routing to be handled by proxies at the edge rather than using centralized middleware.
+
+---
+name: Segmentation-Intro-Security
+class: img-right compact
+Service Segmentation - Intro
+-------------------------
+.center[![:scale 100%](images/consul_segmentation_intro.png)]
+
+Consul enables fine grained service segmentation to secure service-to-service communication with automatic TLS encryption and identity-based authorization.
+
+Consul can be integrated with common centralized PKI and certificate management.
+
+Service configuration is achieved through API-driven Key/Value store that can be used to easily configure services at runtime in any environment.
 
 ---
 name: Segmentation-Control-Plane
+class: img-right compact
 Service Mesh Architecture - Control Plane
 -------------------------
-<br><br>
-<img align="right" width="50%" src="images/connect_control_plane.png">
+.center[![:scale 100%](images/connect_control_plane.png)]
 
 The Control Plane is responsible for making decisions about where to send the traffic and to configure the data plane. Additionally, it is also responsible for features like network policy enforcement and providing service discovery data to the data plane.
 
@@ -33,25 +46,23 @@ Consul is the control plane for the Connect service mesh:
 
 ---
 name: Segmentation-Data-Plane
+class: img-right compact
 Service Mesh Architecture - Data Plane
 -------------------------
-<br><br>
-<img align="right" width="50%" src="images/connect_control_plane.png">
+.center[![:scale 100%](images/connect_control_plane.png)]
 
-The Data Plane provides the ability to forward requests from the applications. It provides more sophisticated features like health checking, load balancing, circuit breaking, timeouts and retries, authentication, and authorization.
+The Data Plane provides the ability to forward requests from the applications, including more sophisticated features like health checking, load balancing, circuit breaking, authentication, and authorization.
 
 The Data Plane is in the critical path of data flow from one application to the other and hence the need for high throughput and low latency.
 
-The Consul Envoy integration is currently the primary way to utilize advanced layer 7 features provided by Consul.
-
-Consul also enables third party proxies to integrate with Connect and provide the data plane with Consul operating as the control plane.
+The Consul Envoy integration is currently the primary way to utilize advanced layer 7 features provided by Consul, but can integrate with other third party proxies.
 
 ---
 name: Segmentation-Identity
+class: img-right compact
 Service Mesh - Identity
 -------------------------
-<br><br>
-<img align="right" width="60%" src="images/connect_certificate_service_identity.png">
+.center[![:scale 100%](images/connect_certificate_service_identity.png)]
 
 Consul provides each service with an identity encoded as a TLS certificate.
 
@@ -63,10 +74,10 @@ Consul provides each service with an identity encoded as a TLS certificate.
 
 ---
 name: Segmentation-Access-Graph
+class: img-right compact
 Service Mesh - Service Access Graph
 -------------------------
-<br><br>
-<img align="right" width="60%" src="images/service_access_graph.png">
+.center[![:scale 100%](images/service_access_graph.png)]
 
 Allows or denies service-to-service communication with Intentions
 
@@ -78,10 +89,10 @@ Allows or denies service-to-service communication with Intentions
 
 ---
 name: Segmentation-Access-Graph
+class: img-right compact
 Service Mesh - Advanced Routing
 -------------------------
-<br><br>
-<img align="right" width="50%" src="images/consul_L7_routing.png">
+.center[![:scale 100%](images/consul_L7_routing.png)]
 
 Layer 7 traffic management allows operators to divide L7 traffic between different subsets of service instances when using Connect.
 
@@ -92,10 +103,10 @@ There are many ways you may wish to carve up a single datacenter's pool of servi
 * Blue/Green deploys
 ---
 name: Segmentation-Mesh-Gateways
+class: img-right compact
 Service Mesh - Mesh Gateways
 -------------------------
-<br><br>
-<img align="right" width="40%" src="images/connect_mesh_gateways.png">
+.center[![:scale 80%](images/connect_mesh_gateways.png)]
 
 Mesh gateways enable routing of Connect traffic between different Consul datacenters:
 
@@ -106,8 +117,7 @@ Mesh gateways enable routing of Connect traffic between different Consul datacen
 
 ---
 name: Segmentation-Lab
-.center[.lab-header[🌐 Lab Exercise: Service Segmentation]]
-<br><br><br>
+# 👩‍💻 Lab Exercise: Service Segmentation
 .blocklist[
 You will accomplish the following in this lab:
 
@@ -121,8 +131,7 @@ You will accomplish the following in this lab:
 
 ---
 name: Segmentation-Lab-K8s
-.center[.lab-header[🌐 Bonus Lab Exercise: Service Segmentation - K8s]]
-<br><br><br>
+# 👩‍💻 Bonus Lab: Service Segmentation - K8s
 .blocklist[
 You will accomplish the following in this lab:
 
@@ -136,8 +145,7 @@ You will accomplish the following in this lab:
 
 ---
 name: Segmentation-Lab-Hybrid
-.center[.lab-header[🌐 Bonus Lab Exercise: Service Segmentation - Hybrid]]
-<br><br><br>
+# 👩‍💻 Bonus Lab: Service Segmentation - Hybrid
 .blocklist[
 You will accomplish the following in this lab:
 
