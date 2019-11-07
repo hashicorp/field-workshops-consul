@@ -193,8 +193,6 @@ challenges:
     https://cdn.geekwire.com/wp-content/uploads/2017/10/armon-dadgar-and-mitchell-hashimoto-630x419.jpg
     ```
 
-    Not perfect, but pretty close! <br>
-
     Let's take a look at the service defintion Consul was able to generate based on our K8s annotations.
     We've played it in the editor tab for you. You can also view it below. <br>
 
@@ -234,6 +232,11 @@ challenges:
   - title: K8s
     type: terminal
     hostname: kubernetes
+  - title: Consul UI
+    type: service
+    hostname: kubernetes
+    path: /ui/
+    port: 30085
   - title: K8s - UI
     type: service
     hostname: kubernetes
@@ -705,7 +708,7 @@ challenges:
   - type: text
     contents: |-
       We will use a purpose built app called `fake-service` to test our upstreams and trace these errors.
-      The app will deploy a few services in the following configuration: <br>
+      The app will deploy five services in the following configuration: <br>
 
       * Frontend - Access to our application
       * API - GRPC API to backend services
@@ -721,6 +724,7 @@ challenges:
   - title: Jaeger UI
     type: service
     hostname: kubernetes
+    path: /search?service=web
     port: 31686
   - title: App - Config
     type: code
@@ -741,4 +745,4 @@ challenges:
     path: /root/token.txt
   difficulty: basic
   timelimit: 900
-checksum: "9098259716077809403"
+checksum: "16473068440887178940"
