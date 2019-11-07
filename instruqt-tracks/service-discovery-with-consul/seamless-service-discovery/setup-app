@@ -40,6 +40,7 @@ cat <<-EOF > /consul/config/client.json
     "consul-server-2:8301"
   ]
 }
+EOF
 
 echo "Restarting the consul service..."
 pkill consul
