@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cp /app_service.json /consul/config/app_service.json
+/usr/local/bin/consul reload
+
+exit 0

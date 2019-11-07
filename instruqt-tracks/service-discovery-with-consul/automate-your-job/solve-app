@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd /var/www/html
+/usr/local/bin/consul-template -once -log-level debug -template "wp-config.php.tpl:wp-config.php"
+
+exit 0

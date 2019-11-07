@@ -203,6 +203,10 @@ challenges:
   - type: text
     contents: "\U0001F5A7 All Your Service Are Belong To Us \U0001F469‍\U0001F4BB"
   tabs:
+  - title: Website
+    type: service
+    hostname: app
+    port: 80
   - title: Consul UI
     type: service
     hostname: consul-server-0
@@ -218,10 +222,6 @@ challenges:
   - title: App Server
     type: terminal
     hostname: app
-  - title: Website
-    type: service
-    hostname: app
-    port: 80
   difficulty: basic
   timelimit: 900
 - slug: seamless-service-discovery
@@ -283,4 +283,4 @@ challenges:
     hostname: app
   difficulty: basic
   timelimit: 900
-checksum: "6551261173279111237"
+checksum: "14010202557101430545"

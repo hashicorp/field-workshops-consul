@@ -1,0 +1,5 @@
+#!/bin/bash
+
+perl -p -i -e "s/'10.94.99.99'/'mysql.service.consul'/" /var/www/html/wp-config.php
+
+exit 0
