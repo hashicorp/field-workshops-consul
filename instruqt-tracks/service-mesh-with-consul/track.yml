@@ -16,7 +16,6 @@ developers:
 - scarolan@hashicorp.com
 private: false
 published: true
-maintenance: false
 challenges:
 - slug: sidecar-services
   id: 4zvgi4rkfawl
@@ -154,8 +153,8 @@ challenges:
     service through a Connect upstream defintion.\nLet's use that defintion to allow
     our application to connect to the database.  \n\nRemember, our listener is configured
     on localhost, so we can just update our properties file to `127.0.0.1`, and establish
-    connectivity. \n\nGo ahead and do this now. Check the `Website` tab. Our service mesh
-    blog is back online!"
+    connectivity. \n\nGo ahead and do this now. Check the `Website` tab. Our service
+    mesh blog is back online!"
   notes:
   - type: text
     contents: In this section will use Envoy to connect the application to the database.
@@ -297,4 +296,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 900
-checksum: "4343199991146368977"
+checksum: "11191397001395148451"
