@@ -203,7 +203,7 @@ challenges:
       connection must be terminated.  \n\nIntentions are powerful because they free
       you from having to manage endless lists of IP address and port mappings.\n\n
       Instead, we can manage traffic in simple terms by what an application is or
-      does. \n\nLet's use intentions to restrict connectivity from our applciaiton
+      does. \n\nLet's use intentions to restrict connectivity from our application
       to the database."
   tabs:
   - title: Consul UI
