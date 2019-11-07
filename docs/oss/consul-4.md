@@ -1,9 +1,7 @@
 name: Chapter-4
-class: center,middle
-.section[
-Chapter 4  
-Consul Use Cases
-]
+class: title
+# Chapter 4
+## Consul Use Cases
 
 ---
 name: Consul-Use-Cases
@@ -16,10 +14,12 @@ As we start to dive into how to use consul it is important to think about how yo
 
 ---
 name: Load-Balancers-Service-Discovery
+class: compact
 Service Discovery and Load Balancers
 -------------------------
 
-.center[![:scale 55%](images/consul-service-discovery.001.png)]
+.center[![:scale 45%](images/consul-service-discovery.001.png)]
+
 * Services location is paramount
 * Traditionally done with load balancers
    * Expensive
@@ -31,19 +31,21 @@ The current mode of operation for handling service discovery is usually done wit
 
 ---
 name: Service-Discovery-with-Consul
+class: compact
 Service Discovery with Consul
 -------------------------
 .center[![:scale 60%](images/consul-service-discovery.002.png)]
 * Services self-register
 * Service health is defined by the service and maintained by the consul agent
 * Services are able to query each other via DNS or HTTP
-   
+
 ???
 In a consul environment services are able to self register along with their unique health check requirements.  This makes it easy to define and healthy service.  This coupled with consul using gossip service routing and availibility is near real time.  This allows for service discovery to be offloaded from the network and load balancer teams to the application deployment pipeline.  This is a crucial first step esp if an organization wants to take advantage of the benifits of a service mesh.
 
 
 ---
 name: Myriad-Use-Cases
+class: compact
 Solve Network Problems with Service Discovery
 -------------------------
 Consul prepared queries allow you to build logic into your DNS based service catalog. This enables transparent failover when the primary datacenter becomes unavailable.
@@ -61,6 +63,11 @@ Consul prepared queries allow you to build logic into your DNS based service cat
 }
 ```
 
+---
+name: Myriad-Use-Cases-Example
+Example
+-------------------------
+
 There are many other practical use cases that can be solved with the Consul catalog. Some of these scenarios include: automatic routing of traffic to healthy nodes, blue/green deployments, service locks, configuration management and more. Learn more about practical, real-world uses for Consul in this HashiConf talk:
 
 .center[
@@ -73,13 +80,14 @@ Because consul is now at the heart of service routing based on service name then
 
 ---
 name: Secure-Networking-is-Hard
+class: compact
 Secure Networking is Hard
 -------------------------
-.center[![:scale 60%](images/consul-service-discovery.003.png)]
+.center[![:scale 50%](images/consul-service-discovery.003.png)]
 
 * Once applications can find each other security becomes the next concern
 * This is usually done with a heavy dose of firewalls
-* This adds signifigant burden to the network organization 
+* This adds signifigant burden to the network organization
 * Huge lists of firewall rules
 
 ???
@@ -89,7 +97,7 @@ Secure Networking is Hard
 name: Firewalls-Wont-Scale
 Firewalls Won't Scale
 -------------------------
-.center[![:scale 80%](images/consul-service-discovery.004.png)]
+.center[![:scale 70%](images/consul-service-discovery.004.png)]
 * Heavy interdependencies
 * Hard to automate
 * Hard to optimize
@@ -110,6 +118,7 @@ The power of this is that all of this can be defined in a simple service definit
 
 ---
 name: Consul-Service-Definition
+class: compact
 Consul Service Definition
 -------------------------
 
@@ -117,15 +126,12 @@ Consul Service Definition
 services {
   name = “web-app"
   port = 9090
-
   connect {
     sidecar_service {
       port = 20000
-
       proxy {
         local_service_address = "127.0.0.1"
         local_service_port = 9090
-
         upstreams {
           destination_name = “order-processing”
           local_bind_port = 8003
@@ -135,8 +141,6 @@ services {
   }
 }
 ```
-The _connect_ block in our service definition activates a sidecar service that enables mesh networking.
-
 
 ???
 As you can see in this example all the connection definition is simply defined as a part of the service definition.  

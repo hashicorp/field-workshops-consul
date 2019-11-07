@@ -1,17 +1,13 @@
 name: Chapter-1
-class: center,middle
-.section[
-Chapter 1  
-HashiCorp Consul Overview
-]
+class: title
+# Chapter 1
+## Introduction to Consul
 
 ---
 name: HashiCorp-Consul-Overview
 Consul Overview
 -------------------------
-.center[
-![:scale 20%](images/consul_logo.png)
-]
+.center[![:scale 10%](images/consul_logo.png)]
 
 HashiCorp Consul is an API-driven service networking solution. It connects and secures all your runtime services across public or private clouds.
 
@@ -24,16 +20,17 @@ For additional descriptions or instructions that expand on this workshop, please
 name: The-Shift
 The shift from static to dynamic
 -------------------------
-.center[![:scale 60%](images/static_to_dynamic.png)]
+.center[![:scale 50%](images/static_to_dynamic.png)]
 .center[Physical servers, to VMs, to containers...]
 
 As our applications have shifted from monoliths to microservices, the networking landscape has changed drastically. Let's briefly explore the history  of this shift, and how Consul can help us with its  challenges.
 
 ---
 name: Client-Server
+class: img-right
 Introduction of Client & Server
 -------------------------
-<img align="right" width="50%" src="images/client_server_flow.png">
+.center[![:scale 100%](images/client_server_flow.png)]
 
 <br><br>
 * Single application per Server
@@ -44,9 +41,10 @@ Introduction of Client & Server
 
 ---
 name: Introduction-of-VMs
+class: img-right
 Introduction of the VM
 -------------------------
-<img align="right" width="50%" src="images/vm_flow.png">
+.center[![:scale 100%](images/vm_flow.png)]
 
 <br><br>
 * Better HW utilization
@@ -58,9 +56,10 @@ Introduction of the VM
 
 ---
 name: Introduction-of-the-Fabric
+class: img-right
 Introduction of the Fabric
 -------------------------
-<img align="right" width="50%" src="images/fabric_flow.png">
+.center[![:scale 100%](images/fabric_flow.png)]
 
 <br><br>
 * L2 Fabrics
@@ -71,9 +70,10 @@ Introduction of the Fabric
 
 ---
 name: Introduction-of-the-Microservice
+class: img-right
 Introduction of the Microservice
 -------------------------
-<img align="right" width="50%" src="images/microservices.png">
+.center[![:scale 100%](images/microservices.png)]
 
 <br><br>
 * Highly maintainable and testable
@@ -84,9 +84,10 @@ Introduction of the Microservice
 
 ---
 name: Introduction-of-the-SDN
+class: img-right
 Introduction of the SDN
 -------------------------
-<img align="right" width="50%" src="images/sdn_flow.png">
+.center[![:scale 100%](images/sdn_flow.png)]
 
 <br><br>
 * Network automation
@@ -96,18 +97,20 @@ Introduction of the SDN
 
 ---
 name: Introduction-of-the-Multi-Cloud-Hybrid
+class: img-right
 Introduction of Multi-Cloud - Hybrid
 -------------------------
-<img align="right" width="50%" src="images/hybrid_cloud_flow.png">
+.center[![:scale 100%](images/hybrid_cloud_flow.png)]
 
 <br><br>
 * Where is my app instance?
 
 ---
 name: Introduction-of-the-Multi-Cloud-K8s
+class: img-right
 Introduction of Multi-Cloud - K8s
 -------------------------
-<img align="right" width="50%" src="images/hybrid_k8s_flow.png">
+.center[![:scale 100%](images/hybrid_k8s_flow.png)]
 
 <br><br>
 * K8s src IP
@@ -118,7 +121,7 @@ Introduction of Multi-Cloud - K8s
 name: Introduction-Summary
 Summary
 -------------------------
-.center[![:scale 60%](images/static_to_dynamic_flow.png)]
+.center[![:scale 50%](images/static_to_dynamic_flow.png)]
 As you can see our networking model has drastically changed.
 Let's learn a little more about how Consul works, and then we can revisit these challenges with Consul.
 

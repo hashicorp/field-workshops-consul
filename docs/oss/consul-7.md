@@ -1,19 +1,17 @@
 name: Chapter-7
-class: center,middle
-.section[
-Chapter 6  
-Appendix
-]
+class: title
+# Appendix
 
 ---
 name: Section-Break-Gossip-Consensus
-class: middle, center
+class: title
 
-# Gossip & Consensus
+## Gossip & Consensus
 
 ---
 
 name: Introduction-to-Consensus
+class: compact
 Introduction to Consensus
 -------------------------
 
@@ -40,6 +38,7 @@ Consensus - A Visualization
 
 ---
 name: Consensus-Modes
+class: compact
 Consensus - Consistency Modes
 -------------------------
 
@@ -47,16 +46,17 @@ While it's not required you understand Consensus under the hood, you should unde
 
 * **Default** - Raft makes use of leader leasing, providing a time window in which the leader assumes its role is stable. However, if the old leader services any reads, the values are potentially stale. We make this trade-off because reads are fast, usually strongly consistent, and only stale in a hard-to-trigger situation.
 
-* **Consistent** - This mode is strongly consistent without caveats. It requires that a leader verify with a quorum of peers that it is still leader. This introduces an additional round-trip to all server nodes. The trade-off is always consistent reads but increased latency due to the extra round trip.
+* **Consistent** - This mode is strongly consistent without caveats. It requires that a leader verify with a quorum of peers that it is still leader.  The trade-off is always consistent reads but increased latency due to the extra round trip.
 
-* **Stale** - This mode allows any server to service the read regardless of whether it is the leader. This means reads can be arbitrarily stale but are generally within 50 milliseconds of the leader. The trade-off is very fast and scalable reads but with stale values. This mode allows reads without a leader meaning a cluster that is unavailable will still be able to respond.
+* **Stale** - This mode allows any server to service the read regardless of whether it is the leader. This means reads can be arbitrarily stale but are generally within 50 milliseconds of the leader.  This mode allows reads without a leader meaning a cluster that is unavailable will still be able to respond.
 
 ---
 name: Consensus-Deployment-Table
+class: compact
 Consensus - Deployment Table
 -------------------------
 
-<br><br><br>
+<br>
 <center>
 <table class="tg" width=60%>
   <tr>
@@ -127,9 +127,10 @@ The WAN pool is globally unique, as all servers should participate in the WAN po
 
 ---
 name: Introduction-to-Gossip-Visualization-50-Node
+class: compact
 Introduction to Gossip - Visualization
 -------------------------
-.center[![:scale 40%](images/gossip_50_node.png)]
+.center[![:scale 30%](images/gossip_50_node.png)]
 .center[50 nodes, ~3.56 gossip cycles] <br>
 
 Gossip in Consul scales logarithmically, so it takes O(logN) rounds in order to reach all nodes.
@@ -138,9 +139,10 @@ For a 50 node cluster, we can estimate roughly 3.56 cycles to reach all the node
 
 ---
 name: Introduction-to-Gossip-Visualization-100-Node
+class: compact
 Introduction to Gossip - Visualization
 -------------------------
-.center[![:scale 40%](images/gossip_100_node.png)]
+.center[![:scale 30%](images/gossip_100_node.png)]
 .center[100 nodes, ~4.19 gossip cycles] <br>
 
 For a 100 node clusters, this means roughly 4.19 cycles to reach all nodes. Pretty cool!

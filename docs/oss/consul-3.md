@@ -1,9 +1,7 @@
 name: Chapter-3
-class: center,middle
-.section[
-Chapter 3  
-Consul Basics
-]
+class: title
+# Chapter 3
+## Consul Basics
 
 ---
 name: Instruqt-Hands-On-Lab
@@ -15,8 +13,7 @@ name: Instruqt-Hands-On-Lab
 
 ---
 name: Interacting-Hands-On-Lab
-.center[.lab-header[👩🏽‍🔬 Lab Exercise: Consul Basics]]
-<br><br><br>
+# 👩‍💻 Lab Exercise: Consul Basics
 .blocklist[
 You will accomplish the following in this lab:
 
