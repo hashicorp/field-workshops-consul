@@ -336,7 +336,7 @@ challenges:
     Finally apply the token to make it active.
 
     ```
-    consul acl set-agent-token agent "<your_app_agent_token>"
+    consul acl set-agent-token agent default "<your_app_agent_token>"
     ```
 
     You can now verify that the `App` agent logs are no longer logging errors.

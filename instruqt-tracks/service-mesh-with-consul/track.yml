@@ -85,7 +85,7 @@ challenges:
 
       In this challenge, we'll set up a sidecar defintion.
   - type: image
-    url: https://github.com/hashicorp/field-workshops-consul/blob/master/docs/oss/images/connect_sidecar.png?raw=true
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/docs/slides/multi-cloud/consul-oss/images/connect_sidecar.png
   tabs:
   - title: Consul UI
     type: service
@@ -400,4 +400,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 900
-checksum: "12813441882236211785"
+checksum: "17577148837295819008"
