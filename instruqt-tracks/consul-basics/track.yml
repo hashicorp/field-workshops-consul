@@ -258,7 +258,7 @@ challenges:
     contents: |-
       Consul servers work together to elect a single leader, which becomes the primary source of truth for the cluster. All updates are forwarded to the cluster leader. If the leader goes down one of the other servers can immediately take its place.
 
-      To ensure high availability within the system, we recommened deploying Consul with 3 or 5 server nodes.
+      To ensure high availability within the system, we recommend deploying Consul with 3 or 5 server nodes.
   - type: text
     contents: |-
       Quorum requires at least (n/2)+1 members. You need quorum for a healthy cluster. <br>

@@ -36,10 +36,10 @@ challenges:
     We also have a VM that will run our legacy service.
     We'll inspect this Consul cluster in the next section. <br>
 
-    The lab is preconfigured for connectvity within each Consul DC, but we need to make each datacenter Consul aware of the other datacenter. <br>
+    The lab is preconfigured for connectivity within each Consul DC, but we need to make each datacenter Consul aware of the other datacenter. <br>
 
     Let's do this by connecting our two Consul datacenters with a `wan join`.
-    This will allow us to manage our workloads accross the datacenters. <br>
+    This will allow us to manage our workloads across the datacenters. <br>
 
     **Note**: the lab env helps us this with this resolution of short names for our lab servers.  <br>
 
@@ -145,7 +145,7 @@ challenges:
       As you recall, the app is broken out into five components:
 
       * Frontend - Access to our application
-      * API - GRPC API to backend services
+      * API - gRPC API to backend services
       * Cache - Cache responses for our API
       * Payments  - Process payments
       * Currency - Do currency lookups for our payments
@@ -168,7 +168,7 @@ challenges:
   title: Deploy the Modern App
   teaser: Deploy our application on K8s.
   assignment: |-
-    We've made a few minor changes to the deploment spec from the last track.
+    We've made a few minor changes to the deployment spec from the last track.
     You'll notice we've removed the spec file for the `currency` service, as it's already running in DC2. <br>
 
     We've also removed the `sidecar` upstreams from the `payments` service that calls the currency service, replaced it with a _Consul DNS_ definition instead. <br>
@@ -183,7 +183,7 @@ challenges:
       value: "http://currency.service.dc2.consul:9094"
     ```
 
-    Let's deploy the rest of the application and test it. Our frontend web component is accessible via nodeport.
+    Let's deploy the rest of the application and test it. Our frontend web component is accessible via NodePort.
 
     ```
     kubectl apply -f  tracing
@@ -250,7 +250,7 @@ challenges:
 
     It seems even though we could discover the service in the datacenter, we don't actually have a route to that service, or the network is blocking it.
 
-    Let's explore this further with a basic connectivity check between our K8s node and our server runing in the other DC.
+    Let's explore this further with a basic connectivity check between our K8s node and our server running in the other DC.
     We can use a tool called `nmap` to help us with this verification. <br>
 
     We know that IP is our Currency service running on our DC2 app server, so we can test with the below command. <br>
@@ -394,7 +394,7 @@ challenges:
   id: ilvgq6nayfv6
   type: challenge
   title: Deploy the DC1 Gateway
-  teaser: Establish gateway connectivity accross datacenters
+  teaser: Establish gateway connectivity across datacenters
   assignment: |-
     First, let's check our connectivity again.
     We can check this between gateways now that our DC2 gateway is accepting traffic. <br>
@@ -463,7 +463,7 @@ challenges:
   title: Bring it all together
   teaser: You're first multi-dc mesh
   assignment: |-
-    First, let's set up some tcpdumps to inspect the traffic on our gateways. <br>
+    First, let's set up tcpdump to inspect the traffic on our gateways. <br>
 
     On the DC1 gateway, run the following. This filter looks specifically at the SSL handshake hello packet. <br>
 
@@ -507,7 +507,7 @@ challenges:
     currency.default.dc2.internal.<spiffe_domain>.consul
     ```
 
-    That's the SNI header. It's the **only** piece of infromation the gateway can see, and this value allows it to be sent to the correct destination. <br>
+    That's the SNI header. It's the **only** piece of information the gateway can see, and this value allows it to be sent to the correct destination. <br>
 
     The packet is not decrypted until it reaches the last sidecar proxy, so we have end-to-end encryption across over the WAN between our DCs. <br>
 

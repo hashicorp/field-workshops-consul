@@ -21,9 +21,9 @@ challenges:
   id: 4zvgi4rkfawl
   type: challenge
   title: "Get Into My Sidecar \U0001F697"
-  teaser: Create a sidecar service defintion for your application proxy
+  teaser: Create a sidecar service definition for your application proxy
   assignment: |-
-    In this challenge we'll add a sidecar service to our existing service defintion. <br>
+    In this challenge we'll add a sidecar service to our existing service definition. <br>
 
     The `sidecar_service` field is a nested service definition where almost any regular service definition field can be set. <br>
 
@@ -33,7 +33,7 @@ challenges:
     In orchestrated environments,such as `Kubernetes` or `Nomad`, this is highly abstract and can be configured
     with simple metadata i.e. annotations. <br>
 
-    Update the defintion by adding the the `connect` block as seen below.
+    Update the definition by adding the the `connect` block as seen below.
     Copy and paste what's below over the entire file in the *Database Service* tab.
     Use CTRL-S to save the file. <br>
 
@@ -77,13 +77,13 @@ challenges:
     contents: |-
       Connect proxies are typically deployed as _sidecars_ to an instance
       that they handle traffic for. They might be on the same bare metal server, virtual
-      machine, or Kubernetes daemonset. Connect has a plugable proxy architecture,
+      machine, or Kubernetes daemonset. Connect has a pluggable proxy architecture,
       with awesome first-class support for Envoy. We'll use Envoy as our proxy for
       the entirety of this workshop. <br>
 
       Visit the [Connect docs](https://www.consul.io/docs/connect/proxies.html) for more info on proxy integration. <br>
 
-      In this challenge, we'll set up a sidecar defintion.
+      In this challenge, we'll set up a sidecar definition.
   - type: image
     url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/docs/slides/multi-cloud/consul-oss/images/connect_sidecar.png
   tabs:
@@ -126,13 +126,13 @@ challenges:
   notes:
   - type: text
     contents: |-
-      In the last challenge we set up a sidecar service defintion for our
+      In the last challenge we set up a sidecar service definition for our
       Envoy proxy. This is the first step in bringing our mesh to life. <br>
 
-      The sidecar defintion tells Consul to expect a proxy registration for a service, Database, in this example. <br>
+      The sidecar definition tells Consul to expect a proxy registration for a service, Database, in this example. <br>
 
       Now that Consul is aware that the Database service should run a proxy,
-      we can use the Consul agent to boostrap the proxy and send it dynamic configuraiton. <br>
+      we can use the Consul agent to bootstrap the proxy and send it dynamic configuration. <br>
 
       We'll take a deeper look at this configuration later.
   tabs:
@@ -153,14 +153,14 @@ challenges:
   id: 7vynj1nfnnan
   type: challenge
   title: "Connect Upstream with Envoy \U0001F517"
-  teaser: Add an upstream defintion for our Envoy app proxy
+  teaser: Add an upstream definition for our Envoy app proxy
   assignment: |-
     We've brought back our application server for this assignment. <br>
 
-    It has an empty sidecar_service defintion, which you can see in the code editior.
+    It has an empty sidecar_service definition, which you can see in the code editor.
     Let's modify it below to create connectivity to our database. <br>
 
-    Modify the application's `sidecar_service` defintion to add our upstream for the database.
+    Modify the application's `sidecar_service` definition to add our upstream for the database.
     You can copy and paste the entire file from below: <br>
 
     ```
@@ -214,12 +214,12 @@ challenges:
   notes:
   - type: text
     contents: |-
-      Connect provides service connectivity through upstream defintions.
+      Connect provides service connectivity through upstream definitions.
       These services could be a database, backend, or any service which another service relies on. <br>
 
-      In the previous challenges we set up a sidecar service defintion without an upstream defintion.  <br>
+      In the previous challenges we set up a sidecar service definition without an upstream definition.  <br>
 
-      In this assignment we'll modify our sidecar service and add an upstream defintion that will allow our application to connect to its database.
+      In this assignment we'll modify our sidecar service and add an upstream definition that will allow our application to connect to its database.
   tabs:
   - title: Consul UI
     type: service
@@ -241,9 +241,9 @@ challenges:
   teaser: Use Consul and Envoy to connect our application to a backend database
   assignment: |-
     In the last assignment we created an Envoy listener for our database
-    service through a Connect upstream defintion. <br>
+    service through a Connect upstream definition. <br>
 
-    Let's use that defintion to allow our application to connect to the database. <br>
+    Let's use that definition to allow our application to connect to the database. <br>
 
     Remember, our listener is configured on localhost, so we can just update our properties file to `127.0.0.1`, and establish connectivity. <br>
 
@@ -301,7 +301,7 @@ challenges:
   - type: text
     contents: |-
       After verifying the TLS client certificate,
-      the authorized API endpoint is called which verifies the connection.
+      the authorize API endpoint is called which verifies the connection.
       If authorize returns false the connection must be terminated. <br>
 
       Intentions are powerful because they free you from having to manage endless lists of IP address and port mappings.
@@ -369,9 +369,9 @@ challenges:
     contents: |-
       In this assignment, we'll take a deeper look at Envoy. We'll focus on three elements that make up the foundation of our mesh. <br>
 
-      * mTLS - How did Connect and Envoy provide end-to-end encryption between services ?
+      * mTLS - How did Connect and Envoy provide end-to-end encryption between services?
       * Service Discovery - How was Consul able to get service discovery information to the Envoy proxy for it's upstreams?
-      * Intentions - How were we able to allow or deny traffic based on service identity ?
+      * Intentions - How were we able to allow or deny traffic based on service identity?
 
       Let's investigate each of these with some easy to get info from Envoy.
   tabs:
