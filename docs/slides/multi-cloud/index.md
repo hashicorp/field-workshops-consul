@@ -4,7 +4,7 @@ background-image: url(https://hashicorp.github.io/field-workshops-assets/assets/
 count: false
 
 
-# Consul Multi-Cloud Field Workshop Slides
+# Consul Multi-Cloud Field Workshop
 ## Slides for Consul multi-cloud field workshops
 
 ![:scale 15%](https://hashicorp.github.io/field-workshops-assets/assets/logos/logo_consul.png)
