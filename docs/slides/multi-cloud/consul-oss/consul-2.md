@@ -21,7 +21,7 @@ Introduction to Consul - Overview
 -------------------------
 .center[![:scale 100%](images/multi-datacenter-federation.png)]
 
-* A consul cluster is refered to as a datacenter
+* A consul cluster is referred to as a datacenter
 * A consul datacenter is made up of server nodes and client nodes
 * 3 or 5 server nodes per datacenter
 * 100s - 10,000s of client nodes

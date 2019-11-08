@@ -40,7 +40,7 @@ Service Discovery with Consul
 * Services are able to query each other via DNS or HTTP
 
 ???
-In a consul environment services are able to self register along with their unique health check requirements.  This makes it easy to define and healthy service.  This coupled with consul using gossip service routing and availibility is near real time.  This allows for service discovery to be offloaded from the network and load balancer teams to the application deployment pipeline.  This is a crucial first step esp if an organization wants to take advantage of the benifits of a service mesh.
+In a consul environment services are able to self register along with their unique health check requirements.  This makes it easy to define and healthy service.  This coupled with consul using gossip service routing and availability is near real time.  This allows for service discovery to be offloaded from the network and load balancer teams to the application deployment pipeline.  This is a crucial first step esp if an organization wants to take advantage of the benefits of a service mesh.
 
 
 ---
@@ -76,7 +76,7 @@ There are many other practical use cases that can be solved with the Consul cata
 
 
 ???
-Because consul is now at the heart of service routing based on service name then failover becomes defined at the service level.  Simply by setting the failover path in your registration you have defined what happens in a failure situation at the service level.  Having this granular path allows for built in resilency for downstream dependencies.  
+Because consul is now at the heart of service routing based on service name then failover becomes defined at the service level.  Simply by setting the failover path in your registration you have defined what happens in a failure situation at the service level.  Having this granular path allows for built-in resiliency for downstream dependencies.
 
 ---
 name: Secure-Networking-is-Hard
@@ -87,7 +87,7 @@ Secure Networking is Hard
 
 * Once applications can find each other security becomes the next concern
 * This is usually done with a heavy dose of firewalls
-* This adds signifigant burden to the network organization
+* This adds significant burden to the network organization
 * Huge lists of firewall rules
 
 ???
@@ -103,7 +103,7 @@ Firewalls Won't Scale
 * Hard to optimize
 
 ???
-If you take this mindset to its logical conclustion you will end up with something like this.  Firewalls at every service trying to maintain all the up and downstream communications channels.  At scale this is completely unmanagable.  
+If you take this mindset to its logical conclusion you will end up with something like this.  Firewalls at every service trying to maintain all the up and downstream communications channels.  At scale this is completely unmanageable.
 ---
 name: Consul-Service-Mesh
 Consul Connect - A Modern Service Mesh
@@ -111,10 +111,10 @@ Consul Connect - A Modern Service Mesh
 .center[![:scale 80%](images/consul-service-discovery.005.png)]
 
 ???
-Using consul in conjuction with a proxy (in this case Envoy) will allow for several things.  
+Using consul in conjunction with a proxy (in this case Envoy) will allow for several things.
 First using consul ACL tokens you give a service an identity that is not IP based.  With this token the service is able to present an identity that is tied to the service no matter where it is running.
-Second you have defined intentions.  This construct is how you define what service is allowed to talk to what service.  And thirdly it provides all the near real time configurations to support a mTLS connection between services.  Things like Certficates and proxy configs are all automatically handled by consul.
-The power of this is that all of this can be defined in a simple service definition.  
+Second you have defined intentions.  This construct is how you define what service is allowed to talk to what service.  And thirdly it provides all the near real time configurations to support a mTLS connection between services.  Things like Certificates and proxy configs are all automatically handled by consul.
+The power of this is that all of this can be defined in a simple service definition.
 
 ---
 name: Consul-Service-Definition
@@ -163,4 +163,4 @@ Consul Mesh Gateways
 .center[Secure connections between any app or service across disparate environments]
 
 ???
-This problem is addressed with the abiltiy have mesh gateways.  This allows a single point at the edge that all mesh traffic flows over.  This allows the network teams to control the ingress/egress points at the edge of the network while still allowing the app teams the flexability to run application componets on the platform of their choosing.  In the next lab we are going to explore the concepts of a service mesh in instruqt.
+This problem is addressed with the availability of mesh gateways.  This allows a single point at the edge that all mesh traffic flows over.  This allows the network teams to control the ingress/egress points at the edge of the network while still allowing the app teams the flexibility to run application components on the platform of their choosing.  In the next lab we are going to explore the concepts of a service mesh in instruqt.

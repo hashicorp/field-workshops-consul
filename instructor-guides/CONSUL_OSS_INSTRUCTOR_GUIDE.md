@@ -59,7 +59,7 @@ Go through each of these tracks from start to finish and make sure you understan
 Between Chapters 1 and 2 there is a slide that says *Live Demo*. You can use an instruqt track to do a brief Consul demo for your participants. Follow these steps to do the demo:
 
 #### Setup
-1. Right before you start the training, visit https://instruqt.com/hashicorp/tracks/service-discovery-with-consul and work up to the 'Seamless Service Discovery' challenge. Or if needbe let your participants take a break after chapter 1 while you set this up. Setup should not take more than 7-8 minutes.
+1. Right before you start the training, visit https://instruqt.com/hashicorp/tracks/service-discovery-with-consul and work up to the 'Seamless Service Discovery' challenge. Or if need be let your participants take a break after chapter 1 while you set this up. Setup should not take more than 7-8 minutes.
 2. Walk through the demo scenario:
 > Welcome to Initech. We're trying to expand into the cloud and still manage our legacy infrastructure. We have this gigantic spreadsheet that contains mappings of all our IP addresses and hosts. The spreadsheet is sometimes out of date or not accurate. Hard-coding IPs into config files has been troublesome, slow and error prone.
 
@@ -76,7 +76,7 @@ dig -p8600 +short http.service.consul
 dig -p8600 +short mysql.service.consul
 ```
 
-> If you have multiple instances of a thing, Consul will automatically rotate between them. It's like having a free load balancer with built in health checks:
+> If you have multiple instances of a thing, Consul will automatically rotate between them. It's like having a free load balancer with built-in health checks:
 
 ```
 dig -p8600 +short consul.service.consul
