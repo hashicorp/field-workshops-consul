@@ -85,7 +85,8 @@ challenges:
 
       In this challenge, we'll set up a sidecar defintion.
   - type: image
-    url: https://github.com/hashicorp/field-workshops-consul/blob/master/docs/oss/images/connect_sidecar.png?raw=true
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/docs/slides/multi-cloud/consul-oss/images/connect_sidecar.png
+    
   tabs:
   - title: Consul UI
     type: service
