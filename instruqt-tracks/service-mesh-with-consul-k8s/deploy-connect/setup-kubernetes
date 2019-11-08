@@ -14,7 +14,7 @@ git clone https://github.com/hashicorp/consul-helm.git
 /usr/bin/kubectl get secret -o json -n kube-system $(kubectl get secret -n kube-system | grep admin-user | awk '{ print $1 }') | jq -r '.data.token' | base64 --decode > /root/token.txt
 
 #Set up the consul default values
-cat <<-EOF > /root/consul-vaules.yaml
+cat <<-EOF > /root/consul-values.yaml
 global:
   datacenter: dc1
   image: "consul:1.6.1"
