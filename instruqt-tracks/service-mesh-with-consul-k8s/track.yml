@@ -524,7 +524,7 @@ challenges:
     ```
 
     Optionally, you can shift all the traffic to the v2 version of the website now that our new feature is working properly.
-    You can additionally verify Consul has propagated this change to envoy by running the above command again.
+    You can additionally verify Consul has propagated this change to Envoy by running the above command again.
 
     ```
     cat <<-EOF > /root/emojify/splitter.hcl
@@ -711,7 +711,7 @@ challenges:
       The app will deploy five services in the following configuration: <br>
 
       * Frontend - Access to our application
-      * API - GRPC API to backend services
+      * API - gRPC API to backend services
       * Cache - Cache responses for our API
       * Payments  - Process payments
       * Currency - Do currency lookups for our payments
