@@ -46,11 +46,7 @@ challenges:
           "production"
         ],
         "port": 3306,
-        "connect": {
-          "sidecar_service": {
-
-          }
-        },
+        "connect": { "sidecar_service": {} },
         "check": {
           "id": "mysql",
           "name": "MySQL TCP on port 3306",
@@ -400,4 +396,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 900
-checksum: "12067809818546059839"
+checksum: "15304326842392076046"
