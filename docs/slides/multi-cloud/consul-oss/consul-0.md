@@ -17,7 +17,7 @@ The Slide Deck
 .center[
 Follow along on your own computer at this link:
 
-### [hashicorp.github.io/field-workshops-consul/oss](https://hashicorp.github.io/field-workshops-consul/oss)
+### [https://hashicorp.github.io/field-workshops-consul/slides/multi-cloud/consul-oss](https://hashicorp.github.io/field-workshops-consul/slides/multi-cloud/consul-oss)
 ]
 
 ???
