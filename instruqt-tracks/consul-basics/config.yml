@@ -11,7 +11,7 @@ containers:
   environment:
     CONSUL_HTTP_ADDR: http://127.0.0.1:8500
   memory: 128
-- name: consul-server-1
+- name: consul-server-2
   image: consul
   ports:
   - 8300
@@ -22,7 +22,7 @@ containers:
   environment:
     CONSUL_HTTP_ADDR: http://127.0.0.1:8500
   memory: 128
-- name: consul-server-2
+- name: consul-server-1
   image: consul
   ports:
   - 8300

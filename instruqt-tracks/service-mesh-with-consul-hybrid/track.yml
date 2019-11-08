@@ -12,7 +12,6 @@ developers:
 - lance@hashicorp.com
 private: false
 published: true
-maintenance: false
 challenges:
 - slug: connect-your-datacenters
   id: i8yrscsmhmjx
@@ -215,11 +214,6 @@ challenges:
     contents: Now that we have our legacy service running in DC2, let's deploy the
       rest of the application in DC1.
   tabs:
-  - title: DC1 - UI
-    type: service
-    hostname: dc1-consul-server
-    path: /ui/dc1
-    port: 8500
   - title: DC2 - UI
     type: service
     hostname: dc1-consul-server
@@ -228,6 +222,11 @@ challenges:
   - title: DC1 - K8s
     type: terminal
     hostname: dc1-kubernetes
+  - title: DC1 - UI
+    type: service
+    hostname: dc1-consul-server
+    path: /ui/dc1
+    port: 8500
   - title: DC1 - App Config
     type: code
     hostname: dc1-kubernetes
@@ -538,4 +537,4 @@ challenges:
     port: 16686
   difficulty: basic
   timelimit: 900
-checksum: "1714935905535146948"
+checksum: "14370304400067811217"

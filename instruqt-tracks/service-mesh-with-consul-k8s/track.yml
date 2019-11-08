@@ -726,6 +726,10 @@ challenges:
     hostname: kubernetes
     path: /search?service=web
     port: 31686
+  - title: K8s - Token
+    type: code
+    hostname: kubernetes
+    path: /root/token.txt
   - title: App - Config
     type: code
     hostname: kubernetes
@@ -739,10 +743,6 @@ challenges:
     type: service
     hostname: kubernetes
     port: 30443
-  - title: K8s - Token
-    type: code
-    hostname: kubernetes
-    path: /root/token.txt
   difficulty: basic
   timelimit: 900
-checksum: "16473068440887178940"
+checksum: "15577054224872602977"
