@@ -1,0 +1,31 @@
+#!/bin/bash
+
+cat <<EOF | kubectl apply -f -
+---
+apiVersion: getambassador.io/v1
+kind: ConsulResolver
+metadata:
+  name: lab-consul-dc1
+spec:
+  address: lab-consul-server.default.svc.cluster.local:8500
+  datacenter: dc1
+EOF
+
+cat <<EOF | kubectl apply -f -
+---
+apiVersion: getambassador.io/v1
+kind: Mapping
+metadata:
+  name: consul-web-mapping-tls
+spec:
+  prefix: /web/
+  service: web-sidecar-proxy
+  resolver: lab-consul-dc1
+  tls: ambassador-consul
+  load_balancer:
+    policy: round_robin
+EOF
+
+consul intention create -allow ambassador web
+
+exit 0

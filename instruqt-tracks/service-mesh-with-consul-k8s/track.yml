@@ -31,12 +31,11 @@ challenges:
 
     Let's go ahead and install Consul into K8s. Helm has been pre-initialized in this environment. <br>
 
-    **You may see this error**: `Error: could not find a ready tiller pod`.
-    Not a problem, just wait few moments, and try again. <br>
-
     ```
     helm install -f consul-values.yaml --name lab ./consul-helm
     ```
+    **You may see this error**: `Error: could not find a ready tiller pod`.
+    Not a problem, just wait few moments, and try again. <br>
 
     The Consul UI will become available once the Consul server pods are running. <br>
 
@@ -745,4 +744,135 @@ challenges:
     port: 30443
   difficulty: basic
   timelimit: 900
-checksum: "11107689157963215131"
+- slug: ingress
+  id: ydjcyyarz7ef
+  type: challenge
+  title: Ingress
+  teaser: Use advanced ingress capabilities.
+  assignment: |-
+    We've configured Ambassador for you in this lab with the following K8s deployment files: <br>
+
+    * https://www.getambassador.io/yaml/ambassador/ambassador-rbac.yaml
+    * https://www.getambassador.io/yaml/ambassador/ambassador-service.yaml (modified for port 8080)
+    * https://www.getambassador.io/yaml/consul/ambassador-consul-connector.yaml
+
+    We've also enabled [Ambassador tracing](https://www.getambassador.io/user-guide/tracing-tutorial-zipkin/), so we can see the gateway ingress in the Jaeger UI. <br>
+
+    You can follow this [guide](https://www.getambassador.io/user-guide/consul/) to see all the integrations with Consul. <br>
+
+    For the integration to work, we need to set up an Ambassador resolver that can query Consul's catalog. <br>
+
+    ```
+    cat <<EOF | kubectl apply -f -
+    ---
+    apiVersion: getambassador.io/v1
+    kind: ConsulResolver
+    metadata:
+      name: lab-consul-dc1
+    spec:
+      address: lab-consul-server.default.svc.cluster.local:8500
+      datacenter: dc1
+    EOF
+    ```
+
+    That's it! Ambassador is ready to go. Let's create a mapping for the application. <br>
+
+    ```
+    cat <<EOF | kubectl apply -f -
+    ---
+    apiVersion: getambassador.io/v1
+    kind: Mapping
+    metadata:
+      name: consul-web-mapping-tls
+    spec:
+      prefix: /web/
+      service: web-sidecar-proxy
+      resolver: lab-consul-dc1
+      tls: ambassador-consul
+      load_balancer:
+        policy: round_robin
+    EOF
+    ```
+
+    At this step, you can look at the route in the Ambassador UI tab and check its health. <br>
+
+    Ambassador is also trusted in the mesh, and has it's own certificate to present to the proxies.
+    The integration manages this as a K8s tls secret. We can see this below. <br>
+
+    ```
+    kubectl get secrets ambassador-consul-connect -o json | jq -r '.data."tls.crt"' | base64 -d | openssl x509 -text -noout
+    ```
+
+    We need to tell Connect to allow this traffic. You can do this selectively on a per service basis. <br>
+
+    ```
+    consul intention create -allow ambassador web
+    ```
+
+    Remember, our ingress controller is sitting behind the K3s load balancer.
+    The `web` service will be available at the prefix path from our mapping. <br>
+
+    We've reset the error rate, so all the API calls will suceed. <br>
+
+    Let's get the load balancer IP, and send our cluster some traffic! <br>
+
+    ```
+    ambassador=$(kubectl get svc ambassador  -o json | jq -r '.status.loadBalancer.ingress[0].ip')
+    curl ${ambassador}:8080/web/
+    ```
+
+    Nice work! Log into the Jaeger UI and look at the new traces.
+    You'll see additional traffic from Ambassador. <br>
+
+    Nice work!
+  notes:
+  - type: text
+    contents: |-
+      Consul supports a rich ecosystem of integrations, and Connect is no exception.
+      In this assignment we'll leverage [Datawire's Ambassador](https://www.consul.io/docs/platform/k8s/ambassador.html)
+      to allow K8s ingress for our tracing application from the prior assignment. <br>
+
+      Ingress exposes HTTP and HTTPS routes from outside the cluster to services within the cluster.
+      Ingress can be configured to give Services externally-reachable URLs, load balance traffic, terminate SSL / TLS, and more. <br>
+
+      It can be very expensive to run dedicated load balancers per application.
+      Ingress can help us manage this problem effectively. <br>
+
+      An Ingress controller is responsible for fulfilling the Ingress, usually with a load balancer.
+      K3s ships with a [load balancer](https://rancher.com/docs/k3s/latest/en/configuration/#service-load-balancer) we can use to send Ambassador the traffic. <br>
+
+      Let's try this out with Ambassador and Connect.
+  tabs:
+  - title: K8s
+    type: terminal
+    hostname: kubernetes
+  - title: Jaeger UI
+    type: service
+    hostname: kubernetes
+    path: /search?service=web
+    port: 31686
+  - title: Ambassador UI
+    type: service
+    hostname: kubernetes
+    path: /ambassador/v0/diag/
+    port: 31877
+  - title: K8s - Token
+    type: code
+    hostname: kubernetes
+    path: /root/token.txt
+  - title: App - Config
+    type: code
+    hostname: kubernetes
+    path: /root/tracing
+  - title: Consul UI
+    type: service
+    hostname: kubernetes
+    path: /ui/
+    port: 30085
+  - title: K8s - UI
+    type: service
+    hostname: kubernetes
+    port: 30443
+  difficulty: basic
+  timelimit: 300
+checksum: "14464825229751926832"

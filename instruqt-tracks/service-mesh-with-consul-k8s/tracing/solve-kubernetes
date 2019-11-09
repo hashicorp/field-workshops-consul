@@ -2,9 +2,11 @@
 
 consul config write trace.hcl
 
-consul intention create -allow app-frontend app-api
-consul intention create -allow app-api app-cache
-consul intention create -allow app-api app-payments
-consul intention create -allow app-payments app-currency
+kubectl apply -f tracing
+
+consul intention create -allow web api
+consul intention create -allow api cache
+consul intention create -allow api payments
+consul intention create -allow payments currency
 
 exit 0
