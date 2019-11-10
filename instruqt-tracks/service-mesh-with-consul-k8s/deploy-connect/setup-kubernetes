@@ -31,6 +31,12 @@ client:
 ui:
   enabled: true
 
+syncCatalog:
+  enabled: true
+  toConsul: true
+  toK8S: false
+  default: true
+
 connectInject:
   enabled: true
   imageEnvoy: envoyproxy/envoy:v1.9.1
