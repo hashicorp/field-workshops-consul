@@ -30,7 +30,7 @@ datasources:
 EOF
 
 #Set up the UI for prometheus
-cat <<EOF | /usr/bin/kubectl apply -f -
+cat <<EOF | kubectl apply -f -
 ---
 apiVersion: v1
 kind: Service
@@ -49,7 +49,7 @@ spec:
 EOF
 
 #Set up the UI for grafana
-cat <<EOF | /usr/bin/kubectl apply -f -
+cat <<EOF | kubectl apply -f -
 ---
 apiVersion: v1
 kind: Service

@@ -2,6 +2,7 @@
 
 consul config write trace.hcl
 
+kubectl apply -f jaeger-all-in-one-template.yml
 kubectl apply -f tracing
 
 consul intention create -allow web api

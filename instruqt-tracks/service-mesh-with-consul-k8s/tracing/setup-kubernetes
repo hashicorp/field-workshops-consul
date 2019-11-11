@@ -4,7 +4,7 @@ cat <<-EOF > /root/jaeger-all-in-one-template.yml
 apiVersion: v1
 kind: List
 items:
-- apiVersion: extensions/v1beta1
+- apiVersion: apps/v1
   kind: Deployment
   metadata:
     name: jaeger
@@ -14,6 +14,9 @@ items:
       app.kubernetes.io/component: all-in-one
   spec:
     replicas: 1
+    selector:
+      matchLabels:
+        app: jaeger
     strategy:
       type: Recreate
     template:

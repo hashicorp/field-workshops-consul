@@ -39,6 +39,10 @@ challenges:
 
     The Consul UI will become available once the Consul server pods are running. <br>
 
+    ```
+    kubectl get pods
+    ```
+
     We've also included the K8s dashboard for the duration of this lab if you want to introspect workloads using the K8s UI.
     You can use the K8s token to authenticate to the dashboard. <br>
 
@@ -81,14 +85,6 @@ challenges:
     hostname: kubernetes
     path: /ui/
     port: 30085
-  - title: K8s - UI
-    type: service
-    hostname: kubernetes
-    port: 30443
-  - title: K8s - Token
-    type: code
-    hostname: kubernetes
-    path: /root/token.txt
   difficulty: basic
   timelimit: 600
 - slug: deploy-application
@@ -170,14 +166,6 @@ challenges:
     hostname: kubernetes
     path: /ui/dc1/intentions
     port: 30085
-  - title: K8s - UI
-    type: service
-    hostname: kubernetes
-    port: 30443
-  - title: K8s - Token
-    type: code
-    hostname: kubernetes
-    path: /root/token.txt
   difficulty: basic
   timelimit: 600
 - slug: emojify-some-faces
@@ -236,14 +224,6 @@ challenges:
     hostname: kubernetes
     path: /ui/
     port: 30085
-  - title: K8s - UI
-    type: service
-    hostname: kubernetes
-    port: 30443
-  - title: K8s - Token
-    type: code
-    hostname: kubernetes
-    path: /root/token.txt
   difficulty: basic
   timelimit: 600
 - slug: scale-the-app
@@ -299,14 +279,6 @@ challenges:
     hostname: kubernetes
     path: /ui/
     port: 30085
-  - title: K8s - UI
-    type: service
-    hostname: kubernetes
-    port: 30443
-  - title: K8s - Token
-    type: code
-    hostname: kubernetes
-    path: /root/token.txt
   difficulty: basic
   timelimit: 600
 - slug: get-metrics
@@ -371,14 +343,6 @@ challenges:
     type: code
     hostname: kubernetes
     path: /tmp/grafana-pass.txt
-  - title: K8s - UI
-    type: service
-    hostname: kubernetes
-    port: 30443
-  - title: K8s - Token
-    type: code
-    hostname: kubernetes
-    path: /root/token.txt
   difficulty: basic
   timelimit: 600
 - slug: ship-a-new-feature
@@ -568,14 +532,6 @@ challenges:
     hostname: kubernetes
     path: /ui/
     port: 30085
-  - title: K8s - UI
-    type: service
-    hostname: kubernetes
-    port: 30443
-  - title: K8s - Token
-    type: code
-    hostname: kubernetes
-    path: /root/token.txt
   difficulty: basic
   timelimit: 900
 - slug: tracing
@@ -725,10 +681,6 @@ challenges:
     hostname: kubernetes
     path: /search?service=web
     port: 31686
-  - title: K8s - Token
-    type: code
-    hostname: kubernetes
-    path: /root/token.txt
   - title: App - Config
     type: code
     hostname: kubernetes
@@ -738,10 +690,6 @@ challenges:
     hostname: kubernetes
     path: /ui/
     port: 30085
-  - title: K8s - UI
-    type: service
-    hostname: kubernetes
-    port: 30443
   difficulty: basic
   timelimit: 900
 - slug: ingress
@@ -809,9 +757,13 @@ challenges:
     consul intention create -allow ambassador web
     ```
 
-    Remember, our ingress controller is sitting behind the K3s load balancer.
-    The `web` service will be available at the prefix path from our mapping. <br>
+    Remember, our ingress controller is sitting behind the K3s load balancer. <br>
 
+    ```
+    kubectl describe svc ambassador
+    ```
+
+    The `web` service will be available at the prefix path from our mapping.
     We've reset the error rate, so all the API calls will suceed. <br>
 
     Let's get the load balancer IP, and send our cluster some traffic! <br>
@@ -856,10 +808,6 @@ challenges:
     hostname: kubernetes
     path: /ambassador/v0/diag/
     port: 31877
-  - title: K8s - Token
-    type: code
-    hostname: kubernetes
-    path: /root/token.txt
   - title: App - Config
     type: code
     hostname: kubernetes
@@ -869,10 +817,6 @@ challenges:
     hostname: kubernetes
     path: /ui/
     port: 30085
-  - title: K8s - UI
-    type: service
-    hostname: kubernetes
-    port: 30443
   difficulty: basic
   timelimit: 300
-checksum: "12015458425346017532"
+checksum: "2055583403598628778"

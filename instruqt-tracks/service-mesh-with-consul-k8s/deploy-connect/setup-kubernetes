@@ -1,5 +1,63 @@
 #!/bin/sh
 
+#ip
+local_ipv4=$(curl -s -H "Metadata-Flavor: Google" http://metadata/computeMetadata/v1/instance/network-interfaces/0/ip)
+
+#install k3s
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v0.10.2" INSTALL_K3S_EXEC="--node-name=kubernetes --docker --no-deploy traefik --no-deploy servicelb" sh -
+mkdir -p /root/.kube
+cp /etc/rancher/k3s/k3s.yaml /root/.kube/config
+sleep  10
+
+#Storage
+kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+
+#metal LB
+kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.3/manifests/metallb.yaml
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    address-pools:
+    - name: default
+      protocol: layer2
+      addresses:
+      - ${local_ipv4}-${local_ipv4}
+EOF
+
+#install helm
+curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
+chmod 700 get_helm.sh && ./get_helm.sh && rm ./get_helm.sh
+kubectl -n kube-system create serviceaccount tiller
+kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+helm init --wait --service-account tiller
+sleep 3
+
+#Set up the UI for Consul
+cat <<EOF | kubectl apply -f -
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul-service
+spec:
+  type: NodePort
+  selector:
+    app: consul
+    component: server
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8500
+    targetPort: 8500
+    nodePort: 30085
+EOF
+
 #Get the consul binary
 wget https://releases.hashicorp.com/consul/1.6.1/consul_1.6.1_linux_amd64.zip
 unzip consul_1.6.1_linux_amd64.zip
@@ -9,9 +67,6 @@ rm -f consul_1.6.1_linux_amd64.zip
 
 #Grab the helm chart
 git clone https://github.com/hashicorp/consul-helm.git
-
-#Get the K8s token for dashboard
-/usr/bin/kubectl get secret -o json -n kube-system $(kubectl get secret -n kube-system | grep admin-user | awk '{ print $1 }') | jq -r '.data.token' | base64 --decode > /root/token.txt
 
 #Set up the consul default values
 cat <<-EOF > /root/consul-values.yaml
@@ -53,26 +108,6 @@ connectInject:
       }
 EOF
 
-#Set up the UI for Consul
-cat <<EOF | /usr/bin/kubectl apply -f -
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: consul-service
-spec:
-  type: NodePort
-  selector:
-    app: consul
-    component: server
-  ports:
-  - name: http
-    protocol: TCP
-    port: 8500
-    targetPort: 8500
-    nodePort: 30085
-EOF
-
-/usr/bin/kubectl wait pod -n kube-system --selector=app=helm --for=condition=Ready
+kubectl wait pod -n kube-system --selector=app=helm --for=condition=Ready
 
 exit 0
