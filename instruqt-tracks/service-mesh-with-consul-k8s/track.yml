@@ -791,7 +791,7 @@ challenges:
       Ingress can help us manage this problem effectively. <br>
 
       An Ingress controller is responsible for fulfilling the Ingress, usually with a load balancer.
-      K3s ships with a [load balancer](https://rancher.com/docs/k3s/latest/en/configuration/#service-load-balancer) we can use to send Ambassador the traffic. <br>
+      We will use the [MetalLB load balancer](https://metallb.universe.tf/) to send Ambassador the traffic. <br>
 
       Let's try this out with Ambassador and Connect.
   tabs:
@@ -819,4 +819,4 @@ challenges:
     port: 30085
   difficulty: basic
   timelimit: 300
-checksum: "2055583403598628778"
+checksum: "2180981823030168835"
