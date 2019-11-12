@@ -43,10 +43,10 @@ challenges:
     kubectl get pods
     ```
 
-    We've also included the K8s dashboard for the duration of this lab if you want to introspect workloads using the K8s UI.
-    You can use the K8s token to authenticate to the dashboard. <br>
+    We've also included the K8s dashboard for the duration of this lab if you want to introspect the workloads using the K8s UI tab.
+    We've set the dashboard up in a demo configuration, so you can use  the `skip` button to authenticate. <br>
 
-    If you want to see a breakout of Consul deployment, run the following command. <br>
+    If you want to see a breakout of the Consul deployment from helm, run the following command. <br>
 
     ```
     helm status lab
@@ -85,6 +85,10 @@ challenges:
     hostname: kubernetes
     path: /ui/
     port: 30085
+  - title: K8s UI
+    type: service
+    hostname: kubernetes
+    port: 30443
   difficulty: basic
   timelimit: 600
 - slug: deploy-application
@@ -166,6 +170,10 @@ challenges:
     hostname: kubernetes
     path: /ui/dc1/intentions
     port: 30085
+  - title: K8s UI
+    type: service
+    hostname: kubernetes
+    port: 30443
   difficulty: basic
   timelimit: 600
 - slug: emojify-some-faces
@@ -224,6 +232,10 @@ challenges:
     hostname: kubernetes
     path: /ui/
     port: 30085
+  - title: K8s UI
+    type: service
+    hostname: kubernetes
+    port: 30443
   difficulty: basic
   timelimit: 600
 - slug: scale-the-app
@@ -279,6 +291,10 @@ challenges:
     hostname: kubernetes
     path: /ui/
     port: 30085
+  - title: K8s UI
+    type: service
+    hostname: kubernetes
+    port: 30443
   difficulty: basic
   timelimit: 600
 - slug: get-metrics
@@ -343,6 +359,10 @@ challenges:
     type: code
     hostname: kubernetes
     path: /tmp/grafana-pass.txt
+  - title: K8s UI
+    type: service
+    hostname: kubernetes
+    port: 30443
   difficulty: basic
   timelimit: 600
 - slug: ship-a-new-feature
@@ -532,6 +552,10 @@ challenges:
     hostname: kubernetes
     path: /ui/
     port: 30085
+  - title: K8s UI
+    type: service
+    hostname: kubernetes
+    port: 30443
   difficulty: basic
   timelimit: 900
 - slug: tracing
@@ -690,6 +714,10 @@ challenges:
     hostname: kubernetes
     path: /ui/
     port: 30085
+  - title: K8s UI
+    type: service
+    hostname: kubernetes
+    port: 30443
   difficulty: basic
   timelimit: 900
 - slug: ingress
@@ -817,6 +845,10 @@ challenges:
     hostname: kubernetes
     path: /ui/
     port: 30085
+  - title: K8s UI
+    type: service
+    hostname: kubernetes
+    port: 30443
   difficulty: basic
   timelimit: 300
-checksum: "2180981823030168835"
+checksum: "9329232762158244592"
