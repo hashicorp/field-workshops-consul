@@ -153,6 +153,15 @@ challenges:
       Consul Connect supports more advanced ingress controllers, such as [Datawire's Ambassador](https://www.consul.io/docs/platform/k8s/ambassador.html),
       but we will use the Nginx container in this lab to show basic functionality.
   tabs:
+  - title: Consul UI
+    type: service
+    hostname: kubernetes
+    path: /ui/dc1/intentions
+    port: 30085
+  - title: K8s UI
+    type: service
+    hostname: kubernetes
+    port: 30443
   - title: Emojify - Config
     type: code
     hostname: kubernetes
@@ -165,15 +174,6 @@ challenges:
     hostname: kubernetes
     path: /
     port: 30000
-  - title: Consul UI
-    type: service
-    hostname: kubernetes
-    path: /ui/dc1/intentions
-    port: 30085
-  - title: K8s UI
-    type: service
-    hostname: kubernetes
-    port: 30443
   difficulty: basic
   timelimit: 600
 - slug: emojify-some-faces
@@ -700,15 +700,20 @@ challenges:
   - title: K8s
     type: terminal
     hostname: kubernetes
+  - title: App UI
+    type: service
+    hostname: kubernetes
+    path: /ui
+    port: 30900
+  - title: App - Config
+    type: code
+    hostname: kubernetes
+    path: /root/tracing
   - title: Jaeger UI
     type: service
     hostname: kubernetes
     path: /search?service=web
     port: 31686
-  - title: App - Config
-    type: code
-    hostname: kubernetes
-    path: /root/tracing
   - title: Consul UI
     type: service
     hostname: kubernetes
@@ -772,6 +777,14 @@ challenges:
 
     At this step, you can look at the route in the Ambassador UI tab and check its health. <br>
 
+    We can also view all the mappings we've created, or a specific mapping.
+    Alternatively, you can manage these [inline](https://www.getambassador.io/reference/mappings/#mapping-resources-and-crds). <br>
+
+    ```
+    kubectl get mappings
+    kubectl describe mapping consul-web-mapping-tls
+    ```
+
     Ambassador is also trusted in the mesh, and has it's own certificate to present to the proxies.
     The integration manages this as a K8s tls secret. We can see this below. <br>
 
@@ -798,7 +811,7 @@ challenges:
 
     ```
     ambassador=$(kubectl get svc ambassador  -o json | jq -r '.status.loadBalancer.ingress[0].ip')
-    curl ${ambassador}:8080/web/
+    curl ${ambassador}/web/
     ```
 
     Nice work! Log into the Jaeger UI and look at the new traces.
@@ -851,4 +864,4 @@ challenges:
     port: 30443
   difficulty: basic
   timelimit: 300
-checksum: "9329232762158244592"
+checksum: "8799246693080526879"
