@@ -79,7 +79,7 @@ Consul Template is a standalone application that populates values from Consul an
 
 A common use case is managing load balancer configuration files that need to be updated regularly in a dynamic infrastructure on machines many not be able to directly connect to the Consul cluster.
 
-It is an ideal for replacing complicated API queries that often require custom formatting. The template tool is based on Go templates and shares many of the same attributes.
+It is an ideal for replacing complicated API queries that often require custom formatting.
 
 ---
 name: Service-Registry-Integration-DNS
