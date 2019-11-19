@@ -1,24 +1,7 @@
 #!/bin/bash
 
 kubectl apply -f https://www.getambassador.io/yaml/ambassador/ambassador-rbac.yaml
-
-cat <<EOF | kubectl apply -f -
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: ambassador
-  labels:
-    app.kubernetes.io/component: ambassador-service
-spec:
-  type: LoadBalancer
-  externalTrafficPolicy: Local
-  ports:
-   - port: 80
-     targetPort: 8080
-  selector:
-    service: ambassador
-EOF
+kubectl apply -f https://www.getambassador.io/yaml/ambassador/ambassador-service.yaml
 
 cat <<EOF | kubectl apply -f -
 ---

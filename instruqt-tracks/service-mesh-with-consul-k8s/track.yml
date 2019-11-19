@@ -734,7 +734,7 @@ challenges:
     We've configured Ambassador for you in this lab with the following K8s deployment files: <br>
 
     * https://www.getambassador.io/yaml/ambassador/ambassador-rbac.yaml
-    * https://www.getambassador.io/yaml/ambassador/ambassador-service.yaml (modified for port 8080)
+    * https://www.getambassador.io/yaml/ambassador/ambassador-service.yaml
     * https://www.getambassador.io/yaml/consul/ambassador-consul-connector.yaml
 
     We've also enabled [Ambassador tracing](https://www.getambassador.io/user-guide/tracing-tutorial-zipkin/), so we can see the gateway ingress in the Jaeger UI. <br>
@@ -864,4 +864,4 @@ challenges:
     port: 30443
   difficulty: basic
   timelimit: 300
-checksum: "8799246693080526879"
+checksum: "7707107130956161914"
