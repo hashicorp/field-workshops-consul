@@ -23,8 +23,8 @@ tags:
 - cluster
 owner: hashicorp
 developers:
-- lance@hashicorp.com
-- scarolan@hashicorp.com
+- null
+- null
 private: false
 published: true
 challenges:
@@ -369,4 +369,4 @@ challenges:
     path: /tmp/bootstrap.txt
   difficulty: basic
   timelimit: 600
-checksum: "2071700225202135438"
+checksum: "1745266151377119856"
