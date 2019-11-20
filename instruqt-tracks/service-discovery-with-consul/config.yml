@@ -22,7 +22,7 @@ containers:
     MYSQL_ROOT_PASSWORD: HashiCorp123
     MYSQL_USER: wp-user
 - name: consul-server-0
-  image: consul
+  image: consul:1.6.1
   ports:
   - 8300
   - 8301
@@ -31,7 +31,7 @@ containers:
   - 8600
   memory: 128
 - name: consul-server-1
-  image: consul
+  image: consul:1.6.1
   ports:
   - 8300
   - 8301
@@ -40,7 +40,7 @@ containers:
   - 8600
   memory: 128
 - name: consul-server-2
-  image: consul
+  image: consul:1.6.1
   ports:
   - 8300
   - 8301

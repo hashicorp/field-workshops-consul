@@ -17,8 +17,8 @@ tags:
 - consul
 owner: hashicorp
 developers:
-- lance@hashicorp.com
-- scarolan@hashicorp.com
+- null
+- null
 private: false
 published: true
 challenges:
@@ -309,4 +309,4 @@ challenges:
     hostname: app
   difficulty: basic
   timelimit: 900
-checksum: "13185615548126404487"
+checksum: "340507570788199309"
