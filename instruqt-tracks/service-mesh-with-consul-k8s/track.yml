@@ -8,7 +8,7 @@ description: |-
   In this track you will use Consul Connect's first-class support on K8s
   for service mesh.
 
-  We'll work through scaling, monitoring, tracing, and advanced L7 traffic patterns.
+  You'll work through scaling, monitoring, and tracing applications. To complete the track you, will gain experience with the advanced L7 traffic patterns.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags: []
 owner: hashicorp
@@ -24,24 +24,33 @@ challenges:
   title: Deploy Connect
   teaser: Your first Consul cluster on K8s
   assignment: |-
-    Let's use Helm to push Consul into the K8s cluster, and enable Connect. <br>
+    First, use Helm with a custom values file to deploy Consul into the K8s cluster and enable Connect. <br>
 
-    We've pulled the helm chart down from Git placed it in the lab environment.
-    Some defaults for you that you can see in the code editor. <br>
+    The helm chart has already been cloned from GitHub and placed it in your lab environment.
+    Click on the `/root/consul-valules.yaml` file to view the Consul deployemnt configuration in the code editor. <br>
 
-    Let's go ahead and install Consul into K8s. Helm has been pre-initialized in this environment. <br>
+    Navigate to the `K8s` shell to install Consul. Note, Helm has been pre-initialized in this environment. Copy or type the following command in the shell.<br>
 
     ```
     helm install -f consul-values.yaml --name lab ./consul-helm
     ```
+
+    The status output should indicate Consul was `DEPLOYED`. <br>
+
     **You may see this error**: `Error: could not find a ready tiller pod`.
     Not a problem, just wait few moments, and try again. <br>
 
-    The Consul UI will become available once the Consul server pods are running. <br>
+    The Consul UI will become available once the Consul server pods are running. Monitor the progress with the follwing `kubectl` command. If `lab-consul-server-0` is `running`, then you should be able to access the Consul UI <br>
 
     ```
     kubectl get pods
     ```
+
+    <br>
+
+    Now that you have successfully deployed Consul on K8s, you can deploy some apps!
+
+    **Optional**
 
     We've also included the K8s dashboard for the duration of this lab if you want to introspect the workloads using the K8s UI tab.
     We've set the dashboard up in a demo configuration, so you can use  the `skip` button to authenticate. <br>
@@ -52,7 +61,6 @@ challenges:
     helm status lab
     ```
 
-    Now we can deploy some apps.
   notes:
   - type: text
     contents: |-
