@@ -8,7 +8,7 @@ jobs:
       - run:
           name: Run Instruqt Validate
           command: |
-            VERSION=1270-4cde42d
+            VERSION=1399-fd97b6a
             apt -y update
             apt -y install wget unzip
             wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
@@ -28,8 +28,52 @@ jobs:
             for dir in $(ls -d /root/project/instruqt-tracks/*); do
               cd $dir && instruqt track validate
             done
+  instruqt-test:
+    docker:
+      - image: ubuntu:latest
+    steps:
+      - checkout
+      - run:
+          name: Run Instruqt Test
+          command: |
+            VERSION=1399-fd97b6a
+            apt -y update
+            apt -y install wget unzip
+            wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
+            cd /tmp
+            unzip instruqt.zip
+            cp instruqt /usr/local/bin/instruqt
+            chmod +x /usr/local/bin/instruqt
+            instruqt version | grep $VERSION
+            RETVAL=$?
+            if [[ $RETVAL -ne 0 ]]; then
+              echo "Version $VERSION is not installed correctly."
+              exit 1
+            else
+              echo "Instruqt Version $VERSION is installed."
+            fi
+            echo "Running instruqt track test..."
+            for dir in $(ls -d /root/project/instruqt-tracks/*); do
+              cd $dir && instruqt track test --skip-fail-check
+            done
 workflows:
   version: 2
   build-and-deploy:
     jobs:
       - instruqt-validate
+      - instruqt-test:
+          requires:
+            - instruqt-validate
+  nightly-build:
+    triggers:
+      - schedule:
+          cron: "0 5 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - instruqt-validate
+      - instruqt-test:
+          requires:
+            - instruqt-validate
