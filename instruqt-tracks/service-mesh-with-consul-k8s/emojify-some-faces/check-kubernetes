@@ -1,0 +1,10 @@
+#!/bin/sh
+
+api=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:30000/api/ --data 'https://cdn.geekwire.com/wp-content/uploads/2017/10/armon-dadgar-and-mitchell-hashimoto-630x419.jpg')
+
+if [ "$api" != "200" ]; then
+  fail-message "Could not emojify."
+  exit 1
+fi
+
+exit 0

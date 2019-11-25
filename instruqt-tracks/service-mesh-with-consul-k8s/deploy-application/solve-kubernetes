@@ -11,4 +11,12 @@ consul intention create -allow emojify-api emojify-cache
 consul intention create -allow emojify-ingress emojify-api
 consul intention create -allow emojify-ingress emojify-website
 
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-api -o name)
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-cache -o name)
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-facebox -o name)
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-website -o name)
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-ingress -o name)
+
+sleep 20
+
 exit 0

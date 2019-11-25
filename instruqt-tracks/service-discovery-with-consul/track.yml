@@ -16,9 +16,7 @@ tags:
 - service catalog
 - consul
 owner: hashicorp
-developers:
-- null
-- null
+developers: []
 private: false
 published: true
 challenges:
@@ -309,4 +307,4 @@ challenges:
     hostname: app
   difficulty: basic
   timelimit: 900
-checksum: "340507570788199309"
+checksum: "3779131424815661968"

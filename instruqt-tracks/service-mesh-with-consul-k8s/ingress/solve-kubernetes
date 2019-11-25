@@ -28,4 +28,6 @@ EOF
 
 consul intention create -allow ambassador web
 
+sleep 10
+
 exit 0

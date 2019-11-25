@@ -2,12 +2,19 @@
 
 consul config write trace.hcl
 
-kubectl apply -f jaeger-all-in-one-template.yml
 kubectl apply -f tracing
 
 consul intention create -allow web api
 consul intention create -allow api cache
 consul intention create -allow api payments
 consul intention create -allow payments currency
+
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=web -o name)
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=api -o name)
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=cache -o name)
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=payments -o name)
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=currency -o name)
+
+sleep 20
 
 exit 0

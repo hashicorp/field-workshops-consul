@@ -836,6 +836,15 @@ challenges:
 
       Let's try this out with Ambassador and Connect.
   tabs:
+  - title: Consul UI
+    type: service
+    hostname: kubernetes
+    path: /ui/
+    port: 30085
+  - title: K8s UI
+    type: service
+    hostname: kubernetes
+    port: 30443
   - title: K8s
     type: terminal
     hostname: kubernetes
@@ -853,15 +862,6 @@ challenges:
     type: code
     hostname: kubernetes
     path: /root/tracing
-  - title: Consul UI
-    type: service
-    hostname: kubernetes
-    path: /ui/
-    port: 30085
-  - title: K8s UI
-    type: service
-    hostname: kubernetes
-    port: 30443
   difficulty: basic
   timelimit: 300
-checksum: "7707107130956161914"
+checksum: "2967676121435162668"

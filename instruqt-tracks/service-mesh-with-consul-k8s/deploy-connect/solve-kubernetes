@@ -1,5 +1,5 @@
 #!/bin/bash
 
-helm install -f consul-vaules.yaml --name lab ./consul-helm  --wait
+helm install -f /root/consul-values.yaml --name lab /root/consul-helm  --wait
 
 exit 0
