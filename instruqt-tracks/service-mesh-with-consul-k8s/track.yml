@@ -60,7 +60,6 @@ challenges:
     ```
     helm status lab
     ```
-
   notes:
   - type: text
     contents: |-
@@ -872,4 +871,4 @@ challenges:
     path: /root/tracing
   difficulty: basic
   timelimit: 300
-checksum: "2967676121435162668"
+checksum: "9447837170576326801"
