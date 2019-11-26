@@ -114,7 +114,7 @@ challenges:
     If you view any of the other services, they will include the same annotations. <br>
 
     These annotations tell Consul that the pod should get an Envoy sidecar proxy to route traffic
-    and listeners for the requested service on the specified upstream port. 
+    and listeners for the requested service on the specified upstream port.
     In the helm chart, you set  `connectInject` to `false`, so now you need to explicitly add the above annotations to deploy a sidecar proxy with your application.<br>
 
     ```
@@ -142,11 +142,11 @@ challenges:
     consul intention create -allow emojify-ingress emojify-website
     ```
 
-    Now you've deployed your applications and created allow intentions, you should be able to access the website on the `Emojify-Website` tab. 
+    Now you've deployed your applications and created allow intentions, you should be able to access the website on the `Emojify-Website` tab.
   notes:
   - type: text
     contents: |-
-      In this exerxise, you will deploy a more complex microservice application called [Emojify](https://github.com/emojify-app). <br>
+      In this exercise, you will deploy a more complex microservice application called [Emojify](https://github.com/emojify-app). <br>
 
       The application has five distinct components that provide functionality:
 
@@ -878,4 +878,4 @@ challenges:
     path: /root/tracing
   difficulty: basic
   timelimit: 300
-checksum: "9447837170576326801"
+checksum: "4724224184968077013"
