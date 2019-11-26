@@ -23,4 +23,6 @@ EOF
 
 /usr/local/bin/consul reload
 
+sleep 10
+
 exit 0

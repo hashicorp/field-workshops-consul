@@ -6,4 +6,6 @@
 #restart web server
 /usr/sbin/service apache2 restart
 
+sleep 5
+
 exit 0
