@@ -1,11 +1,13 @@
 #!/bin/sh
 
-sleep 10
+export PATH=/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 
 echo "Starting Envoy..."
 nohup /usr/local/bin/consul connect envoy -sidecar-for mysql > /envoy.out &
 
 echo "Reloading Consul..."
 /usr/local/bin/consul reload
+
+sleep 10
 
 exit 0

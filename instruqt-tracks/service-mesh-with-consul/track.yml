@@ -11,9 +11,7 @@ description: |-
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags: []
 owner: hashicorp
-developers:
-- null
-- null
+developers: []
 private: false
 published: true
 challenges:
@@ -396,4 +394,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 900
-checksum: "525567581682424602"
+checksum: "7286930693531551250"

@@ -64,6 +64,24 @@ jobs:
             chmod +x /usr/local/bin/instruqt
             echo "Running instruqt track test..."
             cd /root/project/instruqt-tracks/service-discovery-with-consul && instruqt track test --skip-fail-check
+  service-mesh-with-consul:
+    docker:
+      - image: ubuntu:latest
+    steps:
+      - checkout
+      - run:
+          name: Service Mesh with Consul
+          command: |
+            VERSION=1399-fd97b6a
+            apt -y update
+            apt -y install wget unzip
+            wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
+            cd /tmp
+            unzip instruqt.zip
+            cp instruqt /usr/local/bin/instruqt
+            chmod +x /usr/local/bin/instruqt
+            echo "Running instruqt track test..."
+            cd /root/project/instruqt-tracks/service-mesh-with-consul && instruqt track test --skip-fail-check
   service-mesh-with-consul-k8s:
     docker:
       - image: ubuntu:latest
@@ -111,6 +129,9 @@ workflows:
       - service-discovery-with-consul:
           requires:
             - validate
+      - service-mesh-with-consul:
+          requires:
+            - validate
       - service-mesh-with-consul-k8s:
           requires:
             - validate
@@ -131,6 +152,9 @@ workflows:
           requires:
             - validate
       - service-discovery-with-consul:
+          requires:
+            - validate
+      - service-mesh-with-consul:
           requires:
             - validate
       - service-mesh-with-consul-k8s:
