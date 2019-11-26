@@ -346,7 +346,7 @@ challenges:
     kubectl apply -f emojify/traffic.yml
     ```
 
-    Wait a few moment and check your dashboard. Metrics will be streaming in shortly. Nice work!
+    Wait a few moments and check your dashboard. Metrics will be streaming in shortly. Nice work!
   notes:
   - type: text
     contents: |-
