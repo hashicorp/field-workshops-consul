@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  instruqt-validate:
+  validate:
     docker:
       - image: ubuntu:latest
     steps:
@@ -28,10 +28,9 @@ jobs:
             for dir in $(ls -d /root/project/instruqt-tracks/*); do
               cd $dir && instruqt track validate
             done
-  instruqt-test:
+  consul-basics:
     docker:
       - image: ubuntu:latest
-    parallelism: 3
     steps:
       - checkout
       - run:
@@ -47,8 +46,13 @@ jobs:
             chmod +x /usr/local/bin/instruqt
             echo "Running instruqt track test..."
             cd /root/project/instruqt-tracks/consul-basics && instruqt track test --skip-fail-check
+  service-discovery-with-consul:
+    docker:
+      - image: ubuntu:latest
+    steps:
+      - checkout
       - run:
-          name: Service Discovery With Consul
+          name: Consul Basics
           command: |
             VERSION=1399-fd97b6a
             apt -y update
@@ -60,8 +64,13 @@ jobs:
             chmod +x /usr/local/bin/instruqt
             echo "Running instruqt track test..."
             cd /root/project/instruqt-tracks/service-discovery-with-consul && instruqt track test --skip-fail-check
+service-mesh-with-consul-k8s:
+    docker:
+      - image: ubuntu:latest
+    steps:
+      - checkout
       - run:
-          name: Service Mesh With Consul K8s
+          name: Consul Basics
           command: |
             VERSION=1399-fd97b6a
             apt -y update
@@ -77,10 +86,16 @@ workflows:
   version: 2
   build-and-deploy:
     jobs:
-      - instruqt-validate
-      - instruqt-test:
+      - validate
+      - consul-basics:
           requires:
-            - instruqt-validate
+            - validate
+      - service-discovery-with-consul:
+          requires:
+            - validate
+      - service-mesh-with-consul-k8s:
+          requires:
+            - validate
   nightly-build:
     triggers:
       - schedule:
@@ -90,7 +105,13 @@ workflows:
               only:
                 - master
     jobs:
-      - instruqt-validate
-      - instruqt-test:
+      - validate
+      - consul-basics:
           requires:
-            - instruqt-validate
+            - validate
+      - service-discovery-with-consul:
+          requires:
+            - validate
+      - service-mesh-with-consul-k8s:
+          requires:
+            - validate
