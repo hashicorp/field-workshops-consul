@@ -52,7 +52,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Consul Basics
+          name: Service Discovery with Consul
           command: |
             VERSION=1399-fd97b6a
             apt -y update
@@ -64,13 +64,13 @@ jobs:
             chmod +x /usr/local/bin/instruqt
             echo "Running instruqt track test..."
             cd /root/project/instruqt-tracks/service-discovery-with-consul && instruqt track test --skip-fail-check
-service-mesh-with-consul-k8s:
+  service-mesh-with-consul-k8s:
     docker:
       - image: ubuntu:latest
     steps:
       - checkout
       - run:
-          name: Consul Basics
+          name: Service Discovery with Consul K8s
           command: |
             VERSION=1399-fd97b6a
             apt -y update
