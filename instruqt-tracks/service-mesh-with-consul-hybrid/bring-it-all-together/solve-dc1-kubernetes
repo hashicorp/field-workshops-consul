@@ -1,6 +1,12 @@
 #!/bin/bash
 
 kubectl apply -f /root/tracing
-sleep  10
+
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=web -o name)
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=api -o name)
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=cache -o name)
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=payments -o name)
+
+sleep  15
 
 exit 0

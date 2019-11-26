@@ -8,4 +8,6 @@ nohup consul connect envoy -mesh-gateway -register \
                  -bind-address "public=${local_ipv4}:443" \
                  -admin-bind 127.0.0.1:19000 > /gateway.out &
 
+sleep 10
+
 exit 0

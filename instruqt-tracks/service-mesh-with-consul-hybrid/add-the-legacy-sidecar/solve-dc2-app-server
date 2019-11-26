@@ -24,4 +24,6 @@ consul reload
 
 nohup consul connect envoy -sidecar-for=currency > /envoy.out &
 
+sleep 10
+
 exit 0

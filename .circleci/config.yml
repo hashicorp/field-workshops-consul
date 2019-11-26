@@ -82,6 +82,24 @@ jobs:
             chmod +x /usr/local/bin/instruqt
             echo "Running instruqt track test..."
             cd /root/project/instruqt-tracks/service-mesh-with-consul-k8s && instruqt track test --skip-fail-check
+  service-mesh-with-consul-hybrid:
+    docker:
+      - image: ubuntu:latest
+    steps:
+      - checkout
+      - run:
+          name: Service Discovery with Consul Hybrid
+          command: |
+            VERSION=1399-fd97b6a
+            apt -y update
+            apt -y install wget unzip
+            wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
+            cd /tmp
+            unzip instruqt.zip
+            cp instruqt /usr/local/bin/instruqt
+            chmod +x /usr/local/bin/instruqt
+            echo "Running instruqt track test..."
+            cd /root/project/instruqt-tracks/service-mesh-with-consul-hybrid && instruqt track test --skip-fail-check
 workflows:
   version: 2
   build-and-deploy:
@@ -94,6 +112,9 @@ workflows:
           requires:
             - validate
       - service-mesh-with-consul-k8s:
+          requires:
+            - validate
+      - service-mesh-with-consul-hybrid:
           requires:
             - validate
   nightly-build:
@@ -113,5 +134,8 @@ workflows:
           requires:
             - validate
       - service-mesh-with-consul-k8s:
+          requires:
+            - validate
+      - service-mesh-with-consul-hybrid:
           requires:
             - validate
