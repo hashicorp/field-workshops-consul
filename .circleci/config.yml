@@ -59,7 +59,7 @@ jobs:
             chmod +x /usr/local/bin/instruqt
             echo "Running instruqt track test..."
             cd /root/project/instruqt-tracks/service-discovery-with-consul && instruqt track test --skip-fail-check
-       - run:
+      - run:
           name: Service Mesh With Consul K8s
           command: |
             VERSION=1399-fd97b6a
