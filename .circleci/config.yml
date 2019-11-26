@@ -34,7 +34,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Run Instruqt Test
+          name: Consul Basics
           command: |
             VERSION=1399-fd97b6a
             apt -y update
@@ -44,17 +44,33 @@ jobs:
             unzip instruqt.zip
             cp instruqt /usr/local/bin/instruqt
             chmod +x /usr/local/bin/instruqt
-            instruqt version | grep $VERSION
-            RETVAL=$?
-            if [[ $RETVAL -ne 0 ]]; then
-              echo "Version $VERSION is not installed correctly."
-              exit 1
-            else
-              echo "Instruqt Version $VERSION is installed."
-            fi
             echo "Running instruqt track test..."
             cd /root/project/instruqt-tracks/consul-basics && instruqt track test --skip-fail-check
+      - run:
+          name: Service Discovery With Consul
+          command: |
+            VERSION=1399-fd97b6a
+            apt -y update
+            apt -y install wget unzip
+            wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
+            cd /tmp
+            unzip instruqt.zip
+            cp instruqt /usr/local/bin/instruqt
+            chmod +x /usr/local/bin/instruqt
+            echo "Running instruqt track test..."
             cd /root/project/instruqt-tracks/service-discovery-with-consul && instruqt track test --skip-fail-check
+       - run:
+          name: Service Mesh With Consul K8s
+          command: |
+            VERSION=1399-fd97b6a
+            apt -y update
+            apt -y install wget unzip
+            wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
+            cd /tmp
+            unzip instruqt.zip
+            cp instruqt /usr/local/bin/instruqt
+            chmod +x /usr/local/bin/instruqt
+            echo "Running instruqt track test..."
             cd /root/project/instruqt-tracks/service-mesh-with-consul-k8s && instruqt track test --skip-fail-check
 workflows:
   version: 2
