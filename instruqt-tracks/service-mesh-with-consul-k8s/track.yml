@@ -26,10 +26,10 @@ challenges:
   assignment: |-
     First, use Helm with a custom values file to deploy Consul into the K8s cluster and enable Connect. <br>
 
-    The helm chart has already been cloned from GitHub and placed it in your lab environment.
+    The helm chart has been cloned from GitHub and placed it in your lab environment.
     Click on the `/root/consul-valules.yaml` file to view the Consul deployemnt configuration in the code editor. <br>
 
-    Navigate to the `K8s` shell to install Consul. Note, Helm has been pre-initialized in this environment. Copy or type the following command in the shell.<br>
+    Navigate to the `_K8s` shell to install Consul. Note, Helm has been pre-initialized in this environment. Copy or type the following command in the shell.<br>
 
     ```
     helm install -f consul-values.yaml --name lab ./consul-helm
@@ -48,12 +48,12 @@ challenges:
 
     <br>
 
-    Now that you have successfully deployed Consul on K8s, you can deploy some apps!
+    Now that you have successfully deployed Consul on K8s, you can deploy some apps! To continue, click the `Check` button.
 
     **Optional**
 
-    We've also included the K8s dashboard for the duration of this lab if you want to introspect the workloads using the K8s UI tab.
-    We've set the dashboard up in a demo configuration, so you can use  the `skip` button to authenticate. <br>
+    We've included the K8s dashboard for the duration of this lab if you want to compare the workloads using the K8s UI tab.
+    Note, you can use  the `skip` button to authenticate, since the dashboard is already configuration. <br>
 
     If you want to see a breakout of the Consul deployment from helm, run the following command. <br>
 
@@ -64,17 +64,16 @@ challenges:
   - type: text
     contents: |-
       Connect can be used with Kubernetes to secure pod communication with other pods and external Kubernetes services.
-      The Connect sidecar running Envoy can be automatically injected into pods in your cluster, making configuration for Kubernetes automatic. <br>
+      The Connect sidecar proxy running Envoy can be automatically injected into pods in your cluster, making configuration for Kubernetes automatic. <br>
 
-      This functionality is provided by the consul-k8s project and can be automatically installed and configured using the Consul Helm chart.
-      You can read more about Helm [here](https://helm.sh/).<br>
+      This functionality is provided by the consul-k8s project and can be automatically installed and configured using the official Consul Helm chart. <br>
 
       We recommend running Consul on Kubernetes with the same general architecture as running it anywhere else.
       There are some benefits Kubernetes can provide that eases operating a Consul cluster and Connect mesh that we will explore.
-      The standard production deployment guide is still an important read even if running Consul within Kubernetes. <br>
+      The standard production [deployment guide](https://learn.hashicorp.com/consul/datacenter-deploy/deployment-guide?utm_source=instruqt&utm_medium=k8s-track&utm_term=dg) is still an important read even if running Consul within Kubernetes. <br>
 
-      We use a lightweight distro of K8s for instruction in this lab called [k3s](https://k3s.io/).
-      Your environment consists of one single node cluster of K8s.
+      We use a lightweight distro of K8s for this lab called [k3s](https://k3s.io/).
+      Your environment consists of a single node cluster of K8s.
       We will expose services over [NodePorts](https://kubernetes.io/docs/concepts/services-networking/service/#nodeport) in our lab for simplicity.
       This includes access to the Consul API on our K8s workstation.
   - type: image
@@ -104,24 +103,26 @@ challenges:
   title: Deploy Application
   teaser: Bring our application to the world.
   assignment: |-
-    Let's start by investigating our config for the Emojify app in the code editor.
-    You'll notice each of our services has the following annotations.
+    Before deploying your apps, investigate your config for the Emojify app in the code editor called `Emojify-Config`.
+    Select any of the YAML files, you'll notice the service has the following annotations.
 
     ```
     consul.hashicorp.com/connect-inject
     consul.hashicorp.com/connect-service-upstreams
     ```
 
-    These annotations tell Consul that the pod should get an Envoy sidecar to route traffic,
-    and listeners for the requested service on the specified upstream port.
-    If you recall our helm chart, we set the following value, so we have to be explicit with our deployment files.<br>
+    If you view any of the other services, they will include the same annotations. <br>
+
+    These annotations tell Consul that the pod should get an Envoy sidecar proxy to route traffic
+    and listeners for the requested service on the specified upstream port. 
+    In the helm chart, you set  `connectInject` to `false`, so now you need to explicitly add the above annotations to deploy a sidecar proxy with your application.<br>
 
     ```
     connectInject:
       default: false
     ```
 
-    We can deploy our application with the following command.
+    Now, you can deploy your applications. Navigate back to the `_K8s` shell and execute the following commands.
 
     ```
     kubectl apply -f emojify/ingress.yml
@@ -131,8 +132,8 @@ challenges:
     kubectl apply -f emojify/facebox.yml
     ```
 
-    We have a deny by default rule in place that is disallowing all traffic.
-    Let's go ahead and update our intentions so our microservices can serve traffic. <br>
+    By default, the Consul cluster has been configured to deny all traffic between applications. A deny all by default configuration is best practice. You should then allow traffic between applications using intentions.
+    Create the following four intentions so your microservices can serve traffic. <br>
 
     ```
     consul intention create -allow emojify-api emojify-facebox
@@ -141,11 +142,11 @@ challenges:
     consul intention create -allow emojify-ingress emojify-website
     ```
 
-    Now you should be able to access the website through our Nginx ingress container!
+    Now you've deployed your applications and created allow intentions, you should be able to access the website on the `Emojify-Website` tab. 
   notes:
   - type: text
     contents: |-
-      In this lab, we will deploy a more complex microservice application called [Emojify](https://github.com/emojify-app). <br>
+      In this exerxise, you will deploy a more complex microservice application called [Emojify](https://github.com/emojify-app). <br>
 
       The application has five distinct components that provide functionality:
 
@@ -155,7 +156,7 @@ challenges:
       * Cache - Cache layer for API.
       * Facebox - Provides machine learning for detecting and identifies faces in photos.
 
-      In this section we'll explore how these services can be easily connected, monitored, and scaled with Connect. <br>
+      In this exercise you'll also explore how these services can be easily connected, monitored, and scaled with Connect. <br>
 
       Consul Connect supports more advanced ingress controllers, such as [Datawire's Ambassador](https://www.consul.io/docs/platform/k8s/ambassador.html),
       but we will use the Nginx container in this lab to show basic functionality.
@@ -189,21 +190,21 @@ challenges:
   title: Emojify some Faces
   teaser: You get an emoji, and you get an emoji, and you get an emoji.
   assignment: |-
-    We can enter a URL into our website to `emojify` the image. If you don't have an image you'd like to use try the one below of our founders.
+    To use your Emojify app, enter a URL into the website to "emojify" the image. If you don't have an image you'd like to use try the one below of our founders.
 
     ```
     https://cdn.geekwire.com/wp-content/uploads/2017/10/armon-dadgar-and-mitchell-hashimoto-630x419.jpg
     ```
 
-    Let's take a look at the service definition Consul was able to generate based on our K8s annotations.
-    We've played it in the editor tab for you. You can also view it below. <br>
+    Next, in the `Api-Service` tab, view the Consul service definition generated based on your K8s YAML files.
+    You can also discover the service definition using `kubectl`. In the `_K8s` shell tab, excecute the command below. <br>
 
     ```
     kubectl exec $(kubectl get pod --selector=app=emojify-api -o name) -c consul-connect-envoy-sidecar -- cat  /consul/connect-inject/service.hcl
     ```
 
-    You might have remembered creating those Consul service definitions by hand.
-    In K8s, all we needed was the following to generate all the necessary configurations.
+    If you have previous Consul expereince, you have practice creating service definitions by hand.
+    In K8s, all you needed is the following to generate all the necessary configurations.
 
     ```
     template:
@@ -215,11 +216,11 @@ challenges:
           "consul.hashicorp.com/connect-service-upstreams": "emojify-facebox:8003,emojify-cache:8005"
     ```
 
-    Well done! Now we can move to more advanced use cases.
+    Now that you've tested your Emojify app, you can move to more advanced use cases!
   notes:
   - type: text
     contents: |-
-      Now that our app is working we can Emojify some faces.
+      Now that your app is working, you can Emojify some faces.
       Feel free to use your colleagues, or our sample. <br>
   tabs:
   - title: Emojify - Website
@@ -251,28 +252,28 @@ challenges:
   title: Scale the App
   teaser: Handle increased demand
   assignment: |-
-    Let's revisit the emojify app specs from earlier, and scale up the number of Facebox services providing our ML capabilities. <br>
+    To scale the number of Facebox services providing our ML capabilities, increase the `replicas`. <br>
 
-    Go in the code editor and change the number of replicas for the facebox service to `2`.
+    In the emojify app specs from earlier, change the number of replicas for the facebox service to `2`. Note, save the changes by clicking the "save" icon next to the file name.
 
     ```
     spec:
       replicas: 2
     ```
 
-    Now we can scale up the service.
+    Next, use `kubectl` to update the spec.
 
     ```
     kubectl apply -f emojify/facebox.yml
     ```
 
-    Now we can verify in the Consul catalog that we have two healthy services. You can also do this in the Consul UI.
+    Finally, verify the Consul catalog has two healthy services. You can also do this in the `Consul UI` tab or by using the HTTP API command below in the `_K8s` shell.
 
     ```
     curl -s localhost:30085/v1/catalog/service/emojify-facebox | jq '[.. |."ServiceAddress"? | select(. != null)]'
     ```
 
-    We can do the same validation for our Envoy sidecar proxy.
+    You should also verify Envoy sidecar proxy is healthy using `kubectl`.
 
     ```
     kubectl exec $(kubectl get pod --selector=app=emojify-api -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/clusters | grep facebox
@@ -282,9 +283,9 @@ challenges:
   notes:
   - type: text
     contents: |-
-      Now that we've seen the power of Emojify, users are flocking to the application! <br>
+      Now that users have seen the power of Emojify, they are flocking to the application! <br>
 
-      In this assignment we'll scale up our backend services and preserve continuity in the mesh.
+      In the next exercise you'll scale your backend services and preserve continuity in the mesh.
   tabs:
   - title: Facebox - Config
     type: code
@@ -310,47 +311,50 @@ challenges:
   title: Get Metrics
   teaser: Please observe
   assignment: |-
-    You can see pods running with Grafana and Prometheus for our monitoring stack. <br>
+    Your monitoring stack includes Grafana and Prometheus. Ensure both applications have heatlhy, running pods using `kubectl`. <br>
 
     ```
     kubectl get pod --selector=app=prometheus
     kubectl get pod --selector=app=grafana
     ```
 
-    We've installed them for you via their respective helm charts.
+    They were installed via their respective helm charts.
 
     * [Grafana](https://github.com/helm/charts/tree/master/stable/grafana)
     * [Prometheus](https://github.com/helm/charts/tree/master/stable/prometheus)
 
-    You can log into Grafana using the UI tab. The credentials are below:
+    You can log into Grafana in the UI tab with the below credentials:
 
     * username: `admin`
     * password: `check the password tab`
 
-    We have a sample dashboard built for you that can visualize metrics for our application stack. <br>
+    There is a sample dashboard built for you that can visualize metrics for your application stack. <br>
 
-    Follow [these instructions](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) from Grafana to import your dashboard.
+    To create the sample dashboard select the `+` in the left side navigation to `Import`.
     You will need to paste the raw json into Grafana per the above documentation. <br>
 
     ```
     https://raw.githubusercontent.com/hashicorp/consul-k8s-l7-obs-guide/master/overview_dashboard.json
     ```
 
-    We have a application that can simulate traffic for us. Let's run it now. <br>
+    If you encounter issues, you can follow [the complete instructions](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) from Grafana to import your own dashboard.
+
+
+    You have a application that can simulate traffic for you. Let's run it now in the `_K8s` shell. <br>
 
     ```
     kubectl apply -f emojify/traffic.yml
     ```
 
-    Wait a few moments, and check your dashboard. Metrics will be streaming in shortly. Nice work!
+    Wait a few moment and check your dashboard. Metrics will be streaming in shortly. Nice work!
   notes:
   - type: text
     contents: |-
-      In the last assignment we scaled up a component of our application,
-      but how would we have made that determination in the first place? <br>
+      In the previous exercise you scaled up a component of your application,
+      but how would you have made that determination in the first place? <br>
 
-      In this assignment we'll look at detailed telemetry for our microservices.
-      This observability is a powerful feature of Consul Connect and gives us real-time insights on our application performance. <br>
+      In this exercise you'll review detailed telemetry for your microservices.
+      This observability is a powerful feature of Consul Connect and gives you real-time insights on our application performance. <br>
 
       We're spinning up a monitoring stack for you.
       Please be patient. This should take 1-2 minutes.
@@ -378,15 +382,17 @@ challenges:
   title: Ship a New Feature
   teaser: Selectively bring users to a new version of the application.
   assignment: |-
-    We have a few more files in our `emojify` folder.
-    The new service we introduce will allow users to optionally purchase their photograph after its emojfied. <br>
+    In this exercise, you will use Connect's traffic splitting feature for an a/b deployment. <br>
 
-    You'll notice in our deployment spec for the `website` we used a Consul definition called `consul.hashicorp.com/service-tags`.
-    This metadata will allow us send traffic  to either `v1` or `v2` of the website based on certain conditions. <br>
+    Notice, you have a few more files in our `emojify` folder.
+    The new service will allow users to optionally purchase their photograph after its emojfied. <br>
 
-    Let's start by pushing Connect's L7 routing config for this service. Each of these configurations does a few things for us. <br>
+    You'll notice in the deployment spec for the `website`, the Consul definition called `consul.hashicorp.com/service-tags`.
+    This metadata will allow you to send traffic to either `v1` or `v2` of the website based on certain conditions. <br>
 
-    * Resolver - Creates subsets of the website service. In our example, we use the service tags.
+    Start by deploying Connect's L7 routing config for this service. Each of these configurations do a few things. <br>
+
+    * Resolver - Creates a subsets of the website service. In this example, you will use the service tags.
 
     ```
     kind           = "service-resolver"
@@ -402,8 +408,8 @@ challenges:
     }
     ```
 
-    * Splitter - Contains our traffic shaping rules. We're pretty confident in our app,
-    so we're going to send 90% of the traffic to the new service for instructional purposes.
+    * Splitter - Contains your traffic shaping rules. Since you're pretty confident in your app,
+    you'll send 90% of the traffic to the new service.
 
     ```
     kind = "service-splitter"
@@ -420,7 +426,7 @@ challenges:
     ]
     ```
 
-    * Router   - Allows us to do some version specific testing by supplying query params.
+    * Router   - Allows you to do some version specific testing by supplying query params.
 
     ```
     kind = "service-router"
@@ -461,7 +467,7 @@ challenges:
     ]
     ```
 
-    Now let's apply them. <br>
+    Next, apply the routing config. <br>
 
     ```
     consul config write emojify/resolver.hcl
@@ -469,7 +475,7 @@ challenges:
     consul config write emojify/router.hcl
     ```
 
-    With our new routing rules in place, let's go ahead and push the new version of the website with the payment service.
+    With your new routing rules in place, go ahead and push the new version of the website with the payment service.
 
     ```
     kubectl  apply -f emojify/website_v2.yml
@@ -477,15 +483,15 @@ challenges:
     consul intention create -allow emojify-ingress emojify-payments
     ```
 
-    Once your pods are healthy, we can start our testing.
-    Let's check Consul for the `Website` service and look at the `ServiceTags` value.
-    We should see two tagged versions of the application. <br>
+    Once your pods are healthy, you can start our testing.
+    Check Consul for the `Website` service and look at the `ServiceTags` value.
+    We should see two tagged versions of the application using the HTTP API. <br>
 
     ```
     curl -s http://127.0.0.1:8500/v1/catalog/service/emojify-website | jq
     ```
 
-    Let's use that header value we set up earlier to look at our different versions of the website config.
+    Use that header value you set up earlier to look at our different versions of the website config.
     Pay attention to the `PAYMENT_ENABLED` value. <br>
 
     ```
@@ -493,28 +499,27 @@ challenges:
     curl localhost:30000/config/env.js?x-version=2
     ```
 
-    Now, refresh the app a few times, and look for `EmojifyEnterprise` in the top left banner.
+    Now, refresh the app a few times and look for `EmojifyEnterprise` in the top left banner.
     This is the v2 version of our website. <br>
 
-    Emojify another image, and you will see a new option to purchase the image.
+    Emojify another image and you will see a new option to purchase the image.
     Fill in some dummy details and try it now. <br>
 
     It looks like you don't have enough funds (don't worry, this happens every time), better call your bank! <br>
 
-    You'll notice that Envoy is now  grouping clusters by our subset.
+    Notice that Envoy is now grouping clusters by your subsets.
 
     ```
     kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/clusters  | grep emojify-website
     ```
 
-    You can also see Envoy has updated our route definitions for our debug params and traffic weights. Let's do a quick validation. <br>
+    You can also see Envoy has updated your route definitions for your debug params and traffic weights. <br>
 
     ```
     kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
     ```
 
-    Optionally, you can shift all the traffic to the v2 version of the website now that our new feature is working properly.
-    You can additionally verify Consul has propagated this change to Envoy by running the above command again.
+    Finally, you can shift all the traffic to the v2 version of the website now that your new feature is working properly.
 
     ```
     cat <<-EOF > /root/emojify/splitter.hcl
@@ -534,13 +539,15 @@ challenges:
     consul config write emojify/splitter.hcl
     ```
 
-    Nice work! you just used traffic shaping to safely move users to a new version of your application!
+    You can additionally verify Consul has propagated this change to Envoy by running the above command again. <br>
+
+    Nice work! you just used traffic splitting to safely move users to a new version of your application!
   notes:
   - type: text
     contents: |-
-      Now that we scaled our app, and used some metrics to determine it's stable, we can ship a new feature of our application.
+      Now that you've scaled the app and used some metrics to determine it's stable, you can ship a new feature.
 
-      Let's use Connect's L7 routing capabilities to a/b test our application before we roll out to all our users.
+      In the next exercise, you'll use Connect's L7 routing capabilities to a/b test your application before you roll out to all our users.
   tabs:
   - title: K8s
     type: terminal
@@ -571,15 +578,15 @@ challenges:
   title: Tracing Distributed Errors
   teaser: Down the rabbit hole we go.
   assignment: |-
-    We've deployed a few Jaeger services for you while setting up this lab.
+    We've deployed a few Jaeger services for you while setting up this exercise.
     They can be seen be running the below command.
-    The Jaeger UI is also exposed in the tab. We will use it shortly to visualize some traces. <br>
+    The Jaeger UI is also exposed in the tab, you will use it shortly to visualize some traces. <br>
 
     ```
     kubectl get svc --selector=app=jaeger
     ```
 
-    We will use the following Connect configuration to configure Envoy to route our trace information to our Jaeger instance.
+    You will use the following Connect configuration to configure Envoy to route your trace information to your Jaeger instance.
 
     * [Cluster Bootstrap](https://www.consul.io/docs/connect/proxies/envoy.html#envoy_extra_static_clusters_json)
     * [Tracing Bootstrap](https://www.consul.io/docs/connect/proxies/envoy.html#envoy_tracing_json)
@@ -627,13 +634,13 @@ challenges:
       }
     ```
 
-    Let's go ahead and apply that config.
+    Go ahead and apply the config.
 
     ```
     consul config write trace.hcl
     ```
 
-    Now let's push out the tracing application, and configure our intentions.
+    Now you can deploy the tracing application and configure your intentions.
 
     ```
     kubectl apply -f tracing
@@ -644,18 +651,18 @@ challenges:
     consul intention create -allow payments currency
     ```
 
-    Once the pods are running we can test the application through the `Frontend`, which we've exposed over a NodePort.
-    We've configured a 50% error rate for one of our backend services, so run this command twice.
+    Once the pods are running, you can test the application through the `Frontend`, which is exposed over a NodePort.
+    It has been configured to have a 50% error rate for one of the backend services, so run this command twice.
 
     ```
     curl localhost:30900 | jq
     curl localhost:30900 | jq
     ```
 
-    Go to the Jaeger UI and check out the traces for the last two API requests.
-    For the failed API request, it is easy for us to determine where it occurred. <br>
+    Navigate to the Jaeger UI and check out the traces for the last two API requests.
+    For the failed API request, it is easy to determine where it occurred. <br>
 
-    Trace data sent by Envoy will have `component` span tag with a value of `proxy`.
+    Trace data sent by Envoy will have a `component` span tag with a value of `proxy`.
     You can see a detailed description of all the data Envoy sends [here](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/observability/tracing#what-data-each-trace-contains). <br>
 
     The other spans are instrumented with the application client library for tracing.
@@ -672,7 +679,7 @@ challenges:
   notes:
   - type: text
     contents: |-
-      In this assignment we will take a look at Connect's tracing capabilities. <br>
+      In this exercise you will take a look at Connect's tracing capabilities. <br>
 
       Distributed tracing allows developers to obtain visualizations of call flows in large service oriented architectures.
       It can be invaluable in understanding serialization, parallelism, and sources of latency. <br>
@@ -683,17 +690,17 @@ challenges:
       * Sends the generated trace spans to the tracing backends
       * Forwards the trace headers to the proxied application
 
-      We'll explore this in this challenge using popular tracing solutions Zipkin and Jaeger. <br>
+      You'll explore this in this challenge using popular tracing solutions Zipkin and Jaeger. <br>
   - type: text
     contents: |-
-      Connect sidecars will proxy both inbound and outbound requests, but it  does not automatically know how to correlate them.
-      This correlation is called `header propagation`, and requires instrumentation at the application level. <br>
+      Connect sidecars will proxy both inbound and outbound requests, but it does not automatically know how to correlate them.
+      This correlation is called `header propagation` and requires instrumentation at the application level. <br>
 
-      Our sample app does this with `zipkin-go` libraries and the OpenTracing API.
+      Your sample app does this with `zipkin-go` libraries and the OpenTracing API.
       The application compliments the trace data sent by the proxies with useful span tags and logs for better traceability. <br>
   - type: text
     contents: |-
-      We will use a purpose built app called `fake-service` to test our upstreams and trace these errors.
+      You will use a purpose built app called `fake-service` to test your upstreams and trace these errors.
       The app will deploy five services in the following configuration: <br>
 
       * Frontend - Access to our application
@@ -738,17 +745,17 @@ challenges:
   title: Ingress
   teaser: Use advanced ingress capabilities.
   assignment: |-
-    We've configured Ambassador for you in this lab with the following K8s deployment files: <br>
+    We've configured Ambassador for you in this exeercise with the following K8s deployment files: <br>
 
     * https://www.getambassador.io/yaml/ambassador/ambassador-rbac.yaml
     * https://www.getambassador.io/yaml/ambassador/ambassador-service.yaml
     * https://www.getambassador.io/yaml/consul/ambassador-consul-connector.yaml
 
-    We've also enabled [Ambassador tracing](https://www.getambassador.io/user-guide/tracing-tutorial-zipkin/), so we can see the gateway ingress in the Jaeger UI. <br>
+    We've also enabled [Ambassador tracing](https://www.getambassador.io/user-guide/tracing-tutorial-zipkin/), so you can see the gateway ingress in the Jaeger UI. <br>
 
     You can follow this [guide](https://www.getambassador.io/user-guide/consul/) to see all the integrations with Consul. <br>
 
-    For the integration to work, we need to set up an Ambassador resolver that can query Consul's catalog. <br>
+    For the integration to work, you need to set up an Ambassador resolver that can query Consul's catalog. <br>
 
     ```
     cat <<EOF | kubectl apply -f -
@@ -763,7 +770,7 @@ challenges:
     EOF
     ```
 
-    That's it! Ambassador is ready to go. Let's create a mapping for the application. <br>
+    That's it! Ambassador is ready to go. Now you can create a mapping for the application. <br>
 
     ```
     cat <<EOF | kubectl apply -f -
@@ -792,20 +799,20 @@ challenges:
     kubectl describe mapping consul-web-mapping-tls
     ```
 
-    Ambassador is also trusted in the mesh, and has it's own certificate to present to the proxies.
-    The integration manages this as a K8s tls secret. We can see this below. <br>
+    Ambassador is also trusted in the mesh and has it's own certificate to present to the proxies.
+    The integration manages this as a K8s tls secret. You can see this below. <br>
 
     ```
     kubectl get secrets ambassador-consul-connect -o json | jq -r '.data."tls.crt"' | base64 -d | openssl x509 -text -noout
     ```
 
-    We need to tell Connect to allow this traffic. You can do this selectively on a per service basis. <br>
+    You need to tell Connect to allow this traffic. You can do this selectively on a per service basis. <br>
 
     ```
     consul intention create -allow ambassador web
     ```
 
-    Remember, our ingress controller is sitting behind the K3s load balancer. <br>
+    Remember, your ingress controller is sitting behind the K3s load balancer. <br>
 
     ```
     kubectl describe svc ambassador
@@ -814,7 +821,7 @@ challenges:
     The `web` service will be available at the prefix path from our mapping.
     We've reset the error rate, so all the API calls will suceed. <br>
 
-    Let's get the load balancer IP, and send our cluster some traffic! <br>
+    Finally, get the load balancer IP and send your cluster some traffic! <br>
 
     ```
     ambassador=$(kubectl get svc ambassador  -o json | jq -r '.status.loadBalancer.ingress[0].ip')
@@ -828,9 +835,9 @@ challenges:
   notes:
   - type: text
     contents: |-
-      Consul supports a rich ecosystem of integrations, and Connect is no exception.
-      In this assignment we'll leverage [Datawire's Ambassador](https://www.consul.io/docs/platform/k8s/ambassador.html)
-      to allow K8s ingress for our tracing application from the prior assignment. <br>
+      Consul supports a rich ecosystem of integrations and Connect is no exception.
+      In this exercise you'll leverage [Datawire's Ambassador](https://www.consul.io/docs/platform/k8s/ambassador.html)
+      to allow K8s ingress for your tracing application from the prior exercise. <br>
 
       Ingress exposes HTTP and HTTPS routes from outside the cluster to services within the cluster.
       Ingress can be configured to give Services externally-reachable URLs, load balance traffic, terminate SSL / TLS, and more. <br>
@@ -841,7 +848,7 @@ challenges:
       An Ingress controller is responsible for fulfilling the Ingress, usually with a load balancer.
       We will use the [MetalLB load balancer](https://metallb.universe.tf/) to send Ambassador the traffic. <br>
 
-      Let's try this out with Ambassador and Connect.
+      Try it out with Ambassador and Connect!
   tabs:
   - title: Consul UI
     type: service
