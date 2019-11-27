@@ -5,4 +5,6 @@ sleep 10
 database=$(curl -s -G http://127.0.0.1:8500/v1/catalog/nodes --data-urlencode 'filter=Node == Database' | jq -r '.[0].Address')
 perl -p -i -e "s/'10.94.99.99'/'${database}'/" /var/www/html/wp-config.php
 
+sleep 10
+
 exit 0
