@@ -2,4 +2,6 @@
 
 /bin/start_consul.sh
 
-exit  0
+sleep 15
+
+exit 0
