@@ -269,8 +269,8 @@ git clone https://github.com/hashicorp/consul-helm.git
 cat <<-EOF > /root/consul-values.yaml
 global:
   datacenter: dc1
-  image: "consul:1.6.1"
-  imageK8S: "hashicorp/consul-k8s:0.9.2"
+  image: "consul:1.6.2"
+  imageK8S: "hashicorp/consul-k8s:0.9.3"
 
 server:
   replicas: 1
