@@ -8,7 +8,7 @@ jobs:
       - run:
           name: Run Instruqt Validate
           command: |
-            VERSION=1399-fd97b6a
+            VERSION=1401-761d318
             apt -y update
             apt -y install wget unzip
             wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
@@ -36,7 +36,7 @@ jobs:
       - run:
           name: Consul Basics
           command: |
-            VERSION=1399-fd97b6a
+            VERSION=1401-761d318
             apt -y update
             apt -y install wget unzip
             wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
@@ -54,7 +54,7 @@ jobs:
       - run:
           name: Service Discovery with Consul
           command: |
-            VERSION=1399-fd97b6a
+            VERSION=1401-761d318
             apt -y update
             apt -y install wget unzip
             wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
@@ -72,7 +72,7 @@ jobs:
       - run:
           name: Service Mesh with Consul
           command: |
-            VERSION=1399-fd97b6a
+            VERSION=1401-761d318
             apt -y update
             apt -y install wget unzip
             wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
@@ -90,7 +90,7 @@ jobs:
       - run:
           name: Service Mesh with Consul K8s
           command: |
-            VERSION=1399-fd97b6a
+            VERSION=1401-761d318
             apt -y update
             apt -y install wget unzip
             wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
@@ -108,7 +108,7 @@ jobs:
       - run:
           name: Service Mesh with Consul Hybrid
           command: |
-            VERSION=1399-fd97b6a
+            VERSION=1401-761d318
             apt -y update
             apt -y install wget unzip
             wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
