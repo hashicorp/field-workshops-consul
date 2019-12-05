@@ -745,7 +745,7 @@ challenges:
   title: Ingress
   teaser: Use advanced ingress capabilities.
   assignment: |-
-    We've configured Ambassador for you in this exeercise with the following K8s deployment files: <br>
+    We've configured Ambassador for you in this exercise with the following K8s deployment files: <br>
 
     * https://www.getambassador.io/yaml/ambassador/ambassador-rbac.yaml
     * https://www.getambassador.io/yaml/ambassador/ambassador-service.yaml
@@ -878,4 +878,4 @@ challenges:
     path: /root/tracing
   difficulty: basic
   timelimit: 300
-checksum: "4575872228430177547"
+checksum: "7849585748689859230"
