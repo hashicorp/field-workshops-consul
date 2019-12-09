@@ -44,9 +44,10 @@ jobs:
             unzip instruqt.zip
             cp instruqt /usr/local/bin/instruqt
             chmod +x /usr/local/bin/instruqt
-            echo "Running instruqt track test..."
             cd /root/project/instruqt-tracks/consul-basics
+            echo "Running instruqt track test..."
             instruqt track test --skip-fail-check
+            echo "Running instruqt track push..."
             instruqt track push --force
   service-discovery-with-consul:
     docker:
