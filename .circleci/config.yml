@@ -64,9 +64,10 @@ jobs:
             unzip instruqt.zip
             cp instruqt /usr/local/bin/instruqt
             chmod +x /usr/local/bin/instruqt
-            echo "Running instruqt track test..."
             cd /root/project/instruqt-tracks/service-discovery-with-consul
+            echo "Running instruqt track test..."
             instruqt track test --skip-fail-check
+            echo "Running instruqt track push..."
             instruqt track push --force
   service-mesh-with-consul:
     docker:
@@ -84,9 +85,10 @@ jobs:
             unzip instruqt.zip
             cp instruqt /usr/local/bin/instruqt
             chmod +x /usr/local/bin/instruqt
-            echo "Running instruqt track test..."
             cd /root/project/instruqt-tracks/service-mesh-with-consul
+            echo "Running instruqt track test..."
             instruqt track test --skip-fail-check
+            echo "Running instruqt track push..."
             instruqt track push --force
   service-mesh-with-consul-k8s:
     docker:
@@ -104,9 +106,10 @@ jobs:
             unzip instruqt.zip
             cp instruqt /usr/local/bin/instruqt
             chmod +x /usr/local/bin/instruqt
-            echo "Running instruqt track test..."
             cd /root/project/instruqt-tracks/service-mesh-with-consul-k8s
+            echo "Running instruqt track test..."
             instruqt track test --skip-fail-check
+            echo "Running instruqt track push..."
             instruqt track push --force 
   service-mesh-with-consul-hybrid:
     docker:
@@ -124,9 +127,10 @@ jobs:
             unzip instruqt.zip
             cp instruqt /usr/local/bin/instruqt
             chmod +x /usr/local/bin/instruqt
-            echo "Running instruqt track test..."
             cd /root/project/instruqt-tracks/service-mesh-with-consul-hybrid
+            echo "Running instruqt track test..."
             instruqt track test --skip-fail-check
+            echo "Running instruqt track push..."
             instruqt track push --force
 workflows:
   version: 2
