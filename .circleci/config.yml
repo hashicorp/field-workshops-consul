@@ -45,7 +45,9 @@ jobs:
             cp instruqt /usr/local/bin/instruqt
             chmod +x /usr/local/bin/instruqt
             echo "Running instruqt track test..."
-            cd /root/project/instruqt-tracks/consul-basics && instruqt track test --skip-fail-check
+            cd /root/project/instruqt-tracks/consul-basics
+            instruqt track test --skip-fail-check
+            instruqt track push --force
   service-discovery-with-consul:
     docker:
       - image: ubuntu:latest
@@ -63,7 +65,9 @@ jobs:
             cp instruqt /usr/local/bin/instruqt
             chmod +x /usr/local/bin/instruqt
             echo "Running instruqt track test..."
-            cd /root/project/instruqt-tracks/service-discovery-with-consul && instruqt track test --skip-fail-check
+            cd /root/project/instruqt-tracks/service-discovery-with-consul
+            instruqt track test --skip-fail-check
+            instruqt track push --force
   service-mesh-with-consul:
     docker:
       - image: ubuntu:latest
@@ -81,7 +85,9 @@ jobs:
             cp instruqt /usr/local/bin/instruqt
             chmod +x /usr/local/bin/instruqt
             echo "Running instruqt track test..."
-            cd /root/project/instruqt-tracks/service-mesh-with-consul && instruqt track test --skip-fail-check
+            cd /root/project/instruqt-tracks/service-mesh-with-consul
+            instruqt track test --skip-fail-check
+            instruqt track push --force
   service-mesh-with-consul-k8s:
     docker:
       - image: ubuntu:latest
@@ -99,7 +105,9 @@ jobs:
             cp instruqt /usr/local/bin/instruqt
             chmod +x /usr/local/bin/instruqt
             echo "Running instruqt track test..."
-            cd /root/project/instruqt-tracks/service-mesh-with-consul-k8s && instruqt track test --skip-fail-check
+            cd /root/project/instruqt-tracks/service-mesh-with-consul-k8s
+            instruqt track test --skip-fail-check
+            instruqt track push --force 
   service-mesh-with-consul-hybrid:
     docker:
       - image: ubuntu:latest
@@ -117,7 +125,9 @@ jobs:
             cp instruqt /usr/local/bin/instruqt
             chmod +x /usr/local/bin/instruqt
             echo "Running instruqt track test..."
-            cd /root/project/instruqt-tracks/service-mesh-with-consul-hybrid && instruqt track test --skip-fail-check
+            cd /root/project/instruqt-tracks/service-mesh-with-consul-hybrid
+            instruqt track test --skip-fail-check
+            instruqt track push --force
 workflows:
   version: 2
   build-and-deploy:
