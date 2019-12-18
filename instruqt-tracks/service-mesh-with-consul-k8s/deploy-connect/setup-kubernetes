@@ -270,7 +270,7 @@ cat <<-EOF > /root/consul-values.yaml
 global:
   datacenter: dc1
   image: "consul:1.6.2"
-  imageK8S: "hashicorp/consul-k8s:0.9.3"
+  imageK8S: "hashicorp/consul-k8s:0.10.0"
 
 server:
   replicas: 1
