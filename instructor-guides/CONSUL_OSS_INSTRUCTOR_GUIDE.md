@@ -1,9 +1,22 @@
 # Intro to Consul - Instructor Guide
+
+### Overview
 This guide will prepare you to deliver a half-day [Introduction to Consul workshop](https://hashicorp.github.io/field-workshops-consul/oss). This workshop content is suitable for HashiCorp community members, prospects and customers. The workshop is a combination of lecture slides and hands-on labs that introduce new users to Consul features. This workshop focuses on open-source features and is targeted toward new users. The workshop may be presented in-person, over the web, or as a self-guided tutorial.
 
 The workshop alternates between lectures with accompanying slides and hands-on lab exercises. New concepts that are introduced in the slides are reinforced in the labs. Participants will learn both the theory and practice of Consul. As an instructor you should be well familiar with the slide deck and training labs. Go through the course and make sure you understand all of the major concepts and lab exercises. 
 
 When possible you should attend a live training session to observe and learn from another instructor. We will also have video recordings of this workshop available soon.
+
+### What you will learn
+This workshop is a crash course of the Consul OSS adoption journey. Participants will learn the following:
+
+* Consul Overview - History & Adoption
+* Consul Architecture - Protocols, Scalability, Consistency, Availability, and Multi-datacenter
+* Consul Use Cases - Service Registry & Health Monitoring, Network Middleware Automation, and Zero-Trust Networking
+* Consul Basics - Basic Cluster Administration
+* Consul Service Discovery - Service Registry
+* Consul Service Mesh - Service Segmentation & Advanced Routing
+
 
 ### Prerequisites
 Prerequisites are minimal. All that is required to participate in the workshop is a web browser and Internet access. No software needs to be downloaded or installed. Self-contained lab environments run on the Instruqt platform, and markdown-based slide decks are published as Github Pages websites. 
