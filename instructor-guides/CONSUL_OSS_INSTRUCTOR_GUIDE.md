@@ -8,7 +8,7 @@ The workshop alternates between lectures with accompanying slides and hands-on l
 When possible you should attend a live training session to observe and learn from another instructor. We will also have video recordings of this workshop available soon.
 
 ### What you will learn
-This workshop is a crash course of the Consul OSS adoption journey. Participants will learn the following:
+This workshop is a crash course in the Consul OSS adoption journey. Participants will learn the following:
 
 * Consul Overview - History & Adoption
 * Consul Architecture - Protocols, Scalability, Consistency, Availability, and Multi-datacenter
