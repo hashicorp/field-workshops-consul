@@ -14,7 +14,7 @@ This workshop is a crash course in the Consul OSS adoption journey. Participants
 * Consul Architecture - Protocols, Scalability, Consistency, Availability, and Multi-datacenter
 * Consul Use Cases - Service Registry & Health Monitoring, Network Middleware Automation, and Zero-Trust Networking
 * Consul Basics - Basic Cluster Administration
-* Consul Service Discovery - Service Registry
+* Consul Service Discovery - Service Registry & Integrations
 * Consul Service Mesh - Service Segmentation & Advanced Routing
 
 
