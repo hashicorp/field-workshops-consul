@@ -66,8 +66,9 @@ challenges:
       Connect can be used with Kubernetes to secure pod communication with other pods and external Kubernetes services.
       The Connect sidecar proxy running Envoy can be automatically injected into pods in your cluster, making configuration for Kubernetes automatic. <br>
 
-      This functionality is provided by the consul-k8s project and can be automatically installed and configured using the official Consul Helm chart. <br>
-
+      This functionality is provided by the consul-k8s project and can be automatically installed and configured using the official Consul Helm chart.
+  - type: text
+    contents: |-
       We recommend running Consul on Kubernetes with the same general architecture as running it anywhere else.
       There are some benefits Kubernetes can provide that eases operating a Consul cluster and Connect mesh that we will explore.
       The standard production [deployment guide](https://learn.hashicorp.com/consul/datacenter-deploy/deployment-guide?utm_source=instruqt&utm_medium=k8s-track&utm_term=dg) is still an important read even if running Consul within Kubernetes. <br>
@@ -232,9 +233,6 @@ challenges:
     type: code
     hostname: kubernetes
     path: /tmp/api-service.hcl
-  - title: K8s
-    type: terminal
-    hostname: kubernetes
   - title: Consul UI
     type: service
     hostname: kubernetes
@@ -244,6 +242,9 @@ challenges:
     type: service
     hostname: kubernetes
     port: 30443
+  - title: K8s
+    type: terminal
+    hostname: kubernetes
   difficulty: basic
   timelimit: 600
 - slug: scale-the-app
@@ -878,4 +879,4 @@ challenges:
     path: /root/tracing
   difficulty: basic
   timelimit: 300
-checksum: "2088316759387077755"
+checksum: "18219258748458157668"
