@@ -79,7 +79,7 @@ cat <<-EOF > /root/consul-values.yaml
 global:
   datacenter: dc1
   image: "consul:1.6.2"
-  imageK8S: "hashicorp/consul-k8s:0.10.0"
+  imageK8S: "hashicorp/consul-k8s:0.11.0"
 
 server:
   enabled: false
@@ -105,7 +105,7 @@ EOF
 
 #Apply Consul helm
 cd /root
-git clone https://github.com/hashicorp/consul-helm.git
+git clone --branch v0.16.0 https://github.com/hashicorp/consul-helm.git
 helm install -f consul-values.yaml --name lab ./consul-helm
 
 exit 0

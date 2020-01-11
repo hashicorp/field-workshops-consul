@@ -17,6 +17,6 @@ kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-face
 kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-website -o name)
 kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-ingress -o name)
 
-sleep 20
+sleep 60
 
 exit 0

@@ -24,6 +24,6 @@ kubectl  apply -f emojify/payments.yml
 consul intention create -allow emojify-ingress emojify-payments
 kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-payments -o name)
 
-sleep 30
+sleep 60
 
 exit 0
