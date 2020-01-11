@@ -24,7 +24,7 @@ spec:
         ports:
         - containerPort: 8080
       - name: prometheus-statsd
-        image: "prom/statsd-exporter:latest"
+        image: "prom/statsd-exporter:v0.13.0"
         ports:
           - name: metrics
             containerPort: 9102
