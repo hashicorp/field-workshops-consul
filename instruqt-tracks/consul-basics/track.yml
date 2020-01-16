@@ -22,7 +22,8 @@ tags:
 - serf
 - cluster
 owner: hashicorp
-developers: []
+developers:
+- lance@hashicorp.com
 private: false
 published: true
 challenges:
@@ -367,4 +368,4 @@ challenges:
     path: /tmp/bootstrap.txt
   difficulty: basic
   timelimit: 600
-checksum: "3076827581819932736"
+checksum: "1568873612091975301"

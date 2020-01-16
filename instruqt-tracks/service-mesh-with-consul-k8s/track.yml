@@ -13,7 +13,6 @@ icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/c
 tags: []
 owner: hashicorp
 developers:
-- scarolan@hashicorp.com
 - lance@hashicorp.com
 private: false
 published: true
@@ -879,4 +878,4 @@ challenges:
     path: /root/tracing
   difficulty: basic
   timelimit: 300
-checksum: "8210939587037560527"
+checksum: "16428029632233731786"
