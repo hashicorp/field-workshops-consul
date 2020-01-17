@@ -16,13 +16,13 @@ jobs:
             unzip instruqt.zip
             cp instruqt /usr/local/bin/instruqt
             chmod +x /usr/local/bin/instruqt
-            instruqt version | grep $VERSION
+            echo "yes" | instruqt version
             RETVAL=$?
             if [[ $RETVAL -ne 0 ]]; then
-              echo "Version $VERSION is not installed correctly."
+              echo "Instruqt is not installed correctly."
               exit 1
             else
-              echo "Instruqt Version $VERSION is installed."
+              echo "Instruqt is installed and updated to most recent version."
             fi
             echo "Running instruqt track validate..."
             for dir in $(ls -d /root/project/instruqt-tracks/*); do
@@ -44,8 +44,16 @@ jobs:
             unzip instruqt.zip
             cp instruqt /usr/local/bin/instruqt
             chmod +x /usr/local/bin/instruqt
-            cd /root/project/instruqt-tracks/consul-basics
+            echo "yes" | instruqt version
+            RETVAL=$?
+            if [[ $RETVAL -ne 0 ]]; then
+              echo "Instruqt is not installed correctly."
+              exit 1
+            else
+              echo "Instruqt is installed and updated to most recent version."
+            fi
             echo "Running instruqt track test..."
+            cd /root/project/instruqt-tracks/consul-basics
             instruqt track test --skip-fail-check
             echo "Running instruqt track push..."
             instruqt track push --force
@@ -65,6 +73,14 @@ jobs:
             unzip instruqt.zip
             cp instruqt /usr/local/bin/instruqt
             chmod +x /usr/local/bin/instruqt
+            echo "yes" | instruqt version
+            RETVAL=$?
+            if [[ $RETVAL -ne 0 ]]; then
+              echo "Instruqt is not installed correctly."
+              exit 1
+            else
+              echo "Instruqt is installed and updated to most recent version."
+            fi
             cd /root/project/instruqt-tracks/service-discovery-with-consul
             echo "Running instruqt track test..."
             instruqt track test --skip-fail-check
@@ -86,6 +102,14 @@ jobs:
             unzip instruqt.zip
             cp instruqt /usr/local/bin/instruqt
             chmod +x /usr/local/bin/instruqt
+            echo "yes" | instruqt version
+            RETVAL=$?
+            if [[ $RETVAL -ne 0 ]]; then
+              echo "Instruqt is not installed correctly."
+              exit 1
+            else
+              echo "Instruqt is installed and updated to most recent version."
+            fi
             cd /root/project/instruqt-tracks/service-mesh-with-consul
             echo "Running instruqt track test..."
             instruqt track test --skip-fail-check
@@ -107,11 +131,19 @@ jobs:
             unzip instruqt.zip
             cp instruqt /usr/local/bin/instruqt
             chmod +x /usr/local/bin/instruqt
+            echo "yes" | instruqt version
+            RETVAL=$?
+            if [[ $RETVAL -ne 0 ]]; then
+              echo "Instruqt is not installed correctly."
+              exit 1
+            else
+              echo "Instruqt is installed and updated to most recent version."
+            fi
             cd /root/project/instruqt-tracks/service-mesh-with-consul-k8s
             echo "Running instruqt track test..."
             instruqt track test --skip-fail-check
             echo "Running instruqt track push..."
-            instruqt track push --force 
+            instruqt track push --force
   service-mesh-with-consul-hybrid:
     docker:
       - image: ubuntu:latest
@@ -128,6 +160,14 @@ jobs:
             unzip instruqt.zip
             cp instruqt /usr/local/bin/instruqt
             chmod +x /usr/local/bin/instruqt
+            echo "yes" | instruqt version
+            RETVAL=$?
+            if [[ $RETVAL -ne 0 ]]; then
+              echo "Instruqt is not installed correctly."
+              exit 1
+            else
+              echo "Instruqt is installed and updated to most recent version."
+            fi
             cd /root/project/instruqt-tracks/service-mesh-with-consul-hybrid
             echo "Running instruqt track test..."
             instruqt track test --skip-fail-check
