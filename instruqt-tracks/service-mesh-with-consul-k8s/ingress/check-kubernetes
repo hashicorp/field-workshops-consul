@@ -3,7 +3,7 @@
 ambassador=$(kubectl get svc ambassador  -o json | jq -r '.status.loadBalancer.ingress[0].ip')
 api=$(curl -s -o /dev/null -w "%{http_code}" http://$ambassador/web/)
 
-if [ "$api" != "200"]  ; then
+if [ "$api" != "200" ]; then
   fail-message "Could not get to web service."
   exit 1
 fi

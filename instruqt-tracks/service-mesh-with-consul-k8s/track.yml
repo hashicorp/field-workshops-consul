@@ -294,15 +294,15 @@ challenges:
   - title: K8s
     type: terminal
     hostname: kubernetes
+  - title: K8s UI
+    type: service
+    hostname: kubernetes
+    port: 30443
   - title: Consul UI
     type: service
     hostname: kubernetes
     path: /ui/
     port: 30085
-  - title: K8s UI
-    type: service
-    hostname: kubernetes
-    port: 30443
   difficulty: basic
   timelimit: 600
 - slug: get-metrics
@@ -747,8 +747,8 @@ challenges:
   assignment: |-
     We've configured Ambassador for you in this exercise with the following K8s deployment files: <br>
 
-    * https://www.getambassador.io/yaml/ambassador/ambassador-rbac.yaml
-    * https://www.getambassador.io/yaml/ambassador/ambassador-service.yaml
+    * https://www.getambassador.io/yaml/aes-crds.yam
+    * https://www.getambassador.io/yaml/aes.yaml
     * https://www.getambassador.io/yaml/consul/ambassador-consul-connector.yaml
 
     We've also enabled [Ambassador tracing](https://www.getambassador.io/user-guide/tracing-tutorial-zipkin/), so you can see the gateway ingress in the Jaeger UI. <br>
@@ -758,9 +758,9 @@ challenges:
     For the integration to work, you need to set up an Ambassador resolver that can query Consul's catalog. <br>
 
     ```
-    cat <<EOF | kubectl apply -f -
+    cat <<EOF | kubectl -n ambassador apply -f -
     ---
-    apiVersion: getambassador.io/v1
+    apiVersion: getambassador.io/v2
     kind: ConsulResolver
     metadata:
       name: lab-consul-dc1
@@ -775,7 +775,7 @@ challenges:
     ```
     cat <<EOF | kubectl apply -f -
     ---
-    apiVersion: getambassador.io/v1
+    apiVersion: getambassador.io/v2
     kind: Mapping
     metadata:
       name: consul-web-mapping-tls
@@ -803,7 +803,7 @@ challenges:
     The integration manages this as a K8s tls secret. You can see this below. <br>
 
     ```
-    kubectl get secrets ambassador-consul-connect -o json | jq -r '.data."tls.crt"' | base64 -d | openssl x509 -text -noout
+    kubectl get secrets -n ambassador ambassador-consul-connect -o json | jq -r '.data."tls.crt"' | base64 -d | openssl x509 -text -noout
     ```
 
     You need to tell Connect to allow this traffic. You can do this selectively on a per service basis. <br>
@@ -815,17 +815,19 @@ challenges:
     Remember, your ingress controller is sitting behind the K3s load balancer. <br>
 
     ```
-    kubectl describe svc ambassador
+    kubectl describe svc -n ambassador ambassador
     ```
 
     The `web` service will be available at the prefix path from our mapping.
     We've reset the error rate, so all the API calls will suceed. <br>
 
+    Ambassador is deployed with a self-signed certificate for end-to-end mTLS in the lab environment, so we'll ignore trust validation in the API call.
     Finally, get the load balancer IP and send your cluster some traffic! <br>
 
     ```
-    ambassador=$(kubectl get svc ambassador  -o json | jq -r '.status.loadBalancer.ingress[0].ip')
-    curl ${ambassador}/web/
+    ambassador=$(kubectl get svc ambassador -n ambassador -o json | jq -r '.status.loadBalancer.ingress[0].ip')
+    openssl s_client -connect ${ambassador}:443 </dev/null 2>/dev/null | openssl x509 -text
+    curl -k https://${ambassador}/web/
     ```
 
     Nice work! Log into the Jaeger UI and look at the new traces.
@@ -878,4 +880,4 @@ challenges:
     path: /root/tracing
   difficulty: basic
   timelimit: 300
-checksum: "16428029632233731786"
+checksum: "12628048190944129257"
