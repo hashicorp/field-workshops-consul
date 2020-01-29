@@ -58,12 +58,15 @@ jobs:
             echo "Running instruqt track test..."
             # Retry instruqt track test up to 3 times
             n=0
-            until [ $n -ge 3 ]
-            do
+            until [ $n -ge 3 ]; do
               instruqt track test --skip-fail-check && break
               n=$[$n+1]
               sleep 5
             done
+            if [ $n -ge 3 ]; then
+              echo "Instruqt track test failed three times."
+              exit 1
+            fi
   service-discovery-with-consul:
     docker:
       - image: ubuntu:latest
@@ -94,12 +97,15 @@ jobs:
             echo "Running instruqt track test..."
             # Retry instruqt track test up to 3 times
             n=0
-            until [ $n -ge 3 ]
-            do
+            until [ $n -ge 3 ]; do
               instruqt track test --skip-fail-check && break
               n=$[$n+1]
               sleep 5
             done
+            if [ $n -ge 3 ]; then
+              echo "Instruqt track test failed three times."
+              exit 1
+            fi
   service-mesh-with-consul:
     docker:
       - image: ubuntu:latest
@@ -130,12 +136,15 @@ jobs:
             echo "Running instruqt track test..."
             # Retry instruqt track test up to 3 times
             n=0
-            until [ $n -ge 3 ]
-            do
+            until [ $n -ge 3 ]; do
               instruqt track test --skip-fail-check && break
               n=$[$n+1]
               sleep 5
             done
+            if [ $n -ge 3 ]; then
+              echo "Instruqt track test failed three times."
+              exit 1
+            fi
   service-mesh-with-consul-k8s:
     docker:
       - image: ubuntu:latest
@@ -166,12 +175,15 @@ jobs:
             echo "Running instruqt track test..."
             # Retry instruqt track test up to 3 times
             n=0
-            until [ $n -ge 3 ]
-            do
+            until [ $n -ge 3 ]; do
               instruqt track test --skip-fail-check && break
               n=$[$n+1]
               sleep 5
             done
+            if [ $n -ge 3 ]; then
+              echo "Instruqt track test failed three times."
+              exit 1
+            fi
   service-mesh-with-consul-hybrid:
     docker:
       - image: ubuntu:latest
@@ -202,12 +214,15 @@ jobs:
             echo "Running instruqt track test..."
             # Retry instruqt track test up to 3 times
             n=0
-            until [ $n -ge 3 ]
-            do
+            until [ $n -ge 3 ]; do
               instruqt track test --skip-fail-check && break
               n=$[$n+1]
               sleep 5
             done
+            if [ $n -ge 3 ]; then
+              echo "Instruqt track test failed three times."
+              exit 1
+            fi
 workflows:
   version: 2
   build-and-deploy:
