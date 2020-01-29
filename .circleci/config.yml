@@ -52,11 +52,18 @@ jobs:
             else
               echo "Instruqt is installed and updated to most recent version."
             fi
-            echo "Running instruqt track test..."
             cd /root/project/instruqt-tracks/consul-basics
-            instruqt track test --skip-fail-check
             echo "Running instruqt track push..."
             instruqt track push --force
+            echo "Running instruqt track test..."
+            # Retry instruqt track test up to 3 times
+            n=0
+            until [ $n -ge 3 ]
+            do
+              instruqt track test --skip-fail-check && break
+              n=$[$n+1]
+              sleep 5
+            done
   service-discovery-with-consul:
     docker:
       - image: ubuntu:latest
@@ -82,10 +89,17 @@ jobs:
               echo "Instruqt is installed and updated to most recent version."
             fi
             cd /root/project/instruqt-tracks/service-discovery-with-consul
-            echo "Running instruqt track test..."
-            instruqt track test --skip-fail-check
             echo "Running instruqt track push..."
             instruqt track push --force
+            echo "Running instruqt track test..."
+            # Retry instruqt track test up to 3 times
+            n=0
+            until [ $n -ge 3 ]
+            do
+              instruqt track test --skip-fail-check && break
+              n=$[$n+1]
+              sleep 5
+            done
   service-mesh-with-consul:
     docker:
       - image: ubuntu:latest
@@ -111,10 +125,17 @@ jobs:
               echo "Instruqt is installed and updated to most recent version."
             fi
             cd /root/project/instruqt-tracks/service-mesh-with-consul
-            echo "Running instruqt track test..."
-            instruqt track test --skip-fail-check
             echo "Running instruqt track push..."
             instruqt track push --force
+            echo "Running instruqt track test..."
+            # Retry instruqt track test up to 3 times
+            n=0
+            until [ $n -ge 3 ]
+            do
+              instruqt track test --skip-fail-check && break
+              n=$[$n+1]
+              sleep 5
+            done
   service-mesh-with-consul-k8s:
     docker:
       - image: ubuntu:latest
@@ -140,10 +161,17 @@ jobs:
               echo "Instruqt is installed and updated to most recent version."
             fi
             cd /root/project/instruqt-tracks/service-mesh-with-consul-k8s
-            echo "Running instruqt track test..."
-            instruqt track test --skip-fail-check
             echo "Running instruqt track push..."
             instruqt track push --force
+            echo "Running instruqt track test..."
+            # Retry instruqt track test up to 3 times
+            n=0
+            until [ $n -ge 3 ]
+            do
+              instruqt track test --skip-fail-check && break
+              n=$[$n+1]
+              sleep 5
+            done
   service-mesh-with-consul-hybrid:
     docker:
       - image: ubuntu:latest
@@ -169,30 +197,61 @@ jobs:
               echo "Instruqt is installed and updated to most recent version."
             fi
             cd /root/project/instruqt-tracks/service-mesh-with-consul-hybrid
-            echo "Running instruqt track test..."
-            instruqt track test --skip-fail-check
             echo "Running instruqt track push..."
             instruqt track push --force
+            echo "Running instruqt track test..."
+            # Retry instruqt track test up to 3 times
+            n=0
+            until [ $n -ge 3 ]
+            do
+              instruqt track test --skip-fail-check && break
+              n=$[$n+1]
+              sleep 5
+            done
 workflows:
   version: 2
   build-and-deploy:
     jobs:
-      - validate
+      - validate:
+          filters:
+            branches:
+              only:
+                - master
       - consul-basics:
           requires:
             - validate
+          filters:
+            branches:
+              only:
+                - master
       - service-discovery-with-consul:
           requires:
             - validate
+          filters:
+            branches:
+              only:
+                - master
       - service-mesh-with-consul:
           requires:
             - validate
+          filters:
+            branches:
+              only:
+                - master
       - service-mesh-with-consul-k8s:
           requires:
             - validate
+          filters:
+            branches:
+              only:
+                - master
       - service-mesh-with-consul-hybrid:
           requires:
             - validate
+          filters:
+            branches:
+              only:
+                - master
   nightly-build:
     triggers:
       - schedule:
