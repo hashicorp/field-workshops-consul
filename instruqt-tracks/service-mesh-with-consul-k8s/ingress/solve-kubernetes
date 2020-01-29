@@ -1,8 +1,9 @@
 #!/bin/bash
 
-cat <<EOF | kubectl apply -f -
+
+cat <<EOF | kubectl -n ambassador apply -f -
 ---
-apiVersion: getambassador.io/v1
+apiVersion: getambassador.io/v2
 kind: ConsulResolver
 metadata:
   name: lab-consul-dc1
@@ -13,7 +14,7 @@ EOF
 
 cat <<EOF | kubectl apply -f -
 ---
-apiVersion: getambassador.io/v1
+apiVersion: getambassador.io/v2
 kind: Mapping
 metadata:
   name: consul-web-mapping-tls
