@@ -1,5 +1,9 @@
 version: "2"
 virtualmachines:
+- name: dc1-consul-gateway
+  image: instruqt-hashicorp/consul-1-6-2
+  shell: /bin/bash
+  machine_type: n1-standard-1
 - name: dc2-consul-server
   image: instruqt-hashicorp/consul-1-6-2
   shell: /bin/bash
@@ -21,10 +25,6 @@ virtualmachines:
   shell: /bin/bash
   machine_type: n1-standard-1
 - name: dc1-consul-server
-  image: instruqt-hashicorp/consul-1-6-2
-  shell: /bin/bash
-  machine_type: n1-standard-1
-- name: dc1-consul-gateway
   image: instruqt-hashicorp/consul-1-6-2
   shell: /bin/bash
   machine_type: n1-standard-1
