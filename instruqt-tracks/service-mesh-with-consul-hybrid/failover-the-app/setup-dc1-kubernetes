@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#app
+rm -rf /root/tracing
+
+git clone https://github.com/hashicorp/field-workshops-consul.git
+cp -r field-workshops-consul/apps/tracing .
+rm -rf field-workshops-consul
+
+#tracing
+jaeger_server_ip=$(getent ahostsv4 dc1-jaeger-server |  awk '{print $1}' | head -1)
+
+sed -i "s/jaeger-collector/${jaeger_server_ip}/g" /root/tracing/web.yml
+sed -i "s/jaeger-collector/${jaeger_server_ip}/g" /root/tracing/api.yml
+sed -i "s/jaeger-collector/${jaeger_server_ip}/g" /root/tracing/cache.yml
+sed -i "s/jaeger-collector/${jaeger_server_ip}/g" /root/tracing/payments.yml
+sed -i "s/jaeger-collector/${jaeger_server_ip}/g" /root/tracing/currency.yml
+
+#error rate reset
+sed -i 's/0.5/0.0/' /root/tracing/currency.yml
+
+exit 0
