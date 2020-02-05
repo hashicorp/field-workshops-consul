@@ -27,6 +27,38 @@ spec:
     policy: round_robin
 EOF
 
+cat <<EOF | kubectl apply -f -
+---
+apiVersion: getambassador.io/v2
+kind: Filter
+metadata:
+  name: jwt-filter
+spec:
+  JWT:
+    jwksURI: "https://getambassador-demo.auth0.com/.well-known/jwks.json"
+    validAlgorithms:
+      - "none"
+    requireAudience: yes
+    audience: "web"
+    injectRequestHeaders:
+      - name: "X-Token-String"
+        value: "{{ .token.Raw }}"
+EOF
+
+cat <<EOF | kubectl apply -f -
+---
+apiVersion: getambassador.io/v2
+kind: FilterPolicy
+metadata:
+  name: web-policy
+spec:
+  rules:
+    - host: "*"
+      path: /web/
+      filters:
+        - name: jwt-filter
+EOF
+
 consul intention create -allow ambassador web
 
 sleep 60

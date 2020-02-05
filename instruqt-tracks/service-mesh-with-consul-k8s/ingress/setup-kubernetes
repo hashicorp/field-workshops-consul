@@ -1,5 +1,12 @@
 #!/bin/bash
 
+#npm for jwt decode
+apt-get update -y
+apt-get install npm -y
+
+npm install -g jwt-cli
+
+#k8s
 kubectl apply -f https://www.getambassador.io/yaml/aes-crds.yaml && \
 kubectl wait --for condition=established --timeout=90s crd -lproduct=aes && \
 kubectl apply -f https://www.getambassador.io/yaml/aes.yaml && \
