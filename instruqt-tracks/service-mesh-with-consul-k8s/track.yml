@@ -877,14 +877,14 @@ challenges:
     A sample JWT has been provided for you. Decode it first, then try the API.  <br>
 
     ```
-    jwt eyJhbGciOiJub25lIiwidHlwIjoiSldUIiwiZXh0cmEiOiJzbyBtdWNoIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkxhbmNlIExhcnNlbiIsImlhdCI6MTUxNjIzOTAyMiwgImF1ZCI6ICJ3ZWIifQ.
+    jwt eyJhbGciOiJub25lIiwidHlwIjoiSldUIiwiZXh0cmEiOiJzbyBtdWNoIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkxhbmNlIExhcnNlbiIsImlhdCI6MTU3Nzg4MDAwMCwgImF1ZCI6ICJ3ZWIifQ.
     ```
 
     Experiment with authorization, and without it. <br>
 
     ```
     curl -k https://${ambassador}/web/
-    curl -k -H 'Authorization: Bearer eyJhbGciOiJub25lIiwidHlwIjoiSldUIiwiZXh0cmEiOiJzbyBtdWNoIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkxhbmNlIExhcnNlbiIsImlhdCI6MTUxNjIzOTAyMiwgImF1ZCI6ICJ3ZWIifQ.' https://${ambassador}/web/
+    curl -k -H 'Authorization: Bearer eyJhbGciOiJub25lIiwidHlwIjoiSldUIiwiZXh0cmEiOiJzbyBtdWNoIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkxhbmNlIExhcnNlbiIsImlhdCI6MTU3Nzg4MDAwMCwgImF1ZCI6ICJ3ZWIifQ.' https://${ambassador}/web/
     ```
 
     Log into the Jaeger UI and look at the new traces.
@@ -936,4 +936,4 @@ challenges:
     path: /root/tracing
   difficulty: basic
   timelimit: 300
-checksum: "16283327708568780565"
+checksum: "5215742664074852372"
