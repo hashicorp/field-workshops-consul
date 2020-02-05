@@ -818,22 +818,78 @@ challenges:
     kubectl describe svc -n ambassador ambassador
     ```
 
-    The `web` service will be available at the prefix path from our mapping.
-    We've reset the error rate, so all the API calls will suceed. <br>
+    Last, let's set up end-user authentication with a [JWT filter](https://www.getambassador.io/reference/filter-reference/#filter-type-jwt).
+    Typically with web applications, the authentication is implemented at the edge, either via an API/edge gateway or via a top-level request filter within your application framework.
+    The mesh does not control these external clients, so we must authenticate them differently. <br>
 
-    Ambassador is deployed with a self-signed certificate for end-to-end mTLS in the lab environment, so we'll ignore trust validation in the API call.
-    Finally, get the load balancer IP and send your cluster some traffic! <br>
+    The filter is configured to require a `web` audience, and it will also inject the JWT token and pass it to the downstream applications in the mesh.
+    We are using the [none algorithm](https://tools.ietf.org/html/rfc7518#section-3.6) for demo purposes.
+    Apply it now. <br>
+
+
+    ```
+    cat <<EOF | kubectl apply -f -
+    ---
+    apiVersion: getambassador.io/v2
+    kind: Filter
+    metadata:
+      name: jwt-filter
+    spec:
+      JWT:
+        jwksURI: "https://getambassador-demo.auth0.com/.well-known/jwks.json"
+        validAlgorithms:
+          - "none"
+        requireAudience: yes
+        audience: "web"
+        injectRequestHeaders:
+          - name: "X-Token-String"
+            value: "{{ .token.Raw }}"
+    EOF
+    ```
+
+    Next, configure the `/web/` route to use the filter.
+
+    ```
+    cat <<EOF | kubectl apply -f -
+    ---
+    apiVersion: getambassador.io/v2
+    kind: FilterPolicy
+    metadata:
+      name: web-policy
+    spec:
+      rules:
+        - host: "*"
+          path: /web/
+          filters:
+            - name: jwt-filter
+    EOF
+    ```
+
+    Finally, Ambassador is deployed with a self-signed certificate for end-to-end mTLS in the lab environment, so we'll ignore trust validation in the API call.
+    Get the load balancer IP <br>
 
     ```
     ambassador=$(kubectl get svc ambassador -n ambassador -o json | jq -r '.status.loadBalancer.ingress[0].ip')
     openssl s_client -connect ${ambassador}:443 </dev/null 2>/dev/null | openssl x509 -text
-    curl -k https://${ambassador}/web/
     ```
 
-    Nice work! Log into the Jaeger UI and look at the new traces.
-    You'll see additional traffic from Ambassador. <br>
+    Now, send some traffic the application.
+    A sample JWT has been provided for you. Decode it first, then try the API.  <br>
 
-    Nice work!
+    ```
+    jwt eyJhbGciOiJub25lIiwidHlwIjoiSldUIiwiZXh0cmEiOiJzbyBtdWNoIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkxhbmNlIExhcnNlbiIsImlhdCI6MTUxNjIzOTAyMiwgImF1ZCI6ICJ3ZWIifQ.
+    ```
+
+    Experiment with authorization, and without it. <br>
+
+    ```
+    curl -k https://${ambassador}/web/
+    curl -k -H 'Authorization: Bearer eyJhbGciOiJub25lIiwidHlwIjoiSldUIiwiZXh0cmEiOiJzbyBtdWNoIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkxhbmNlIExhcnNlbiIsImlhdCI6MTUxNjIzOTAyMiwgImF1ZCI6ICJ3ZWIifQ.' https://${ambassador}/web/
+    ```
+
+    Log into the Jaeger UI and look at the new traces.
+    You'll see additional traffic from Ambassador.  Make sure to check out the `ext_autz` traces.
+    Nice work!! <br>
   notes:
   - type: text
     contents: |-
@@ -842,7 +898,7 @@ challenges:
       to allow K8s ingress for your tracing application from the prior exercise. <br>
 
       Ingress exposes HTTP and HTTPS routes from outside the cluster to services within the cluster.
-      Ingress can be configured to give Services externally-reachable URLs, load balance traffic, terminate SSL / TLS, and more. <br>
+      Ingress can be configured to give Services externally-reachable URLs, load balance traffic, terminate SSL / TLS, end-user authentication and more. <br>
 
       It can be very expensive to run dedicated load balancers per application.
       Ingress can help us manage this problem effectively. <br>
@@ -867,7 +923,7 @@ challenges:
   - title: Jaeger UI
     type: service
     hostname: kubernetes
-    path: /search?service=web
+    path: /search?service=ambassador-ambassador
     port: 31686
   - title: Ambassador UI
     type: service
@@ -880,4 +936,4 @@ challenges:
     path: /root/tracing
   difficulty: basic
   timelimit: 300
-checksum: "2132239239315128870"
+checksum: "16283327708568780565"
