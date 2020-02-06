@@ -747,7 +747,7 @@ challenges:
   assignment: |-
     We've configured Ambassador for you in this exercise with the following K8s deployment files: <br>
 
-    * https://www.getambassador.io/yaml/aes-crds.yam
+    * https://www.getambassador.io/yaml/aes-crds.yaml
     * https://www.getambassador.io/yaml/aes.yaml
     * https://www.getambassador.io/yaml/consul/ambassador-consul-connector.yaml
 
