@@ -14,6 +14,7 @@ tags: []
 owner: hashicorp
 developers:
 - lance@hashicorp.com
+- kcorbin@hashicorp.com
 private: false
 published: true
 challenges:
@@ -936,4 +937,4 @@ challenges:
     path: /root/tracing
   difficulty: basic
   timelimit: 300
-checksum: "5215742664074852372"
+checksum: "2199986546285559043"
