@@ -101,7 +101,7 @@ challenges:
 - slug: deploy-application
   id: 71ekxt1ehjg5
   type: challenge
-  title: Deploy Application
+  title: Deploy the Application
   teaser: Bring our application to the world.
   assignment: |-
     Before deploying your apps, investigate your config for the Emojify app in the code editor called `Emojify-Config`.
@@ -250,7 +250,7 @@ challenges:
 - slug: scale-the-app
   id: r2vgop1q59ix
   type: challenge
-  title: Scale the App
+  title: Scale the Application
   teaser: Handle increased demand
   assignment: |-
     To scale the number of Facebox services providing our ML capabilities, increase the `replicas`. <br>
@@ -937,4 +937,4 @@ challenges:
     path: /root/tracing
   difficulty: basic
   timelimit: 300
-checksum: "9307711387212167151"
+checksum: "13476228820722163816"
