@@ -27,7 +27,7 @@ challenges:
     First, use Helm with a custom values file to deploy Consul into the K8s cluster and enable Connect. <br>
 
     The helm chart has been cloned from GitHub and placed it in your lab environment.
-    Click on the `/root/consul-valules.yaml` file to view the Consul deployemnt configuration in the code editor. <br>
+    Click on the `/root/consul-valules.yaml` file to view the Consul deployment configuration in the code editor. <br>
 
     Navigate to the `_K8s` shell to install Consul. Note, Helm has been pre-initialized in this environment. Copy or type the following command in the shell.<br>
 
@@ -40,7 +40,7 @@ challenges:
     **You may see this error**: `Error: could not find a ready tiller pod`.
     Not a problem, just wait few moments, and try again. <br>
 
-    The Consul UI will become available once the Consul server pods are running. Monitor the progress with the follwing `kubectl` command. If `lab-consul-server-0` is `running`, then you should be able to access the Consul UI <br>
+    The Consul UI will become available once the Consul server pods are running. Monitor the progress with the following `kubectl` command. If `lab-consul-server-0` is `running`, then you should be able to access the Consul UI <br>
 
     ```
     kubectl get pods
@@ -185,10 +185,10 @@ challenges:
     port: 30000
   difficulty: basic
   timelimit: 600
-- slug: emojify-some-faces
+- slug: use-the-application
   id: ude8vm6frk3v
   type: challenge
-  title: Emojify some Faces
+  title: Use the Application
   teaser: You get an emoji, and you get an emoji, and you get an emoji.
   assignment: |-
     To use your Emojify app, enter a URL into the website to "emojify" the image. If you don't have an image you'd like to use try the one below of our founders.
@@ -198,13 +198,13 @@ challenges:
     ```
 
     Next, in the `Api-Service` tab, view the Consul service definition generated based on your K8s YAML files.
-    You can also discover the service definition using `kubectl`. In the `_K8s` shell tab, excecute the command below. <br>
+    You can also discover the service definition using `kubectl`. In the `_K8s` shell tab, execute the command below. <br>
 
     ```
     kubectl exec $(kubectl get pod --selector=app=emojify-api -o name) -c consul-connect-envoy-sidecar -- cat  /consul/connect-inject/service.hcl
     ```
 
-    If you have previous Consul expereince, you have practice creating service definitions by hand.
+    If you have previous Consul experience, you have practice creating service definitions by hand.
     In K8s, all you needed is the following to generate all the necessary configurations.
 
     ```
@@ -255,7 +255,7 @@ challenges:
   assignment: |-
     To scale the number of Facebox services providing our ML capabilities, increase the `replicas`. <br>
 
-    In the emojify app specs from earlier, change the number of replicas for the facebox service to `2`. Note, save the changes by clicking the "save" icon next to the file name.
+    In the emojify app specs from earlier, change the number of replicas for the Facebox service to `2`. Note, save the changes by clicking the "save" icon next to the file name.
 
     ```
     spec:
@@ -312,7 +312,7 @@ challenges:
   title: Get Metrics
   teaser: Please observe
   assignment: |-
-    Your monitoring stack includes Grafana and Prometheus. Ensure both applications have heatlhy, running pods using `kubectl`. <br>
+    Your monitoring stack includes Grafana and Prometheus. Ensure both applications have healthy, running pods using `kubectl`. <br>
 
     ```
     kubectl get pod --selector=app=prometheus
@@ -937,4 +937,4 @@ challenges:
     path: /root/tracing
   difficulty: basic
   timelimit: 300
-checksum: "2199986546285559043"
+checksum: "9307711387212167151"
