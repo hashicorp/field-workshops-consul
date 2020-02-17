@@ -5,9 +5,10 @@ echo "Fixing our path..."
 export PATH=/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 
 #Get Envoy for us
-curl -O https://raw.githubusercontent.com/hashicorp/instruqt-packer/master/consul/resources/envoy
-mv envoy /usr/local/bin/envoy
-chmod +x /usr/local/bin/envoy
+curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
+getenvoy run standard:1.11.1 -- --version
+cp /root/.getenvoy/builds/standard/1.11.1/linux_glibc/bin/envoy /usr/local/bin/envoy
+envoy --version
 
 echo "Installing utilities..."
 apt -y update
