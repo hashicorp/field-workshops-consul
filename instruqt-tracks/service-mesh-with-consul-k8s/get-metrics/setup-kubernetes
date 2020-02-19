@@ -68,7 +68,7 @@ spec:
 EOF
 
 helm install --wait -f prometheus-values.yaml --name prometheus stable/prometheus
-helm install --wait  -f grafana-values.yaml --name grafana stable/grafana
+helm install --wait  -f grafana-values.yaml --name grafana stable/grafana --version 4.6.3
 
 sleep 15
 
