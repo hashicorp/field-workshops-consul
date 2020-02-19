@@ -187,7 +187,7 @@ challenges:
   difficulty: basic
   timelimit: 600
 - slug: use-the-application
-  id: ude8vm6frk3v
+  id: ibdhfvn7xzbo
   type: challenge
   title: Use the Application
   teaser: You get an emoji, and you get an emoji, and you get an emoji.
@@ -938,4 +938,40 @@ challenges:
     path: /root/tracing
   difficulty: basic
   timelimit: 300
-checksum: "10017180324616181251"
+- slug: summary
+  id: neancacl0syl
+  type: challenge
+  title: Summary
+  teaser: Sandbox mode
+  assignment: |-
+    Congratulations on completing this lab!!! The environment will be available for the next hour and a half.
+    Click `check` when  you  are  done exploring to teardown the environment.
+  notes:
+  - type: text
+    contents: The next assignment preserves the environment.
+  tabs:
+  - title: K8s
+    type: terminal
+    hostname: kubernetes
+  - title: Consul UI
+    type: service
+    hostname: kubernetes
+    path: /ui/
+    port: 30085
+  - title: K8s UI
+    type: service
+    hostname: kubernetes
+    port: 30443
+  - title: Jaeger UI
+    type: service
+    hostname: kubernetes
+    path: /search?service=ambassador-ambassador
+    port: 31686
+  - title: Ambassador UI
+    type: service
+    hostname: kubernetes
+    path: /ambassador/v0/diag/
+    port: 31877
+  difficulty: basic
+  timelimit: 5400
+checksum: "32553153165368711"
