@@ -5,4 +5,4 @@ virtualmachines:
   shell: /bin/bash
   environment:
     CONSUL_HTTP_ADDR: http://127.0.0.1:30085
-  machine_type: n1-standard-2
+  machine_type: n1-standard-4

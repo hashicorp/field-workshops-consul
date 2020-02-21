@@ -33,13 +33,11 @@ challenges:
     Navigate to the `_K8s` shell to install Consul. Note, Helm has been pre-initialized in this environment. Copy or type the following command in the shell.<br>
 
     ```
-    helm install -f consul-values.yaml --name lab ./consul-helm
+    helm install -f consul-values.yaml --name lab ./consul-helm --wait
     ```
 
     The status output should indicate Consul was `DEPLOYED`. <br>
 
-    **You may see this error**: `Error: could not find a ready tiller pod`.
-    Not a problem, just wait few moments, and try again. <br>
 
     The Consul UI will become available once the Consul server pods are running. Monitor the progress with the following `kubectl` command. If `lab-consul-server-0` is `running`, then you should be able to access the Consul UI <br>
 
@@ -132,6 +130,12 @@ challenges:
     kubectl apply -f emojify/api.yml
     kubectl apply -f emojify/cache.yml
     kubectl apply -f emojify/facebox.yml
+
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-ingress -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-website -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-api -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-cache -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-facebox -o name)
     ```
 
     By default, the Consul cluster has been configured to deny all traffic between applications. A deny all by default configuration is best practice. You should then allow traffic between applications using intentions.
@@ -482,6 +486,9 @@ challenges:
     ```
     kubectl  apply -f emojify/website_v2.yml
     kubectl  apply -f emojify/payments.yml
+
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-payments -o name)
+
     consul intention create -allow emojify-ingress emojify-payments
     ```
 
@@ -646,6 +653,12 @@ challenges:
 
     ```
     kubectl apply -f tracing
+
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=web -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=api -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=cache -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=payments -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=currency -o name)
 
     consul intention create -allow web api
     consul intention create -allow api cache
@@ -974,4 +987,4 @@ challenges:
     port: 31877
   difficulty: basic
   timelimit: 5400
-checksum: "32553153165368711"
+checksum: "1041685005202055625"

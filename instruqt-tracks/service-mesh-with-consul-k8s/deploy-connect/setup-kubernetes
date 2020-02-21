@@ -256,20 +256,20 @@ spec:
 EOF
 
 #Get the consul binary
-wget https://releases.hashicorp.com/consul/1.6.1/consul_1.6.1_linux_amd64.zip
-unzip consul_1.6.1_linux_amd64.zip
+wget https://releases.hashicorp.com/consul/1.7.0/consul_1.7.0_linux_amd64.zip
+unzip consul_1.7.0_linux_amd64.zip
 mv consul /usr/local/bin/consul
 chmod +x /usr/local/bin/consul
-rm -f consul_1.6.1_linux_amd64.zip
+rm -f consul_1.7.0_linux_amd64.zip
 
 #Grab the helm chart
-git clone --branch v0.16.0 https://github.com/hashicorp/consul-helm.git
+git clone --branch v0.16.2 https://github.com/hashicorp/consul-helm.git
 
 #Set up the consul default values
 cat <<-EOF > /root/consul-values.yaml
 global:
   datacenter: dc1
-  image: "consul:1.7.0-beta4"
+  image: "consul:1.7.0"
   imageK8S: "hashicorp/consul-k8s:0.11.0"
 
 server:
@@ -291,7 +291,8 @@ syncCatalog:
 
 connectInject:
   enabled: true
-  imageEnvoy: envoyproxy/envoy:v1.9.1
+  #envoy image with curl and utils
+  imageEnvoy: nicholasjackson/consul-envoy:v1.7.0-v0.12.2
 
   #true will inject by default, otherwise requires annotation
   default: false
