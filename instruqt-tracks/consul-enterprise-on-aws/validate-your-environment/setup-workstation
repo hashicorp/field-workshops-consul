@@ -1,0 +1,20 @@
+#!/bin/bash
+
+#wait for creds to populate
+apt-get update -y
+apt-get install git -y
+
+#set up AWS creds file
+mkdir -p ~/.aws/
+cat << EOF > ~/.aws/credentials
+[default]
+aws_access_key_id=${INSTRUQT_AWS_ACCOUNT_CONSUL_AWS_ACCESS_KEY_ID}
+aws_secret_access_key=${INSTRUQT_AWS_ACCOUNT_CONSUL_AWS_SECRET_ACCESS_KEY}
+EOF
+
+#tf code for AWS
+git clone https://github.com/hashicorp/field-workshops-consul.git
+
+#provision
+
+exit 0

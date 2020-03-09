@@ -1,0 +1,14 @@
+version: "2"
+containers:
+- name: cloud-client
+  image: gcr.io/instruqt/cloud-client
+  shell: /bin/bash
+  ports:
+  - 80
+- name: workstation
+  image: ubuntu
+  shell: /bin/bash
+aws_accounts:
+- name: consul
+  managed_policies:
+  - arn:aws:iam::aws:policy/AmazonEC2FullAccess
