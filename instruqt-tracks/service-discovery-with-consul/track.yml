@@ -281,15 +281,6 @@ challenges:
       Check out the HashiCorp Learn guide to learn more about DNS forwarding: https://learn.hashicorp.com/consul/security-networking/forwarding
   - type: text
     contents: "\U0001F310 Consul - A Powerful DNS-based Service Catalog \U0001F578️"
-  - type: text
-    contents: |-
-      \U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338 <br>
-
-      _It's not DNS_ <br>
-      _There's no way it's DNS_ <br>
-      _It was DNS_ <br>
-
-      \U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338\U0001F338
   tabs:
   - title: Website
     type: service
@@ -308,4 +299,4 @@ challenges:
     hostname: app
   difficulty: basic
   timelimit: 900
-checksum: "570416565148122576"
+checksum: "4128408683431438756"
