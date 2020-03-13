@@ -26,4 +26,4 @@ You will accomplish the following in this lab:
 * Add Basic Security with Consul ACLs
 ]
 
-### .center[<a href="https://instruqt.com/hashicorp/tracks/consul-basics" target="_blank">Instruqt - Consul Basics</a>]
+Your instructor will provide the URL for the lab environment.

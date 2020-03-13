@@ -141,4 +141,4 @@ You will accomplish the following in this lab:
 * Seamless DNS integration
 ]
 
-### .center[<a href="https://instruqt.com/hashicorp/tracks/service-discovery-with-consul" target="_blank">Instruqt - Consul Service Discovery</a>]
+Your instructor will provide the URL for the lab environment.
