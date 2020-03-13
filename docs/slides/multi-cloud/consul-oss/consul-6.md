@@ -127,8 +127,7 @@ You will accomplish the following in this lab:
 * Use Consul to connect and secure traffic
 ]
 
-### .center[<a href="https://instruqt.com/hashicorp/tracks/service-mesh-with-consul" target="_blank">Instruqt - Consul Service Mesh</a>]
-
+Your instructor will provide the URL for the lab environment.
 ---
 name: Segmentation-Lab-K8s
 # 👩‍💻 Bonus Lab: Service Segmentation - K8s
@@ -141,7 +140,7 @@ You will accomplish the following in this lab:
 * Observe application performance
 ]
 
-### .center[<a href="https://instruqt.com/hashicorp/tracks/service-mesh-with-consul-k8s" target="_blank">Instruqt - Consul Service Mesh on K8s</a>]
+Your instructor will provide the URL for the lab environment.
 
 ---
 name: Segmentation-Lab-Hybrid
@@ -154,4 +153,4 @@ You will accomplish the following in this lab:
 * Use Mesh Gateways to solve for multi-datacenter network complexities
 ]
 
-### .center[<a href="https://instruqt.com/hashicorp/tracks/service-mesh-with-consul-hybrid" target="_blank">Instruqt - Consul Service Mesh Hybrid</a>]
+Your instructor will provide the URL for the lab environment.
