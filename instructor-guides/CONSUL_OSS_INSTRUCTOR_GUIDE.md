@@ -60,13 +60,13 @@ The slide deck for this training is written completely in [Markdown](https://gui
 https://github.com/hashicorp/field-workshops-consul/projects/1
 
 ### Hands-on Labs
-At certain points in the slide deck there are links to the lab exercises. [Instruqt](https://instruqt.com/hashicorp) is our lab platform. Lab exercises can be completed anonymously, but if users want to keep track of their progress they should create accounts on the Instruqt website. There are currently three labs referenced in the slide deck:
+At certain points in the slide deck there are links to the lab exercises. [Instruqt](https://instruqt.com/hashicorp) is our lab platform. Lab exercises can be completed anonymously, but if users want to keep track of their progress they should create accounts on the Instruqt website. There are currently five labs referenced in the slide deck:
 
-https://instruqt.com/hashicorp/tracks/consul-basics
-https://instruqt.com/hashicorp/tracks/service-discovery-with-consul
-https://instruqt.com/hashicorp/tracks/TBD
+https://play.instruqt.com/hashicorp/topics/consul-workshops
 
 Go through each of these tracks from start to finish and make sure you understand them. Students may have questions during the labs. When presenting a workshop be sure to give enough time for all your participants to go through the labs. Remember that this is probably their first time working a tool like Consul.
+
+You will need to provide the links to your workshop attendees. You can either provide the public link, or send a private invite per track. Instruqt will support private invites for topics in the near future.
 
 ### The Live Demo
 Between Chapters 1 and 2 there is a slide that says *Live Demo*. You can use an instruqt track to do a brief Consul demo for your participants. Follow these steps to do the demo:
