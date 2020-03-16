@@ -1,0 +1,77 @@
+{
+  "variables": {
+    "aws_access_key_id": "{{ env `AWS_ACCESS_KEY_ID` }}",
+    "aws_secret_access_key": "{{ env `AWS_SECRET_ACCESS_KEY` }}",
+    "aws_region": "{{ env `AWS_REGION` }}"
+  },
+  "builders": [
+    {
+      "name": "amazon-ebs-centos-7",
+      "type": "amazon-ebs",
+      "access_key": "{{ user `aws_access_key_id` }}",
+      "secret_key": "{{ user `aws_secret_access_key` }}",
+      "region": "{{ user `aws_region` }}",
+      "spot_price": "0",
+      "force_deregister": true,
+      "force_delete_snapshot": true,
+      "ssh_pty": true,
+      "instance_type": "m5.large",
+      "associate_public_ip_address": true,
+      "source_ami_filter": {
+        "filters": {
+          "product-code": "aw0evgkw8e5c1q413zgy5pjce",
+          "virtualization-type": "hvm",
+          "name": "*CentOS Linux 7 x86_64 HVM EBS ENA*",
+          "root-device-type": "ebs"
+        },
+        "owners": ["679593333241"],
+        "most_recent": true
+      },
+      "ssh_username": "centos",
+      "ssh_timeout": "5m",
+      "ami_virtualization_type": "hvm",
+      "ami_name": "is-aws-immutable-consul-centos7-{{isotime \"2006-01-02-03-04\"}}",
+      "ami_description": "{{ user `owner` }} - IS AWS Consul - CentOS 7",
+      "ami_regions": ["us-east-1", "us-east-2", "us-west-2"],
+      "tags": {
+        "Name": "IS AWS Consul v{{ user `consul_version` }}",
+        "System": "is-immutable-consul",
+        "Product": "Consul",
+        "Consul-Version": "{{ user `consul_version` }}",
+        "OS": "centos",
+        "OS-Version": "7",
+        "Release": "{{ user `release` }}",
+        "Owner": "{{ user `owner` }}"
+      },
+      "launch_block_device_mappings": [{
+        "device_name": "/dev/sda1",
+        "delete_on_termination": true
+      }]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "{{ user `consul_zip` }}",
+      "destination": "/tmp/consul.zip"
+    },
+    {
+      "type": "file",
+      "source": "files",
+      "destination": "/tmp"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/el7.sh",
+      "only": ["amazon-ebs-centos-7"]
+    },
+    {
+      "type": "shell",
+      "script": "scripts/setup.sh"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/cleanup.sh"
+    }
+  ]
+}

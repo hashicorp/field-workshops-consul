@@ -2,7 +2,7 @@
 
 #wait for creds to populate
 apt-get update -y
-apt-get install git -y
+apt-get install git unzip -y
 
 #set up AWS creds file
 mkdir -p ~/.aws/
@@ -12,8 +12,12 @@ aws_access_key_id=${INSTRUQT_AWS_ACCOUNT_CONSUL_AWS_ACCESS_KEY_ID}
 aws_secret_access_key=${INSTRUQT_AWS_ACCOUNT_CONSUL_AWS_SECRET_ACCESS_KEY}
 EOF
 
-#tf code for AWS
-git clone https://github.com/hashicorp/field-workshops-consul.git
+#get assets
+git clone -b add-consul-instruqt-ent-aws https://github.com/hashicorp/field-workshops-consul.git
+#cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-aws/packer .
+cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-aws/terraform .
+rm -rf field-workshops-consul
+
 
 #provision
 echo "running terraform..."

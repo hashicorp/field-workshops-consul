@@ -1,0 +1,46 @@
+# Private Local Account AMI filter
+ami_prefix     = "is-aws-immutable-consul-"
+ami_release    = "0.0.1"
+ami_os         = "centos"
+ami_os_release = "7"
+ami_owner      = "somebody@hashicorp.com"
+
+# Public/Cross-Account Specific AMI ID(This overrides the above filter)
+#ami_id = "ami-03009801a98de33a7"
+
+instance_type = "m5.large"
+region        = "us-east-2"
+
+#Keep at 0.0.1/bootstrap=true during initial ACL Bootstrap
+#Then moving to 0.0.2 set bootstrap to false
+consul_cluster_version = "0.0.1"
+bootstrap              = true
+
+#SSH Key
+key_name           = "yourname"
+name_prefix        = "yourname"
+vpc_id             = "vpc-b61d20de"
+subnets            = "subnet-73fc063f,subnet-aa1281d0,subnet-33f8dd5b"
+availability_zones = "us-east-2a,us-east-2b,us-east-2c"
+
+public_ip = false
+
+consul_nodes       = "5"   #You can use an even number when using redundancy zones
+redundancy_zones   = false #Currently has issues with UpgradeMigrations
+performance_mode   = true  #Performance disk io provisioning, and production raft values
+enable_snapshots   = true  #Enables the Consul snapshot agent on the consul servers
+snapshot_interval  = "30m" #Snapshot Agent interval
+snapshot_retention = 336   #Snapshot retention count 336 @ 30m = 7 days
+
+#Optional additional configuration overrides passed to the consul servers
+consul_config = {
+  addresses = {
+    dns = "127.0.0.1 $${LOCAL_IPV4}"
+  }
+  log_level = "info"
+}
+
+owner = "somebody@hashicorp.com"
+ttl   = "-1"
+
+

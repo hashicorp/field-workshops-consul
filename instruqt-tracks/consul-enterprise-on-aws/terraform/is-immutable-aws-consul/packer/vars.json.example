@@ -1,0 +1,8 @@
+{
+  "consul_zip": "/Users/somebody/Downloads/hc-enterprise-binaries/consul/prem/1.6.1/consul-enterprise_1.6.1+prem_linux_amd64.zip",
+  "consul_version": "1.6.1",
+  "username": "somebody",
+  "pubkey": "ssh-rsa AAAAB3NzaC1d/e1lIXGXX7DD/zlzHcw== somebody@somebody.local",
+  "owner": "somebody@hashicorp.com",
+  "release": "0.0.1"
+}
