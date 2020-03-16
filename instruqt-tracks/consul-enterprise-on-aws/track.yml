@@ -44,7 +44,8 @@ challenges:
     terraform-vpc-storage: 10.4.0.0/16
     ```
 
-    Our shared service VPC
+    Our shared service VPC will run the core Consul infrastructure.
+    You will provision the Consul servers in the next assignment.
   notes:
   - type: text
     contents: |-
@@ -63,7 +64,7 @@ challenges:
     type: terminal
     hostname: cloud-client
   difficulty: basic
-  timelimit: 1500
+  timelimit: 3000
 - slug: build-consul-image
   id: gudhtmhdc2au
   type: challenge
@@ -90,5 +91,5 @@ challenges:
     type: terminal
     hostname: cloud-client
   difficulty: basic
-  timelimit: 300
-checksum: "444908921687612108"
+  timelimit: 3000
+checksum: "5710095615489375433"

@@ -1,5 +1,33 @@
 #!/bin/bash
 
-echo "installing packer..."
+#fix path
+export PATH=/sbin:/bin:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/bin
 
+#install packer
+cd /tmp
+echo "installing packer..."
+curl -O https://releases.hashicorp.com/packer/1.5.4/packer_1.5.4_linux_amd64.zip
+unzip packer_1.5.4_linux_amd64.zip
+mv packer /usr/local/bin/packer
+rm -f *.zip
+cd /root
+
+#Download Consul
+cd /root/packer
+curl -O https://releases.hashicorp.com/consul/1.7.1/consul_1.7.1_linux_amd64.zip
+
+#create variable file
+pubkey=$(cat ~/.ssh/id_rsa.pub)
+cat << EOF > /root/packer/vars.json
+{
+  "consul_zip": "consul_1.7.1_linux_amd64.zip",
+  "consul_version": "1.7.1",
+  "username": "instruqt",
+  "pubkey": "${pubkey}",
+  "owner": "instruqt@hashicorp.com",
+  "release": "0.0.1"
+}
+EOF
+#aws ec2 create-default-vpc
+#AWS_REGION=us-east-1 packer build -var-file vars.json centos.json
 exit 0

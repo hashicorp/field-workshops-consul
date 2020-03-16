@@ -1,8 +1,11 @@
 #!/bin/bash
 
+#fix path
+export PATH=/sbin:/bin:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/bin
+
 #wait for creds to populate
 apt-get update -y
-apt-get install git unzip -y
+apt-get install vim curl git unzip -y
 
 #set up AWS creds file
 mkdir -p ~/.aws/
@@ -12,14 +15,24 @@ aws_access_key_id=${INSTRUQT_AWS_ACCOUNT_CONSUL_AWS_ACCESS_KEY_ID}
 aws_secret_access_key=${INSTRUQT_AWS_ACCOUNT_CONSUL_AWS_SECRET_ACCESS_KEY}
 EOF
 
+#install terraform
+cd /tmp
+echo "running terraform..."
+curl -O https://releases.hashicorp.com/terraform/0.12.23/terraform_0.12.23_linux_amd64.zip
+unzip terraform_0.12.23_linux_amd64.zip
+mv terraform /usr/local/bin/terraform
+rm -f *.zip
+cd /root
+
 #get assets
 git clone -b add-consul-instruqt-ent-aws https://github.com/hashicorp/field-workshops-consul.git
-#cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-aws/packer .
 cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-aws/terraform .
+cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-aws/packer .
 rm -rf field-workshops-consul
 
-
 #provision
-echo "running terraform..."
+cd /root/terraform/infra
+terraform init
+#terraform apply -auto-approve
 
 exit 0
