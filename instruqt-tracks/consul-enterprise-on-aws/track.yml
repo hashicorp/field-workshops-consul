@@ -31,7 +31,7 @@ challenges:
     View the VPCs in your environment.
 
     ```
-    aws ec2  describe-vpcs --region us-east-1
+    aws ec2 describe-vpcs
     ```
 
     You'll notice you have four separate VPCs that map to the infra diagram shared earlier.
@@ -92,4 +92,4 @@ challenges:
     hostname: cloud-client
   difficulty: basic
   timelimit: 3000
-checksum: "5710095615489375433"
+checksum: "7461759902783477200"

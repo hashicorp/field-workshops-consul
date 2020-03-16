@@ -28,7 +28,7 @@
         ],
         "most_recent": true
       },
-      "ssh_username": "centos",
+      "ssh_username": "ec2-user",
       "ssh_timeout": "5m",
       "ami_virtualization_type": "hvm",
       "ami_name": "is-aws-immutable-consul-centos7-{{isotime \"2006-01-02-03-04\"}}",

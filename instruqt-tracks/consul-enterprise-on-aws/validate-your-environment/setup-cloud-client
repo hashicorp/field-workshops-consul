@@ -1,0 +1,6 @@
+#!/bin/bash
+
+aws configure set default.region us-east-1
+aws ec2 create-default-vpc
+
+exit 0
