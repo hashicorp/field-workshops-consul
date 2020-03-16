@@ -18,7 +18,7 @@ challenges:
 - slug: validate-your-environment
   id: zf9q5j426xdi
   type: challenge
-  title: Validate your Environment
+  title: 'Infrastructure: Validate the Environment'
   teaser: A short description of the challenge.
   assignment: |-
     The cloud infrastructure team has already set up cloud infrastructure for this environment.
@@ -64,4 +64,31 @@ challenges:
     hostname: cloud-client
   difficulty: basic
   timelimit: 1500
-checksum: "8351266944461321196"
+- slug: build-consul-image
+  id: gudhtmhdc2au
+  type: challenge
+  title: 'Infrastructure: Build Consul Image'
+  teaser: A short description of the challenge.
+  assignment: |-
+    In this assignment you will build an immutable image of [Consul with HashiCorp Packer](https://packer.io/) <br>
+
+    Immutability has many advantages for infrastructure management.
+    Consul enterprise can take advantage of immutable patterns with [Automated Upgrades](https://www.consul.io/docs/enterprise/upgrades/index.html)
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: terminal
+    type: terminal
+    hostname: workstation
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
+checksum: "7059940413251673082"

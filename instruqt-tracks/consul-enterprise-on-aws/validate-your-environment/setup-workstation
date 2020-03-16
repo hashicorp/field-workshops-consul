@@ -16,5 +16,6 @@ EOF
 git clone https://github.com/hashicorp/field-workshops-consul.git
 
 #provision
+echo "running terraform..."
 
 exit 0
