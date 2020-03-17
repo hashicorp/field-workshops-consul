@@ -39,6 +39,9 @@ module "vpc-frontend" {
 
   enable_nat_gateway = true
   single_nat_gateway = true
+
+  private_subnet_tags = { "Tier" : "private" }
+  public_subnet_tags  = { "Tier" : "public" }
 }
 
 module "vpc-api" {
@@ -59,6 +62,9 @@ module "vpc-api" {
 
   enable_nat_gateway = true
   single_nat_gateway = true
+
+  private_subnet_tags = { "Tier" : "private" }
+  public_subnet_tags  = { "Tier" : "public" }
 }
 
 module "vpc-storage" {
@@ -79,6 +85,9 @@ module "vpc-storage" {
 
   enable_nat_gateway = true
   single_nat_gateway = true
+
+  private_subnet_tags = { "Tier" : "private" }
+  public_subnet_tags  = { "Tier" : "public" }
 }
 
 /*

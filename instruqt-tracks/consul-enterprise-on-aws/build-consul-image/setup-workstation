@@ -28,6 +28,4 @@ cat << EOF > /root/packer/vars.json
   "release": "0.0.1"
 }
 EOF
-
-#AWS_REGION=us-east-1 packer build -var-file vars.json centos.json
 exit 0

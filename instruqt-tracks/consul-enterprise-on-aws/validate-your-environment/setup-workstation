@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Allow instruqt time to do its thing
+sleep 10
+
+# Source important environment variables
+source /etc/profile.d/instruqt-env.sh
+source /root/.bashrc
+
 #fix path
 export PATH=/sbin:/bin:/usr/bin:/usr/sbin:/usr/local/sbin:/usr/local/bin
 
