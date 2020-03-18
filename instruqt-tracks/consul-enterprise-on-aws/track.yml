@@ -50,16 +50,22 @@ challenges:
   - type: text
     contents: |-
       In this assignment you will familiarize yourself with the AWS cloud
-      environment.
+      environment. <br>
+
+      Please be patient as we provision your cloud environment.
   tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/infra
   - title: Cloud Consoles
     type: service
     hostname: cloud-client
     path: /
     port: 80
-  - title: Cloud CLI
-    type: terminal
-    hostname: cloud-client
   difficulty: basic
   timelimit: 3000
 - slug: build-consul-image
@@ -73,10 +79,17 @@ challenges:
     Immutability has many advantages for infrastructure management.
     Consul enterprise can take advantage of immutable patterns with [Automated Upgrades](https://www.consul.io/docs/enterprise/upgrades/index.html)
 
-    The Packer build has been set up for you.
+    The Packer build has been set up for you. Inspect the variable file, then build the image.
 
     ```
+    cat /root/packer/vars.json
     AWS_REGION=us-east-1 packer build -var-file vars.json centos.json
+    ```
+
+    Validate your AMI is available in us-east-1.
+
+    ```
+    aws ec2 describe-images --owners self
     ```
 
     Now that you have a Consul image, you're ready to provision Consul in a prod-like ASG.
@@ -84,17 +97,18 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
-  - title: terminal
+  - title: Cloud CLI
     type: terminal
-    hostname: workstation
+    hostname: cloud-client
+  - title: Packer
+    type: code
+    hostname: cloud-client
+    path: /root/packer
   - title: Cloud Consoles
     type: service
     hostname: cloud-client
     path: /
     port: 80
-  - title: Cloud CLI
-    type: terminal
-    hostname: cloud-client
   difficulty: basic
   timelimit: 3000
 - slug: provision-consul
@@ -110,17 +124,18 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
-  - title: terminal
+  - title: Cloud CLI
     type: terminal
-    hostname: workstation
+    hostname: cloud-client
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/consul
   - title: Cloud Consoles
     type: service
     hostname: cloud-client
     path: /
     port: 80
-  - title: Cloud CLI
-    type: terminal
-    hostname: cloud-client
   difficulty: basic
   timelimit: 300
-checksum: "11500824511209325894"
+checksum: "8173713120494469434"

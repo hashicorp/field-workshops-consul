@@ -1,0 +1,37 @@
+#!/bin/bash
+
+set-workdir /root/terraform/consul
+
+cat << EOF > /root/terraform/consul/consul.auto.tfvars
+ami_prefix     = "is-aws-immutable-consul-"
+ami_release    = "0.0.1"
+ami_os         = "centos"
+ami_os_release = "7"
+ami_owner      = "instruqt@hashicorp.com"
+
+instance_type = "t3.large"
+region        = "us-east-1"
+
+consul_cluster_version = "0.0.1"
+bootstrap              = true
+
+#SSH Key
+key_name           = "instruqt"
+name_prefix        = "instruqt"
+vpc_id             = "vpc-b61d20de"
+subnets            = "subnet-73fc063f,subnet-aa1281d0,subnet-33f8dd5b"
+availability_zones = "us-east-2a,us-east-2b,us-east-2c"
+
+public_ip = false
+
+consul_nodes       = "6"   #You can use an even number when using redundancy zones
+redundancy_zones   = false #Currently has issues with UpgradeMigrations
+performance_mode   = false  #Performance disk io provisioning, and production raft values
+enable_snapshots   = false  #Enables the Consul snapshot agent on the consul servers
+
+owner = "instruqt@hashicorp.com"
+ttl   = "-1"
+
+EOF
+
+exit 0

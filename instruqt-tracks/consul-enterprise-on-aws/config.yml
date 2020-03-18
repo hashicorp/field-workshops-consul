@@ -11,4 +11,4 @@ containers:
 aws_accounts:
 - name: consul
   managed_policies:
-  - arn:aws:iam::aws:policy/AmazonEC2FullAccess
+  - arn:aws:iam::aws:policy/AdministratorAccess
