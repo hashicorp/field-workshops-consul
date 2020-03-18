@@ -18,7 +18,7 @@ pubkey=$(cat ~/.ssh/id_rsa.pub)
 cat << EOF > /root/packer/vars.json
 {
   "consul_zip": "consul_1.7.2+ent_linux_amd64.zip",
-  "consul_version": "1.7.1",
+  "consul_version": "1.7.2",
   "username": "instruqt",
   "pubkey": "${pubkey}",
   "owner": "instruqt@hashicorp.com",
