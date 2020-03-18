@@ -41,4 +41,8 @@ resource "aws_instance" "bastion-shared-svcs" {
   vpc_security_group_ids      = ["${aws_security_group.bastion-shared-svcs.id}"]
   subnet_id                   = "${module.vpc-shared-svcs.public_subnets[0]}"
   associate_public_ip_address = true
+
+  tags = {
+    Name = "bastion"
+  }
 }

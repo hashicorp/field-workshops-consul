@@ -117,6 +117,48 @@ challenges:
   title: 'Infrastructure: Provision Consul'
   teaser: A short description of the challenge.
   assignment: |-
+    In this assignment, you'll install the ASG that will run the Consul servers.
+    The terraform module is configured to use the packer image you created in the last assignment. <br>
+
+    Inspect the variable file, then deploy Consul.
+
+    ```
+    cat consul.auto.tfvars
+    terraform apply -auto-approve
+    ```
+
+    Now, validate the Consul servers deployed to AWS. <br>
+
+    ```
+    aws autoscaling describe-auto-scaling-groups
+    ```
+
+    You should see the Consul servers with a ``*-0.0.1` postfix.
+    You will increment the deployment in the next exercise to finish the immutable bootstrap.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/consul
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  difficulty: basic
+  timelimit: 300
+- slug: bootstrap-consul
+  id: e9a2xlzwes8d
+  type: challenge
+  title: 'Infrastructure: Bootstrap Consul'
+  teaser: A short description of the challenge.
+  assignment: |-
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
@@ -138,4 +180,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 300
-checksum: "6283241296992489894"
+checksum: "8216213331829521541"
