@@ -24,7 +24,7 @@ availability_zones = "us-east-2a,us-east-2b,us-east-2c"
 
 public_ip = false
 
-consul_nodes       = "6"   #You can use an even number when using redundancy zones
+consul_nodes       = "3"   #You can use an even number when using redundancy zones
 redundancy_zones   = false #Currently has issues with UpgradeMigrations
 performance_mode   = false  #Performance disk io provisioning, and production raft values
 enable_snapshots   = false  #Enables the Consul snapshot agent on the consul servers
