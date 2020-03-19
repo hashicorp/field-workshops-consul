@@ -1,0 +1,6 @@
+#!/bin/bash
+
+consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate consul_lb)
+export CONSUL_HTTP_ADDR=http://${consul_lb}
+
+exit 0

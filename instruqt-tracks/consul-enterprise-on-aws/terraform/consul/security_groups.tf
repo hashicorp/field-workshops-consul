@@ -4,6 +4,15 @@ resource "aws_security_group" "consul" {
   vpc_id      = var.vpc_id
 }
 
+resource "aws_security_group_rule" "ssh" {
+  security_group_id = aws_security_group.consul.id
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  cidr_blocks       = ["10.1.0.0/16"]
+}
+
 resource "aws_security_group_rule" "consul_external_egress_https" {
   security_group_id = aws_security_group.consul.id
   type              = "egress"

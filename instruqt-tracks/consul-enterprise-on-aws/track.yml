@@ -12,8 +12,8 @@ tags: []
 owner: hashicorp
 developers:
 - lance@hashicorp.com
-private: false
-published: false
+private: true
+published: true
 challenges:
 - slug: validate-your-environment
   id: zf9q5j426xdi
@@ -135,6 +135,23 @@ challenges:
 
     You should see the Consul servers with a ``*-0.0.1` postfix.
     You will increment the deployment in the next exercise to finish the immutable bootstrap.
+
+    Let's inspect one of the newly provisioned Consul instances.
+    We can access the newly provisioned instance through our bastion host.
+
+    ```
+    consul_instance=$(aws autoscaling describe-auto-scaling-groups --output json | jq -r '[.. |."InstanceId"? | select(. != null)][0]')
+    bastion_instance=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].InstanceId' --filters "Name=tag:Name,Values=bastion" --output text)
+
+    consul_ip=$(aws ec2 describe-instances --instance-ids ${consul_instance} --query 'Reservations[].Instances[].PrivateIpAddress' --output text)
+    bastion_ip=$(aws ec2 describe-instances --instance-ids ${bastion_instance} --query 'Reservations[].Instances[].PublicIpAddress' --output text)
+
+    ssh -A -J ubuntu@${bastion_ip} ec2-user@${consul_ip} 'sudo cat /etc/consul.d/consul.hcl'
+    ```
+
+    To finish the bootstrap process, we need to set the following value: `default_policy = "deny"`. <br>
+
+    Go to the next assignment, and finish the bootstrap.
   notes:
   - type: text
     contents: Replace this text with your own text
@@ -159,14 +176,52 @@ challenges:
   title: 'Infrastructure: Bootstrap Consul'
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    Consul Enterprise supports an [upgrade pattern](https://learn.hashicorp.com/consul/day-2-operations/autopilot#upgrade-migrations) that allows operators to deploy a complete cluster of new servers,
+    and safely migrate the new servers until the upgrade is complete. <br>
 
-    You can use any GitHub flavoured markdown.
+    In the second terminal window, you will watch the new servers added as `non-voters`.
+    Once autopilot has validated the new servers, it will safely promote them.
+    You will see the old servers removed from the list.
+
+    ```
+    watch consul operator raft list-peers
+    ```
+
+    Next, make the following two changes to the `consul.auto.tfvars file` to complete the bootstrap:
+      * consul_cluster_version = "0.0.2"
+      * bootstrap = false
+
+    Now run terraform, and watch the servers automatically transition.
+
+    ```
+    cat consul.auto.tfvars
+    terraform apply -auto-approve
+    ```
+
+    Nice work! You just did an automated server update with Consul enterprise. <br>
+
+    You can now validate the changes. Notice the `node_meta` is for the `0.0.2` version of the deployment.
+    You can also see that the `default_policy` for ACLs was updated for the new value.
+
+    ```
+    consul catalog nodes --detailed
+
+    consul_instance=$(aws autoscaling describe-auto-scaling-groups --output json | jq -r '[.. |."InstanceId"? | select(. != null)][0]')
+    bastion_instance=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].InstanceId' --filters "Name=tag:Name,Values=bastion" --output text)
+    consul_ip=$(aws ec2 describe-instances --instance-ids ${consul_instance} --query 'Reservations[].Instances[].PrivateIpAddress' --output text)
+    bastion_ip=$(aws ec2 describe-instances --instance-ids ${bastion_instance} --query 'Reservations[].Instances[].PublicIpAddress' --output text)
+    ssh -A -J ubuntu@${bastion_ip} ec2-user@${consul_ip} 'sudo cat /etc/consul.d/consul.hcl'
+    ```
+
+    Now you can start setting up the tenants for the Consul shared service consumers.
   notes:
   - type: text
     contents: Replace this text with your own text
   tabs:
   - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud CLI - watch
     type: terminal
     hostname: cloud-client
   - title: Terraform
@@ -180,4 +235,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 300
-checksum: "7942058728072536930"
+checksum: "6105431671320264528"
