@@ -11,7 +11,7 @@ server              = true
 bootstrap_expect    = ${bootstrap_expect}
 data_dir            = "/opt/consul/data"
 advertise_addr      = "$${LOCAL_IPV4}"
-client_addr         = "127.0.0.1"
+client_addr         = "0.0.0.0"
 log_level           = "INFO"
 ui                  = true
 

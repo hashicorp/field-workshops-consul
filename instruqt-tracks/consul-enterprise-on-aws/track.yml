@@ -52,7 +52,7 @@ challenges:
       In this assignment you will familiarize yourself with the AWS cloud
       environment. <br>
 
-      Please be patient as we provision your cloud environment.
+      Please be patient as we provision your cloud environment in AWS.
   tabs:
   - title: Cloud CLI
     type: terminal
@@ -180,4 +180,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 300
-checksum: "8216213331829521541"
+checksum: "7942058728072536930"

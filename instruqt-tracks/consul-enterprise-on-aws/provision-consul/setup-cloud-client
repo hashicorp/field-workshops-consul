@@ -2,8 +2,8 @@
 
 set-workdir /root/terraform/consul
 
-vpc=$(terraform output -state /root/terraform/infra/terraform.tfstate shared_svcs_vpc)
-subnets=$(terraform output -state /root/terraform/infra/terraform.tfstate -json shared_svc_public_subnets | sed 's/[][]//g' | sed 's/"//g')
+vpc=$(/usr/local/bin/terraform output -state /root/terraform/infra/terraform.tfstate shared_svcs_vpc)
+subnets=$(/usr/local/bin/terraform output -state /root/terraform/infra/terraform.tfstate -json shared_svcs_public_subnets | sed 's/[][]//g' | sed 's/"//g')
 
 cat << EOF > /root/terraform/consul/consul.auto.tfvars
 ami_prefix     = "is-aws-immutable-consul-"
@@ -36,7 +36,7 @@ ttl   = "-1"
 EOF
 
 cd /root/terraform/consul
-terraform init
+/usr/local/bin/terraform init
 
 
 exit 0
