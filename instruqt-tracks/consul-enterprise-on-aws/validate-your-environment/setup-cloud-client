@@ -4,8 +4,14 @@ sleep 10
 aws configure set default.region us-east-1
 aws ec2 create-default-vpc
 
+#ssh
 aws ec2 import-key-pair --key-name "instruqt" --public-key-material file://~/.ssh/id_rsa.pub
 eval `ssh-agent -s`
+
+cat << EOF > ~/.ssh/config
+Host *
+    StrictHostKeyChecking no
+EOF
 
 #install terraform
 cd /tmp

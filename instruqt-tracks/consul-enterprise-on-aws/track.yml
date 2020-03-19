@@ -149,8 +149,6 @@ challenges:
     ssh -A -J ubuntu@${bastion_ip} ec2-user@${consul_ip} 'sudo cat /etc/consul.d/consul.hcl'
     ```
 
-    To finish the bootstrap process, we need to set the following value: `default_policy = "deny"`. <br>
-
     Go to the next assignment, and finish the bootstrap.
   notes:
   - type: text
@@ -184,6 +182,8 @@ challenges:
     You will see the old servers removed from the list.
 
     ```
+    consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate consul_lb)
+    export CONSUL_HTTP_ADDR=http://${consul_lb}
     watch consul operator raft list-peers
     ```
 
@@ -204,6 +204,10 @@ challenges:
     You can also see that the `default_policy` for ACLs was updated for the new value.
 
     ```
+    aws autoscaling describe-auto-scaling-groups
+
+    consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate consul_lb)
+    export CONSUL_HTTP_ADDR=http://${consul_lb}
     consul catalog nodes --detailed
 
     consul_instance=$(aws autoscaling describe-auto-scaling-groups --output json | jq -r '[.. |."InstanceId"? | select(. != null)][0]')
@@ -235,4 +239,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 300
-checksum: "6105431671320264528"
+checksum: "2085667167324711883"

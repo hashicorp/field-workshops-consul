@@ -3,4 +3,8 @@
 consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate consul_lb)
 export CONSUL_HTTP_ADDR=http://${consul_lb}
 
+cat <<PROFILE | tee /etc/profile.d/consul.sh
+export CONSUL_HTTP_ADDR=http://${consul_lb}
+PROFILE
+
 exit 0
