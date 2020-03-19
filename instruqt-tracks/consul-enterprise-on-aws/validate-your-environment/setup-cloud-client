@@ -44,4 +44,18 @@ echo "running terraform..."
 /usr/local/bin/terraform init
 /usr/local/bin/terraform apply -auto-approve
 
+
+#helper scripts
+
+#consul config
+cat << 'EOF' > /usr/local/bin/check-consul-config
+consul_instance=$(aws autoscaling describe-auto-scaling-groups --output json | jq -r '[.. |."InstanceId"? | select(. != null)][0]')
+bastion_instance=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].InstanceId' --filters "Name=tag:Name,Values=bastion" --output text)
+consul_ip=$(aws ec2 describe-instances --instance-ids ${consul_instance} --query 'Reservations[].Instances[].PrivateIpAddress' --output text)
+bastion_ip=$(aws ec2 describe-instances --instance-ids ${bastion_instance} --query 'Reservations[].Instances[].PublicIpAddress' --output text)
+ssh -A -J ubuntu@${bastion_ip} ec2-user@${consul_ip} 'sudo cat /etc/consul.d/consul.hcl'
+EOF
+
+chmod +x /usr/local/bin/check-consul-config
+
 exit 0
