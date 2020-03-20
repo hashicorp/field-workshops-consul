@@ -1,0 +1,29 @@
+#!/bin/bash
+
+consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate consul_lb)
+
+cat << EOF > /etc/nginx/conf.d/consul.conf
+server {
+  listen 8080;
+  location / {
+    proxy_pass http://${consul_lb};
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect off;
+  }
+  location ~ /.css {
+    proxy_pass http://${consul_lb};
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect off;
+    add_header Content-Type text/css;
+  }
+  location ~ /.js {
+    proxy_pass http://${consul_lb};
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect off;
+    add_header Content-Type application/x-javascript;
+  }
+  access_log /var/log/nginx/consul.log;
+}
+EOF
+
+/usr/sbin/service nginx restart

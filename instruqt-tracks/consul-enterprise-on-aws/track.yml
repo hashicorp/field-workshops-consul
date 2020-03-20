@@ -97,13 +97,13 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
-  - title: Cloud CLI
-    type: terminal
-    hostname: cloud-client
   - title: Packer
     type: code
     hostname: cloud-client
     path: /root/packer
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
   - title: Cloud Consoles
     type: service
     hostname: cloud-client
@@ -239,6 +239,11 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8080
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -272,4 +277,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 300
-checksum: "4883520947834097260"
+checksum: "11362414718132626306"
