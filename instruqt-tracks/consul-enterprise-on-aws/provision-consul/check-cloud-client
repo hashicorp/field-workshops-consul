@@ -1,0 +1,11 @@
+#!/bin/bash
+
+env=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate instruqt_env)
+asg=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names ${env}-consul-0.0.1 |  jq '.AutoScalingGroups | length')
+
+if [ $asg != "1" ]; then
+  fail-message "ASG did not provision successful."
+  exit 1
+fi
+
+exit 0

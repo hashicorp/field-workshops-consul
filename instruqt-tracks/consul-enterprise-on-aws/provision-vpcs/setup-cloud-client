@@ -42,8 +42,6 @@ rm -rf field-workshops-consul
 cd /root/terraform/infra
 echo "running terraform..."
 /usr/local/bin/terraform init
-/usr/local/bin/terraform apply -auto-approve
-
 
 #helper scripts
 
@@ -57,5 +55,7 @@ ssh -A -J ubuntu@${bastion_ip} ec2-user@${consul_ip} 'sudo cat /etc/consul.d/con
 EOF
 
 chmod +x /usr/local/bin/check-consul-config
+
+set-workdir /root/terraform/infra
 
 exit 0

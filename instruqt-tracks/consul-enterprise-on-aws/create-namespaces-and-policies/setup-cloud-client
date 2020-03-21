@@ -10,18 +10,6 @@ server {
     proxy_set_header X-Real-IP \$remote_addr;
     proxy_redirect off;
   }
-  location ~ /.css {
-    proxy_pass http://${consul_lb};
-    proxy_set_header X-Real-IP \$remote_addr;
-    proxy_redirect off;
-    add_header Content-Type text/css;
-  }
-  location ~ /.js {
-    proxy_pass http://${consul_lb};
-    proxy_set_header X-Real-IP \$remote_addr;
-    proxy_redirect off;
-    add_header Content-Type application/x-javascript;
-  }
   access_log /var/log/nginx/consul.log;
 }
 EOF

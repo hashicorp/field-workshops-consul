@@ -15,27 +15,32 @@ developers:
 private: true
 published: true
 challenges:
-- slug: validate-your-environment
+- slug: provision-vpcs
   id: zf9q5j426xdi
   type: challenge
-  title: 'Infrastructure: Validate the Environment'
+  title: 'Infrastructure: Provision VPCs'
   teaser: A short description of the challenge.
   assignment: |-
-    The cloud infrastructure team has already set up cloud infrastructure for this environment.
-    You can think of workstation terminal as your developer machine preloaded with cloud access credentials. <br>
+    The cloud infrastructure team is responsible for providing VPCs to shared service and development teams.
+    You can think of workstation terminal as your laptop machine preloaded with cloud access credentials for your company. <br>
 
     Any any time you can use the AWS console to view your environment.
     AWS CLI commands will be provided for you to interact with AWS's APIs. <br>
 
 
-    View the VPCs in your environment.
+    Inspect the Terraform code, and then provision the cloud environment.
+
+    ```
+    terraform apply -auto-approve
+    ```
+
+    You'll notice you have four separate VPCs that map to the infra diagram shared earlier.
 
     ```
     aws ec2 describe-vpcs
     ```
 
-    You'll notice you have four separate VPCs that map to the infra diagram shared earlier.
-    Their CIDR blocks are listed below.
+    Their CIDR blocks are listed below:
 
     ```
     terraform-vpc-shared-svcs: 10.1.0.0/16
@@ -71,7 +76,7 @@ challenges:
 - slug: build-consul-image
   id: gudhtmhdc2au
   type: challenge
-  title: 'Infrastructure: Build Consul Image'
+  title: 'Operations: Build Consul Image'
   teaser: A short description of the challenge.
   assignment: |-
     In this assignment you will build an immutable image of [Consul with HashiCorp Packer](https://packer.io/) <br>
@@ -114,7 +119,7 @@ challenges:
 - slug: provision-consul
   id: lb5bfvjidxkm
   type: challenge
-  title: 'Infrastructure: Provision Consul'
+  title: 'Operations: Provision Consul'
   teaser: A short description of the challenge.
   assignment: |-
     In this assignment, you'll install the ASG that will run the Consul servers.
@@ -165,7 +170,7 @@ challenges:
 - slug: bootstrap-consul
   id: e9a2xlzwes8d
   type: challenge
-  title: 'Infrastructure: Bootstrap Consul'
+  title: 'Operations: Bootstrap Consul'
   teaser: A short description of the challenge.
   assignment: |-
     Consul Enterprise supports an [upgrade pattern](https://learn.hashicorp.com/consul/day-2-operations/autopilot#upgrade-migrations) that allows operators to deploy a complete cluster of new servers,
@@ -257,7 +262,7 @@ challenges:
 - slug: create-vpc-peering
   id: q1iyzqw46drv
   type: challenge
-  title: 'Network: Create VPC Peering'
+  title: 'Network: Create Transitive Peering'
   teaser: A short description of the challenge.
   assignment: |-
     The assignment the participant needs to complete in order to proceed.
@@ -277,4 +282,40 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 300
-checksum: "11362414718132626306"
+- slug: provision-eks-clusters
+  id: vyia9s5smay0
+  type: challenge
+  title: 'Infrastructure: Provision EKS clusters'
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
+- slug: configure-eks-clusters
+  id: tgg7nqest7rm
+  type: challenge
+  title: 'Operations: Configure EKS clusters'
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
+checksum: "6266650863968444826"

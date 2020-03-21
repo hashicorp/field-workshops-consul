@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#Check we have 5 VPCs
+vpc=$(aws ec2 describe-vpcs | jq '.Vpcs | length')
+
+if [ $vpc != "5" ]; then
+  fail-message "VPCs did not provision successful."
+  exit 1
+fi
+
+exit 0
