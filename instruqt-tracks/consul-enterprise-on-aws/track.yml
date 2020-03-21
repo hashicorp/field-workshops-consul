@@ -237,13 +237,39 @@ challenges:
   title: 'Operations: Create Namespaces and Policies'
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    Consul enterprise support [namespaces](https://www.consul.io/docs/enterprise/namespaces/index.html) to enable network and operations teams to provide self-service for development teams.
 
-    You can use any GitHub flavoured markdown.
+    Start by creating the shared service discovery policy that will underpin the development team tenants.
+    This will allow the mesh to discover services across teams, but teams will control the services that can connect to services they run. <br>
+
+    ```
+    consul acl policy create -name "cross-namespace-sd" -description "cross-namespace service discovery" -rules @cross-namespace.hcl
+    ```
+
+    Now you can create the namespaces for each development team, that share the namespace discovery policy. <br>
+
+    ```
+    consul namespace write frontend-namespace.hcl
+    consul namespace write api-namespace.hcl
+    ```
+
+    You also need to create policies for the nodes that each team will run in their VPC.
+    We will restrict this by CIDR block. <br>
+
+    ```
+    consul acl policy create -name "frontend-agent" -description "frontend agents" -rules @frontend-team-agent.hcl
+    consul acl policy create -name "api-agent" -description "api agents" -rules @api-team-agent.hcl
+    ```
+
+    Nice work!
   notes:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Policies
+    type: code
+    hostname: cloud-client
+    path: /root/policies
   - title: Consul
     type: service
     hostname: cloud-client
@@ -318,4 +344,4 @@ challenges:
     hostname: cloud-client
   difficulty: basic
   timelimit: 300
-checksum: "1892905444734826185"
+checksum: "825722565200066165"

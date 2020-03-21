@@ -1,0 +1,42 @@
+#!/bin/bash
+
+#namespace_sd
+/usr/local/bin/consul acl policy read -name cross-namespace-sd
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking namespace sd policy"
+  exit 1
+fi
+
+#namespaces
+/usr/local/bin/consul namespace read frontend
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking frontend namespace"
+  exit 1
+fi
+
+/usr/local/bin/consul namespace read api
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking api namespace"
+  exit 1
+fi
+
+#frontend
+/usr/local/bin/consul acl policy read -name frontend-agent
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking frontend agent policy"
+  exit 1
+fi
+
+#api
+/usr/local/bin/consul acl policy read -name api-agent
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking api agent policy"
+  exit 1
+fi
+
+exit 0

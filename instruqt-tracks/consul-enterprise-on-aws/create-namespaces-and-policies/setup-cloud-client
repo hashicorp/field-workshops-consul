@@ -1,7 +1,7 @@
 #!/bin/bash
 
+#consul proxy for UI
 consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate consul_lb)
-
 cat << EOF > /etc/nginx/conf.d/consul.conf
 server {
   listen 8080;
@@ -13,5 +13,67 @@ server {
   access_log /var/log/nginx/consul.log;
 }
 EOF
-
 /usr/sbin/service nginx restart
+
+#consul policies
+mkdir /root/policies
+
+#namespace sd
+cat << EOF > /root/policies/cross-namespace.hcl
+namespace_prefix "" {
+  service_prefix "" {
+    policy = "read"
+  }
+  node_prefix "" {
+    policy = "read"
+  }
+}
+EOF
+
+#frontend team
+cat << EOF > /root/policies/frontend-namespace.hcl
+Name = "frontend"
+Description = "namespace for frontend team"
+ACLs {
+  PolicyDefaults = [
+    {
+      Name = "cross-namespace-sd"
+    }
+  ]
+  RoleDefaults = []
+}
+EOF
+cat << EOF > /root/policies/frontend-team-agent.hcl
+node_prefix "ip-10-2-" {
+  policy = "write"
+}
+service_prefix "" {
+  policy = "read"
+}
+EOF
+
+#api team
+cat << EOF > /root/policies/api-namespace.hcl
+Name = "api"
+Description = "namespace for api team"
+ACLs {
+  PolicyDefaults = [
+    {
+      Name = "cross-namespace-sd"
+    }
+  ]
+  RoleDefaults = []
+}
+EOF
+cat << EOF > /root/policies/api-team-agent.hcl
+node_prefix "ip-10-3-" {
+  policy = "write"
+}
+service_prefix "" {
+  policy = "read"
+}
+EOF
+
+set-workdir /root/policies
+
+exit 0
