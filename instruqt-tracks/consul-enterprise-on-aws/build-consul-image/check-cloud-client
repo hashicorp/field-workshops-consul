@@ -1,8 +1,10 @@
 #!/bin/bash
 
-asg=$(aws autoscaling describe-auto-scaling-groups |  jq '.AutoScalingGroups | length')
+image=$(aws ec2 describe-images --filter Name=tag:Product,Values=Consul --owners self |  jq '.Images | length')
 
-if [ $asg != "1" ]; then
-  fail-message "ASG did not provision successful."
+if [ $image != "1" ]; then
+  fail-message "Image did not provision successful."
   exit 1
 fi
+
+exit 0
