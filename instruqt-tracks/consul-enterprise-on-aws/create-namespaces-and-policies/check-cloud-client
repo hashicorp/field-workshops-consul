@@ -1,5 +1,9 @@
 #!/bin/bash
 
+export CONSUL_HTTP_TOKEN=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate consul_master_token)
+consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate consul_lb)
+export CONSUL_HTTP_ADDR=http://${consul_lb}
+
 #namespace_sd
 /usr/local/bin/consul acl policy read -name cross-namespace-sd
 if [ $? -ne 0 ]

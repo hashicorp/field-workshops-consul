@@ -14,7 +14,7 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-resource "aws_security_group" "vault-shared-svcs" {
+resource "aws_security_group" "vault" {
   name        = "bastion"
   description = "bastion"
   vpc_id      = "${module.vpc-shared-svcs.vpc_id}"
@@ -22,6 +22,13 @@ resource "aws_security_group" "vault-shared-svcs" {
   ingress {
     from_port   = 22
     to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8200
+    to_port     = 8200
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -41,6 +48,7 @@ resource "aws_instance" "vault-shared-svcs" {
   vpc_security_group_ids      = ["${aws_security_group.vault-shared-svcs.id}"]
   subnet_id                   = "${module.vpc-shared-svcs.private_subnets[0]}"
   associate_public_ip_address = false
+  user_data                   = templatefile("${path.module}/scripts/vault.sh")
 
   tags = {
     Name = "vault"

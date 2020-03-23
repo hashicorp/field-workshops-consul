@@ -298,6 +298,10 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/network
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -344,4 +348,4 @@ challenges:
     hostname: cloud-client
   difficulty: basic
   timelimit: 300
-checksum: "825722565200066165"
+checksum: "17932043242844821366"
