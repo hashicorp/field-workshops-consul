@@ -50,7 +50,7 @@ resource "aws_autoscaling_group" "consul" {
   wait_for_capacity_timeout = "480s"
   health_check_grace_period = 15
   health_check_type         = "EC2"
-  target_group_arns           = ["${aws_lb_target_group.consul.arn}"]
+  target_group_arns         = ["${aws_lb_target_group.consul.arn}"]
   vpc_zone_identifier       = split(",", var.subnets)
   initial_lifecycle_hook {
     name                 = "consul_health"

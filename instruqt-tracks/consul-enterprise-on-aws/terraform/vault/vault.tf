@@ -46,7 +46,7 @@ resource "aws_instance" "vault-shared-svcs" {
   ami                         = "${data.aws_ami.ubuntu.id}"
   key_name                    = "instruqt"
   vpc_security_group_ids      = ["${aws_security_group.vault-shared-svcs.id}"]
-  subnet_id                   = "${module.vpc-shared-svcs.private_subnets[0]}"
+  subnet_id                   = "${data.terraform_remote_state.vpc.outputs.shared_svcs_private_subnets[0]}"
   associate_public_ip_address = false
   user_data                   = templatefile("${path.module}/scripts/vault.sh")
 

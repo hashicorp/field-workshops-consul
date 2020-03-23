@@ -18,9 +18,9 @@ resource "aws_security_group" "vault_lb" {
 }
 
 resource "aws_lb_target_group" "vault" {
-  port     = 8200
-  protocol = "HTTP"
-  vpc_id   = var.vpc_id
+  port                 = 8200
+  protocol             = "HTTP"
+  vpc_id               = var.vpc_id
   deregistration_delay = "15"
 
   health_check {
@@ -35,7 +35,7 @@ resource "aws_lb" "vault" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = ["${aws_security_group.vault_lb.id}"]
-  subnets            = split(",", var.public_subnets)
+  subnets            = data.terraform_remote_state.vpc.outputs.shared_svcs_public_subnets
 }
 
 resource "aws_lb_listener" "vault" {

@@ -1,11 +1,3 @@
-data "terraform_remote_state" "vpc" {
-backend = "local"
-
-config = {
-  path = "/root/terraform/infra/terraform.tfstate"
-    }
-}
-
 resource "aws_ec2_transit_gateway" "tgw" {
   auto_accept_shared_attachments = "enable"
 }
