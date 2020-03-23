@@ -1,5 +1,5 @@
 resource "aws_security_group" "vault_lb" {
-  vpc_id = var.vpc_id
+  vpc_id = data.terraform_remote_state.vpc.outputs.shared_svcs_vpc
 
   ingress {
     from_port   = 80
@@ -20,8 +20,7 @@ resource "aws_security_group" "vault_lb" {
 resource "aws_lb_target_group" "vault" {
   port                 = 8200
   protocol             = "HTTP"
-  vpc_id               = var.vpc_id
-  deregistration_delay = "15"
+  vpc_id               = data.terraform_remote_state.vpc.outputs.shared_svcs_vpc
 
   health_check {
     path     = "/v1/sys/health"

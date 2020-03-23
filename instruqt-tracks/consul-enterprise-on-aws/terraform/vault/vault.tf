@@ -17,7 +17,7 @@ data "aws_ami" "ubuntu" {
 resource "aws_security_group" "vault" {
   name        = "bastion"
   description = "bastion"
-  vpc_id      = "${module.vpc-shared-svcs.vpc_id}"
+  vpc_id      = data.terraform_remote_state.vpc.outputs.shared_svcs_vpc
 
   ingress {
     from_port   = 22
@@ -41,14 +41,14 @@ resource "aws_security_group" "vault" {
   }
 }
 
-resource "aws_instance" "vault-shared-svcs" {
+resource "aws_instance" "vault" {
   instance_type               = "t2.small"
   ami                         = "${data.aws_ami.ubuntu.id}"
   key_name                    = "instruqt"
-  vpc_security_group_ids      = ["${aws_security_group.vault-shared-svcs.id}"]
+  vpc_security_group_ids      = ["${data.terraform_remote_state.vpc.outputs.shared_svcs_vpc}"]
   subnet_id                   = "${data.terraform_remote_state.vpc.outputs.shared_svcs_private_subnets[0]}"
   associate_public_ip_address = false
-  user_data                   = templatefile("${path.module}/scripts/vault.sh")
+  user_data                   = file("${path.module}/scripts/vault.sh")
 
   tags = {
     Name = "vault"
