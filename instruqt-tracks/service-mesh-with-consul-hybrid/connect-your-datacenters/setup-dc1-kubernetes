@@ -64,11 +64,7 @@ spec:
 EOF
 
 #install helm
-curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
-chmod 700 get_helm.sh && ./get_helm.sh && rm ./get_helm.sh
-kubectl -n kube-system create serviceaccount tiller
-kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
-helm init --wait --service-account tiller
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 sleep 3
 
 #Get the Consul server IP
@@ -106,6 +102,6 @@ EOF
 #Apply Consul helm
 cd /root
 git clone --branch v0.16.0 https://github.com/hashicorp/consul-helm.git
-helm install -f consul-values.yaml --name lab ./consul-helm
+helm install -f consul-values.yaml lab ./consul-helm --wait
 
 exit 0

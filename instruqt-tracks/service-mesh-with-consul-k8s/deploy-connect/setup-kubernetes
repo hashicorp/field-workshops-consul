@@ -31,11 +31,7 @@ data:
 EOF
 
 #install helm
-curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
-chmod 700 get_helm.sh && ./get_helm.sh && rm ./get_helm.sh
-kubectl -n kube-system create serviceaccount tiller
-kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
-helm init --wait --service-account tiller
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 sleep 3
 
 #dashboard
@@ -305,7 +301,5 @@ connectInject:
       "envoy_dogstatsd_url": "udp://127.0.0.1:9125"
       }
 EOF
-
-kubectl wait pod -n kube-system --selector=app=helm --for=condition=Ready
 
 exit 0

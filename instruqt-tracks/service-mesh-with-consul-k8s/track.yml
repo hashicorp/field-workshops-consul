@@ -33,7 +33,7 @@ challenges:
     Navigate to the `_K8s` shell to install Consul. Note, Helm has been pre-initialized in this environment. Copy or type the following command in the shell.<br>
 
     ```
-    helm install -f consul-values.yaml --name lab ./consul-helm --wait
+    helm install -f consul-values.yaml lab ./consul-helm --wait
     ```
 
     The status output should indicate Consul was `DEPLOYED`. <br>
@@ -987,4 +987,4 @@ challenges:
     port: 31877
   difficulty: basic
   timelimit: 5400
-checksum: "1041685005202055625"
+checksum: "7609019275543151325"
