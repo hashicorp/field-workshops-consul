@@ -35,7 +35,7 @@ resource "aws_security_group" "bastion-shared-svcs" {
 }
 
 resource "aws_instance" "bastion-shared-svcs" {
-  instance_type               = "t2.small"
+  instance_type               = "t3.small"
   ami                         = "${data.aws_ami.ubuntu.id}"
   key_name                    = "instruqt"
   vpc_security_group_ids      = ["${aws_security_group.bastion-shared-svcs.id}"]
