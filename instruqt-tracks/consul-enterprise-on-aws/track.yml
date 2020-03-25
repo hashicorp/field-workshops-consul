@@ -291,9 +291,25 @@ challenges:
   title: 'Network: Create Transitive Peering'
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    The network team is responsible for creating connectivity between VPCs, and on-prem environments.
+    On AWS the network team leverages [AWS Transit Gateway](https://aws.amazon.com/transit-gateway/) to reduce management overhead. <br>
 
-    You can use any GitHub flavoured markdown.
+    Run Terraform to setup the transit gateway routes. <br>
+
+    ```
+    terraform apply -auto-approve
+    ```
+
+    Now inspect one of the route tables. Let's look at the route table for the API team private subnets.
+
+    ```
+    route_table=$(/usr/local/bin/terraform output -state /root/terraform/infra/terraform.tfstate -json api_private_route_table_ids | jq -r .[0])
+    aws ec2 describe-route-tables --route-table-ids ${route_table}
+    ```
+
+    You'll notice routes to CIDR blocks for other application teams route through the transit gateway.  <br>
+
+    You will expand the transit gateway to connect to the on-prem enviroment in a later assignment.
   notes:
   - type: text
     contents: Replace this text with your own text
@@ -318,9 +334,54 @@ challenges:
   title: 'Infrastructure: Provision EKS clusters'
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    The API and Frontend teams run their applications on AWS EKS.
+    The infrastructure team is responsible for provisioning EKS clusters. <br>
 
-    You can use any GitHub flavoured markdown.
+
+    Inspect the Terraform for EKS, then provision the Kubernetes clusters. <br>
+
+    ```
+    terraform apply -auto-approve
+    ```
+
+    Validate your clusters once they are provisioned.
+
+    ```
+    aws eks describe-cluster --name frontend
+    aws eks describe-cluster --name api
+    ```
+
+    Great work! In this next assignments we will connect these Kubernetes nodes to the Consul shared service.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/eks
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
+- slug: configure-eks-cluster-segments
+  id: tgg7nqest7rm
+  type: challenge
+  title: 'Operations: Configure EKS cluster segments'
+  teaser: A short description of the challenge.
+  assignment: |-
+    To adhere to InfoSec policies, Consul gossip traffic needs to be restricted to App VPCs <> Shared Service VPC.
+    Consul enterprise [network segments](https://www.consul.io/docs/enterprise/network-segments/index.html) support this hub-and-spoke topology.
+
+    Inspect the terraform, and apply the config.
+
+    ```
+    cat consul.auto.tfvars
+    terraform apply -auto-approve
+    ```
+
+    Nice work!
   notes:
   - type: text
     contents: Replace this text with your own text
@@ -330,10 +391,10 @@ challenges:
     hostname: cloud-client
   difficulty: basic
   timelimit: 300
-- slug: configure-eks-clusters
-  id: tgg7nqest7rm
+- slug: configure-eks-cluster-secrets
+  id: 1xvi1a2qxxft
   type: challenge
-  title: 'Operations: Configure EKS clusters'
+  title: 'Operations: Configure EKS cluster secrets'
   teaser: A short description of the challenge.
   assignment: |-
     The assignment the participant needs to complete in order to proceed.
@@ -348,4 +409,4 @@ challenges:
     hostname: cloud-client
   difficulty: basic
   timelimit: 300
-checksum: "17932043242844821366"
+checksum: "16843214858463984692"

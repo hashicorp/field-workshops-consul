@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set-workdir /root/policies
+
 #consul proxy for UI
 consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate consul_lb)
 cat << EOF > /etc/nginx/conf.d/consul.conf
@@ -73,7 +75,5 @@ service_prefix "" {
   policy = "read"
 }
 EOF
-
-set-workdir /root/policies
 
 exit 0

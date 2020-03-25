@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set-workdir /root/terraform/consul
+
+exit 0

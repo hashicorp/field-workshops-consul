@@ -1,0 +1,55 @@
+#!/bin/bash
+
+set-workdir /root/terraform/consul
+
+vpc=$(/usr/local/bin/terraform output -state /root/terraform/infra/terraform.tfstate shared_svcs_vpc)
+subnets=$(/usr/local/bin/terraform output -state /root/terraform/infra/terraform.tfstate -json shared_svcs_public_subnets | sed 's/[][]//g' | sed 's/"//g')
+
+cat << EOF > /root/terraform/consul/consul.auto.tfvars
+ami_prefix     = "is-aws-immutable-consul-"
+ami_release    = "0.0.1"
+ami_os         = "centos"
+ami_os_release = "7"
+ami_owner      = "instruqt@hashicorp.com"
+
+instance_type = "t3.large"
+region        = "us-east-1"
+
+consul_cluster_version = "0.0.3"
+bootstrap              = false
+
+#SSH Key
+key_name           = "instruqt"
+name_prefix        = "instruqt"
+vpc_id             = "${vpc}"
+subnets            = "${subnets}"
+availability_zones = "us-east-1a,us-east-1b,us-east-1c"
+
+public_ip = false
+
+consul_nodes       = "3"
+performance_mode   = false
+enable_snapshots   = false
+
+owner = "instruqt@hashicorp.com"
+ttl   = "-1"
+
+consul_config = {
+  "segments": [
+    {
+      "name": "frontend",
+      "bind": "\$\${LOCAL_IPV4}",
+      "advertise": "\$\${LOCAL_IPV4}",
+      "port": 8303
+    },
+    {
+      "name": "api",
+      "bind": "\$\${LOCAL_IPV4}",
+      "advertise": "\$\${LOCAL_IPV4}",
+      "port": 8304
+    }
+  ]
+}
+EOF
+
+exit 0
