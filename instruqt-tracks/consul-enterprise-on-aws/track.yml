@@ -338,13 +338,15 @@ challenges:
     The infrastructure team is responsible for provisioning EKS clusters. <br>
 
 
-    Inspect the Terraform for EKS, then provision the Kubernetes clusters. <br>
+    Inspect the Terraform for EKS, then provision the Kubernetes clusters.
+    EKS can take over ~10 minutes to provision, so you will run this as a background task. <br>
 
     ```
-    terraform apply -auto-approve
+    nohup terraform apply -auto-approve | tee terraform.out &
     ```
 
     Validate your clusters once they are provisioned.
+    The status should be `ACTIVE`. <br>
 
     ```
     aws eks describe-cluster --name frontend
@@ -375,6 +377,7 @@ challenges:
     Consul enterprise [network segments](https://www.consul.io/docs/enterprise/network-segments/index.html) support this hub-and-spoke topology.
 
     Inspect the terraform, and apply the config.
+    EKS can take over ~10 minutes to provision, so we'll run this terraform in the background.
 
     ```
     cat consul.auto.tfvars
@@ -386,6 +389,10 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/consul
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -409,4 +416,4 @@ challenges:
     hostname: cloud-client
   difficulty: basic
   timelimit: 300
-checksum: "16843214858463984692"
+checksum: "4375432759750280805"

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+api=$(aws eks describe-cluster --name api | jq -r .cluster.status)
+if [ $api != "ACTIVE" ]; then
+  fail-message "API EKS cluster did not provision"
+  exit 1
+fi
+
+frontend=$(aws eks describe-cluster --name frontend | jq -r .cluster.status)
+if [ $frontend != "ACTIVE" ]; then
+  fail-message "Frontend EKS cluster did not provision"
+  exit 1
+fi
+
+exit 0

@@ -61,6 +61,11 @@ resource "aws_autoscaling_group" "consul" {
 
   tags = [
     {
+      key                 = "role"
+      value               = "Consul"
+      propagate_at_launch = true
+    },
+    {
       key                 = "Name"
       value               = "${random_id.environment_name.hex}-consul-${var.consul_cluster_version}"
       propagate_at_launch = true
