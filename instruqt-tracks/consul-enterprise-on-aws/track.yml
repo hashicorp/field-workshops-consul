@@ -72,7 +72,7 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 3000
+  timelimit: 18000
 - slug: build-consul-image
   id: gudhtmhdc2au
   type: challenge
@@ -115,7 +115,7 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 3000
+  timelimit: 18000
 - slug: provision-consul
   id: lb5bfvjidxkm
   type: challenge
@@ -145,7 +145,7 @@ challenges:
     We can access the newly provisioned instance through our bastion host helper script.
 
     ```
-    check-consul-config
+    check-consul-config /etc/consul.d/consul.hcl
     ```
 
     Go to the next assignment, and finish the bootstrap.
@@ -166,7 +166,7 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 300
+  timelimit: 1800
 - slug: bootstrap-consul
   id: e9a2xlzwes8d
   type: challenge
@@ -206,7 +206,7 @@ challenges:
     You can also see that the `default_policy` for ACLs was updated for the new value.
 
     ```
-    check-consul-config
+    check-consul-config /etc/consul.d/consul.hcl
     ```
 
     Now you can start setting up the tenants for the Consul shared service consumers.
@@ -230,7 +230,7 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 300
+  timelimit: 1800
 - slug: create-namespaces-and-policies
   id: dqbr9fjrk1uj
   type: challenge
@@ -284,7 +284,7 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 300
+  timelimit: 1800
 - slug: create-vpc-peering
   id: q1iyzqw46drv
   type: challenge
@@ -327,7 +327,7 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 300
+  timelimit: 1800
 - slug: provision-eks-clusters
   id: vyia9s5smay0
   type: challenge
@@ -366,7 +366,7 @@ challenges:
     type: terminal
     hostname: cloud-client
   difficulty: basic
-  timelimit: 300
+  timelimit: 1800
 - slug: configure-eks-cluster-segments
   id: tgg7nqest7rm
   type: challenge
@@ -376,15 +376,18 @@ challenges:
     To adhere to InfoSec policies, Consul gossip traffic needs to be restricted to App VPCs <> Shared Service VPC.
     Consul enterprise [network segments](https://www.consul.io/docs/enterprise/network-segments/index.html) support this hub-and-spoke topology.
 
-    Inspect the terraform, and apply the config.
-    EKS can take over ~10 minutes to provision, so we'll run this terraform in the background.
-
     ```
     cat consul.auto.tfvars
     terraform apply -auto-approve
     ```
 
-    Nice work!
+    Validate your network segments were applied to the Consul servers.
+
+    ```
+    check-consul-config /etc/consul.d/zz-override.json | jq
+    ```
+
+    Now you can configure these EKS nodes to Connect to the Consul service.
   notes:
   - type: text
     contents: Replace this text with your own text
@@ -397,16 +400,56 @@ challenges:
     type: terminal
     hostname: cloud-client
   difficulty: basic
-  timelimit: 300
+  timelimit: 1800
 - slug: configure-eks-cluster-secrets
   id: 1xvi1a2qxxft
   type: challenge
   title: 'Operations: Configure EKS cluster secrets'
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    You need to seed the Consul clusters with secrets for the client agents to join with the server nodes.
+    In production, a CI/CD pipeline, Terraform, or configuration management tool can perform these tasks with Vault.
+    Platforms for these systems have well defined patterns for establishing trust with Vault. <br>
 
-    You can use any GitHub flavoured markdown.
+    You have been provided a sample script to the following:
+
+    * Create a namespace to run Consul pods (injector webhooks, etc.)
+    * Provide a gossip key
+    * Provide an ACL
+
+    Inspect the script.
+
+    ```
+    cat /usr/local/bin/setup-k8s-consul-cluster
+    ```
+
+    Start with the frontend cluster.
+
+    ```
+    kubectl config use-context eks_frontend
+    ```
+
+    Now configure the cluster. Add the secrets as arguments to the script
+
+    ```
+    setup-k8s-consul-cluster <gossip_key> <acl_token>
+    ```
+
+    Verify the secrets were provisioned.
+
+    ```
+    kubectl  get secrets -n consul
+    ```
+
+    Switch contexts, and repeat the process for the other EKS cluster.
+
+    ```
+    kubectl config use-context eks_api
+    setup-k8s-consul-cluster <gossip_key> <acl_token>
+    kubectl  get secrets -n consul
+    ```
+
+    Now you can provision the Consul client agents in the EKS clusters.
   notes:
   - type: text
     contents: Replace this text with your own text
@@ -415,5 +458,5 @@ challenges:
     type: terminal
     hostname: cloud-client
   difficulty: basic
-  timelimit: 300
-checksum: "4375432759750280805"
+  timelimit: 1800
+checksum: "13386812836035251744"
