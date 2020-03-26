@@ -101,7 +101,7 @@ chmod +x /usr/local/bin/wp
 cat
 echo "Configuring user and theme..."
 sleep 10 # wait for DB server to be up
-URL="app-80-${INSTRUQT_PARTICIPANT_ID}.env.play.instruqt.com"
+URL="https://app-80-${INSTRUQT_PARTICIPANT_ID}.env.play.instruqt.com"
 /usr/local/bin/wp core install --url="$URL" --title="Consul Service Mesh" --admin_user=consul --admin_password=consul --admin_email=consul@example.com --skip-email --allow-root --path=/var/www/html
 /usr/local/bin/wp theme activate twentyseventeen --allow-root --path=/var/www/html
 /usr/local/bin/wp option update blogdescription "Dynamically secure any service or app on your network" --allow-root --path=/var/www/html
