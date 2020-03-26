@@ -84,6 +84,10 @@ variable "subnets" {
   description = "list of subnets to launch Consul within"
 }
 
+variable "public_subnets" {
+  description = "list of subnets to launch Consul LB"
+}
+
 variable "vpc_id" {
   description = "VPC ID"
 }

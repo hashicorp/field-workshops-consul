@@ -5,7 +5,7 @@ consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraf
 echo "export CONSUL_HTTP_ADDR=http://${consul_lb}" >> /etc/bash.bashrc
 
 vpc=$(/usr/local/bin/terraform output -state /root/terraform/infra/terraform.tfstate shared_svcs_vpc)
-subnets=$(/usr/local/bin/terraform output -state /root/terraform/infra/terraform.tfstate -json shared_svcs_public_subnets | sed 's/[][]//g' | sed 's/"//g')
+subnets=$(/usr/local/bin/terraform output -state /root/terraform/infra/terraform.tfstate -json shared_svcs_private_subnets | sed 's/[][]//g' | sed 's/"//g')
 
 cat << EOF > /root/terraform/consul/consul.auto.tfvars
 ami_prefix     = "is-aws-immutable-consul-"

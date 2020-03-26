@@ -35,7 +35,7 @@ resource "aws_lb" "consul" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = ["${aws_security_group.consul_lb.id}"]
-  subnets            = split(",", var.subnets)
+  subnets            = split(",", var.public_subnets)
 }
 
 resource "aws_lb_listener" "ui" {

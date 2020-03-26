@@ -1,0 +1,81 @@
+#!/bin/bash
+
+mkdir /root/helm
+set-workdir /root/helm
+
+instruqt_env=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate instruqt_env)
+cat << EOF > /root/helm/frontend-values.yaml
+global:
+  tls:
+    enabled: false
+  image: 'hashicorp/consul-enterprise:1.7.1-ent'
+  domain: consul
+  datacenter: us-east-1
+  bootstrapACLs: true
+  gossipEncryption:
+    secretName: hashicorp-consul-gossip-key
+    secretKey: key
+  enableConsulNamespaces: true
+server:
+  enabled: false
+client:
+  enabled: true
+  join: ["provider=aws tag_key=Environment-Name tag_value=${instruqt_env}"]
+  extraConfig: |
+    {
+      "log_level": "DEBUG",
+      "segment": "frontend",
+      "ports": {
+        "serf_lan": 8303
+        }
+    }
+ui:
+  enabled: true
+connectInject:
+  enabled: true
+  default: false
+  k8sAllowNamespaces: ["default"]
+  consulNamespaces:
+    consulDestinationNamespace: "frontend"
+EOF
+
+cat << EOF > /root/helm/api-values.yaml
+global:
+  tls:
+    enabled: false
+  image: 'hashicorp/consul-enterprise:1.7.1-ent'
+  domain: consul
+  datacenter: us-east-1
+  bootstrapACLs: true
+  gossipEncryption:
+    secretName: hashicorp-consul-gossip-key
+    secretKey: key
+  enableConsulNamespaces: true
+server:
+  enabled: false
+client:
+  enabled: true
+  join: ["provider=aws tag_key=Environment-Name tag_value=${instruqt_env}"]
+  extraConfig: |
+    {
+      "log_level": "DEBUG",
+      "segment": "api",
+      "ports": {
+        "serf_lan": 8304
+        }
+    }
+ui:
+  enabled: true
+connectInject:
+  enabled: true
+  default: false
+  k8sAllowNamespaces: ["default"]
+  consulNamespaces:
+    consulDestinationNamespace: "api"
+EOF
+
+git clone https://github.com/hashicorp/consul-helm.git
+
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+exit 0

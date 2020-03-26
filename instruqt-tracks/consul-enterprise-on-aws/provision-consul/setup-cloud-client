@@ -3,7 +3,8 @@
 set-workdir /root/terraform/consul
 
 vpc=$(/usr/local/bin/terraform output -state /root/terraform/infra/terraform.tfstate shared_svcs_vpc)
-subnets=$(/usr/local/bin/terraform output -state /root/terraform/infra/terraform.tfstate -json shared_svcs_public_subnets | sed 's/[][]//g' | sed 's/"//g')
+subnets=$(/usr/local/bin/terraform output -state /root/terraform/infra/terraform.tfstate -json shared_svcs_private_subnets | sed 's/[][]//g' | sed 's/"//g')
+public_subnets=$(/usr/local/bin/terraform output -state /root/terraform/infra/terraform.tfstate -json shared_svcs_public_subnets | sed 's/[][]//g' | sed 's/"//g')
 
 cat << EOF > /root/terraform/consul/consul.auto.tfvars
 ami_prefix     = "is-aws-immutable-consul-"
@@ -23,6 +24,7 @@ key_name           = "instruqt"
 name_prefix        = "instruqt"
 vpc_id             = "${vpc}"
 subnets            = "${subnets}"
+public_subnets     = "${subnets}"
 availability_zones = "us-east-1a,us-east-1b,us-east-1c"
 
 public_ip = false

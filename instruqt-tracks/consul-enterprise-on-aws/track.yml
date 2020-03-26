@@ -376,6 +376,9 @@ challenges:
     To adhere to InfoSec policies, Consul gossip traffic needs to be restricted to App VPCs <> Shared Service VPC.
     Consul enterprise [network segments](https://www.consul.io/docs/enterprise/network-segments/index.html) support this hub-and-spoke topology.
 
+    The network segment config has been added to the Terraform file with a new cluster version.
+    Inspect it, then apply the configuration. <br>
+
     ```
     cat consul.auto.tfvars
     terraform apply -auto-approve
@@ -459,4 +462,32 @@ challenges:
     hostname: cloud-client
   difficulty: basic
   timelimit: 1800
-checksum: "13386812836035251744"
+- slug: deploy-consul-in-eks
+  id: qpys5ypf7ary
+  type: challenge
+  title: 'Operations: Deploy Consul in EKS'
+  teaser: A short description of the challenge.
+  assignment: |-
+    The Consul helm chart will allow us to easily deploy the agents into the cluster.
+    The ACL init job will use the credentials you previously provisioned.
+
+    Start with the frontend cluster.
+
+    ```
+    kubectl config use-context eks_frontend
+    helm install hashicorp -f frontend-values.yaml --namespace consul ./consul-helm
+    ```
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Helm
+    type: code
+    hostname: cloud-client
+    path: /root/helm
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
+checksum: "18360150148741293953"
