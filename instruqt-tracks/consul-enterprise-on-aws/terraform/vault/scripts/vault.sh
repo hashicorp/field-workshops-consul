@@ -11,9 +11,12 @@ cat <<-EOF > /docker-compose.yml
 version: '3'
 services:
   vault:
-    container_name: "vault"
-    network_mode: "host"
-    image: "vault"
+    container_name: vault
+    network_mode: host
+    restart: always
+    image: vault
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=root
 EOF
 
 /usr/local/bin/docker-compose up -d
