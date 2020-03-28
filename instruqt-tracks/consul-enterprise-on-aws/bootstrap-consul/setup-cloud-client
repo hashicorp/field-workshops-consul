@@ -1,40 +1,14 @@
 #!/bin/bash
 
-#Add Consul LB addr to shell
-consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate consul_lb)
+#add Consul LB to shell
+consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate lb)
 echo "export CONSUL_HTTP_ADDR=http://${consul_lb}" >> /etc/bash.bashrc
 
-vpc=$(/usr/local/bin/terraform output -state /root/terraform/infra/terraform.tfstate shared_svcs_vpc)
-subnets=$(/usr/local/bin/terraform output -state /root/terraform/infra/terraform.tfstate -json shared_svcs_private_subnets | sed 's/[][]//g' | sed 's/"//g')
-
-cat << EOF > /root/terraform/consul/consul.auto.tfvars
-ami_prefix     = "is-aws-immutable-consul-"
-ami_release    = "0.0.1"
-ami_os         = "centos"
-ami_os_release = "7"
-ami_owner      = "instruqt@hashicorp.com"
-
-instance_type = "t3.large"
-region        = "us-east-1"
-
+#updates vars
+cat << EOF > /root/terraform/consul/terraform.tfvars
+consul_nodes = 3
 consul_cluster_version = "0.0.2"
-bootstrap              = false
-
-#SSH Key
-key_name           = "instruqt"
-name_prefix        = "instruqt"
-vpc_id             = "${vpc}"
-subnets            = "${subnets}"
-availability_zones = "us-east-1a,us-east-1b,us-east-1c"
-
-public_ip = false
-
-consul_nodes       = "3"
-performance_mode   = false
-enable_snapshots   = false
-
-owner = "instruqt@hashicorp.com"
-ttl   = "-1"
+bootstrap = false
 EOF
 
 exit 0

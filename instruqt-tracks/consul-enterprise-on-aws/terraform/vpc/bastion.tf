@@ -17,7 +17,7 @@ data "aws_ami" "ubuntu" {
 resource "aws_security_group" "bastion-shared-svcs" {
   name        = "bastion"
   description = "bastion"
-  vpc_id      = "${module.vpc-shared-svcs.vpc_id}"
+  vpc_id      = module.vpc-shared-svcs.vpc_id
 
   ingress {
     from_port   = 22
@@ -36,10 +36,10 @@ resource "aws_security_group" "bastion-shared-svcs" {
 
 resource "aws_instance" "bastion-shared-svcs" {
   instance_type               = "t3.small"
-  ami                         = "${data.aws_ami.ubuntu.id}"
+  ami                         = data.aws_ami.ubuntu.id
   key_name                    = "instruqt"
   vpc_security_group_ids      = ["${aws_security_group.bastion-shared-svcs.id}"]
-  subnet_id                   = "${module.vpc-shared-svcs.public_subnets[0]}"
+  subnet_id                   = module.vpc-shared-svcs.public_subnets[0]
   associate_public_ip_address = true
 
   tags = {

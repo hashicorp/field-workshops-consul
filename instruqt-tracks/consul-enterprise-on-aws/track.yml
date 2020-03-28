@@ -189,8 +189,9 @@ challenges:
     Now run terraform, and watch the servers automatically transition.
 
     ```
-    cat consul.auto.tfvars
-    terraform apply -auto-approve
+    cat terraform.tfvars
+    cat main.tf
+    terraform apply
     ```
 
     Nice work! You just did an automated server update with Consul enterprise. <br>
@@ -533,4 +534,4 @@ challenges:
     hostname: cloud-client
   difficulty: basic
   timelimit: 300
-checksum: "5196870058203002042"
+checksum: "6141291402500543356"
