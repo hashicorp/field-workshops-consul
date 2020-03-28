@@ -2,7 +2,7 @@ resource "aws_lb" "consul" {
   name               = "consul-lb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = ["${aws_security_group.consul_lb.id}"]
+  security_groups    = ["${aws_security_group.consul_lb_external.id}"]
   subnets            = data.terraform_remote_state.vpc.outputs.shared_svcs_public_subnets
 }
 

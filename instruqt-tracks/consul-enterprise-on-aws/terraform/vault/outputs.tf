@@ -1,3 +1,3 @@
-output "vault_lb" {
+output "lb" {
   value = aws_lb.vault.dns_name
 }

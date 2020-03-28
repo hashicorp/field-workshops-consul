@@ -1,0 +1,21 @@
+#!/bin/bash
+
+cd /root/terraform/vault
+/usr/local/bin/terraform init
+/usr/local/bin/terraform apply -auto-approve
+
+vault_lb=$(/usr/local/bin/terraform output -state /root/terraform/vault/terraform.tfstate lb)
+cat << EOF > /etc/nginx/conf.d/vault.conf
+server {
+  listen 8200;
+  location / {
+    proxy_pass http://${vault_lb};
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect off;
+  }
+  access_log /var/log/nginx/vault.log;
+}
+EOF
+/usr/sbin/service nginx restart
+
+exit 0

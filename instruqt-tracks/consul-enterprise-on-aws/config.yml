@@ -5,7 +5,8 @@ containers:
   shell: /bin/bash
   ports:
   - 80
-  - 8080
+  - 8200
+  - 8500
 aws_accounts:
 - name: consul
   managed_policies:

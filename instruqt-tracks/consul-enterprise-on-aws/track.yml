@@ -246,6 +246,11 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   difficulty: basic
   timelimit: 300
 - slug: create-namespaces-and-policies
@@ -318,6 +323,11 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   difficulty: basic
   timelimit: 300
 - slug: create-vpc-peering
@@ -534,4 +544,4 @@ challenges:
     hostname: cloud-client
   difficulty: basic
   timelimit: 300
-checksum: "6141291402500543356"
+checksum: "5079636423663509926"
