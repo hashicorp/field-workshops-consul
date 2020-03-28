@@ -33,6 +33,15 @@ mv consul /usr/local/bin/consul
 rm -f *.zip
 cd /root
 
+#install vault
+cd /tmp
+echo "installing vault..."
+curl -O https://releases.hashicorp.com/vault/1.3.4/vault_1.3.4_linux_amd64.zip
+unzip *.zip
+mv vault /usr/local/bin/vault
+rm -f *.zip
+cd /root
+
 #get assets
 echo "cloning assets..."
 git clone -b add-consul-instruqt-ent-aws https://github.com/hashicorp/field-workshops-consul.git

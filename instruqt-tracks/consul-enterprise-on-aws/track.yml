@@ -236,17 +236,76 @@ challenges:
   title: 'Security: Centralize Consul Secrets'
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    Terraform and Vault are commonly used together to provide secure workflows for credentials.
+    Terraform Enterprise provides additional features on top of Terraform to make this easier. <br>
 
-    You can use any GitHub flavoured markdown.
+    The bootstrap outputs have been secured in Vault.
+    You will access these later to configure additional Consul roles for humans and machines. <br>
+
+    Login as an operator and inspect the credentials.  <br>
+
+    ```
+    vault login -method=userpass username=operations password=Password1
+    ```
+
+    Now inspect the credentials.
+
+    ```
+    vault kv get secret/consul
+    ```
+
+    You can use the master token to create a management token for Vault to issue [dynamic secrets](https://www.vaultproject.io/docs/secrets/consul/) for Consul.
+    Dynamic secrets have many advantages. <br>
+
+    Get a management token for Vault to manage Consul tokens with.
+    You can retrieve the privileged token for this operation from Vault.  <br>
+
+    ```
+    export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
+    vault_consul_mgmt_token=$(consul acl token create -policy-name=global-management -description "vault mgmt" | grep SecretID | cut -d ":" -f2 | xargs)
+    echo $vault_consul_mgmt_token
+    ```
+
+    Now configure the secrets engine.
+
+    ```
+    vault write consul/config/access address=${CONSUL_HTTP_ADDR} token=${vault_consul_mgmt_token}
+    vault read consul/config/access
+    ```
+
+    Last, create a policy for the operations team, and link it to the Vault role.
+    We will put a short ttl of one hour on these highly privileged administrative tokens.
+
+    ```
+    consul acl policy create -name "ops" -description "admin policy for ops" -rules 'acl = "write" operator = "write"'
+    vault write consul/roles/ops policies=ops ttl=1h
+    ```
+
+    Now you are ready to get a dynamic Consul token from Vault.
+
+    ```
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    Nice work. You'll leverage this dynamic role in the next exercise.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: A Vault instance is spinning up for you. Please be patience.
   tabs:
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/vault
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
-  - title: Cloud Consoles
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
@@ -259,7 +318,14 @@ challenges:
   title: 'Operations: Create Namespaces and Policies'
   teaser: A short description of the challenge.
   assignment: |-
-    Consul enterprise support [namespaces](https://www.consul.io/docs/enterprise/namespaces/index.html) to enable network and operations teams to provide self-service for development teams.
+    Consul enterprise support [namespaces](https://www.consul.io/docs/enterprise/namespaces/index.html) to enable network and operations teams to provide self-service for development teams. <br>
+
+    Fetch a dynamic operater token from vault.
+    ```
+    vault login -method=userpass username=operations password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
 
     Start by creating the shared service discovery policy that will underpin the development team tenants.
     This will allow the mesh to discover services across teams, but teams will control the services that can connect to services they run. <br>
@@ -296,7 +362,7 @@ challenges:
     type: service
     hostname: cloud-client
     path: /
-    port: 8080
+    port: 8500
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -305,6 +371,11 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   difficulty: basic
   timelimit: 1800
 - slug: create-consul-roles
@@ -544,4 +615,4 @@ challenges:
     hostname: cloud-client
   difficulty: basic
   timelimit: 300
-checksum: "5079636423663509926"
+checksum: "10041067925950021547"

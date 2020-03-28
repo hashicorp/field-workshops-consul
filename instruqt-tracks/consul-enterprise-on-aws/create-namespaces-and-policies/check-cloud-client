@@ -5,10 +5,10 @@ consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraf
 export CONSUL_HTTP_ADDR=http://${consul_lb}
 
 #namespace_sd
-/usr/local/bin/consul acl policy read -name cross-namespace-sd
+/usr/local/bin/consul acl policy read -name cross-namespace-policy
 if [ $? -ne 0 ]
 then
-  fail-message "Error checking namespace sd policy"
+  fail-message "Error checking cross namespace policy"
   exit 1
 fi
 

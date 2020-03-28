@@ -1,10 +1,13 @@
 #!/bin/bash
 
+set-workdir /root/terraform/vault
+
 cd /root/terraform/vault
 /usr/local/bin/terraform init
 /usr/local/bin/terraform apply -auto-approve
 
 vault_lb=$(/usr/local/bin/terraform output -state /root/terraform/vault/terraform.tfstate lb)
+echo "export VAULT_ADDR=http://${vault_lb}" >> /etc/bash.bashrc
 cat << EOF > /etc/nginx/conf.d/vault.conf
 server {
   listen 8200;
@@ -16,6 +19,39 @@ server {
   access_log /var/log/nginx/vault.log;
 }
 EOF
+consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate lb)
+cat << EOF > /etc/nginx/conf.d/consul.conf
+server {
+  listen 8500;
+  location / {
+    proxy_pass http://${consul_lb};
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect off;
+  }
+  access_log /var/log/nginx/consul.log;
+}
+EOF
 /usr/sbin/service nginx restart
 
+#inital vault
+master_token=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate master_token)
+agent_server_token=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate agent_server_token)
+gossip_key=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate gossip_key)
+
+/usr/local/bin/vault login root
+/usr/local/bin/vault kv put secret/consul master_token=${master_token} agent_server_token=${agent_server_token} gossip_key=${gossip_key}
+
+/usr/local/bin/vault auth enable userpass
+/usr/local/bin/vault write auth/userpass/users/operations password=Password1 policies=ops
+/usr/local/bin/vault secrets enable consul
+
+echo 'path "secret/data/consul" {
+  capabilities = ["read"]
+}
+path "consul/*"
+{
+  capabilities = ["create", "read", "update", "delete"]
+}' | vault policy write ops -
+
+unset VAULT_TOKEN
 exit 0
