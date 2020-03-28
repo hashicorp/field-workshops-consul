@@ -1,5 +1,5 @@
 output "env" {
-  value = module.consul.outputs.env
+  value = module.consul.env
 }
 
 output "lb" {

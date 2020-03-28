@@ -18,6 +18,6 @@ variable "extra_config" {
 
 variable "network_segments" {
   description = "Name and port mapping for segment"
-  type        = "map"
-  default     = {}
+  type        = list
+  default     = []
 }

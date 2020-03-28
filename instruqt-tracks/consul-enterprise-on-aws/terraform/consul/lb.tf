@@ -1,5 +1,5 @@
 resource "aws_security_group" "consul_lb" {
-  vpc_id = var.vpc_id
+  vpc_id = data.terraform_remote_state.vpc.outputs.shared_svcs_vpc
 
   ingress {
     from_port   = 80
@@ -21,17 +21,17 @@ resource "aws_lb" "consul" {
   name               = "consul-lb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = ["aws_security_group.consul_lb.id"]
+  security_groups    = ["${aws_security_group.consul_lb.id}"]
   subnets            = data.terraform_remote_state.vpc.outputs.shared_svcs_public_subnets
 }
 
 resource "aws_lb_listener" "ui" {
-  load_balancer_arn = "aws_lb.consul.arn"
+  load_balancer_arn = aws_lb.consul.arn
   port              = "80"
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = "module.consul.outputs.target_group"
+    target_group_arn = module.consul.target_group
   }
 }

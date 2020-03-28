@@ -99,13 +99,3 @@ resource "aws_security_group_rule" "consul_dns_udp" {
   protocol                 = "udp"
   source_security_group_id = aws_security_group.consul.id
 }
-
-// This rule allows Consul API LB traffic.
-resource "aws_security_group_rule" "consul_lb" {
-  security_group_id        = aws_security_group.consul.id
-  type                     = "ingress"
-  from_port                = 8500
-  to_port                  = 8500
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.consul_lb.id
-}

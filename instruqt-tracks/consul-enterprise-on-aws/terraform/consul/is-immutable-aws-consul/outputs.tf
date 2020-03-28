@@ -3,7 +3,7 @@ output "env" {
 }
 
 output "target_group" {
-  value = aws_lb.consul.dns_name
+  value = aws_lb_target_group.consul.id
 }
 
 output "master_token" {
@@ -19,5 +19,5 @@ output "snapshot_token" {
 }
 
 output "gossip_key" {
-  value = random_uuid.consul_gossip_encryption_key.result
+  value = random_id.consul_gossip_encryption_key.b64_std
 }

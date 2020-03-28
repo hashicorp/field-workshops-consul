@@ -129,3 +129,10 @@ variable "consul_config" {
   description = "HCL Object with additional configuration overrides supplied to the consul servers.  This is converted to JSON before rendering via the template."
   default     = {}
 }
+
+variable "additional_security_group_ids" {
+  description = "A list of additional SGs."
+  default     = []
+}
+
+

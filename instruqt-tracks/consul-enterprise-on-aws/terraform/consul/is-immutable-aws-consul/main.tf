@@ -51,7 +51,7 @@ resource "aws_autoscaling_group" "consul" {
   health_check_grace_period = 15
   health_check_type         = "EC2"
   target_group_arns         = ["${aws_lb_target_group.consul.arn}"]
-  vpc_zone_identifier       = split(",", var.subnets)
+  vpc_zone_identifier       = var.subnets
   initial_lifecycle_hook {
     name                 = "consul_health"
     default_result       = "ABANDON"
@@ -150,5 +150,18 @@ locals {
     snapshot_interval      = var.snapshot_interval
     snapshot_retention     = var.snapshot_retention
     consul_config          = var.consul_config
+  }
+}
+
+resource "aws_lb_target_group" "consul" {
+  port                 = 8500
+  protocol             = "HTTP"
+  vpc_id               = var.vpc_id
+  deregistration_delay = "15"
+
+  health_check {
+    path     = "/v1/status/leader"
+    port     = "8500"
+    protocol = "HTTP"
   }
 }

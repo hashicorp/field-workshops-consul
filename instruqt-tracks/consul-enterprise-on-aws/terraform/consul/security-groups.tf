@@ -1,16 +1,12 @@
-resource "aws_security_group" "allow_eks" {
-
-
-  name        = "allow_tls"
-  description = "Allow TLS inbound traffic"
-  vpc_id      = "${aws_vpc.main.id}"
+resource "aws_security_group" "ssh" {
+  name        = "ssh"
+  description = "Allow ssh traffic"
+  vpc_id      = data.terraform_remote_state.vpc.outputs.shared_svcs_vpc
 
   ingress {
-    description = "TLS from VPC"
-    from_port   = 443
-    to_port     = 443
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = aws_vpc.main.cidr_block
+    cidr_blocks = ["0.0.0.0/0"]
   }
-
 }

@@ -1,12 +1,9 @@
 slug: consul-enterprise-on-aws
-id: uyhpz2gmcv6f
+id: stkflr7xh9ud
 type: track
 title: Consul Enterprise on AWS
 teaser: A short description of the track.
-description: |-
-  A long description of the track.
-
-  You can use any GitHub flavoured markdown.
+description: THIS TRACK IS UNDER ACTIVE DEVELOPMENT!!! Things may periodically break!!
 icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
 tags: []
 owner: hashicorp
@@ -16,7 +13,7 @@ private: true
 published: true
 challenges:
 - slug: provision-vpcs
-  id: zf9q5j426xdi
+  id: ujbryneafql8
   type: challenge
   title: 'Infrastructure: Provision VPCs'
   teaser: A short description of the challenge.
@@ -31,7 +28,7 @@ challenges:
     Inspect the Terraform code, and then provision the cloud environment.
 
     ```
-    terraform apply -auto-approve
+    terraform apply
     ```
 
     You'll notice you have four separate VPCs that map to the infra diagram shared earlier.
@@ -62,7 +59,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root/terraform/infra
+    path: /root/terraform/vpc
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -74,7 +71,7 @@ challenges:
   difficulty: basic
   timelimit: 18000
 - slug: build-consul-image
-  id: gudhtmhdc2au
+  id: x3xlgqyvidby
   type: challenge
   title: 'Operations: Build Consul Image'
   teaser: A short description of the challenge.
@@ -117,7 +114,7 @@ challenges:
   difficulty: basic
   timelimit: 18000
 - slug: provision-consul
-  id: lb5bfvjidxkm
+  id: jhvf5b2rlhmk
   type: challenge
   title: 'Operations: Provision Consul'
   teaser: A short description of the challenge.
@@ -128,8 +125,9 @@ challenges:
     Inspect the variable file, then deploy Consul.
 
     ```
-    cat consul.auto.tfvars
-    terraform apply -auto-approve
+    cat terraform.tfvars
+    cat main.tf
+    terraform apply
     ```
 
     Now, validate the Consul servers deployed to AWS. <br>
@@ -168,7 +166,7 @@ challenges:
   difficulty: basic
   timelimit: 1800
 - slug: bootstrap-consul
-  id: e9a2xlzwes8d
+  id: 7mefmboypk7h
   type: challenge
   title: 'Operations: Bootstrap Consul'
   teaser: A short description of the challenge.
@@ -231,8 +229,26 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 1800
+- slug: centralize-consul-secrets
+  id: 8whoxkkzchx0
+  type: challenge
+  title: 'Security: Centralize Consul Secrets'
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
 - slug: create-namespaces-and-policies
-  id: dqbr9fjrk1uj
+  id: g7hylnrby0x9
   type: challenge
   title: 'Operations: Create Namespaces and Policies'
   teaser: A short description of the challenge.
@@ -243,7 +259,7 @@ challenges:
     This will allow the mesh to discover services across teams, but teams will control the services that can connect to services they run. <br>
 
     ```
-    consul acl policy create -name "cross-namespace-sd" -description "cross-namespace service discovery" -rules @cross-namespace.hcl
+    consul acl policy create -name "cross-namespace-policy" -description "cross-namespace service discovery" -rules @cross-namespace.hcl
     ```
 
     Now you can create the namespaces for each development team, that share the namespace discovery policy. <br>
@@ -257,8 +273,8 @@ challenges:
     We will restrict this by CIDR block. <br>
 
     ```
-    consul acl policy create -name "frontend-agent" -description "frontend agents" -rules @frontend-team-agent.hcl
-    consul acl policy create -name "api-agent" -description "api agents" -rules @api-team-agent.hcl
+    consul acl policy create -name "frontend-agent-policy" -description "frontend agents" -rules @frontend-team-agent.hcl
+    consul acl policy create -name "api-agent-policy" -description "api agents" -rules @api-team-agent.hcl
     ```
 
     Nice work!
@@ -285,8 +301,26 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 1800
+- slug: create-consul-roles
+  id: r0oxqx8ait5u
+  type: challenge
+  title: 'Security: Create Consul Roles'
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
 - slug: create-vpc-peering
-  id: q1iyzqw46drv
+  id: suzx6ufcymhe
   type: challenge
   title: 'Network: Create Transitive Peering'
   teaser: A short description of the challenge.
@@ -329,7 +363,7 @@ challenges:
   difficulty: basic
   timelimit: 1800
 - slug: provision-eks-clusters
-  id: vyia9s5smay0
+  id: oxwep1bahgcl
   type: challenge
   title: 'Infrastructure: Provision EKS clusters'
   teaser: A short description of the challenge.
@@ -368,7 +402,7 @@ challenges:
   difficulty: basic
   timelimit: 1800
 - slug: configure-eks-cluster-segments
-  id: tgg7nqest7rm
+  id: xrckckfdqgj9
   type: challenge
   title: 'Operations: Configure EKS cluster segments'
   teaser: A short description of the challenge.
@@ -405,7 +439,7 @@ challenges:
   difficulty: basic
   timelimit: 1800
 - slug: configure-eks-cluster-secrets
-  id: 1xvi1a2qxxft
+  id: ld9gbmuj5jnr
   type: challenge
   title: 'Operations: Configure EKS cluster secrets'
   teaser: A short description of the challenge.
@@ -463,7 +497,7 @@ challenges:
   difficulty: basic
   timelimit: 1800
 - slug: deploy-consul-in-eks
-  id: qpys5ypf7ary
+  id: 3ewjpnxsjsmh
   type: challenge
   title: 'Operations: Deploy Consul in EKS'
   teaser: A short description of the challenge.
@@ -477,6 +511,15 @@ challenges:
     kubectl config use-context eks_frontend
     helm install hashicorp -f frontend-values.yaml --namespace consul ./consul-helm
     ```
+
+    Next deploy the API clister.
+
+    ```
+    kubectl config use-context eks_api
+    helm install hashicorp -f api-values.yaml --namespace consul ./consul-helm
+    ```
+
+    Nice work! Now you can start deploying applications.
   notes:
   - type: text
     contents: Replace this text with your own text
@@ -490,4 +533,4 @@ challenges:
     hostname: cloud-client
   difficulty: basic
   timelimit: 300
-checksum: "18360150148741293953"
+checksum: "5196870058203002042"

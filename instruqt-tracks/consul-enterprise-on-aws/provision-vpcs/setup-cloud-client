@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set-workdir /root/terraform/infra
+set-workdir /root/terraform/vpc
 
 sleep 10
 aws configure set default.region us-east-1
@@ -41,7 +41,7 @@ cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-aws/packer .
 rm -rf field-workshops-consul
 
 #provision
-cd /root/terraform/infra
+cd /root/terraform/vpc
 echo "running terraform..."
 /usr/local/bin/terraform init
 
