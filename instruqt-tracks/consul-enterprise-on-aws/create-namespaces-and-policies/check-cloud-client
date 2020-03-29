@@ -1,7 +1,7 @@
 #!/bin/bash
 
-export CONSUL_HTTP_TOKEN=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate consul_master_token)
-consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate consul_lb)
+export CONSUL_HTTP_TOKEN=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate master_token)
+consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate lb)
 export CONSUL_HTTP_ADDR=http://${consul_lb}
 
 #namespace_sd
@@ -28,7 +28,7 @@ then
 fi
 
 #frontend
-/usr/local/bin/consul acl policy read -name frontend-agent
+/usr/local/bin/consul acl policy read -name frontend-agent-policy
 if [ $? -ne 0 ]
 then
   fail-message "Error checking frontend agent policy"
@@ -36,7 +36,7 @@ then
 fi
 
 #api
-/usr/local/bin/consul acl policy read -name api-agent
+/usr/local/bin/consul acl policy read -name api-agent-policy
 if [ $? -ne 0 ]
 then
   fail-message "Error checking api agent policy"

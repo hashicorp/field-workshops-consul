@@ -6,6 +6,8 @@ cd /root/terraform/vault
 /usr/local/bin/terraform init
 /usr/local/bin/terraform apply -auto-approve
 
+sleep 60
+
 vault_lb=$(/usr/local/bin/terraform output -state /root/terraform/vault/terraform.tfstate lb)
 echo "export VAULT_ADDR=http://${vault_lb}" >> /etc/bash.bashrc
 cat << EOF > /etc/nginx/conf.d/vault.conf
@@ -20,6 +22,7 @@ server {
 }
 EOF
 consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate lb)
+echo "export CONSUL_HTTP_ADDR=http://${consul_lb}" >> /etc/bash.bashrc
 cat << EOF > /etc/nginx/conf.d/consul.conf
 server {
   listen 8500;
@@ -34,6 +37,7 @@ EOF
 /usr/sbin/service nginx restart
 
 #inital vault
+export VAULT_ADDR=http://${vault_lb}
 master_token=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate master_token)
 agent_server_token=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate agent_server_token)
 gossip_key=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate gossip_key)
@@ -51,7 +55,7 @@ echo 'path "secret/data/consul" {
 path "consul/*"
 {
   capabilities = ["create", "read", "update", "delete"]
-}' | vault policy write ops -
+}' | /usr/local/bin/vault policy write ops -
 
 unset VAULT_TOKEN
 exit 0

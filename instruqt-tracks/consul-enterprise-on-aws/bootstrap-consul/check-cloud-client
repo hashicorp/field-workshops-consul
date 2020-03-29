@@ -1,6 +1,6 @@
 #!/bin/bash
 
-env=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate instruqt_env)
+env=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate env)
 asg=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names ${env}-consul-0.0.2 |  jq '.AutoScalingGroups | length')
 
 if [ $asg != "1" ]; then
