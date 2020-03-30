@@ -58,15 +58,15 @@ resource "aws_security_group" "consul_eks" {
   }
 
   ingress {
-    from_port   =  each.value
-    to_port     =  each.value
+    from_port   = each.value
+    to_port     = each.value
     protocol    = "tcp"
     cidr_blocks = ["10.2.0.0/16", "10.3.0.0/16"]
   }
 
-    ingress {
-    from_port   =  each.value
-    to_port     =  each.value
+  ingress {
+    from_port   = each.value
+    to_port     = each.value
     protocol    = "udp"
     cidr_blocks = ["10.2.0.0/16", "10.3.0.0/16"]
   }
@@ -85,7 +85,7 @@ resource "aws_security_group" "consul_eks" {
     cidr_blocks = ["10.2.0.0/16", "10.3.0.0/16"]
   }
 
-    egress {
+  egress {
     from_port   = each.value
     to_port     = each.value
     protocol    = "udp"

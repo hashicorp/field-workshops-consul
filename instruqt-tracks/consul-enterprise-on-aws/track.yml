@@ -277,7 +277,7 @@ challenges:
     We will put a short ttl of one hour on these highly privileged administrative tokens.
 
     ```
-    consul acl policy create -name "ops" -description "admin policy for ops" -rules 'acl = "write" operator = "write"'
+    consul acl policy create -name "ops" -description "admin policy for ops" -rules 'acl = "write" operator = "write" namespace_prefix "" {acl = "write"}'
     vault write consul/roles/ops policies=ops ttl=1h
     ```
 
@@ -564,6 +564,11 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   difficulty: basic
   timelimit: 1800
 - slug: configure-eks-cluster-secrets
@@ -621,6 +626,11 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   difficulty: basic
   timelimit: 1800
 - slug: deploy-consul-in-eks
@@ -636,14 +646,23 @@ challenges:
 
     ```
     kubectl config use-context eks_frontend
-    helm install hashicorp -f frontend-values.yaml --namespace consul ./consul-helm
+    helm install hashicorp -f frontend-values.yaml --namespace consul ./consul-helm --wait
+    kubectl get pods -n consul
     ```
 
     Next deploy the API cluster.
 
     ```
     kubectl config use-context eks_api
-    helm install hashicorp -f api-values.yaml --namespace consul ./consul-helm
+    helm install hashicorp -f api-values.yaml --namespace consul ./consul-helm --wait
+    kubectl get pods -n consul
+    ```
+
+    Check the nodes for the full working set.  You will see a few members in the `left` state.
+    This is expected, as they are left over from the auto upgrade and no longer in the peer set. <br>
+
+    ```
+    consul members
     ```
 
     Nice work! Now you need to create trust between K8s API and the Consul API.s
@@ -658,6 +677,11 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   difficulty: basic
   timelimit: 300
 - slug: security-configure-k8s-consul-authentication
@@ -666,7 +690,37 @@ challenges:
   title: 'Security: Configure K8s Consul Authentication'
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assignment you will use a [Consul auth method](https://www.consul.io/docs/acl/auth-methods/kubernetes.html)
+    to securely introduce Consul ACL tokens to K8s pods. <br>
+
+    Start by retrieving a Consul operations token from Vault. <br>
+
+    ```
+    vault login -method=userpass username=operations password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    Now you can create the auth method in the frontend namespace.
+    The cross namespace policy you created earlier will be attached to the token.
+    You need three key pieces of information to complete this task. <br>
+
+    * K8s endpoint
+    * K8s CA
+    * Service Account JWT
+
+    The helper script will assist you in this task.
+    Review it now. <br>
+
+    ```
+    cat /usr/local/bin/setup-k8s-consul-auth
+    ```
+
+    Configure the clusters.
+    ```
+    setup-k8s-consul-auth frontend
+    setup-k8s-consul-auth api
+    ```
 
     You can use any GitHub flavoured markdown.
   notes:
@@ -676,6 +730,21 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
   difficulty: basic
   timelimit: 300
 - slug: developer-deploy-applications
@@ -684,16 +753,34 @@ challenges:
   title: 'Developer: Deploy Applications'
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    Now you can start deploying applications to the k8s clusters.
 
-    You can use any GitHub flavoured markdown.
+    Start with the Frontend cluster.
+
+    ```
+    kubectl config use-context eks_frontend
+    kubectl apply -f frontend
+    ```
+
+    Now deploy the API cluster.
+
+    ```
+    kubectl config use-context eks_api
+    kubectl apply -f api
+    ```
+
+    All the pods are ready. In the next assignment we will update intentions so traffic will route.
   notes:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Apps
+    type: code
+    hostname: cloud-client
+    path: /root/apps
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
   difficulty: basic
   timelimit: 300
-checksum: "9210867440212527589"
+checksum: "2635165296758465269"

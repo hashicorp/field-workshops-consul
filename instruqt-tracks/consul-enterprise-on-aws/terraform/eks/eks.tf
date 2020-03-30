@@ -24,7 +24,7 @@ module "frontend" {
   cluster_version                      = "1.15"
   subnets                              = flatten([data.terraform_remote_state.vpc.outputs.frontend_private_subnets])
   vpc_id                               = data.terraform_remote_state.vpc.outputs.frontend_vpc
-  worker_additional_security_group_ids = [aws_security_group.frontend-eks-gossip.id]
+  worker_additional_security_group_ids = [aws_security_group.frontend-eks-consul.id]
 
   manage_aws_auth  = true
   write_kubeconfig = true
@@ -65,7 +65,7 @@ module "api" {
   cluster_version                      = "1.15"
   subnets                              = flatten([data.terraform_remote_state.vpc.outputs.api_private_subnets])
   vpc_id                               = data.terraform_remote_state.vpc.outputs.api_vpc
-  worker_additional_security_group_ids = [aws_security_group.api-eks-gossip.id]
+  worker_additional_security_group_ids = [aws_security_group.api-eks-consul.id]
 
   manage_aws_auth  = true
   write_kubeconfig = true
@@ -79,10 +79,17 @@ module "api" {
   ]
 }
 
-resource "aws_security_group" "frontend-eks-gossip" {
+resource "aws_security_group" "frontend-eks-consul" {
   name        = "consul-frontend-eks-gossip"
   description = "consul-eks-gossip"
   vpc_id      = data.terraform_remote_state.vpc.outputs.frontend_vpc
+
+  ingress {
+    from_port   = 20000
+    to_port     = 20000
+    protocol    = "tcp"
+    cidr_blocks = ["10.2.0.0/16","10.3.0.0/16"]
+  }
 
   ingress {
     from_port   = 8300
@@ -107,10 +114,17 @@ resource "aws_security_group" "frontend-eks-gossip" {
 
 }
 
-resource "aws_security_group" "api-eks-gossip" {
+resource "aws_security_group" "api-eks-consul" {
   name        = "consul-api-eks-gossip"
   description = "consul-eks-gossip"
   vpc_id      = data.terraform_remote_state.vpc.outputs.api_vpc
+
+  ingress {
+    from_port   = 20000
+    to_port     = 20000
+    protocol    = "tcp"
+    cidr_blocks = ["10.2.0.0/16","10.3.0.0/16"]
+  }
 
   ingress {
     from_port   = 8300

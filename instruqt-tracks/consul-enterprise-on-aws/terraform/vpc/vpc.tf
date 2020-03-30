@@ -19,6 +19,7 @@ module "vpc-shared-svcs" {
 
   private_subnet_tags = { "Tier" : "private" }
   public_subnet_tags  = { "Tier" : "public" }
+
 }
 
 module "vpc-frontend" {
@@ -41,7 +42,8 @@ module "vpc-frontend" {
   single_nat_gateway = true
 
   private_subnet_tags = { "Tier" : "private" }
-  public_subnet_tags  = { "Tier" : "public" }
+  public_subnet_tags  = { "Tier" : "public", "kubernetes.io/cluster/frontend" : "shared", "kubernetes.io/role/elb" : "1" }
+  vpc_tags            = { "kubernetes.io/cluster/frontend" : "shared" }
 }
 
 module "vpc-api" {

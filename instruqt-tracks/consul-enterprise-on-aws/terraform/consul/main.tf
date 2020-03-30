@@ -20,6 +20,8 @@ module "consul" {
   consul_cluster_version = var.consul_cluster_version
   bootstrap              = var.bootstrap
 
+  enable_connect = true
+
   key_name    = "instruqt"
   name_prefix = "instruqt"
   vpc_id      = data.terraform_remote_state.vpc.outputs.shared_svcs_vpc
