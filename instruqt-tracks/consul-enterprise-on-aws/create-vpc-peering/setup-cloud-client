@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set-workdir /root/terraform/network
+set-workdir /root/terraform/tgw
 
-cd /root/terraform/network
+cd /root/terraform/tgw
 /usr/local/bin/terraform init
 
 exit 0

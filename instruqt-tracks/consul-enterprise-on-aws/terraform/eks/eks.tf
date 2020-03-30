@@ -22,9 +22,9 @@ module "frontend" {
   }
   cluster_name                         = "frontend"
   cluster_version                      = "1.15"
-  subnets                              = flatten(["${data.terraform_remote_state.vpc.outputs.frontend_private_subnets}"])
-  vpc_id                               = "${data.terraform_remote_state.vpc.outputs.frontend_vpc}"
-  worker_additional_security_group_ids = ["${aws_security_group.frontend-eks-gossip.id}"]
+  subnets                              = flatten([data.terraform_remote_state.vpc.outputs.frontend_private_subnets])
+  vpc_id                               = data.terraform_remote_state.vpc.outputs.frontend_vpc
+  worker_additional_security_group_ids = [aws_security_group.frontend-eks-gossip.id]
 
   manage_aws_auth  = true
   write_kubeconfig = true
@@ -63,9 +63,9 @@ module "api" {
   }
   cluster_name                         = "api"
   cluster_version                      = "1.15"
-  subnets                              = flatten(["${data.terraform_remote_state.vpc.outputs.api_private_subnets}"])
-  vpc_id                               = "${data.terraform_remote_state.vpc.outputs.api_vpc}"
-  worker_additional_security_group_ids = ["${aws_security_group.api-eks-gossip.id}"]
+  subnets                              = flatten([data.terraform_remote_state.vpc.outputs.api_private_subnets])
+  vpc_id                               = data.terraform_remote_state.vpc.outputs.api_vpc
+  worker_additional_security_group_ids = [aws_security_group.api-eks-gossip.id]
 
   manage_aws_auth  = true
   write_kubeconfig = true
@@ -82,7 +82,7 @@ module "api" {
 resource "aws_security_group" "frontend-eks-gossip" {
   name        = "consul-frontend-eks-gossip"
   description = "consul-eks-gossip"
-  vpc_id      = "${data.terraform_remote_state.vpc.outputs.frontend_vpc}"
+  vpc_id      = data.terraform_remote_state.vpc.outputs.frontend_vpc
 
   ingress {
     from_port   = 8300
@@ -110,7 +110,7 @@ resource "aws_security_group" "frontend-eks-gossip" {
 resource "aws_security_group" "api-eks-gossip" {
   name        = "consul-api-eks-gossip"
   description = "consul-eks-gossip"
-  vpc_id      = "${data.terraform_remote_state.vpc.outputs.api_vpc}"
+  vpc_id      = data.terraform_remote_state.vpc.outputs.api_vpc
 
   ingress {
     from_port   = 8300

@@ -17,6 +17,10 @@ namespace_prefix "" {
 }
 EOF
 
+cat << EOF > /root/policies/injector.hcl
+operator = "write"
+EOF
+
 #frontend team
 cat << EOF > /root/policies/frontend-namespace.hcl
 Name = "frontend"
@@ -30,12 +34,22 @@ ACLs {
   RoleDefaults = []
 }
 EOF
+
 cat << EOF > /root/policies/frontend-team-agent.hcl
 node_prefix "ip-10-2-" {
   policy = "write"
 }
 service_prefix "" {
   policy = "read"
+}
+EOF
+
+cat << EOF > /root/policies/frontend-team-developer.hcl
+namespace "frontend" {
+  service_prefix "" {
+    policy = "read"
+    intentions = "write"
+  }
 }
 EOF
 
@@ -52,12 +66,22 @@ ACLs {
   RoleDefaults = []
 }
 EOF
+
 cat << EOF > /root/policies/api-team-agent.hcl
 node_prefix "ip-10-3-" {
   policy = "write"
 }
 service_prefix "" {
   policy = "read"
+}
+EOF
+
+cat << EOF > /root/policies/api-team-developer.hcl
+namespace "api" {
+  service_prefix "" {
+    policy = "read"
+    intentions = "write"
+  }
 }
 EOF
 

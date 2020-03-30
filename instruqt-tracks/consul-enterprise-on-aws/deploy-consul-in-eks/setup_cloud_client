@@ -3,7 +3,8 @@
 mkdir /root/helm
 set-workdir /root/helm
 
-instruqt_env=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate instruqt_env)
+instruqt_env=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate env)
+
 cat << EOF > /root/helm/frontend-values.yaml
 global:
   tls:
@@ -20,7 +21,7 @@ server:
   enabled: false
 client:
   enabled: true
-  join: ["provider=aws tag_key=Environment-Name tag_value=${instruqt_env}"]
+  join: ["provider=aws tag_key=Environment-Name tag_value=${instruqt_env}-consul"]
   extraConfig: |
     {
       "log_level": "DEBUG",
@@ -55,7 +56,7 @@ server:
   enabled: false
 client:
   enabled: true
-  join: ["provider=aws tag_key=Environment-Name tag_value=${instruqt_env}"]
+  join: ["provider=aws tag_key=Environment-Name tag_value=${instruqt_env}-consul"]
   extraConfig: |
     {
       "log_level": "DEBUG",
@@ -75,7 +76,6 @@ connectInject:
 EOF
 
 git clone https://github.com/hashicorp/consul-helm.git
-
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
 exit 0

@@ -328,10 +328,12 @@ challenges:
     ```
 
     Start by creating the shared service discovery policy that will underpin the development team tenants.
-    This will allow the mesh to discover services across teams, but teams will control the services that can connect to services they run. <br>
+    This will allow the mesh to discover services across teams, but teams will control the services that can connect to services they run.
+    We will also create a policy for the K8s injector. <br>
 
     ```
     consul acl policy create -name "cross-namespace-policy" -description "cross-namespace service discovery" -rules @cross-namespace.hcl
+    consul acl policy create -name "k8s-injector-policy" -description "k8s injection" -rules @injector.hcl
     ```
 
     Now you can create the namespaces for each development team, that share the namespace discovery policy. <br>
@@ -349,7 +351,16 @@ challenges:
     consul acl policy create -name "api-agent-policy" -description "api agents" -rules @api-team-agent.hcl
     ```
 
-    Nice work!
+    Last, create policies for the development teams to manage their own intentions.
+    Intentions allow connectivy between services. <br>
+
+    ```
+    consul acl policy create -name "frontend-developer-policy" -description "frontend dev" -rules @frontend-team-developer.hcl
+    consul acl policy create -name "api-developer-policy" -description "api dev" -rules @api-team-developer.hcl
+
+    ```
+
+    Nice work! In the next assigment we will link these policies to Vault roles.
   notes:
   - type: text
     contents: Replace this text with your own text
@@ -384,9 +395,27 @@ challenges:
   title: 'Security: Create Consul Roles'
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    Link the Consul policies to Vault roles so the various users in the organization can request Consul ACL tokens.
+    Get an operator token for Consul. <br>
 
-    You can use any GitHub flavoured markdown.
+    ```
+    vault login -method=userpass username=operations password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    We will create scoped TTLs for each role.
+    The agent tokens will be rotated periodically, and will have a longer TTL.
+
+    ```
+    vault write consul/roles/k8s-injector       policies=k8s-injector-policy       ttl=720h
+    vault write consul/roles/frontend-agent     policies=frontend-agent-policy     ttl=720h
+    vault write consul/roles/frontend-developer policies=frontend-developer-policy ttl=1h
+    vault write consul/roles/api-agent          policies=api-agent-policy          ttl=720h
+    vault write consul/roles/api-developer      policies=api-developer-policy      ttl=1h
+    ```
+
+    You will use these roles and policies to configure the Kubernetes clusters and onboard the development teams in a later assignment.
   notes:
   - type: text
     contents: Replace this text with your own text
@@ -394,11 +423,21 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
-  - title: Cloud Consoles
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
     port: 8200
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   difficulty: basic
   timelimit: 300
 - slug: create-vpc-peering
@@ -413,13 +452,13 @@ challenges:
     Run Terraform to setup the transit gateway routes. <br>
 
     ```
-    terraform apply -auto-approve
+    terraform apply
     ```
 
     Now inspect one of the route tables. Let's look at the route table for the API team private subnets.
 
     ```
-    route_table=$(/usr/local/bin/terraform output -state /root/terraform/infra/terraform.tfstate -json api_private_route_table_ids | jq -r .[0])
+    route_table=$(/usr/local/bin/terraform output -state /root/terraform/vpc/terraform.tfstate -json api_private_route_table_ids | jq -r .[0])
     aws ec2 describe-route-tables --route-table-ids ${route_table}
     ```
 
@@ -433,7 +472,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root/terraform/network
+    path: /root/terraform/tgw
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -458,7 +497,8 @@ challenges:
     EKS can take over ~10 minutes to provision, so you will run this as a background task. <br>
 
     ```
-    nohup terraform apply -auto-approve | tee terraform.out &
+    nohup terraform apply -auto-approve > terraform.out &
+    tail -f terraform.out
     ```
 
     Validate your clusters once they are provisioned.
@@ -481,6 +521,11 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   difficulty: basic
   timelimit: 1800
 - slug: configure-eks-cluster-segments
@@ -496,8 +541,9 @@ challenges:
     Inspect it, then apply the configuration. <br>
 
     ```
-    cat consul.auto.tfvars
-    terraform apply -auto-approve
+    cat terraform.tfvars
+    cat main.tf
+    terraform apply
     ```
 
     Validate your network segments were applied to the Consul servers.
@@ -536,36 +582,35 @@ challenges:
     * Provide a gossip key
     * Provide an ACL
 
-    Inspect the script.
+    First, get an operations token from Vault.
+
+    ```
+    vault login -method=userpass username=operations password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    Next, inspect the setup script.
 
     ```
     cat /usr/local/bin/setup-k8s-consul-cluster
     ```
 
-    Start with the frontend cluster.
-
-    ```
-    kubectl config use-context eks_frontend
-    ```
-
-    Now configure the cluster. Add the secrets as arguments to the script
-
-    ```
-    setup-k8s-consul-cluster <gossip_key> <acl_token>
-    ```
-
+    Start with the frontend cluster, and run the setup script with the Vault provided Consul secrets.
     Verify the secrets were provisioned.
 
     ```
+    kubectl config use-context eks_frontend
+    setup-k8s-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/frontend-agent) $(vault read -field token consul/creds/k8s-injector)
     kubectl  get secrets -n consul
     ```
 
-    Switch contexts, and repeat the process for the other EKS cluster.
+    Repeat these steps on the API cluster.
 
     ```
     kubectl config use-context eks_api
-    setup-k8s-consul-cluster <gossip_key> <acl_token>
-    kubectl  get secrets -n consul
+    setup-k8s-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/api-agent) $(vault read -field token consul/creds/k8s-injector)
+    kubectl get secrets -n consul
     ```
 
     Now you can provision the Consul client agents in the EKS clusters.
@@ -594,14 +639,14 @@ challenges:
     helm install hashicorp -f frontend-values.yaml --namespace consul ./consul-helm
     ```
 
-    Next deploy the API clister.
+    Next deploy the API cluster.
 
     ```
     kubectl config use-context eks_api
     helm install hashicorp -f api-values.yaml --namespace consul ./consul-helm
     ```
 
-    Nice work! Now you can start deploying applications.
+    Nice work! Now you need to create trust between K8s API and the Consul API.s
   notes:
   - type: text
     contents: Replace this text with your own text
@@ -615,4 +660,40 @@ challenges:
     hostname: cloud-client
   difficulty: basic
   timelimit: 300
-checksum: "13946277103398208247"
+- slug: security-configure-k8s-consul-authentication
+  id: tnkxgigifkbu
+  type: challenge
+  title: 'Security: Configure K8s Consul Authentication'
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
+- slug: developer-deploy-applications
+  id: dslh2b4hvc4t
+  type: challenge
+  title: 'Developer: Deploy Applications'
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
+checksum: "713405128595788288"

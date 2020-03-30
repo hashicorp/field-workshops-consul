@@ -7,16 +7,16 @@ output "lb" {
 }
 
 output "master_token" {
-  value = module.consul.master_token
-  sensitive   = true
+  value     = module.consul.master_token
+  sensitive = true
 }
 
 output "agent_server_token" {
-  value =  module.consul.agent_server_token
-  sensitive   = true
+  value     = module.consul.agent_server_token
+  sensitive = true
 }
 
 output "gossip_key" {
-  value = module.consul.gossip_key
-  sensitive   = true
+  value     = module.consul.gossip_key
+  sensitive = true
 }

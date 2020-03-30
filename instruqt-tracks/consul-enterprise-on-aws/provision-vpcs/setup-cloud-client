@@ -76,11 +76,12 @@ cat << "SCRIPT" > /usr/local/bin/setup-k8s-consul-cluster
 
 gossip_key=$1
 acl_token=$2
+injection_token=$3
 
 #base64 the secrets
-gossip_key=$(echo -n $1 | base64 -w 0)
-acl_token=$(echo -n  $2 | base64 -w 0)
-
+gossip_key=$(echo -n $gossip_key | base64 -w 0)
+acl_token=$(echo -n  $acl_token | base64 -w 0)
+injection_token=$(echo -n  $injection_token | base64 -w 0)
 
 #create the consul namespace
 cat <<EOF | kubectl apply -f -
@@ -109,6 +110,15 @@ metadata:
 type: Opaque
 data:
   token: $acl_token
+EOF
+cat <<EOF | kubectl apply -n consul -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hashicorp-consul-connect-inject-acl-token
+type: Opaque
+data:
+  token: $injection_token
 EOF
 SCRIPT
 chmod +x /usr/local/bin/setup-k8s-consul-cluster

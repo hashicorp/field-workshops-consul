@@ -46,7 +46,7 @@ gossip_key=$(/usr/local/bin/terraform output -state /root/terraform/consul/terra
 /usr/local/bin/vault kv put secret/consul master_token=${master_token} agent_server_token=${agent_server_token} gossip_key=${gossip_key}
 
 /usr/local/bin/vault auth enable userpass
-/usr/local/bin/vault write auth/userpass/users/operations password=Password1 policies=ops
+/usr/local/bin/vault write auth/userpass/users/operations password=Password1 policies=ops token_ttl=30m token_max_ttl=1h
 /usr/local/bin/vault secrets enable consul
 
 echo 'path "secret/data/consul" {
