@@ -40,21 +40,4 @@ module "consul" {
 
   additional_security_group_ids = [aws_security_group.consul_ssh.id, aws_security_group.consul_lb.id, values(aws_security_group.consul_eks)[*].id]
 
-  consul_config = {
-    "segments": [
-      {
-        "name": "frontend",
-        "bind": "\$\${LOCAL_IPV4}",
-        "advertise": "\$\${LOCAL_IPV4}",
-        "port": 8303
-      },
-      {
-        "name": "api",
-        "bind": "\$\${LOCAL_IPV4}",
-        "advertise": "\$\${LOCAL_IPV4}",
-        "port": 8304
-      }
-    ]
-  }
-
 }
