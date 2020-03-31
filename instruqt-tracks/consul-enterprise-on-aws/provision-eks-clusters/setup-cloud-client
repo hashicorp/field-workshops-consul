@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#route propagation from TGW
+sleep 60
+
 set-workdir /root/terraform/eks
 
 cd /root/terraform/eks

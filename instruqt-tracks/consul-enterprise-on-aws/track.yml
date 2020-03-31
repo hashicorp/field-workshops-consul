@@ -70,7 +70,7 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 18000
+  timelimit: 900
 - slug: build-consul-image
   id: x3xlgqyvidby
   type: challenge
@@ -113,7 +113,7 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 18000
+  timelimit: 9000
 - slug: provision-consul
   id: jhvf5b2rlhmk
   type: challenge
@@ -166,7 +166,7 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 1800
+  timelimit: 900
 - slug: bootstrap-consul
   id: 7mefmboypk7h
   type: challenge
@@ -232,7 +232,7 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 1800
+  timelimit: 900
 - slug: centralize-consul-secrets
   id: 8whoxkkzchx0
   type: challenge
@@ -314,7 +314,7 @@ challenges:
     path: /
     port: 8200
   difficulty: basic
-  timelimit: 300
+  timelimit: 900
 - slug: create-namespaces-and-policies
   id: g7hylnrby0x9
   type: challenge
@@ -368,6 +368,16 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   - title: Policies
     type: code
     hostname: cloud-client
@@ -380,18 +390,8 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
-  - title: Cloud Consoles
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 80
-  - title: Vault
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8200
   difficulty: basic
-  timelimit: 1800
+  timelimit: 900
 - slug: create-consul-roles
   id: r0oxqx8ait5u
   type: challenge
@@ -442,7 +442,7 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 300
+  timelimit: 900
 - slug: create-vpc-peering
   id: suzx6ufcymhe
   type: challenge
@@ -486,7 +486,7 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 1800
+  timelimit: 900
 - slug: provision-eks-clusters
   id: oxwep1bahgcl
   type: challenge
@@ -532,7 +532,7 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 1800
+  timelimit: 900
 - slug: configure-eks-cluster-segments
   id: xrckckfdqgj9
   type: challenge
@@ -576,7 +576,7 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 1800
+  timelimit: 900
 - slug: configure-eks-cluster-secrets
   id: ld9gbmuj5jnr
   type: challenge
@@ -638,7 +638,7 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 1800
+  timelimit: 900
 - slug: deploy-consul-in-eks
   id: 3ewjpnxsjsmh
   type: challenge
@@ -683,13 +683,16 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
   - title: Cloud Consoles
     type: service
     hostname: cloud-client
     path: /
     port: 80
   difficulty: basic
-  timelimit: 300
+  timelimit: 900
 - slug: configure-k8s-consul-authentication
   id: tnkxgigifkbu
   type: challenge
@@ -752,7 +755,7 @@ challenges:
     path: /
     port: 8500
   difficulty: basic
-  timelimit: 300
+  timelimit: 900
 - slug: deploy-applications
   id: dslh2b4hvc4t
   type: challenge
@@ -787,8 +790,23 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   difficulty: basic
-  timelimit: 300
+  timelimit: 900
 - slug: update-intentions
   id: apxx5zldywqm
   type: challenge
@@ -848,5 +866,5 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 300
-checksum: "4519673999537663670"
+  timelimit: 900
+checksum: "2935544596342039717"
