@@ -47,14 +47,19 @@ EOF
 cat << EOF > /root/policies/frontend-team-developer.hcl
 namespace "frontend" {
   service_prefix "" {
-    policy = "read"
+    policy     = "read"
     intentions = "write"
   }
 }
+
 namespace_prefix "" {
+  node_prefix "" {
+    policy = "read"
+  }
   service_prefix "" {
     policy = "read"
   }
+  acl = "read"
 }
 EOF
 
@@ -84,14 +89,19 @@ EOF
 cat << EOF > /root/policies/backend-team-developer.hcl
 namespace "backend" {
   service_prefix "" {
-    policy = "read"
+    policy     = "read"
     intentions = "write"
   }
 }
+
 namespace_prefix "" {
+  node_prefix "" {
+    policy = "read"
+  }
   service_prefix "" {
     policy = "read"
   }
+  acl = "read"
 }
 EOF
 

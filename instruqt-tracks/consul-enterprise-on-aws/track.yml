@@ -294,7 +294,8 @@ challenges:
     Nice work. You'll leverage this dynamic role in the next exercise.
   notes:
   - type: text
-    contents: A Vault instance is spinning up for you. Please be patience.
+    contents: A Vault instance is spinning up for you. Please be patient. This can
+      take up to five minutes.
   tabs:
   - title: Terraform
     type: code
@@ -313,6 +314,11 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   difficulty: basic
   timelimit: 900
 - slug: create-namespaces-and-policies
@@ -368,28 +374,28 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
-  - title: Cloud Consoles
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 80
-  - title: Vault
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8200
   - title: Policies
     type: code
     hostname: cloud-client
     path: /root/policies
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
   - title: Consul
     type: service
     hostname: cloud-client
     path: /
     port: 8500
-  - title: Cloud CLI
-    type: terminal
+  - title: Vault
+    type: service
     hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   difficulty: basic
   timelimit: 900
 - slug: create-consul-roles
@@ -426,16 +432,16 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
-  - title: Vault
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8200
   - title: Consul
     type: service
     hostname: cloud-client
     path: /
     port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   - title: Cloud Consoles
     type: service
     hostname: cloud-client
@@ -480,6 +486,16 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   - title: Cloud Consoles
     type: service
     hostname: cloud-client
@@ -526,6 +542,16 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   - title: Cloud Consoles
     type: service
     hostname: cloud-client
@@ -570,6 +596,16 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   - title: Cloud Consoles
     type: service
     hostname: cloud-client
@@ -632,6 +668,16 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   - title: Cloud Consoles
     type: service
     hostname: cloud-client
@@ -676,6 +722,21 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Helm
     type: code
     hostname: cloud-client
@@ -686,11 +747,6 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
-  - title: Cloud Consoles
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 80
   difficulty: basic
   timelimit: 900
 - slug: configure-k8s-consul-authentication
@@ -739,21 +795,21 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
-  - title: Cloud Consoles
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 80
-  - title: Vault
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8200
   - title: Consul
     type: service
     hostname: cloud-client
     path: /
     port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   difficulty: basic
   timelimit: 900
 - slug: deploy-applications
@@ -834,15 +890,17 @@ challenges:
     ```
 
     Last, test the application.
-    Validate the IP addresses from each CIDR in the response payload. <br>
+    Validate the IP addresses from each CIDR in the response payload.
+    AWS LBs can take a few moments to create routable DNS, so you will validate that as well. <br>
 
     ```
     kubectl config use-context eks_frontend
     endpoint=$(kubectl get services web -o json | jq -r .status.loadBalancer.ingress[0].hostname)
+    nslookup $endpoint
     curl -s $endpoint
     ```
 
-    Great job. You just connected multiple K8s clusters to  your Consul shared service.
+    Great job. You just connected multiple K8s clusters to your Consul shared service.
   notes:
   - type: text
     contents: Replace this text with your own text
@@ -867,4 +925,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 900
-checksum: "2935544596342039717"
+checksum: "4248443991551454497"

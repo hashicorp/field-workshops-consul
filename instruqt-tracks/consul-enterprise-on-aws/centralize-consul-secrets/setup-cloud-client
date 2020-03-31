@@ -50,7 +50,10 @@ gossip_key=$(/usr/local/bin/terraform output -state /root/terraform/consul/terra
 /usr/local/bin/vault write auth/userpass/users/backend password=Password1 policies=backend token_ttl=30m
 /usr/local/bin/vault secrets enable consul
 
-echo 'path "secret/data/consul" {
+echo 'path "secret/*" {
+  capabilities = ["list"]
+}
+path "secret/data/consul" {
   capabilities = ["read"]
 }
 path "consul/*"
