@@ -6,8 +6,8 @@ export CONSUL_HTTP_ADDR=http://${consul_lb}
 
 /usr/local/bin/consul acl policy create -name "cross-namespace-sd" -description "cross-namespace service discovery" -rules @cross-namespace.hcl
 /usr/local/bin/consul namespace write frontend-namespace.hcl
-/usr/local/bin/consul namespace write api-namespace.hcl
+/usr/local/bin/consul namespace write backend-namespace.hcl
 /usr/local/bin/consul acl policy create -name "frontend-agent" -description "frontend agents" -rules @frontend-team-agent.hcl
-/usr/local/bin/consul acl policy create -name "api-agent" -description "api agents" -rules @api-team-agent.hcl
+/usr/local/bin/consul acl policy create -name "backend-agent" -description "backend agents" -rules @backend-team-agent.hcl
 
 exit 0

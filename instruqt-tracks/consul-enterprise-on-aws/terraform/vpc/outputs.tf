@@ -30,18 +30,18 @@ output "frontend_public_subnets" {
   value = module.vpc-frontend.public_subnets
 }
 
-output "api_vpc" {
-  value = module.vpc-api.vpc_id
+output "backend_vpc" {
+  value = module.vpc-backend.vpc_id
 }
 
-output "api_private_route_table_ids" {
-  value = module.vpc-api.private_route_table_ids
+output "backend_private_route_table_ids" {
+  value = module.vpc-backend.private_route_table_ids
 }
 
-output "api_private_subnets" {
-  value = module.vpc-api.private_subnets
+output "backend_private_subnets" {
+  value = module.vpc-backend.private_subnets
 }
 
-output "api_public_subnets" {
-  value = module.vpc-api.public_subnets
+output "backend_public_subnets" {
+  value = module.vpc-backend.public_subnets
 }

@@ -8,7 +8,7 @@ consul_cluster_version = "0.0.3"
 bootstrap = false
 network_segments = {
   "frontend" = "8303"
-  "api" = "8304"
+  "backend" = "8304"
 }
 EOF
 
@@ -34,6 +34,8 @@ module "consul" {
 
   consul_cluster_version = var.consul_cluster_version
   bootstrap              = var.bootstrap
+
+  enable_connect = true
 
   key_name    = "instruqt"
   name_prefix = "instruqt"
@@ -64,7 +66,7 @@ module "consul" {
         "port": 8303
       },
       {
-        "name": "api",
+        "name": "backend",
         "bind": "$${LOCAL_IPV4}",
         "advertise": "$${LOCAL_IPV4}",
         "port": 8304

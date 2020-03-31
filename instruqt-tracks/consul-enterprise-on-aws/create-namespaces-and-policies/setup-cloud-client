@@ -18,7 +18,7 @@ namespace_prefix "" {
 EOF
 
 cat << EOF > /root/policies/injector.hcl
-operator = "write"
+operator = "read"
 EOF
 
 #frontend team
@@ -51,12 +51,17 @@ namespace "frontend" {
     intentions = "write"
   }
 }
+namespace_prefix "" {
+  service_prefix "" {
+    policy = "read"
+  }
+}
 EOF
 
-#api team
-cat << EOF > /root/policies/api-namespace.hcl
-Name = "api"
-Description = "namespace for api team"
+#backend team
+cat << EOF > /root/policies/backend-namespace.hcl
+Name = "backend"
+Description = "namespace for backend team"
 ACLs {
   PolicyDefaults = [
     {
@@ -67,7 +72,7 @@ ACLs {
 }
 EOF
 
-cat << EOF > /root/policies/api-team-agent.hcl
+cat << EOF > /root/policies/backend-team-agent.hcl
 node_prefix "ip-10-3-" {
   policy = "write"
 }
@@ -76,11 +81,16 @@ service_prefix "" {
 }
 EOF
 
-cat << EOF > /root/policies/api-team-developer.hcl
-namespace "api" {
+cat << EOF > /root/policies/backend-team-developer.hcl
+namespace "backend" {
   service_prefix "" {
     policy = "read"
     intentions = "write"
+  }
+}
+namespace_prefix "" {
+  service_prefix "" {
+    policy = "read"
   }
 }
 EOF

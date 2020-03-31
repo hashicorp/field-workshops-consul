@@ -1,8 +1,8 @@
 #!/bin/bash
 
-api=$(aws eks describe-cluster --name api | jq -r .cluster.status)
-if [ $api != "ACTIVE" ]; then
-  fail-message "API EKS cluster did not provision"
+backend=$(aws eks describe-cluster --name backend | jq -r .cluster.status)
+if [ $backend != "ACTIVE" ]; then
+  fail-message "ackend EKS cluster did not provision"
   exit 1
 fi
 

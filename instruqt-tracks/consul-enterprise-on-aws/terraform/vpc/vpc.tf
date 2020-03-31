@@ -46,11 +46,11 @@ module "vpc-frontend" {
   vpc_tags            = { "kubernetes.io/cluster/frontend" : "shared" }
 }
 
-module "vpc-api" {
+module "vpc-backend" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> v2.0"
 
-  name = "terraform-vpc-api"
+  name = "terraform-vpc-backend"
 
   cidr = "10.3.0.0/16"
 

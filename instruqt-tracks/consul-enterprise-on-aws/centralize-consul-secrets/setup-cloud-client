@@ -47,6 +47,7 @@ gossip_key=$(/usr/local/bin/terraform output -state /root/terraform/consul/terra
 
 /usr/local/bin/vault auth enable userpass
 /usr/local/bin/vault write auth/userpass/users/operations password=Password1 policies=ops token_ttl=8h
+/usr/local/bin/vault write auth/userpass/users/backend password=Password1 policies=backend token_ttl=30m
 /usr/local/bin/vault secrets enable consul
 
 echo 'path "secret/data/consul" {
@@ -56,6 +57,11 @@ path "consul/*"
 {
   capabilities = ["create", "read", "update", "delete"]
 }' | /usr/local/bin/vault policy write ops -
+
+echo 'path "consul/creds/backend-developer"
+{
+  capabilities = ["read"]
+}' | /usr/local/bin/vault policy write backend -
 
 unset VAULT_TOKEN
 exit 0

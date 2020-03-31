@@ -22,13 +22,14 @@ challenges:
     You can think of workstation terminal as your laptop machine preloaded with cloud access credentials for your company. <br>
 
     Any any time you can use the AWS console to view your environment.
-    AWS CLI commands will be provided for you to interact with AWS's APIs. <br>
+    AWS CLI commands will be provided for you to interact with AWS's backends. <br>
 
 
     Inspect the Terraform code, and then provision the cloud environment.
 
     ```
-    terraform apply
+    terraform plan
+    terraform apply -auto-approve
     ```
 
     You'll notice you have four separate VPCs that map to the infra diagram shared earlier.
@@ -42,7 +43,7 @@ challenges:
     ```
     terraform-vpc-shared-svcs: 10.1.0.0/16
     terraform-vpc-frontend: 10.2.0.0/16
-    terraform-vpc-api: 10.3.0.0/16
+    terraform-vpc-backend: 10.3.0.0/16
     terraform-vpc-storage: 10.4.0.0/16
     ```
 
@@ -127,7 +128,8 @@ challenges:
     ```
     cat terraform.tfvars
     cat main.tf
-    terraform apply
+    terraform plan
+    terraform apply -auto-approve
     ```
 
     Now, validate the Consul servers deployed to AWS. <br>
@@ -191,7 +193,8 @@ challenges:
     ```
     cat terraform.tfvars
     cat main.tf
-    terraform apply
+    terraform plan
+    terraform apply -auto-approve
     ```
 
     Nice work! You just did an automated server update with Consul enterprise. <br>
@@ -340,7 +343,7 @@ challenges:
 
     ```
     consul namespace write frontend-namespace.hcl
-    consul namespace write api-namespace.hcl
+    consul namespace write backend-namespace.hcl
     ```
 
     You also need to create policies for the nodes that each team will run in their VPC.
@@ -348,7 +351,7 @@ challenges:
 
     ```
     consul acl policy create -name "frontend-agent-policy" -description "frontend agents" -rules @frontend-team-agent.hcl
-    consul acl policy create -name "api-agent-policy" -description "api agents" -rules @api-team-agent.hcl
+    consul acl policy create -name "backend-agent-policy" -description "backend agents" -rules @backend-team-agent.hcl
     ```
 
     Last, create policies for the development teams to manage their own intentions.
@@ -356,7 +359,7 @@ challenges:
 
     ```
     consul acl policy create -name "frontend-developer-policy" -description "frontend dev" -rules @frontend-team-developer.hcl
-    consul acl policy create -name "api-developer-policy" -description "api dev" -rules @api-team-developer.hcl
+    consul acl policy create -name "backend-developer-policy" -description "backend dev" -rules @backend-team-developer.hcl
 
     ```
 
@@ -411,8 +414,8 @@ challenges:
     vault write consul/roles/k8s-injector       policies=k8s-injector-policy       ttl=720h
     vault write consul/roles/frontend-agent     policies=frontend-agent-policy     ttl=720h
     vault write consul/roles/frontend-developer policies=frontend-developer-policy ttl=1h
-    vault write consul/roles/api-agent          policies=api-agent-policy          ttl=720h
-    vault write consul/roles/api-developer      policies=api-developer-policy      ttl=1h
+    vault write consul/roles/backend-agent          policies=backend-agent-policy          ttl=720h
+    vault write consul/roles/backend-developer      policies=backend-developer-policy      ttl=1h
     ```
 
     You will use these roles and policies to configure the Kubernetes clusters and onboard the development teams in a later assignment.
@@ -452,13 +455,14 @@ challenges:
     Run Terraform to setup the transit gateway routes. <br>
 
     ```
-    terraform apply
+    terraform plan
+    terraform apply -auto-approve
     ```
 
-    Now inspect one of the route tables. Let's look at the route table for the API team private subnets.
+    Now inspect one of the route tables. Let's look at the route table for the backend team private subnets.
 
     ```
-    route_table=$(/usr/local/bin/terraform output -state /root/terraform/vpc/terraform.tfstate -json api_private_route_table_ids | jq -r .[0])
+    route_table=$(/usr/local/bin/terraform output -state /root/terraform/vpc/terraform.tfstate -json backend_private_route_table_ids | jq -r .[0])
     aws ec2 describe-route-tables --route-table-ids ${route_table}
     ```
 
@@ -489,7 +493,7 @@ challenges:
   title: 'Infrastructure: Provision EKS clusters'
   teaser: A short description of the challenge.
   assignment: |-
-    The API and Frontend teams run their applications on AWS EKS.
+    The backend and Frontend teams run their applications on AWS EKS.
     The infrastructure team is responsible for provisioning EKS clusters. <br>
 
 
@@ -497,6 +501,7 @@ challenges:
     EKS can take over ~10 minutes to provision, so you will run this as a background task. <br>
 
     ```
+    terraform plan
     nohup terraform apply -auto-approve > terraform.out &
     tail -f terraform.out
     ```
@@ -506,7 +511,7 @@ challenges:
 
     ```
     aws eks describe-cluster --name frontend
-    aws eks describe-cluster --name api
+    aws eks describe-cluster --name backend
     ```
 
     Great work! In this next assignments we will connect these Kubernetes nodes to the Consul shared service.
@@ -543,7 +548,8 @@ challenges:
     ```
     cat terraform.tfvars
     cat main.tf
-    terraform apply
+    terraform plan
+    terraform apply -auto-approve
     ```
 
     Validate your network segments were applied to the Consul servers.
@@ -610,11 +616,11 @@ challenges:
     kubectl  get secrets -n consul
     ```
 
-    Repeat these steps on the API cluster.
+    Repeat these steps on the backend cluster.
 
     ```
-    kubectl config use-context eks_api
-    setup-k8s-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/api-agent) $(vault read -field token consul/creds/k8s-injector)
+    kubectl config use-context eks_backend
+    setup-k8s-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/backend-agent) $(vault read -field token consul/creds/k8s-injector)
     kubectl get secrets -n consul
     ```
 
@@ -650,11 +656,11 @@ challenges:
     kubectl get pods -n consul
     ```
 
-    Next deploy the API cluster.
+    Next deploy the backend cluster.
 
     ```
-    kubectl config use-context eks_api
-    helm install hashicorp -f api-values.yaml --namespace consul ./consul-helm --wait
+    kubectl config use-context eks_backend
+    helm install hashicorp -f backend-values.yaml --namespace consul ./consul-helm --wait
     kubectl get pods -n consul
     ```
 
@@ -665,7 +671,7 @@ challenges:
     consul members
     ```
 
-    Nice work! Now you need to create trust between K8s API and the Consul API.s
+    Nice work! Now you need to create trust between K8s backend and the Consul backend.s
   notes:
   - type: text
     contents: Replace this text with your own text
@@ -684,7 +690,7 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 300
-- slug: security-configure-k8s-consul-authentication
+- slug: configure-k8s-consul-authentication
   id: tnkxgigifkbu
   type: challenge
   title: 'Security: Configure K8s Consul Authentication'
@@ -719,7 +725,7 @@ challenges:
     Configure the clusters.
     ```
     setup-k8s-consul-auth frontend
-    setup-k8s-consul-auth api
+    setup-k8s-consul-auth backend
     ```
 
     You can use any GitHub flavoured markdown.
@@ -747,7 +753,7 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-- slug: developer-deploy-applications
+- slug: deploy-applications
   id: dslh2b4hvc4t
   type: challenge
   title: 'Developer: Deploy Applications'
@@ -762,11 +768,11 @@ challenges:
     kubectl apply -f frontend
     ```
 
-    Now deploy the API cluster.
+    Now deploy the backend cluster.
 
     ```
-    kubectl config use-context eks_api
-    kubectl apply -f api
+    kubectl config use-context eks_backend
+    kubectl apply -f backend
     ```
 
     All the pods are ready. In the next assignment we will update intentions so traffic will route.
@@ -783,4 +789,64 @@ challenges:
     hostname: cloud-client
   difficulty: basic
   timelimit: 300
-checksum: "2635165296758465269"
+- slug: update-intentions
+  id: apxx5zldywqm
+  type: challenge
+  title: 'Developer: Update Intentions'
+  teaser: A short description of the challenge.
+  assignment: |-
+    In this assignment you will create an intention set to allow traffic within your namespace,
+    and selectively allow traffic into your namespace from other namespaces.  <br>
+
+    Get a token for the backend development team. <br>
+
+    ```
+    vault login -method=userpass username=backend password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/backend-developer)
+    consul acl token read -self
+    ```
+
+    Create the intentions. <br>
+
+    ```
+    consul intention create --allow frontend/web backend/api
+    consul intention create --allow backend/api backend/cache
+    consul intention create --allow backend/api backend/payments
+    consul intention create --allow backend/payments backend/currency
+    ```
+
+    Last, test the application.
+    Validate the IP addresses from each CIDR in the response payload. <br>
+
+    ```
+    kubectl config use-context eks_frontend
+    endpoint=$(kubectl get services web -o json | jq -r .status.loadBalancer.ingress[0].hostname)
+    curl -s $endpoint
+    ```
+
+    Great job. You just connected multiple K8s clusters to  your Consul shared service.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  difficulty: basic
+  timelimit: 300
+checksum: "4519673999537663670"

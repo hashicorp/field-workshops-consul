@@ -1,5 +1,0 @@
-#!/bin/bash
-
-unset VAULT_TOKEN
-
-exit 0

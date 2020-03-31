@@ -39,33 +39,33 @@ module "frontend" {
 }
 
 
-data "aws_eks_cluster" "api" {
-  name = module.api.cluster_id
+data "aws_eks_cluster" "backend" {
+  name = module.backend.cluster_id
 }
 
-data "aws_eks_cluster_auth" "api" {
-  name = module.api.cluster_id
+data "aws_eks_cluster_auth" "backend" {
+  name = module.backend.cluster_id
 }
 
 provider "kubernetes" {
-  alias                  = "api"
-  host                   = data.aws_eks_cluster.api.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.api.certificate_authority.0.data)
-  token                  = data.aws_eks_cluster_auth.api.token
+  alias                  = "backend"
+  host                   = data.aws_eks_cluster.backend.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.backend.certificate_authority.0.data)
+  token                  = data.aws_eks_cluster_auth.backend.token
   load_config_file       = false
   version                = "~> 1.9"
 }
 
-module "api" {
+module "backend" {
   source = "terraform-aws-modules/eks/aws"
   providers = {
-    kubernetes = kubernetes.api
+    kubernetes = kubernetes.backend
   }
-  cluster_name                         = "api"
+  cluster_name                         = "backend"
   cluster_version                      = "1.15"
-  subnets                              = flatten([data.terraform_remote_state.vpc.outputs.api_private_subnets])
-  vpc_id                               = data.terraform_remote_state.vpc.outputs.api_vpc
-  worker_additional_security_group_ids = [aws_security_group.api-eks-consul.id]
+  subnets                              = flatten([data.terraform_remote_state.vpc.outputs.backend_private_subnets])
+  vpc_id                               = data.terraform_remote_state.vpc.outputs.backend_vpc
+  worker_additional_security_group_ids = [aws_security_group.backend-eks-consul.id]
 
   manage_aws_auth  = true
   write_kubeconfig = true
@@ -114,10 +114,10 @@ resource "aws_security_group" "frontend-eks-consul" {
 
 }
 
-resource "aws_security_group" "api-eks-consul" {
-  name        = "consul-api-eks-gossip"
+resource "aws_security_group" "backend-eks-consul" {
+  name        = "consul-backend-eks-gossip"
   description = "consul-eks-gossip"
-  vpc_id      = data.terraform_remote_state.vpc.outputs.api_vpc
+  vpc_id      = data.terraform_remote_state.vpc.outputs.backend_vpc
 
   ingress {
     from_port   = 20000

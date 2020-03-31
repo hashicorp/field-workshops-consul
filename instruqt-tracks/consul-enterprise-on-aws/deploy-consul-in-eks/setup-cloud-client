@@ -41,7 +41,7 @@ connectInject:
     consulDestinationNamespace: "frontend"
 EOF
 
-cat << EOF > /root/helm/api-values.yaml
+cat << EOF > /root/helm/backend-values.yaml
 global:
   tls:
     enabled: false
@@ -61,7 +61,7 @@ client:
   extraConfig: |
     {
       "log_level": "DEBUG",
-      "segment": "api",
+      "segment": "backend",
       "ports": {
         "serf_lan": 8304
         }
@@ -73,7 +73,7 @@ connectInject:
   default: false
   k8sAllowNamespaces: ["default"]
   consulNamespaces:
-    consulDestinationNamespace: "api"
+    consulDestinationNamespace: "backend"
 EOF
 
 git clone https://github.com/hashicorp/consul-helm.git

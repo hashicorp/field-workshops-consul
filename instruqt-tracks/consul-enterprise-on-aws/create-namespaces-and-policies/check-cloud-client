@@ -20,10 +20,10 @@ then
   exit 1
 fi
 
-/usr/local/bin/consul namespace read api
+/usr/local/bin/consul namespace read backend
 if [ $? -ne 0 ]
 then
-  fail-message "Error checking api namespace"
+  fail-message "Error checking backend namespace"
   exit 1
 fi
 
@@ -35,11 +35,11 @@ then
   exit 1
 fi
 
-#api
-/usr/local/bin/consul acl policy read -name api-agent-policy
+#backend
+/usr/local/bin/consul acl policy read -name backend-agent-policy
 if [ $? -ne 0 ]
 then
-  fail-message "Error checking api agent policy"
+  fail-message "Error checking backend agent policy"
   exit 1
 fi
 

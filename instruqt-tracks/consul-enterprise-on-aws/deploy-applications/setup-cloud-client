@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set-workdir /root/apps
+cd /root/apps
+
+exit 0
