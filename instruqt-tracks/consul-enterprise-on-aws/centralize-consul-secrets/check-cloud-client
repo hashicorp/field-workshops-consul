@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#get a dynamic cred
+/usr/local/bin/vault read consul/creds/ops
+
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get dynamic operator credential."
+  exit 1
+fi
+
+exit 0
