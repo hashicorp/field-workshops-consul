@@ -69,6 +69,12 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/01-provision-vpcs.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
 - slug: build-consul-image
@@ -112,6 +118,12 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/02-build-consul-image.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 9000
 - slug: provision-consul
@@ -165,6 +177,12 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/03-provision-consul.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
 - slug: bootstrap-consul
@@ -231,6 +249,12 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/04-bootstrap-consul.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
 - slug: centralize-consul-secrets
@@ -319,6 +343,12 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/05-centralize-consul-secrets.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
 - slug: create-namespaces-and-policies
@@ -396,6 +426,12 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/06-create-namespaces-and-policies.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
 - slug: create-consul-roles
@@ -447,6 +483,12 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/07-create-consul-roles.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
 - slug: create-vpc-peering
@@ -501,6 +543,12 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/08-create-vpc-peering.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
 - slug: provision-eks-clusters
@@ -557,6 +605,12 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/09-provision-eks-clusters.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
 - slug: configure-eks-cluster-segments
@@ -611,6 +665,12 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/10-configure-eks-cluster-segments.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
 - slug: configure-eks-cluster-secrets
@@ -683,6 +743,12 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/11-configure-eks-cluster-secrets.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
 - slug: deploy-consul-in-eks
@@ -747,6 +813,12 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/12-deploy-consul-in-eks.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
 - slug: configure-k8s-consul-authentication
@@ -810,6 +882,12 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/13-configure-k8s-consul-authentication.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
 - slug: deploy-applications
@@ -861,6 +939,12 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/14-deploy-applications.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
 - slug: update-intentions
@@ -923,6 +1007,12 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/15-update-intentions.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
 checksum: "6995797526076691038"
