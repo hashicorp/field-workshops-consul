@@ -57,10 +57,6 @@ challenges:
 
       Please be patient as we provision your cloud environment in AWS.
   tabs:
-  - title: Terraform
-    type: code
-    hostname: cloud-client
-    path: /root/terraform/vpc
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -75,6 +71,10 @@ challenges:
   - title: Target lab architecture
     type: external
     url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/vpc
   difficulty: basic
   timelimit: 900
 - slug: build-consul-image
@@ -521,6 +521,12 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/08-create-vpc-peering.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -543,12 +549,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
-  - title: Current lab setup
-    type: external
-    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/08-create-vpc-peering.png
-  - title: Target lab architecture
-    type: external
-    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
 - slug: provision-eks-clusters
@@ -583,6 +583,17 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/09-provision-eks-clusters.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -600,17 +611,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
-  - title: Cloud Consoles
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 80
-  - title: Current lab setup
-    type: external
-    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/09-provision-eks-clusters.png
-  - title: Target lab architecture
-    type: external
-    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
 - slug: configure-eks-cluster-segments
@@ -917,6 +917,12 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/14-deploy-applications.png
   - title: Apps
     type: code
     hostname: cloud-client
@@ -939,12 +945,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
-  - title: Current lab setup
-    type: external
-    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/14-deploy-applications.png
-  - title: Target lab architecture
-    type: external
-    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
 - slug: update-intentions
@@ -980,7 +980,17 @@ challenges:
     ```
     kubectl config use-context eks_frontend
     endpoint=$(kubectl get services web -o json | jq -r .status.loadBalancer.ingress[0].hostname)
-    nslookup $endpoint
+    ```
+
+    Wait for the LB to resolve.
+
+    ```
+    watch nslookup $endpoint
+    ```
+
+    Last,try the API.
+
+    ```
     curl -s $endpoint
     ```
 
@@ -989,6 +999,11 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -1002,11 +1017,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
-  - title: Cloud Consoles
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 80
   - title: Current lab setup
     type: external
     url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/15-update-intentions.png
@@ -1015,4 +1025,4 @@ challenges:
     url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
   timelimit: 900
-checksum: "6995797526076691038"
+checksum: "493897389139254995"

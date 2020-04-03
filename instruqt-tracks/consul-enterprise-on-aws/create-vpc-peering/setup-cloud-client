@@ -3,6 +3,6 @@
 set-workdir /root/terraform/tgw
 
 cd /root/terraform/tgw
-/usr/local/bin/terraform init
+terraform init
 
 exit 0

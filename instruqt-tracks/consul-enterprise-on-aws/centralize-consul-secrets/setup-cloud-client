@@ -3,13 +3,13 @@
 set-workdir /root/terraform/vault
 
 cd /root/terraform/vault
-/usr/local/bin/terraform init
-/usr/local/bin/terraform apply -auto-approve
+terraform init
+terraform apply -auto-approve
 
 sleep 60
 
-vault_lb=$(/usr/local/bin/terraform output -state /root/terraform/vault/terraform.tfstate lb)
-echo "export VAULT_ADDR=http://${vault_lb}" >> /etc/bash.bashrc
+vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate lb)
+echo "export VAULT_ADDR=http://${vault_lb}" >> ~/.bashrc
 cat << EOF > /etc/nginx/conf.d/vault.conf
 server {
   listen 8200;
@@ -21,8 +21,7 @@ server {
   access_log /var/log/nginx/vault.log;
 }
 EOF
-consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate lb)
-echo "export CONSUL_HTTP_ADDR=http://${consul_lb}" >> /etc/bash.bashrc
+consul_lb=$(terraform output -state /root/terraform/consul/terraform.tfstate lb)
 cat << EOF > /etc/nginx/conf.d/consul.conf
 server {
   listen 8500;
@@ -38,17 +37,17 @@ EOF
 
 #inital vault
 export VAULT_ADDR=http://${vault_lb}
-master_token=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate master_token)
-agent_server_token=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate agent_server_token)
-gossip_key=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate gossip_key)
+master_token=$(terraform output -state /root/terraform/consul/terraform.tfstate master_token)
+agent_server_token=$(terraform output -state /root/terraform/consul/terraform.tfstate agent_server_token)
+gossip_key=$(terraform output -state /root/terraform/consul/terraform.tfstate gossip_key)
 
-/usr/local/bin/vault login root
-/usr/local/bin/vault kv put secret/consul master_token=${master_token} agent_server_token=${agent_server_token} gossip_key=${gossip_key}
+vault login root
+vault kv put secret/consul master_token=${master_token} agent_server_token=${agent_server_token} gossip_key=${gossip_key}
 
-/usr/local/bin/vault auth enable userpass
-/usr/local/bin/vault write auth/userpass/users/operations password=Password1 policies=ops token_ttl=8h
-/usr/local/bin/vault write auth/userpass/users/backend password=Password1 policies=backend token_ttl=30m
-/usr/local/bin/vault secrets enable consul
+vault auth enable userpass
+vault write auth/userpass/users/operations password=Password1 policies=ops token_ttl=8h
+vault write auth/userpass/users/backend password=Password1 policies=backend token_ttl=30m
+vault secrets enable consul
 
 echo 'path "secret/*" {
   capabilities = ["list"]
@@ -59,12 +58,12 @@ path "secret/data/consul" {
 path "consul/*"
 {
   capabilities = ["create", "read", "update", "delete"]
-}' | /usr/local/bin/vault policy write ops -
+}' | vault policy write ops -
 
 echo 'path "consul/creds/backend-developer"
 {
   capabilities = ["read"]
-}' | /usr/local/bin/vault policy write backend -
+}' | vault policy write backend -
 
 unset VAULT_TOKEN
 exit 0

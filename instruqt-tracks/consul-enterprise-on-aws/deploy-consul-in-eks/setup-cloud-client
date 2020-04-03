@@ -4,7 +4,7 @@ mkdir /root/helm
 set-workdir /root/helm
 cd /root/helm
 
-instruqt_env=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate env)
+instruqt_env=$(terraform output -state /root/terraform/consul/terraform.tfstate env)
 
 cat << EOF > /root/helm/frontend-values.yaml
 global:

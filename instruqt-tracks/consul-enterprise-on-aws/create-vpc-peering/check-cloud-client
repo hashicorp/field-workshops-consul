@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#check we have five routes
+route_table=$(terraform output -state /root/terraform/vpc/terraform.tfstate -json backend_private_route_table_ids | jq -r .[0])
+routes=$(aws ec2 describe-route-tables --route-table-ids ${route_table} | jq '.RouteTables[0].Routes | length')
+
+if [ $routes != "5" ]; then
+  fail-message "Route table does not have the correct number of routes."
+  exit 1
+fi
+
+exit 0

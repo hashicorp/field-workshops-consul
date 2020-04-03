@@ -1,11 +1,11 @@
 #!/bin/bash
 
-#get a dynamic cred
-/usr/local/bin/vault read consul/creds/ops
+vault login -method=userpass username=operations password=Password1
+vault read consul/creds/ops
 
 if [ $? -ne 0 ]
 then
-  fail-message "Could not get dynamic operator credential."
+  fail-message "Could not get ops cred."
   exit 1
 fi
 

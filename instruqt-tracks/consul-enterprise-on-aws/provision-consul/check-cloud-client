@@ -1,6 +1,6 @@
 #!/bin/bash
 
-env=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate env)
+env=$(terraform output -state /root/terraform/consul/terraform.tfstate env)
 
 if [ -z "$env" ]; then
   fail-message "Could not get Consul env from state."

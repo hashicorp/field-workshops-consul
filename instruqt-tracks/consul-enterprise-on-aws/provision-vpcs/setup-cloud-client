@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#path
+echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
+
 set-workdir /root/terraform/vpc
 
 sleep 10

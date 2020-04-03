@@ -1,11 +1,10 @@
 #!/bin/bash
 
-export CONSUL_HTTP_TOKEN=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate master_token)
-consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate lb)
-export CONSUL_HTTP_ADDR=http://${consul_lb}
+vault login -method=userpass username=operations password=Password1
+export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
 
 #namespace_sd
-/usr/local/bin/consul acl policy read -name cross-namespace-policy
+consul acl policy read -name cross-namespace-policy
 if [ $? -ne 0 ]
 then
   fail-message "Error checking cross namespace policy"
@@ -13,14 +12,14 @@ then
 fi
 
 #namespaces
-/usr/local/bin/consul namespace read frontend
+consul namespace read frontend
 if [ $? -ne 0 ]
 then
   fail-message "Error checking frontend namespace"
   exit 1
 fi
 
-/usr/local/bin/consul namespace read backend
+consul namespace read backend
 if [ $? -ne 0 ]
 then
   fail-message "Error checking backend namespace"
@@ -28,7 +27,7 @@ then
 fi
 
 #frontend
-/usr/local/bin/consul acl policy read -name frontend-agent-policy
+consul acl policy read -name frontend-agent-policy
 if [ $? -ne 0 ]
 then
   fail-message "Error checking frontend agent policy"
@@ -36,7 +35,7 @@ then
 fi
 
 #backend
-/usr/local/bin/consul acl policy read -name backend-agent-policy
+consul acl policy read -name backend-agent-policy
 if [ $? -ne 0 ]
 then
   fail-message "Error checking backend agent policy"

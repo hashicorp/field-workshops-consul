@@ -1,0 +1,49 @@
+#!/bin/bash
+
+kubectl config use-context eks_frontend
+
+kubectl get secret -n consul hashicorp-consul-client-acl-token
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get client-acl-token secret for frontend cluster."
+  exit 1
+fi
+
+kubectl get secret -n consul hashicorp-consul-connect-inject-acl-token
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get inject-acl-token secret for frontend cluster."
+  exit 1
+fi
+
+kubectl get secret -n consul hashicorp-consul-gossip-key
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get gossip-key secret for frontend cluster."
+  exit 1
+fi
+
+kubectl config use-context eks_backend
+
+kubectl get secret -n consul hashicorp-consul-client-acl-token
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get client-acl-token secret for backend cluster."
+  exit 1
+fi
+
+kubectl get secret -n consul hashicorp-consul-connect-inject-acl-token
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get inject-acl-token secret for backend cluster."
+  exit 1
+fi
+
+kubectl get secret -n consul hashicorp-consul-gossip-key
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get gossip-key secret for backend cluster."
+  exit 1
+fi
+
+exit 0

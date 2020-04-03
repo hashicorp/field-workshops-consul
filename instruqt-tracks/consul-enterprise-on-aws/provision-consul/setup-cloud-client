@@ -9,7 +9,7 @@ bootstrap = true
 EOF
 
 cd /root/terraform/consul
-/usr/local/bin/terraform init
+terraform init
 
 
 exit 0

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+vault login -method=userpass username=operations password=Password1
+
+vault write consul/roles/k8s-injector       policies=k8s-injector-policy       ttl=720h
+vault write consul/roles/frontend-agent     policies=frontend-agent-policy     ttl=720h
+vault write consul/roles/frontend-developer policies=frontend-developer-policy ttl=1h
+vault write consul/roles/backend-agent      policies=backend-agent-policy      ttl=720h
+vault write consul/roles/backend-developer  policies=backend-developer-policy  ttl=1h
+
+exit 0

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #add Consul LB to shell
-consul_lb=$(/usr/local/bin/terraform output -state /root/terraform/consul/terraform.tfstate lb)
-echo "export CONSUL_HTTP_ADDR=http://${consul_lb}" >> /etc/bash.bashrc
+consul_lb=$(terraform output -state /root/terraform/consul/terraform.tfstate lb)
+echo "export CONSUL_HTTP_ADDR=http://${consul_lb}" >> ~/.bashrc
 
 #updates vars
 cat << EOF > /root/terraform/consul/terraform.tfvars
