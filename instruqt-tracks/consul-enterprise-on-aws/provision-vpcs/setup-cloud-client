@@ -48,9 +48,9 @@ cd /root
 #get assets
 echo "cloning assets..."
 git clone -b add-consul-instruqt-ent-aws https://github.com/hashicorp/field-workshops-consul.git
-cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-aws/terraform .
-cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-aws/packer .
-cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-aws/apps .
+cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-aws/assets/terraform .
+cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-aws/assets/packer .
+cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-aws/assets/apps .
 rm -rf field-workshops-consul
 
 #provision
