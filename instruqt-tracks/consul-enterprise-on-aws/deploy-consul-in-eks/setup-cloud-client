@@ -10,7 +10,7 @@ cat << EOF > /root/helm/frontend-values.yaml
 global:
   tls:
     enabled: false
-  image: 'hashicorp/consul-enterprise:1.7.1-ent'
+  image: 'hashicorp/consul-enterprise:1.7.2-ent'
   domain: consul
   datacenter: us-east-1
   bootstrapACLs: true
@@ -25,7 +25,6 @@ client:
   join: ["provider=aws tag_key=Environment-Name tag_value=${instruqt_env}-consul"]
   extraConfig: |
     {
-      "log_level": "DEBUG",
       "segment": "frontend",
       "ports": {
         "serf_lan": 8303
@@ -45,7 +44,7 @@ cat << EOF > /root/helm/backend-values.yaml
 global:
   tls:
     enabled: false
-  image: 'hashicorp/consul-enterprise:1.7.1-ent'
+  image: 'hashicorp/consul-enterprise:1.7.2-ent'
   domain: consul
   datacenter: us-east-1
   bootstrapACLs: true
@@ -60,7 +59,6 @@ client:
   join: ["provider=aws tag_key=Environment-Name tag_value=${instruqt_env}-consul"]
   extraConfig: |
     {
-      "log_level": "DEBUG",
       "segment": "backend",
       "ports": {
         "serf_lan": 8304
