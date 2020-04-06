@@ -8,8 +8,8 @@ icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
 tags: []
 owner: hashicorp
 developers:
-- lance@hashicorp.com
 - cpu@hashicorp.com
+- lance@hashicorp.com
 private: true
 published: true
 challenges:
@@ -1059,4 +1059,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 300
-checksum: "14540076787219512594"
+checksum: "16777192166553469223"
