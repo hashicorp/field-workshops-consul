@@ -9,6 +9,7 @@ tags: []
 owner: hashicorp
 developers:
 - lance@hashicorp.com
+- cpu@hashicorp.com
 private: true
 published: true
 challenges:
