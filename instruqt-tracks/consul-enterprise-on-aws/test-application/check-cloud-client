@@ -1,0 +1,12 @@
+#!/bin/bash
+
+kubectl config use-context eks_frontend
+endpoint=$(kubectl get services web -o json | jq -r .status.loadBalancer.ingress[0].hostname)
+api=$(curl -s -o /dev/null -w "%{http_code}" "${endpoint}")
+
+if [ "${api}" != "200" ]; then
+  fail-message "Your service did not return a 200."
+  exit 1
+fi
+
+exit 0

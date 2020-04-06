@@ -898,31 +898,31 @@ challenges:
   assignment: |-
     Now you can start deploying applications to the k8s clusters.
 
-    Start with the Frontend cluster.
+    Start with the Frontend cluster. <br>
 
     ```
     kubectl config use-context eks_frontend
     kubectl apply -f frontend
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=web -o name) --timeout=30s
     ```
 
-    Now deploy the backend cluster.
+    Now deploy the backend cluster. <br>
 
     ```
     kubectl config use-context eks_backend
     kubectl apply -f backend
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=api -o name) --timeout=30s
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=cache -o name) --timeout=30s
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=currency -o name) --timeout=30s
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=payments -o name) --timeout=30s
     ```
 
-    All the pods are ready. In the next assignment we will update intentions so traffic will route.
+    All the pods are ready.
+    In the next assignment we will update intentions so traffic will route.
   notes:
   - type: text
     contents: Replace this text with your own text
   tabs:
-  - title: Target lab architecture
-    type: external
-    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
-  - title: Current lab setup
-    type: external
-    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/14-deploy-applications.png
   - title: Apps
     type: code
     hostname: cloud-client
@@ -945,6 +945,12 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/14-deploy-applications.png
   difficulty: basic
   timelimit: 900
 - slug: update-intentions
@@ -973,6 +979,44 @@ challenges:
     consul intention create --allow backend/payments backend/currency
     ```
 
+    Now that intentions are configured the application will receive traffic.
+    You will test the application in the next assignment.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Current lab setup
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/15-update-intentions.png
+  - title: Target lab architecture
+    type: external
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
+  difficulty: basic
+  timelimit: 900
+- slug: test-application
+  id: jllgtf6nz3hz
+  type: challenge
+  title: 'Developer: Test Application'
+  teaser: A short description of the challenge.
+  assignment: |-
     Last, test the application.
     Validate the IP addresses from each CIDR in the response payload.
     AWS LBs can take a few moments to create routable DNS, so you will validate that as well. <br>
@@ -980,17 +1024,6 @@ challenges:
     ```
     kubectl config use-context eks_frontend
     endpoint=$(kubectl get services web -o json | jq -r .status.loadBalancer.ingress[0].hostname)
-    ```
-
-    Wait for the LB to resolve.
-
-    ```
-    watch nslookup $endpoint
-    ```
-
-    Last,try the API.
-
-    ```
     curl -s $endpoint
     ```
 
@@ -1024,5 +1057,5 @@ challenges:
     type: external
     url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.png
   difficulty: basic
-  timelimit: 900
-checksum: "11299528585992347149"
+  timelimit: 300
+checksum: "14540076787219512594"

@@ -4,9 +4,6 @@ kubectl config use-context eks_frontend
 kubectl apply -f frontend
 kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=web -o name) --timeout=30s
 
-#AWS DNS LB
-sleep 60
-
 kubectl config use-context eks_backend
 kubectl apply -f backend
 kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=api -o name) --timeout=30s
