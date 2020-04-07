@@ -4,7 +4,7 @@ type: track
 title: Consul Enterprise on AWS
 teaser: A short description of the track.
 description: THIS TRACK IS UNDER ACTIVE DEVELOPMENT!!! Things may periodically break!!
-icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags: []
 owner: hashicorp
 developers:
@@ -1059,4 +1059,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 300
-checksum: "2726769093488485329"
+checksum: "933256476742287042"
