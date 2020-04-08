@@ -18,7 +18,7 @@ Governance and Policy - Namespaces
 
 ---
 name: Consul-Enterprise-Governance-Policy-Lab
-# 👩‍💻 Lab Exercise: Consul Governance and Policy - Self-Service Workflows
+# 👩‍💻 Lab Exercise: Self-Service Workflows
 <br><br>
 In this lab you'll perform the following tasks:
   * Create Consul Namespaces and Policies

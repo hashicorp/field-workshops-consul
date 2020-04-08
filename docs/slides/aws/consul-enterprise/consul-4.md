@@ -17,7 +17,7 @@ Global Visibility, Routing and Scale - Network Segments
 
 ---
 name: Consul-Enterprise-Global-Visibility-Routing-Scale-Lab
-# 👩‍💻 Lab Exercise: Consul Enterprise - Global Visibility, Routing and Scale - Service Continuity
+# 👩‍💻 Lab Exercise: Advanced Networking Topologies
 <br><br>
 In this lab you'll perform the following tasks:
   * Create Transitive Peering using AWS Transit Gateway
