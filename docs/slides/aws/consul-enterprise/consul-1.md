@@ -1,9 +1,9 @@
 name: Chapter-1
 class: title
 # Chapter 1
-## Consul OSS to Consul Enterprise
+## Enterprise Overview
 
 ---
-name: HashiCorp-Consul-OSS-Enterprise-Overview
+name: Enterprise-Overview
 Consul OSS to Consul Enterprise
 -------------------------
