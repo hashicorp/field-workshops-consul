@@ -352,146 +352,6 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 900
-- slug: create-namespaces-and-policies
-  id: g7hylnrby0x9
-  type: challenge
-  title: 'Operations: Create Namespaces and Policies'
-  teaser: A short description of the challenge.
-  assignment: |-
-    Consul enterprise support [namespaces](https://www.consul.io/docs/enterprise/namespaces/index.html) to enable network and operations teams to provide self-service for development teams. <br>
-
-    Fetch a dynamic operater token from vault.
-    ```
-    vault login -method=userpass username=operations password=Password1
-    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
-    consul acl token read -self
-    ```
-
-    Start by creating the shared service discovery policy that will underpin the development team tenants.
-    This will allow the mesh to discover services across teams, but teams will control the services that can connect to services they run.
-    We will also create a policy for the K8s injector. <br>
-
-    ```
-    consul acl policy create -name "cross-namespace-policy" -description "cross-namespace service discovery" -rules @cross-namespace.hcl
-    consul acl policy create -name "k8s-injector-policy" -description "k8s injection" -rules @injector.hcl
-    ```
-
-    Now you can create the namespaces for each development team, that share the namespace discovery policy. <br>
-
-    ```
-    consul namespace write frontend-namespace.hcl
-    consul namespace write backend-namespace.hcl
-    ```
-
-    You also need to create policies for the nodes that each team will run in their VPC.
-    We will restrict this by CIDR block. <br>
-
-    ```
-    consul acl policy create -name "frontend-agent-policy" -description "frontend agents" -rules @frontend-team-agent.hcl
-    consul acl policy create -name "backend-agent-policy" -description "backend agents" -rules @backend-team-agent.hcl
-    ```
-
-    Last, create policies for the development teams to manage their own intentions.
-    Intentions allow connectivy between services. <br>
-
-    ```
-    consul acl policy create -name "frontend-developer-policy" -description "frontend dev" -rules @frontend-team-developer.hcl
-    consul acl policy create -name "backend-developer-policy" -description "backend dev" -rules @backend-team-developer.hcl
-
-    ```
-
-    Nice work! In the next assigment we will link these policies to Vault roles.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
-  tabs:
-  - title: Policies
-    type: code
-    hostname: cloud-client
-    path: /root/policies
-  - title: Cloud CLI
-    type: terminal
-    hostname: cloud-client
-  - title: Consul
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8500
-  - title: Vault
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8200
-  - title: Cloud Consoles
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 80
-  - title: Current lab setup
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/06-create-namespaces-and-policies.html
-  - title: Target lab architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
-  difficulty: basic
-  timelimit: 900
-- slug: create-consul-roles
-  id: r0oxqx8ait5u
-  type: challenge
-  title: 'Security: Create Consul Roles'
-  teaser: A short description of the challenge.
-  assignment: |-
-    Link the Consul policies to Vault roles so the various users in the organization can request Consul ACL tokens.
-    Get an operator token for Consul. <br>
-
-    ```
-    vault login -method=userpass username=operations password=Password1
-    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
-    consul acl token read -self
-    ```
-
-    We will create scoped TTLs for each role.
-    The agent tokens will be rotated periodically, and will have a longer TTL.
-
-    ```
-    vault write consul/roles/k8s-injector       policies=k8s-injector-policy       ttl=720h
-    vault write consul/roles/frontend-agent     policies=frontend-agent-policy     ttl=720h
-    vault write consul/roles/frontend-developer policies=frontend-developer-policy ttl=1h
-    vault write consul/roles/backend-agent          policies=backend-agent-policy          ttl=720h
-    vault write consul/roles/backend-developer      policies=backend-developer-policy      ttl=1h
-    ```
-
-    You will use these roles and policies to configure the Kubernetes clusters and onboard the development teams in a later assignment.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
-  tabs:
-  - title: Cloud CLI
-    type: terminal
-    hostname: cloud-client
-  - title: Consul
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8500
-  - title: Vault
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8200
-  - title: Cloud Consoles
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 80
-  - title: Current lab setup
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/07-create-consul-roles.html
-  - title: Target lab architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
-  difficulty: basic
-  timelimit: 900
 - slug: create-vpc-peering
   id: suzx6ufcymhe
   type: challenge
@@ -644,6 +504,12 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/10-configure-eks-cluster-segments.html
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -666,9 +532,143 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  difficulty: basic
+  timelimit: 900
+- slug: create-namespaces-and-policies
+  id: g7hylnrby0x9
+  type: challenge
+  title: 'Operations: Create Namespaces and Policies'
+  teaser: A short description of the challenge.
+  assignment: |-
+    Consul enterprise support [namespaces](https://www.consul.io/docs/enterprise/namespaces/index.html) to enable network and operations teams to provide self-service for development teams. <br>
+
+    Fetch a dynamic operater token from vault.
+    ```
+    vault login -method=userpass username=operations password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    Start by creating the shared service discovery policy that will underpin the development team tenants.
+    This will allow the mesh to discover services across teams, but teams will control the services that can connect to services they run.
+    We will also create a policy for the K8s injector. <br>
+
+    ```
+    consul acl policy create -name "cross-namespace-policy" -description "cross-namespace service discovery" -rules @cross-namespace.hcl
+    consul acl policy create -name "k8s-injector-policy" -description "k8s injection" -rules @injector.hcl
+    ```
+
+    Now you can create the namespaces for each development team, that share the namespace discovery policy. <br>
+
+    ```
+    consul namespace write frontend-namespace.hcl
+    consul namespace write backend-namespace.hcl
+    ```
+
+    You also need to create policies for the nodes that each team will run in their VPC.
+    We will restrict this by CIDR block. <br>
+
+    ```
+    consul acl policy create -name "frontend-agent-policy" -description "frontend agents" -rules @frontend-team-agent.hcl
+    consul acl policy create -name "backend-agent-policy" -description "backend agents" -rules @backend-team-agent.hcl
+    ```
+
+    Last, create policies for the development teams to manage their own intentions.
+    Intentions allow connectivy between services. <br>
+
+    ```
+    consul acl policy create -name "frontend-developer-policy" -description "frontend dev" -rules @frontend-team-developer.hcl
+    consul acl policy create -name "backend-developer-policy" -description "backend dev" -rules @backend-team-developer.hcl
+
+    ```
+
+    Nice work! In the next assigment we will link these policies to Vault roles.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Policies
+    type: code
+    hostname: cloud-client
+    path: /root/policies
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/10-configure-eks-cluster-segments.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/06-create-namespaces-and-policies.html
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+  difficulty: basic
+  timelimit: 900
+- slug: create-consul-roles
+  id: r0oxqx8ait5u
+  type: challenge
+  title: 'Security: Create Consul Roles'
+  teaser: A short description of the challenge.
+  assignment: |-
+    Link the Consul policies to Vault roles so the various users in the organization can request Consul ACL tokens.
+    Get an operator token for Consul. <br>
+
+    ```
+    vault login -method=userpass username=operations password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    We will create scoped TTLs for each role.
+    The agent tokens will be rotated periodically, and will have a longer TTL.
+
+    ```
+    vault write consul/roles/k8s-injector       policies=k8s-injector-policy       ttl=720h
+    vault write consul/roles/frontend-agent     policies=frontend-agent-policy     ttl=720h
+    vault write consul/roles/frontend-developer policies=frontend-developer-policy ttl=1h
+    vault write consul/roles/backend-agent          policies=backend-agent-policy          ttl=720h
+    vault write consul/roles/backend-developer      policies=backend-developer-policy      ttl=1h
+    ```
+
+    You will use these roles and policies to configure the Kubernetes clusters and onboard the development teams in a later assignment.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/07-create-consul-roles.html
   - title: Target lab architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
@@ -924,6 +924,9 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/14-deploy-applications.html
   - title: Apps
     type: code
     hostname: cloud-client
@@ -946,9 +949,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
-  - title: Current lab setup
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/14-deploy-applications.html
   - title: Target lab architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
@@ -1059,4 +1059,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 300
-checksum: "933256476742287042"
+checksum: "3823799623685876417"

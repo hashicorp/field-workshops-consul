@@ -1,6 +1,6 @@
 #!/bin/bash
 
 #wait for AWS LB DNS
-sleep 60
+sleep 120
 
 exit 0
