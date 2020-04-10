@@ -8,7 +8,6 @@ name: Consul-On-AWS
 class: img-center compact
 Consul as a shared Service on AWS
 -------------------------
-**What will be covered in this section?**
 
 .contents[
 * Benefits of running Consul as a shared enterprise wide service
@@ -45,7 +44,7 @@ Consul Shared Central Service
 ---
 name: Personas1
 class: img-right compact
-Personas 
+Personas
 -------------------------
 .center[![:scale 70%](images/people1.png)]
 
@@ -187,7 +186,7 @@ name: Consul-Shared-Central-Service2
 class: img-right compact
 Consul Shared Central Service
 -------------------------
-.center[![:scale 53%](images/consul-central-service.png)]
+.center[![:scale 100%](images/consul-central-service.png)]
 
 .contents[
 * Collaboration between different teams
