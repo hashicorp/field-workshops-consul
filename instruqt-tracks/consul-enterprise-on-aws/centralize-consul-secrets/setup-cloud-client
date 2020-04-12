@@ -40,9 +40,10 @@ export VAULT_ADDR=http://${vault_lb}
 master_token=$(terraform output -state /root/terraform/consul/terraform.tfstate master_token)
 agent_server_token=$(terraform output -state /root/terraform/consul/terraform.tfstate agent_server_token)
 gossip_key=$(terraform output -state /root/terraform/consul/terraform.tfstate gossip_key)
+snapshot_token=$(terraform output -state /root/terraform/consul/terraform.tfstate snapshot_token)
 
 vault login root
-vault kv put secret/consul master_token=${master_token} agent_server_token=${agent_server_token} gossip_key=${gossip_key}
+vault kv put secret/consul master_token=${master_token} agent_server_token=${agent_server_token} snapshot_token=${snapshot_token} gossip_key=${gossip_key}
 
 vault auth enable userpass
 vault write auth/userpass/users/operations password=Password1 policies=ops token_ttl=8h

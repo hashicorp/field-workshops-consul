@@ -1,9 +1,10 @@
 slug: consul-enterprise-on-aws
 id: stkflr7xh9ud
 type: track
-title: Consul Enterprise on AWS
-teaser: A short description of the track.
-description: THIS TRACK IS UNDER ACTIVE DEVELOPMENT!!! Things may periodically break!!
+title: Consul on AWS
+teaser: Consul as a Shared Service on AWS with Consul Enterprise
+description: In this track you will set up a Consul shared service on AWS, and connect
+  applications across multiple platforms.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags: []
 owner: hashicorp
@@ -17,23 +18,23 @@ challenges:
   id: ujbryneafql8
   type: challenge
   title: 'Infrastructure: Provision VPCs'
-  teaser: A short description of the challenge.
+  teaser: Create VPCs for Consul shared service and Development teams
   assignment: |-
-    The cloud infrastructure team is responsible for providing VPCs to shared service and development teams.
-    You can think of workstation terminal as your laptop machine preloaded with cloud access credentials for your company. <br>
+    You can think of the Cloud CLI terminal as your laptop machine preloaded with cloud access credentials for your company. <br>
 
     Any any time you can use the AWS console to view your environment.
-    AWS CLI commands will be provided for you to interact with AWS's backends. <br>
+    AWS CLI commands will be provided for you to interact with AWS throughout this lab. <br>
 
+    Your first task is setting up VPCs for each team.
 
-    Inspect the Terraform code, and then provision the cloud environment.
+    Inspect the Terraform code, and then provision the VPCs.
 
     ```
     terraform plan
     terraform apply -auto-approve
     ```
 
-    You'll notice you have four separate VPCs that map to the infra diagram shared earlier.
+    You'll notice you have four separate VPCs.
 
     ```
     aws ec2 describe-vpcs
@@ -48,15 +49,13 @@ challenges:
     terraform-vpc-storage: 10.4.0.0/16
     ```
 
-    Our shared service VPC will run the core Consul infrastructure.
-    You will provision the Consul servers in the next assignment.
+    The shared service VPC will run the core Consul infrastructure.
+    You will provision the Consul servers into this VPC in the next few assignments.
   notes:
   - type: text
     contents: |-
       In this assignment you will familiarize yourself with the AWS cloud
-      environment. <br>
-
-      Please be patient as we provision your cloud environment in AWS.
+      environment, and provision VPCs for your services and applications.
   tabs:
   - title: Cloud CLI
     type: terminal
@@ -68,44 +67,46 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/01-provision-vpcs.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/01-provision-vpcs.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   - title: Terraform
     type: code
     hostname: cloud-client
     path: /root/terraform/vpc
   difficulty: basic
-  timelimit: 900
+  timelimit: 1200
 - slug: build-consul-image
   id: x3xlgqyvidby
   type: challenge
   title: 'Operations: Build Consul Image'
-  teaser: A short description of the challenge.
+  teaser: Create a Consul immutable image
   assignment: |-
-    In this assignment you will build an immutable image of [Consul with HashiCorp Packer](https://packer.io/) <br>
+    The Packer build has been set up for you, which you can optionally look through in the code editor.
+    This Packer build is provided by the HashiCorp implementation services team. <br>
 
-    Immutability has many advantages for infrastructure management.
-    Consul enterprise can take advantage of immutable patterns with [Automated Upgrades](https://www.consul.io/docs/enterprise/upgrades/index.html)
-
-    The Packer build has been set up for you. Inspect the variable file, then build the image.
+    Inspect the variable file, then build the EC2 image.
 
     ```
     cat /root/packer/vars.json
     AWS_REGION=us-east-1 packer build -var-file vars.json centos.json
     ```
 
-    Validate your AMI is available in us-east-1.
+    Validate your AMI is available.
 
     ```
     aws ec2 describe-images --owners self
     ```
 
-    Now that you have a Consul image, you're ready to provision Consul in a prod-like ASG.
+    Now that you have a Consul image, you're ready to provision the Consul servers in an ASG.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: |-
+      In this assignment you will build an immutable image of Consul with [HashiCorp Packer](https://packer.io/). <br>
+
+      Immutability has many advantages for infrastructure management.
+      Consul Enterprise can take advantage of immutable patterns with [Automated Upgrades](https://www.consul.io/docs/enterprise/upgrades/index.html).
   tabs:
   - title: Packer
     type: code
@@ -121,22 +122,22 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/02-build-consul-image.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/02-build-consul-image.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
-  timelimit: 900
+  timelimit: 1200
 - slug: provision-consul
   id: jhvf5b2rlhmk
   type: challenge
   title: 'Operations: Provision Consul'
-  teaser: A short description of the challenge.
+  teaser: Provision Consul severs in an ASG
   assignment: |-
-    In this assignment, you'll install the ASG that will run the Consul servers.
-    The terraform module is configured to use the packer image you created in the last assignment. <br>
+    A terraform module has been provided for you to provision your Consul immutable image into the ASG.
+    This module is provided by the HashiCorp implementation services team. <br>
 
-    Inspect the variable file, then deploy Consul.
+    Inspect the variable file for Terraform, and deploy Consul.
 
     ```
     cat terraform.tfvars
@@ -145,7 +146,7 @@ challenges:
     terraform apply -auto-approve
     ```
 
-    Now, validate the Consul servers deployed to AWS. <br>
+    Now, validate the Consul servers deployed to your ASG. <br>
 
     ```
     aws autoscaling describe-auto-scaling-groups
@@ -161,10 +162,11 @@ challenges:
     check-consul-config /etc/consul.d/consul.hcl
     ```
 
-    Go to the next assignment, and finish the bootstrap.
+    You will finish setting up the Consul servers in the next assignment.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: In this assignment, you'll install Consul into ASG using the immutable
+      image you created in the last assignment. <br>
   tabs:
   - title: Terraform
     type: code
@@ -180,34 +182,29 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/03-provision-consul.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/03-provision-consul.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
-  timelimit: 900
+  timelimit: 1200
 - slug: bootstrap-consul
   id: 7mefmboypk7h
   type: challenge
   title: 'Operations: Bootstrap Consul'
-  teaser: A short description of the challenge.
+  teaser: Bootstrap Consul with an immutable migration
   assignment: |-
-    Consul Enterprise supports an [upgrade pattern](https://learn.hashicorp.com/consul/day-2-operations/autopilot#upgrade-migrations) that allows operators to deploy a complete cluster of new servers,
-    and safely migrate the new servers until the upgrade is complete. <br>
-
-    In one of the terminal window, you will watch the new servers added as `non-voters`.
-    Once autopilot has validated the new servers, it will safely promote them.
-    You will see the old servers removed from the list.
+    In one of the terminal window, you will watch the new servers transition in real time.
 
     ```
     watch consul operator raft list-peers
     ```
 
-    Next, validate the following two changes to the `consul.auto.tfvars file` to complete the bootstrap:
+    You will notice two changes to the Terraform variables to complete the bootstrapping process.
       * consul_cluster_version = "0.0.2"
       * bootstrap = false
 
-    Now run terraform, and watch the servers automatically transition.
+    Now run terraform, and watch the servers automatically transition with the watch command you configured earlier.
 
     ```
     cat terraform.tfvars
@@ -216,29 +213,27 @@ challenges:
     terraform apply -auto-approve
     ```
 
-    Nice work! You just did an automated server update with Consul enterprise. <br>
-
-    You can now validate the changes. Notice the `node_meta` is for the `0.0.2` version of the deployment. <br>
+    You can now validate the `node_meta` is for the `0.0.2` version of the deployment. <br>
 
     ```
     consul catalog nodes --detailed
     ```
 
-    You can also see that the `default_policy` for ACLs was updated for the new value.
+    You can also see that the `default_policy` for ACLs was updated to deny, the desired production value.
 
     ```
     check-consul-config /etc/consul.d/consul.hcl
     ```
 
-    Now you can start setting up the tenants for the Consul shared service consumers.
+    In the next assignment you will centralize secrets from the Consul bootstrap for service consumers.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: |-
+      Consul Enterprise supports an [upgrade pattern](https://learn.hashicorp.com/consul/day-2-operations/autopilot#upgrade-migrations) that allows operators to deploy a complete cluster of new servers,
+      and safely migrate the new servers until the upgrade is complete. <br>
+
+      This feature allows you to easily apply codified changes to the Consul servers without impacting availability of the service.
   tabs:
-  - title: Terraform
-    type: code
-    hostname: cloud-client
-    path: /root/terraform/consul
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -252,25 +247,25 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/04-bootstrap-consul.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/04-bootstrap-consul.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/consul
   difficulty: basic
-  timelimit: 900
+  timelimit: 1200
 - slug: centralize-consul-secrets
   id: 8whoxkkzchx0
   type: challenge
   title: 'Security: Centralize Consul Secrets'
-  teaser: A short description of the challenge.
+  teaser: Use Vault to store Consul secrets
   assignment: |-
-    Terraform and Vault are commonly used together to provide secure workflows for credentials.
-    Terraform Enterprise provides additional features on top of Terraform to make this easier. <br>
+    The Consul bootstrap outputs from the last few assignments have been secured in Vault through the provisioning process. <br>
 
-    The bootstrap outputs have been secured in Vault.
-    You will access these later to configure additional Consul roles for humans and machines. <br>
-
-    Login as an operator and inspect the credentials.  <br>
+    Login as an operator and inspect the credentials. <br>
 
     ```
     vault login -method=userpass username=operations password=Password1
@@ -283,7 +278,6 @@ challenges:
     ```
 
     You can use the master token to create a management token for Vault to issue [dynamic secrets](https://www.vaultproject.io/docs/secrets/consul/) for Consul.
-    Dynamic secrets have many advantages. <br>
 
     Get a management token for Vault to manage Consul tokens with.
     You can retrieve the privileged token for this operation from Vault.  <br>
@@ -291,7 +285,6 @@ challenges:
     ```
     export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
     vault_consul_mgmt_token=$(consul acl token create -policy-name=global-management -description "vault mgmt" | grep SecretID | cut -d ":" -f2 | xargs)
-    echo $vault_consul_mgmt_token
     ```
 
     Now configure the secrets engine.
@@ -302,25 +295,31 @@ challenges:
     ```
 
     Last, create a policy for the operations team, and link it to the Vault role.
-    We will put a short ttl of one hour on these highly privileged administrative tokens.
 
     ```
     consul acl policy create -name "ops" -description "admin policy for ops" -rules 'acl = "write" operator = "write" namespace_prefix "" {acl = "write"}'
     vault write consul/roles/ops policies=ops ttl=1h
     ```
 
-    Now you are ready to get a dynamic Consul token from Vault.
+    Now you are ready to get a dynamic Consul token from Vault for an operator.
+    Validate the token after you fetch it. <br>
 
     ```
     export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
     consul acl token read -self
     ```
 
-    Nice work. You'll leverage this dynamic role in the next exercise.
+    You will use this role in a later assignment to configure access for Consul service consumers.
   notes:
   - type: text
-    contents: A Vault instance is spinning up for you. Please be patient. This can
-      take up to five minutes.
+    contents: |-
+      Terraform and Vault are commonly used together to provide secure workflows for credentials.
+      Terraform Enterprise provides additional features on top of Terraform to make securing this workflow easier. <br>
+
+      In this assignment you will use these highly privileged credentials to configure self-service,
+      least privileged access to the Consul service. <br>
+
+      A Vault instance is provisioning for this assignment. Please be patient as this can take a few minutes.
   tabs:
   - title: Terraform
     type: code
@@ -346,48 +345,83 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/05-centralize-consul-secrets.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/05-centralize-consul-secrets.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
-  timelimit: 900
+  timelimit: 1200
+- slug: validate-backup-agent
+  id: iq5nherggpo9
+  type: challenge
+  title: 'Operations: Validate Backup Agent'
+  teaser: A short description of the challenge.
+  assignment: |-
+    This feature requires your Consul cluster to be licensed to function properly.
+    Retrieve a Consul operator token from Vault and apply your license.
+    Your instructor will provide the license for you.
+    Wait a few moments for the license to propagate. <br>
+
+    ```
+    consul license put <license>
+    sleep 30
+    ```
+
+    The Consul snapshot agent is highly available, and coordinates with other snapshot agents by establishing a [session](https://www.consul.io/docs/internals/sessions.html) in Consul.
+    In this assignment you will validate the session, and check S3 for the Consul snapshot backup files. <br>
+
+    Snapshots are a privileged action in Consul.
+    Now that the cluster is licensed, you will validate the backup processes are running.
+  notes:
+  - type: text
+    contents: |-
+      Consul Enterprise enables you to run the snapshot agent within your environment.
+      Once running, the snapshot agent service operates as a highly available process that integrates with the snapshot API to automatically manage taking snapshots, backup rotation, and sending backup files offsite to Amazon S3.
+
+      In this assignment you will validate the Snapshot Agent is working correctly.
+  tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
 - slug: create-vpc-peering
   id: suzx6ufcymhe
   type: challenge
   title: 'Network: Create Transitive Peering'
-  teaser: A short description of the challenge.
+  teaser: Add connectivity to the Consul shared service
   assignment: |-
-    The network team is responsible for creating connectivity between VPCs, and on-prem environments.
-    On AWS the network team leverages [AWS Transit Gateway](https://aws.amazon.com/transit-gateway/) to reduce management overhead. <br>
-
-    Run Terraform to setup the transit gateway routes. <br>
+    Run Terraform to setup the transit gateway routes between VPCs you provisioned earlier. <br>
 
     ```
     terraform plan
     terraform apply -auto-approve
     ```
 
-    Now inspect one of the route tables. Let's look at the route table for the backend team private subnets.
+    Inspect the route table for the backend team private subnets.
 
     ```
     route_table=$(/usr/local/bin/terraform output -state /root/terraform/vpc/terraform.tfstate -json backend_private_route_table_ids | jq -r .[0])
     aws ec2 describe-route-tables --route-table-ids ${route_table}
     ```
 
-    You'll notice routes to CIDR blocks for other application teams route through the transit gateway.  <br>
+    You'll notice routes to CIDR blocks for shared services route target the TGW. <br>
 
-    You will expand the transit gateway to connect to the on-prem enviroment in a later assignment.
+    In a later assignment you will use these TGW routes to connect the mesh across VPCs.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: |-
+      [AWS Transit Gateway](https://aws.amazon.com/transit-gateway/) can help reduce complexity of VPC peering in AWS
+      environments, and is commonly used to help developers connect their applications to shared services. <br>
+
+      In this assignment you will use TGW to provide connectivity across VPCs.
   tabs:
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/08-create-vpc-peering.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/08-create-vpc-peering.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -411,19 +445,16 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 900
+  timelimit: 1200
 - slug: provision-eks-clusters
   id: oxwep1bahgcl
   type: challenge
   title: 'Infrastructure: Provision EKS clusters'
-  teaser: A short description of the challenge.
+  teaser: Deploy EKS clusters for development teams
   assignment: |-
-    The backend and Frontend teams run their applications on AWS EKS.
-    The infrastructure team is responsible for provisioning EKS clusters. <br>
-
-
     Inspect the Terraform for EKS, then provision the Kubernetes clusters.
-    EKS can take over ~10 minutes to provision, so you will run this as a background task. <br>
+    EKS can take over ~15 minutes to provision, so you will run this as a background task.
+    Please be patient. <br>
 
     ```
     terraform plan
@@ -432,17 +463,20 @@ challenges:
     ```
 
     Validate your clusters once they are provisioned.
-    The status should be `ACTIVE`. <br>
+    Their status will be `ACTIVE`. <br>
 
     ```
     aws eks describe-cluster --name frontend
     aws eks describe-cluster --name backend
     ```
 
-    Great work! In this next assignments we will connect these Kubernetes nodes to the Consul shared service.
+    In the next assignment you will configure connectivity for these clusters back to the shared Consul service.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: |-
+      Development teams are provided with EKS clusters in their VPCs. <br>
+
+      In this assignment you will provision EKS clusters for application workloads.
   tabs:
   - title: Cloud Consoles
     type: service
@@ -451,10 +485,10 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/09-provision-eks-clusters.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/09-provision-eks-clusters.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -473,17 +507,14 @@ challenges:
     path: /
     port: 8200
   difficulty: basic
-  timelimit: 900
+  timelimit: 1200
 - slug: configure-eks-cluster-segments
   id: xrckckfdqgj9
   type: challenge
   title: 'Operations: Configure EKS cluster segments'
-  teaser: A short description of the challenge.
+  teaser: Add Consul network segments for hub and spoke connectivity
   assignment: |-
-    To adhere to InfoSec policies, Consul gossip traffic needs to be restricted to App VPCs <> Shared Service VPC.
-    Consul enterprise [network segments](https://www.consul.io/docs/enterprise/network-segments/index.html) support this hub-and-spoke topology.
-
-    The network segment config has been added to the Terraform file with a new cluster version.
+    The network segment config has been added to the Terraform file with a new cluster version for Consul.
     Inspect it, then apply the configuration. <br>
 
     ```
@@ -499,17 +530,20 @@ challenges:
     check-consul-config /etc/consul.d/zz-override.json | jq
     ```
 
-    Now you can configure these EKS nodes to Connect to the Consul service.
+    Now that the Consul service is stood up, and connectivity is in place, Consul operators can configure the tenants for self-service.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: |-
+      Network policies for cross-vpc traffic are restricted to proxy authenticated traffic. <br>
+
+      Consul enterprise [network segments](https://www.consul.io/docs/enterprise/network-segments/index.html) support this hub-and-spoke topology.
   tabs:
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/10-configure-eks-cluster-segments.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/10-configure-eks-cluster-segments.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -533,28 +567,33 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 900
+  timelimit: 1200
 - slug: create-namespaces-and-policies
   id: g7hylnrby0x9
   type: challenge
   title: 'Operations: Create Namespaces and Policies'
-  teaser: A short description of the challenge.
+  teaser: Configure self-service access
   assignment: |-
-    Consul enterprise support [namespaces](https://www.consul.io/docs/enterprise/namespaces/index.html) to enable network and operations teams to provide self-service for development teams. <br>
+    You need a privileged operator token to configure Consul for the consuming teams.
+    Authenticate with Vault, and fetch a token. <br>
 
-    Fetch a dynamic operater token from vault.
     ```
     vault login -method=userpass username=operations password=Password1
     export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
     consul acl token read -self
     ```
 
-    Start by creating the shared service discovery policy that will underpin the development team tenants.
-    This will allow the mesh to discover services across teams, but teams will control the services that can connect to services they run.
-    We will also create a policy for the K8s injector. <br>
+    The service discovery policy will underpin all development tenants.
+    This will allow the mesh to discover services across teams, however, individuals teams will control what services can connect to them from other namespaces. <br>
 
     ```
     consul acl policy create -name "cross-namespace-policy" -description "cross-namespace service discovery" -rules @cross-namespace.hcl
+    ```
+
+    The K8s injector policy will allow read access to the namespaces available within the Consul service.
+    This is required for the Consul K8s integration to work properly. <br>
+
+    ```
     consul acl policy create -name "k8s-injector-policy" -description "k8s injection" -rules @injector.hcl
     ```
 
@@ -565,8 +604,8 @@ challenges:
     consul namespace write backend-namespace.hcl
     ```
 
-    You also need to create policies for the nodes that each team will run in their VPC.
-    We will restrict this by CIDR block. <br>
+    You also need to create policies for low level client agent permissions for each development VPC.
+    We will create a blast radius for these tokens by CIDR block. <br>
 
     ```
     consul acl policy create -name "frontend-agent-policy" -description "frontend agents" -rules @frontend-team-agent.hcl
@@ -574,7 +613,7 @@ challenges:
     ```
 
     Last, create policies for the development teams to manage their own intentions.
-    Intentions allow connectivy between services. <br>
+    Intentions allow connectivity between services. <br>
 
     ```
     consul acl policy create -name "frontend-developer-policy" -description "frontend dev" -rules @frontend-team-developer.hcl
@@ -582,10 +621,12 @@ challenges:
 
     ```
 
-    Nice work! In the next assigment we will link these policies to Vault roles.
+    In the next assignment we will link these policies to dynamic Vault roles so developers and operators can get access centrally.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: Consul enterprise support [namespaces](https://www.consul.io/docs/enterprise/namespaces/index.html)
+      to enable network and operations teams to provide self-service for development
+      teams.
   tabs:
   - title: Policies
     type: code
@@ -611,20 +652,19 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/06-create-namespaces-and-policies.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/06-create-namespaces-and-policies.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
-  timelimit: 900
+  timelimit: 1200
 - slug: create-consul-roles
   id: r0oxqx8ait5u
   type: challenge
   title: 'Security: Create Consul Roles'
-  teaser: A short description of the challenge.
+  teaser: Create Dynamic Consul roles in Vault
   assignment: |-
-    Link the Consul policies to Vault roles so the various users in the organization can request Consul ACL tokens.
-    Get an operator token for Consul. <br>
+    Authenticate with the Consul operations role.
 
     ```
     vault login -method=userpass username=operations password=Password1
@@ -632,30 +672,24 @@ challenges:
     consul acl token read -self
     ```
 
-    We will create scoped TTLs for each role.
-    The agent tokens will be rotated periodically, and will have a longer TTL.
+    Next, link the policies. The TTLs are scoped for each task.
 
     ```
-    vault write consul/roles/k8s-injector       policies=k8s-injector-policy       ttl=720h
-    vault write consul/roles/frontend-agent     policies=frontend-agent-policy     ttl=720h
-    vault write consul/roles/frontend-developer policies=frontend-developer-policy ttl=1h
-    vault write consul/roles/backend-agent          policies=backend-agent-policy          ttl=720h
-    vault write consul/roles/backend-developer      policies=backend-developer-policy      ttl=1h
+    vault write consul/roles/k8s-injector           policies=k8s-injector-policy          ttl=720h
+    vault write consul/roles/frontend-agent         policies=frontend-agent-policy        ttl=720h
+    vault write consul/roles/frontend-developer     policies=frontend-developer-policy    ttl=1h
+    vault write consul/roles/backend-agent          policies=backend-agent-policy         ttl=720h
+    vault write consul/roles/backend-developer      policies=backend-developer-policy     ttl=1h
     ```
 
-    You will use these roles and policies to configure the Kubernetes clusters and onboard the development teams in a later assignment.
+    You will use these roles in later assignments to seed K8s clusters with scoped access to the central service,
+    as well as allow developers the ability to configure routing within their tenant.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: |-
+      Vault is the leading solution for secrets management across multi-cloud and hybrid deployments. <br>
+      In this assignment you will enable self-service access to Consul credentials for developers and operators.
   tabs:
-  - title: Cloud CLI
-    type: terminal
-    hostname: cloud-client
-  - title: Consul
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8500
   - title: Vault
     type: service
     hostname: cloud-client
@@ -666,31 +700,29 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/07-create-consul-roles.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/07-create-consul-roles.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
-  timelimit: 900
+  timelimit: 1200
 - slug: configure-eks-cluster-secrets
   id: ld9gbmuj5jnr
   type: challenge
   title: 'Operations: Configure EKS cluster secrets'
-  teaser: A short description of the challenge.
+  teaser: Create K8s secrets for Consul
   assignment: |-
-    You need to seed the Consul clusters with secrets for the client agents to join with the server nodes.
-    In production, a CI/CD pipeline, Terraform, or configuration management tool can perform these tasks with Vault.
-    Platforms for these systems have well defined patterns for establishing trust with Vault. <br>
-
-    You have been provided a sample script to the following:
-
-    * Create a namespace to run Consul pods (injector webhooks, etc.)
-    * Provide a gossip key
-    * Provide an ACL
-
-    First, get an operations token from Vault.
+    You need to authenticate with Vault to gain access to the Consul roles required to provide secrets for the K8s clusters.
 
     ```
     vault login -method=userpass username=operations password=Password1
@@ -698,14 +730,20 @@ challenges:
     consul acl token read -self
     ```
 
-    Next, inspect the setup script.
+    A sample script has been provided to setup each K8s cluster.
+    The script will perform the following tasks:
+
+    * Create a namespace to run Consul pods (injector webhooks, daemonset, etc.)
+    * Provide a Consul gossip key
+    * Provide a Consul ACL token
+
+    Inspect the setup script.
 
     ```
     cat /usr/local/bin/setup-k8s-consul-cluster
     ```
 
-    Start with the frontend cluster, and run the setup script with the Vault provided Consul secrets.
-    Verify the secrets were provisioned.
+    Start with the frontend cluster.
 
     ```
     kubectl config use-context eks_frontend
@@ -713,7 +751,7 @@ challenges:
     kubectl  get secrets -n consul
     ```
 
-    Repeat these steps on the backend cluster.
+    Repeat, for the backend cluster.
 
     ```
     kubectl config use-context eks_backend
@@ -721,10 +759,15 @@ challenges:
     kubectl get secrets -n consul
     ```
 
-    Now you can provision the Consul client agents in the EKS clusters.
+    In the next assignment you will use these secrets to deploy the Consul client agents with Helm.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: |-
+      [Consul Helm](https://www.consul.io/docs/platform/k8s/helm.html) is the HashiCorp supported method for deploying Consul into K8s environment,
+      and it supports a wide array of configuration options. <br>
+
+      In this assignment you will configure K8s secrets that will allow client agents running in K8s
+      to authenticate with Consul servers in the shared service.
   tabs:
   - title: Cloud CLI
     type: terminal
@@ -746,20 +789,20 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/11-configure-eks-cluster-secrets.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/11-configure-eks-cluster-secrets.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
-  timelimit: 900
+  timelimit: 1200
 - slug: deploy-consul-in-eks
   id: 3ewjpnxsjsmh
   type: challenge
   title: 'Operations: Deploy Consul in EKS'
-  teaser: A short description of the challenge.
+  teaser: Deploy Consul in EKS with Helm
   assignment: |-
-    The Consul helm chart will allow us to easily deploy the agents into the cluster.
-    The ACL init job will use the credentials you previously provisioned.
+    Use the code editor to inspect the Helm chart values for each K8s cluster.
+    When you have reviewed the values you can deploy each K8s cluster.
 
     Start with the frontend cluster.
 
@@ -769,7 +812,7 @@ challenges:
     kubectl get pods -n consul
     ```
 
-    Next deploy the backend cluster.
+    Repeat for the backend cluster.
 
     ```
     kubectl config use-context eks_backend
@@ -777,18 +820,29 @@ challenges:
     kubectl get pods -n consul
     ```
 
-    Check the nodes for the full working set.  You will see a few members in the `left` state.
-    This is expected, as they are left over from the auto upgrade and no longer in the peer set. <br>
+    Check the nodes for the full working set.
+    You can continue when the Frontend and Backend EKS nodes have joined the peer set. <br>
 
     ```
-    consul members
+    watch consul members
     ```
 
-    Nice work! Now you need to create trust between K8s backend and the Consul backend.s
+    In the next assignment we will create trust between the K8s API server and the Consul shared service.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: |-
+      The k8s clusters are now ready to connect to the Consul shared service.
+      You will deploy the Consul client agents with Helm in this assignment.
   tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/12-deploy-consul-in-eks.html
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   - title: Consul
     type: service
     hostname: cloud-client
@@ -811,27 +865,16 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
-  - title: Cloud CLI
-    type: terminal
-    hostname: cloud-client
-  - title: Current lab setup
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/12-deploy-consul-in-eks.html
-  - title: Target lab architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
-  timelimit: 900
+  timelimit: 1200
 - slug: configure-k8s-consul-authentication
   id: tnkxgigifkbu
   type: challenge
   title: 'Security: Configure K8s Consul Authentication'
-  teaser: A short description of the challenge.
+  teaser: Create trust between K8s clusters and Consul
   assignment: |-
-    In this assignment you will use a [Consul auth method](https://www.consul.io/docs/acl/auth-methods/kubernetes.html)
-    to securely introduce Consul ACL tokens to K8s pods. <br>
-
-    Start by retrieving a Consul operations token from Vault. <br>
+    Configuring Consul auth methods is a privileged action.
+    You need a Consul operator token to perform these tasks. <br>
 
     ```
     vault login -method=userpass username=operations password=Password1
@@ -839,7 +882,6 @@ challenges:
     consul acl token read -self
     ```
 
-    Now you can create the auth method in the frontend namespace.
     The cross namespace policy you created earlier will be attached to the token.
     You need three key pieces of information to complete this task. <br>
 
@@ -847,23 +889,27 @@ challenges:
     * K8s CA
     * Service Account JWT
 
-    The helper script will assist you in this task.
-    Review it now. <br>
+    The helper script will assist you. Review it now. <br>
 
     ```
     cat /usr/local/bin/setup-k8s-consul-auth
     ```
 
-    Configure the clusters.
+    Run the script for each K8s cluster.
+
     ```
     setup-k8s-consul-auth frontend
     setup-k8s-consul-auth backend
     ```
 
-    You can use any GitHub flavoured markdown.
+    In the next assignment you'll use the trust relationship you just created to deploy applications into the mesh.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: |-
+      In this assignment you will use the [K8s Consul auth method](https://www.consul.io/docs/acl/auth-methods/kubernetes.html)
+      to securely introduce Consul ACL tokens to K8s pods that run applications. <br>
+
+      [Consul auth methods](https://www.consul.io/docs/acl/acl-auth-methods.html) make it easy to securely introduce Consul ACL tokens on ephemeral platforms.
   tabs:
   - title: Cloud CLI
     type: terminal
@@ -885,21 +931,21 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/13-configure-k8s-consul-authentication.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/13-configure-k8s-consul-authentication.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
-  timelimit: 900
+  timelimit: 1200
 - slug: deploy-applications
   id: dslh2b4hvc4t
   type: challenge
   title: 'Developer: Deploy Applications'
-  teaser: A short description of the challenge.
+  teaser: Deploy application workloads across K8s environments
   assignment: |-
-    Now you can start deploying applications to the k8s clusters.
+    You can view the K8s spec files for the applications in the code editor. <br>
 
-    Start with the Frontend cluster. <br>
+    Start with the Frontend cluster application. <br>
 
     ```
     kubectl config use-context eks_frontend
@@ -907,7 +953,7 @@ challenges:
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=web -o name) --timeout=30s
     ```
 
-    Now deploy the backend cluster. <br>
+    Now deploy the backend cluster applications. <br>
 
     ```
     kubectl config use-context eks_backend
@@ -918,15 +964,14 @@ challenges:
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=payments -o name) --timeout=30s
     ```
 
-    All the pods are ready.
-    In the next assignment we will update intentions so traffic will route.
+    In the next assignment we will update intentions so the new applications will receive traffic over mTLS.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: The K8s clusters are now ready to run application workloads.
   tabs:
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/14-deploy-applications.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/14-deploy-applications.html
   - title: Apps
     type: code
     hostname: cloud-client
@@ -951,19 +996,16 @@ challenges:
     port: 80
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
-  timelimit: 900
+  timelimit: 1200
 - slug: update-intentions
   id: apxx5zldywqm
   type: challenge
   title: 'Developer: Update Intentions'
-  teaser: A short description of the challenge.
+  teaser: Routing as a service
   assignment: |-
-    In this assignment you will create an intention set to allow traffic within your namespace,
-    and selectively allow traffic into your namespace from other namespaces.  <br>
-
-    Get a token for the backend development team. <br>
+    Retrieve a Consul token as backend developer team. <br>
 
     ```
     vault login -method=userpass username=backend password=Password1
@@ -971,7 +1013,8 @@ challenges:
     consul acl token read -self
     ```
 
-    Create the intentions. <br>
+    Create the intentions for services within your namespace.
+    Also allow access from the Frontend Web application to the Backend API application. <br>
 
     ```
     consul intention create --allow frontend/web backend/api
@@ -980,11 +1023,12 @@ challenges:
     consul intention create --allow backend/payments backend/currency
     ```
 
-    Now that intentions are configured the application will receive traffic.
-    You will test the application in the next assignment.
+    In the next assignment you will send traffic to the Web application in the Frontend namespace.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: |-
+      Intentions allow service mesh routing based on service identity. <br>
+      The Consul shared service allows developers to control routing within their namespaces, and selectively allow traffic from other teams to their namespace.
   tabs:
   - title: Cloud Consoles
     type: service
@@ -1006,32 +1050,38 @@ challenges:
     port: 8200
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/15-update-intentions.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/15-update-intentions.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
-  timelimit: 900
+  timelimit: 1200
 - slug: test-application
   id: jllgtf6nz3hz
   type: challenge
   title: 'Developer: Test Application'
-  teaser: A short description of the challenge.
+  teaser: Put it all together
   assignment: |-
-    Last, test the application.
-    Validate the IP addresses from each CIDR in the response payload.
-    AWS LBs can take a few moments to create routable DNS, so you will validate that as well. <br>
+    You need to fetch the external DNS name for the AWS ELB.
 
     ```
     kubectl config use-context eks_frontend
     endpoint=$(kubectl get services web -o json | jq -r .status.loadBalancer.ingress[0].hostname)
-    curl -s $endpoint
     ```
 
-    Great job. You just connected multiple K8s clusters to your Consul shared service.
+    Test the application. You should receive a `200` status code.
+    Take note of the IP addresses of each service.
+
+    ```
+    curl -v -s $endpoint
+    ```
+
+    Well done! You just securely connected application workloads across multiple K8s clusters!!!
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: |-
+      The Web application in the Frontend namespace is exposed via an AWS ELB.
+      It can take a few minutes for an ELB to resolve DNS. Please be patient.
   tabs:
   - title: Cloud Consoles
     type: service
@@ -1053,10 +1103,10 @@ challenges:
     port: 8200
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/15-update-intentions.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/15-update-intentions.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 300
-checksum: "3823799623685876417"
+checksum: "14712676556954999685"

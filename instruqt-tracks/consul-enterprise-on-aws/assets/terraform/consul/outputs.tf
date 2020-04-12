@@ -16,6 +16,11 @@ output "agent_server_token" {
   sensitive = true
 }
 
+output "snapshot_token" {
+  value     = module.consul.snapshot_token
+  sensitive = true
+}
+
 output "gossip_key" {
   value     = module.consul.gossip_key
   sensitive = true
