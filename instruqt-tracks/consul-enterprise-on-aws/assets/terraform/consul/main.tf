@@ -35,7 +35,7 @@ module "consul" {
   consul_nodes     = "3"
   redundancy_zones = false
   performance_mode = false
-  enable_snapshots = false
+  enable_snapshots = true
 
   owner = "instruqt@hashicorp.com"
   ttl   = "-1"

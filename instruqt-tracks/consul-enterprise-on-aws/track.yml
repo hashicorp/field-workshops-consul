@@ -357,21 +357,54 @@ challenges:
   title: 'Operations: Validate Backup Agent'
   teaser: A short description of the challenge.
   assignment: |-
+    The Consul snapshot agent is highly available, and coordinates with other snapshot agents by establishing a [session](https://www.consul.io/docs/internals/sessions.html) in Consul.
+    In this assignment you will validate the session, and check S3 for the Consul snapshot backup files. <br>
+
+
     This feature requires your Consul cluster to be licensed to function properly.
     Retrieve a Consul operator token from Vault and apply your license.
     Your instructor will provide the license for you.
     Wait a few moments for the license to propagate. <br>
 
+    Get a privileged token to apply the license. <br>
+
+    ```
+    vault login -method=userpass username=operations password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    Now apply the license. <br>
+
     ```
     consul license put <license>
-    sleep 30
+    sleep 15
     ```
 
-    The Consul snapshot agent is highly available, and coordinates with other snapshot agents by establishing a [session](https://www.consul.io/docs/internals/sessions.html) in Consul.
-    In this assignment you will validate the session, and check S3 for the Consul snapshot backup files. <br>
+    Now you can retrieve the session that is holding the lock. <br>
 
-    Snapshots are a privileged action in Consul.
-    Now that the cluster is licensed, you will validate the backup processes are running.
+    ```
+    export CONSUL_HTTP_TOKEN=$(vault kv get -field snapshot_token secret/consul)
+    consul acl token read -self
+    consul kv get -detailed consul-snapshot/lock
+    ```
+
+    The session info holds the address of the active backup agent. <br>
+
+    ```
+    session=$(consul kv get -detailed consul-snapshot/lock | grep Session | awk -F ' ' '{print $2}')
+    curl -v --header "X-Consul-Token: ${CONSUL_HTTP_TOKEN}" $CONSUL_HTTP_ADDR/v1/session/info/${session} | jq
+    ```
+
+    With a session lock present, you should have Consul backups in the S3 bucket.
+
+    ```
+    aws s3 ls
+    bucket=$(aws s3api list-buckets --query "Buckets[].Name" | jq -r .[0])
+    aws s3 ls s3://${bucket}/consul-snapshot/
+    ```
+
+    Consul is now automatically backing up to S3. In the next assignment you will start configuring the network.
   notes:
   - type: text
     contents: |-
@@ -380,9 +413,34 @@ challenges:
 
       In this assignment you will validate the Snapshot Agent is working correctly.
   tabs:
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/vault
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/05-centralize-consul-secrets.html
   difficulty: basic
   timelimit: 300
 - slug: create-vpc-peering
@@ -1109,4 +1167,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 300
-checksum: "14712676556954999685"
+checksum: "10339252630857031935"
