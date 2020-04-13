@@ -46,7 +46,6 @@ challenges:
     terraform-vpc-shared-svcs: 10.1.0.0/16
     terraform-vpc-frontend: 10.2.0.0/16
     terraform-vpc-backend: 10.3.0.0/16
-    terraform-vpc-storage: 10.4.0.0/16
     ```
 
     The shared service VPC will run the core Consul infrastructure.
@@ -313,7 +312,7 @@ challenges:
   notes:
   - type: text
     contents: |-
-      Terraform and Vault are commonly used together to provide secure workflows for credentials.
+      Terraform and Vault are commonly used together to provide secure provisioning workflows.
       Terraform Enterprise provides additional features on top of Terraform to make securing this workflow easier. <br>
 
       In this assignment you will use these highly privileged credentials to configure self-service,
@@ -378,13 +377,19 @@ challenges:
 
     ```
     consul license put <license>
-    sleep 15
+    sleep 60
     ```
 
     Inspect the configure file for the agent that was applied by the Terraform module. <br>
 
     ```
     check-consul-config /etc/consul-snapshot.d/consul-snapshot.json | jq
+    ```
+
+    The Snapshot Agent service should now be healthy.
+
+    ```
+    curl -s ${CONSUL_HTTP_ADDR}/v1/health/service/consul-snapshot?passing=true | jq
     ```
 
     Now you can retrieve the session that is holding the lock. <br>
@@ -449,6 +454,28 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/05-centralize-consul-secrets.html
   difficulty: basic
   timelimit: 1200
+- slug: platform-quiz
+  id: yreyomgnhyt9
+  type: quiz
+  title: 'Quiz: Platform'
+  teaser: Platform Review
+  assignment: |
+    What feature(s) did you use to set up your Consul shared service in the lab?
+  notes:
+  - type: text
+    contents: |
+      Quiz time!
+  answers:
+  - Automated Upgrades
+  - Automated Backups
+  - Consul Sessions
+  - None of the Above
+  solution:
+  - 0
+  - 1
+  - 2
+  difficulty: basic
+  timelimit: 300
 - slug: create-vpc-peering
   id: suzx6ufcymhe
   type: challenge
@@ -632,6 +659,26 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 1200
+- slug: gvrs-quiz
+  id: kjjm5qjzltq0
+  type: quiz
+  title: 'Quiz: GVRS'
+  teaser: Visibility, Routing, and Scale Review
+  assignment: |
+    What feature(s) did you use to create Consul gossip segments across AWS Transit Gateway in the lab?
+  notes:
+  - type: text
+    contents: |
+      Quiz time!
+  answers:
+  - Advanced Federation
+  - Network Segmentation
+  - Redundancy Zones
+  - None of the Above
+  solution:
+  - 1
+  difficulty: basic
+  timelimit: 300
 - slug: create-namespaces-and-policies
   id: g7hylnrby0x9
   type: challenge
@@ -1172,5 +1219,25 @@ challenges:
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
+  timelimit: 1200
+- slug: governance-and-policy-quiz
+  id: i8yzbimnbcd7
+  type: quiz
+  title: 'Quiz: Governance & Policy'
+  teaser: Governance & Policy Review
+  assignment: |
+    What feature(s) did you use to enable self-service for developers?
+  notes:
+  - type: text
+    contents: |
+      Quiz time!
+  answers:
+  - ACLs
+  - Namespaces
+  - Auth Methods
+  - Binding Rules
+  solution:
+  - 1
+  difficulty: basic
   timelimit: 300
-checksum: "7665455163480886508"
+checksum: "15253187514266638007"
