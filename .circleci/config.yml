@@ -229,7 +229,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Cosul on AWS
+          name: Consul on AWS
+          no_output_timeout: 30m
           command: |
             VERSION=$INSTRUQT_VERSION
             apt -y update
