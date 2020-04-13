@@ -355,7 +355,7 @@ challenges:
   id: iq5nherggpo9
   type: challenge
   title: 'Operations: Validate Backup Agent'
-  teaser: A short description of the challenge.
+  teaser: Automatically Backup Consul to S3
   assignment: |-
     Automated Backups requires a fully licensed Consul Enterprise environment to function properly.
     This environment currently has a temporary license. <br>
@@ -448,7 +448,7 @@ challenges:
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/05-centralize-consul-secrets.html
   difficulty: basic
-  timelimit: 300
+  timelimit: 1200
 - slug: create-vpc-peering
   id: suzx6ufcymhe
   type: challenge
@@ -1173,4 +1173,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 300
-checksum: "14987806215235321785"
+checksum: "7665455163480886508"
