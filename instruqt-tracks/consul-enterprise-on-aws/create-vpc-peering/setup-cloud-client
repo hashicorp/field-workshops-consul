@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set-workdir /root/terraform/tgw
+
+cd /root/terraform/tgw
+terraform init
+
+exit 0

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#install packer
+cd /tmp
+echo "installing packer..."
+curl -O https://releases.hashicorp.com/packer/1.5.4/packer_1.5.4_linux_amd64.zip
+unzip *.zip
+mv packer /usr/local/bin/packer
+rm -f *.zip
+cd /root
+
+#Download Consul
+cd /root/packer
+curl -O https://releases.hashicorp.com/consul/1.7.2+ent/consul_1.7.2+ent_linux_amd64.zip
+
+#create variable file
+pubkey=$(cat ~/.ssh/id_rsa.pub)
+cat << EOF > /root/packer/vars.json
+{
+  "consul_zip": "consul_1.7.2+ent_linux_amd64.zip",
+  "consul_version": "1.7.2",
+  "username": "instruqt",
+  "pubkey": "${pubkey}",
+  "owner": "instruqt@hashicorp.com",
+  "release": "0.0.1"
+}
+EOF
+
+set-workdir /root/packer
+exit 0

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#todo - add license check
+
+#todo - add session check
+
+#todo - add S3 check
+
+exit 0

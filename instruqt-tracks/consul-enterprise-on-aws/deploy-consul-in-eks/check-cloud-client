@@ -1,0 +1,19 @@
+#!/bin/bash
+
+kubectl config use-context eks_frontend
+kubectl wait -n consul --for=condition=Ready $(kubectl get pod -n consul --selector=app=consul -o name) --timeout=10s
+if [ $? -ne 0 ]
+then
+  fail-message "Consul pod is not ready for eks_frontend."
+  exit 1
+fi
+
+kubectl config use-context eks_backend
+kubectl wait -n consul --for=condition=Ready $(kubectl get pod -n consul --selector=app=consul -o name) --timeout=10s
+if [ $? -ne 0 ]
+then
+  fail-message "Consul pod is not ready for eks_backend."
+  exit 1
+fi
+
+exit 0

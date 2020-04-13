@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#add Consul LB to shell
+consul_lb=$(terraform output -state /root/terraform/consul/terraform.tfstate lb)
+echo "export CONSUL_HTTP_ADDR=http://${consul_lb}" >> ~/.bashrc
+
+#updates vars
+cat << EOF > /root/terraform/consul/terraform.tfvars
+consul_nodes = 3
+consul_cluster_version = "0.0.2"
+bootstrap = false
+EOF
+
+exit 0

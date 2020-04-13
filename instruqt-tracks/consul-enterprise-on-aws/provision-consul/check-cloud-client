@@ -1,0 +1,17 @@
+#!/bin/bash
+
+env=$(terraform output -state /root/terraform/consul/terraform.tfstate env)
+
+if [ -z "$env" ]; then
+  fail-message "Could not get Consul env from state."
+  exit 1
+fi
+
+asg=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names ${env}-consul-0.0.1 |  jq '.AutoScalingGroups | length')
+
+if [ $asg != "1" ]; then
+  fail-message "ASG did not provision successful. Did not find 0.0.1 version."
+  exit 1
+fi
+
+exit 0

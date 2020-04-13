@@ -1,0 +1,10 @@
+#!/bin/bash
+
+image=$(aws ec2 describe-images --filter Name=tag:Product,Values=Consul --owners self |  jq '.Images | length')
+
+if [ $image != "1" ]; then
+  fail-message "Image did not provision successful."
+  exit 1
+fi
+
+exit 0

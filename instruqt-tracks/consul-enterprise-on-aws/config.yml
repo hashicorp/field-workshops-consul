@@ -1,0 +1,13 @@
+version: "2"
+containers:
+- name: cloud-client
+  image: gcr.io/instruqt/cloud-client
+  shell: /bin/bash
+  ports:
+  - 80
+  - 8200
+  - 8500
+aws_accounts:
+- name: consul
+  managed_policies:
+  - arn:aws:iam::aws:policy/AdministratorAccess

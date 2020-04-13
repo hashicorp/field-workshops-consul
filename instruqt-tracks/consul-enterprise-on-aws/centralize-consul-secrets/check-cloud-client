@@ -1,0 +1,12 @@
+#!/bin/bash
+
+vault login -method=userpass username=operations password=Password1
+vault read consul/creds/ops
+
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get ops cred."
+  exit 1
+fi
+
+exit 0

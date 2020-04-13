@@ -1,0 +1,11 @@
+#!/bin/bash
+
+kubectl config use-context eks_frontend
+helm install hashicorp -f frontend-values.yaml --namespace consul ./consul-helm --wait
+kubectl wait -n consul --for=condition=Ready $(kubectl get pod -n consul --selector=app=consul -o name) --timeout=60s
+
+kubectl config use-context eks_backend
+helm install hashicorp -f backend-values.yaml --namespace consul ./consul-helm --wait
+kubectl wait -n consul --for=condition=Ready $(kubectl get pod -n consul --selector=app=consul -o name) --timeout=60s
+
+exit 0

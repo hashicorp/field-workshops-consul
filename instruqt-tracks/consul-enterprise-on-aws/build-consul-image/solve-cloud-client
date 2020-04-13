@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd /root/packer
+AWS_REGION=us-east-1 packer build -var-file vars.json centos.json
+
+exit 0

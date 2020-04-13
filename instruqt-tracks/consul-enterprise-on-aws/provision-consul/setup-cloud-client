@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set-workdir /root/terraform/consul
+
+cat << EOF > /root/terraform/consul/terraform.tfvars
+consul_nodes = 3
+consul_cluster_version = "0.0.1"
+bootstrap = true
+EOF
+
+cd /root/terraform/consul
+terraform init
+
+
+exit 0
