@@ -357,16 +357,16 @@ challenges:
   title: 'Operations: Validate Backup Agent'
   teaser: A short description of the challenge.
   assignment: |-
+    Automated Backups requires a fully licensed Consul Enterprise environment to function properly.
+    This environment currently has a temporary license. <br>
+
+    If you have an enterprise license (your instructor will provide one for you) continue with the assignment.
+    If you do not have an enterprise license, click `check` now and skip this section. <br>
+
     The Consul snapshot agent is highly available, and coordinates with other snapshot agents by establishing a [session](https://www.consul.io/docs/internals/sessions.html) in Consul.
-    In this assignment you will validate the session, and check S3 for the Consul snapshot backup files. <br>
+    You will validate the session, and check S3 for the Consul snapshot backup files. <br>
 
-
-    This feature requires your Consul cluster to be licensed to function properly.
-    Retrieve a Consul operator token from Vault and apply your license.
-    Your instructor will provide the license for you.
-    Wait a few moments for the license to propagate. <br>
-
-    Get a privileged token to apply the license. <br>
+    Get a privileged token to perform the license action. <br>
 
     ```
     vault login -method=userpass username=operations password=Password1
@@ -379,6 +379,12 @@ challenges:
     ```
     consul license put <license>
     sleep 15
+    ```
+
+    Inspect the configure file for the agent that was applied by the Terraform module. <br>
+
+    ```
+    check-consul-config /etc/consul-snapshot.d/consul-snapshot.json | jq
     ```
 
     Now you can retrieve the session that is holding the lock. <br>
@@ -1167,4 +1173,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 300
-checksum: "10339252630857031935"
+checksum: "14987806215235321785"
