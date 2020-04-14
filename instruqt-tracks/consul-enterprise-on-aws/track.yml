@@ -66,10 +66,10 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/01-provision-vpcs.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/01-provision-vpcs.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -121,10 +121,10 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/02-build-consul-image.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/02-build-consul-image.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 1200
 - slug: provision-consul
@@ -181,10 +181,10 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/03-provision-consul.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/03-provision-consul.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 1200
 - slug: bootstrap-consul
@@ -246,10 +246,10 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/04-bootstrap-consul.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/04-bootstrap-consul.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -344,10 +344,10 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/05-centralize-consul-secrets.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/05-centralize-consul-secrets.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 1200
 - slug: validate-backup-agent
@@ -426,7 +426,7 @@ challenges:
   tabs:
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -451,7 +451,7 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/05-centralize-consul-secrets.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/05-centralize-consul-secrets.html
   difficulty: basic
   timelimit: 1200
 - slug: platform-quiz
@@ -509,10 +509,10 @@ challenges:
   tabs:
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/08-create-vpc-peering.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/08-create-vpc-peering.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -576,10 +576,10 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/09-provision-eks-clusters.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/09-provision-eks-clusters.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -631,10 +631,10 @@ challenges:
   tabs:
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/10-configure-eks-cluster-segments.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/10-configure-eks-cluster-segments.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -763,10 +763,10 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/06-create-namespaces-and-policies.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/06-create-namespaces-and-policies.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 1200
 - slug: create-consul-roles
@@ -821,10 +821,10 @@ challenges:
     port: 8500
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/07-create-consul-roles.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/07-create-consul-roles.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 1200
 - slug: configure-eks-cluster-secrets
@@ -900,10 +900,10 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/11-configure-eks-cluster-secrets.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/11-configure-eks-cluster-secrets.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 1200
 - slug: deploy-consul-in-eks
@@ -950,10 +950,10 @@ challenges:
     hostname: cloud-client
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/12-deploy-consul-in-eks.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/12-deploy-consul-in-eks.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   - title: Consul
     type: service
     hostname: cloud-client
@@ -1042,10 +1042,10 @@ challenges:
     port: 80
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/13-configure-k8s-consul-authentication.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/13-configure-k8s-consul-authentication.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 1200
 - slug: deploy-applications
@@ -1082,7 +1082,7 @@ challenges:
   tabs:
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/14-deploy-applications.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/14-deploy-applications.html
   - title: Apps
     type: code
     hostname: cloud-client
@@ -1107,7 +1107,7 @@ challenges:
     port: 80
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 1200
 - slug: update-intentions
@@ -1161,10 +1161,10 @@ challenges:
     port: 8200
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/15-update-intentions.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/15-update-intentions.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 1200
 - slug: test-application
@@ -1214,10 +1214,10 @@ challenges:
     port: 8200
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/15-update-intentions.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/15-update-intentions.html
   - title: Target lab architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-ent-aws-track/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 1200
 - slug: governance-and-policy-quiz
@@ -1240,4 +1240,4 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "15253187514266638007"
+checksum: "7639748257925994831"
