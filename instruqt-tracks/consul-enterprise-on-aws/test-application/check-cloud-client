@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ -f /tmp/skip-check ]; then
+    rm /tmp/skip-check
+    exit 0
+fi
+
 kubectl config use-context eks_frontend
 endpoint=$(kubectl get services web -o json | jq -r .status.loadBalancer.ingress[0].hostname)
 api=$(curl -s -o /dev/null -w "%{http_code}" "${endpoint}")

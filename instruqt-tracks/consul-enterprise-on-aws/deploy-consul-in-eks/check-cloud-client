@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ -f /tmp/skip-check ]; then
+    rm /tmp/skip-check
+    exit 0
+fi
+
 kubectl config use-context eks_frontend
 kubectl wait -n consul --for=condition=Ready $(kubectl get pod -n consul --selector=app=consul -o name) --timeout=10s
 if [ $? -ne 0 ]

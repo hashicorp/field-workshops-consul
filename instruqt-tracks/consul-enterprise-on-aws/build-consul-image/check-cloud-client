@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ -f /tmp/skip-check ]; then
+    rm /tmp/skip-check
+    exit 0
+fi
+
 image=$(aws ec2 describe-images --filter Name=tag:Product,Values=Consul --owners self |  jq '.Images | length')
 
 if [ $image != "1" ]; then

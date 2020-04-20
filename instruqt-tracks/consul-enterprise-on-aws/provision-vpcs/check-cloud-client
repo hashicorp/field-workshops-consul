@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ -f /tmp/skip-check ]; then
+    rm /tmp/skip-check
+    exit 0
+fi
+
 #Check we have 5 VPCs
 vpc=$(aws ec2 describe-vpcs | jq '[.. |."State"? | select(. == "available")] | length')
 

@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ -f /tmp/skip-check ]; then
+    rm /tmp/skip-check
+    exit 0
+fi
+
 env=$(terraform output -state /root/terraform/consul/terraform.tfstate env)
 
 if [ -z "$env" ]; then
