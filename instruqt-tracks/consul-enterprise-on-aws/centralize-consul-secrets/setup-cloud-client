@@ -2,11 +2,10 @@
 
 set-workdir /root/terraform/vault
 
-cd /root/terraform/vault
-terraform init
-terraform apply -auto-approve
-
-sleep 60
+#cd /root/terraform/vault
+#terraform init
+#terraform apply -auto-approve
+#sleep 60
 
 vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate lb)
 echo "export VAULT_ADDR=http://${vault_lb}" >> ~/.bashrc

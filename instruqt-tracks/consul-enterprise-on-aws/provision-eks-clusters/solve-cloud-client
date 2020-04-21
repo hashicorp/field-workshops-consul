@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /root/terraform/eks
-terraform  apply -auto-approve
+#cd /root/terraform/eks
+#terraform  apply -auto-approve
 
 exit 0

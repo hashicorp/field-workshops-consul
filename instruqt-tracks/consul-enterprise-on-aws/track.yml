@@ -543,13 +543,12 @@ challenges:
   title: 'Infrastructure: Provision EKS clusters'
   teaser: Deploy EKS clusters for development teams
   assignment: |-
-    Inspect the Terraform for EKS, then provision the Kubernetes clusters.
-    EKS can take over ~15 minutes to provision, so you will run this as a background task.
-    Please be patient. <br>
+    Inspect the Terraform for EKS. <br>
+
+    EKS can take over ~15 minutes to provision, so this task we kicked off in the background during your other assignments.
+    You can see the log output below. <br>
 
     ```
-    terraform plan
-    nohup terraform apply -auto-approve > terraform.out &
     tail -f terraform.out
     ```
 
@@ -1240,4 +1239,4 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "12468212963620286091"
+checksum: "17453291565983350328"

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #route propagation from TGW
-sleep 60
+#sleep 60
 
 set-workdir /root/terraform/eks
 
@@ -11,6 +11,6 @@ chmod +x aws-iam-authenticator
 mv aws-iam-authenticator /usr/local/bin/aws-iam-authenticator
 
 cd /root/terraform/eks
-terraform init
+#terraform init
 
 exit 0
