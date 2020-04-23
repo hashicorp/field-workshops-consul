@@ -1132,6 +1132,8 @@ challenges:
     consul intention create --allow backend/api backend/payments
     consul intention create --allow backend/payments backend/currency
     ```
+    
+    Inside of the Consul UI, click on ACLs and insert the value of the CONSUL_HTTP_TOKEN to view the intentions you created inside of the UI. 
 
     In the next assignment you will send traffic to the Web application in the Frontend namespace.
   notes:
