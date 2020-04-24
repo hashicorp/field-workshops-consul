@@ -22,7 +22,7 @@ challenges:
   assignment: |-
     You can think of the Cloud CLI terminal as your laptop machine preloaded with cloud access credentials for your company. <br>
 
-    Any any time you can use the AWS console to view your environment.
+    At any time you can use the AWS console to view your environment.
     AWS CLI commands will be provided for you to interact with AWS throughout this lab. <br>
 
     Your first task is setting up VPCs for each team.
@@ -34,7 +34,7 @@ challenges:
     terraform apply -auto-approve
     ```
 
-    You'll notice you have four separate VPCs.
+    You'll notice you have three separate VPCs.
 
     ```
     aws ec2 describe-vpcs
@@ -76,6 +76,62 @@ challenges:
     path: /root/terraform/vpc
   difficulty: basic
   timelimit: 1200
+- slug: provision-core-services
+  id: ixv5ankwmiwf
+  type: challenge
+  title: 'Infrastructure: Provision Core Services'
+  teaser: A short description of the challenge.
+  assignment: |-
+    You will use Terraform to provision these services in the background while you set up Consul in the next few assignments. <br>
+
+    Start with Vault.
+
+    ```
+    cd /root/terraform/vault
+    terraform init
+    terraform plan
+    nohup terraform apply -auto-approve > /root/terraform/vault/terraform.out &
+    ```
+
+    Next, provision EKS.
+
+    ```
+    cd /root/terraform/eks
+    terraform init
+    terraform plan
+    nohup terraform apply -auto-approve > /root/terraform/eks/terraform.out &
+    ```
+
+    Now you can deploy Consul.
+  notes:
+  - type: text
+    contents: In this assignment you will provision a Vault instance and the EKS clusters
+      that the development teams rely on to run their workloads.
+  tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/01-provision-vpcs.html
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+  - title: Terraform - EKS
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/eks
+  - title: Terraform - Vault
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/vault
+  difficulty: basic
+  timelimit: 300
 - slug: build-consul-image
   id: x3xlgqyvidby
   type: challenge
@@ -196,7 +252,7 @@ challenges:
     In one of the terminal window, you will watch the new servers transition in real time.
 
     ```
-    watch consul operator raft list-peers
+    watch 'consul operator raft list-peers ; consul catalog nodes --detailed'
     ```
 
     You will notice two changes to the Terraform variables to complete the bootstrapping process.
@@ -210,12 +266,6 @@ challenges:
     cat main.tf
     terraform plan
     terraform apply -auto-approve
-    ```
-
-    You can now validate the `node_meta` is for the `0.0.2` version of the deployment. <br>
-
-    ```
-    consul catalog nodes --detailed
     ```
 
     You can also see that the `default_policy` for ACLs was updated to deny, the desired production value.
@@ -256,6 +306,52 @@ challenges:
     path: /root/terraform/consul
   difficulty: basic
   timelimit: 1200
+- slug: validate-load-balancers
+  id: yxgcduonarhs
+  type: challenge
+  title: 'Operations: Validate Load Balancers'
+  teaser: A short description of the challenge.
+  assignment: |-
+    In the past few assignments you created Load Balancers for both Vault and Consul. <br>
+
+    Your Vault LB should be ready by now. Check its health for a 200 code. <br>
+
+    ```
+    vault=$(aws elbv2 describe-load-balancers --names vault-lb --output json | jq -r .LoadBalancers[0].DNSName)
+    curl -s -v http://{$vault}/v1/sys/health | jq
+    ```
+
+    Applications and services that use Consul typically do so through a Consul agent running on the same VM, K8s worker node, etc.
+    In some cases, to make the UI available for example, Consul's API can also be exposed via a load balancer.
+    Check the status of the cluster through the load balancer. <br>
+
+    ```
+    consul=$(aws elbv2 describe-load-balancers --names consul-lb --output json | jq -r .LoadBalancers[0].DNSName)
+    curl -s -v http://{$consul}/v1/status/leader | jq
+    ```
+
+    In the next assignment you will retrieve Consul secrets from Vault.
+  notes:
+  - type: text
+    contents: In this assignment you will validate your AWS ALBs for both Vault and
+      Consul.
+  tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/04-bootstrap-consul.html
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+  difficulty: basic
+  timelimit: 300
 - slug: centralize-consul-secrets
   id: 8whoxkkzchx0
   type: challenge
@@ -738,6 +834,9 @@ challenges:
       to enable network and operations teams to provide self-service for development
       teams.
   tabs:
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   - title: Policies
     type: code
     hostname: cloud-client
@@ -763,9 +862,6 @@ challenges:
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/06-create-namespaces-and-policies.html
-  - title: Target lab architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 1200
 - slug: create-consul-roles
@@ -1239,4 +1335,4 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "17453291565983350328"
+checksum: "17738216602975894280"

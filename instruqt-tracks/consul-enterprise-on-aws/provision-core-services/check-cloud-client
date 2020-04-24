@@ -1,0 +1,32 @@
+#!/bin/bash
+
+#check the Vault instance is running
+id=$(aws ec2 describe-instances --filters 'Name=tag:Name,Values=vault' | jq -r .Reservations[0].Instances[0].InstanceId)
+status=$(aws ec2 describe-instance-status --instance-ids $id | jq -r .InstanceStatuses[0].InstanceState.Name)
+if [ "${status}" != "pending" ] && [ "${status}" != "running" ] ; then
+  fail-message "Vault instance is not provisioning/provisioned. Wait a few moments and try again. Current state is: ${status}"
+  exit 1
+fi
+
+#check Vault LB is provisioning
+status=$(aws elbv2 describe-load-balancers --names vault-lb --output json | jq  -r .LoadBalancers[0].State.Code)
+if [ "${status}" != "provisioning" ] && [ "${status}" != "active" ] ; then
+  fail-message "Vault LB is not provisioning/provisioned. Wait a few moments and try again. Current state is: ${status}"
+  exit 1
+fi
+
+#check EKS frontend is provisioning
+status=$(aws eks describe-cluster --name frontend | jq -r .cluster.status)
+if [ "${status}" != "CREATING" ]; then
+  fail-message "Frontend EKS cluster is not provisioning. Wait a few moments and try again. Current state is: ${status}"
+  exit 1
+fi
+
+#check EKS backend is provisioning
+status=$(aws eks describe-cluster --name backend | jq -r .cluster.status)
+if [ "${status}" != "CREATING" ]; then
+  fail-message "Backend EKS cluster is not provisioning. Wait a few moments and try again. Current state is: ${status}"
+  exit 1
+fi
+
+exit 0

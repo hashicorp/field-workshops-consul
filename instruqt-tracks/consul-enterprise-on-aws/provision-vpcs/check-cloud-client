@@ -8,6 +8,12 @@ fi
 #Check we have 5 VPCs
 vpc=$(aws ec2 describe-vpcs | jq '[.. |."State"? | select(. == "available")] | length')
 
+#fix this check
+if [ $vpc = "6" ]; then
+  exit 0
+fi
+
+#should be 5 total VPCs
 if [ $vpc != "5" ]; then
   fail-message "VPCs did not provision successful."
   exit 1

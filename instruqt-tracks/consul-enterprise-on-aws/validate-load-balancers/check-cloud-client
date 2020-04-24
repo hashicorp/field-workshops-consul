@@ -1,0 +1,35 @@
+#!/bin/sh
+
+#check we have terraform state for Vault LB
+terraform output -state /root/terraform/vault/terraform.tfstate lb
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking vault state for lb"
+  exit 1
+fi
+
+#check we have terraform state for Consul LB
+terraform output -state /root/terraform/consul/terraform.tfstate lb
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking consul state for lb"
+  exit 1
+fi
+
+#check we get a 200 from Vault
+vault=$(aws elbv2 describe-load-balancers --names vault-lb --output json | jq -r .LoadBalancers[0].DNSName)
+api=$(curl -s -o /dev/null -w "%{http_code}" http://{$vault}/v1/sys/health)
+if [ "${api}" != "200" ]; then
+  fail-message "Vault did not return a 200"
+  exit 1
+fi
+
+#check we get a 200 from Consul
+consul=$(aws elbv2 describe-load-balancers --names consul-lb --output json | jq -r .LoadBalancers[0].DNSName)
+api=$(curl -s -o /dev/null -w "%{http_code}" http://{$consul}/v1/status/leader)
+if [ "${api}" != "200" ]; then
+  fail-message "Your Consul cluster does not have a leader."
+  exit 1
+fi
+
+exit 0
