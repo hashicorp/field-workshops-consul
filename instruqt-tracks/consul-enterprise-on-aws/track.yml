@@ -633,22 +633,21 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 1200
-- slug: provision-eks-clusters
+- slug: validate-eks-clusters
   id: oxwep1bahgcl
   type: challenge
-  title: 'Infrastructure: Provision EKS clusters'
-  teaser: Deploy EKS clusters for development teams
+  title: 'Infrastructure: Validate EKS clusters'
+  teaser: Validate EKS clusters for development teams
   assignment: |-
-    Inspect the Terraform for EKS. <br>
+    The EKS provisioning you kicked off earlier should now be complete. <br>
 
-    EKS can take over ~15 minutes to provision, so this task we kicked off in the background during your other assignments.
-    You can see the log output below. <br>
+    Inspect the kube config. <br>
 
     ```
-    tail -f terraform.out
+    cat ~/.kube/config
     ```
 
-    Validate your clusters once they are provisioned.
+    Validate your clusters are in the correct state.
     Their status will be `ACTIVE`. <br>
 
     ```
@@ -1254,6 +1253,10 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
+  - title: Apps
+    type: code
+    hostname: cloud-client
+    path: /root/apps
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/15-update-intentions.html
@@ -1307,6 +1310,10 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
+  - title: Apps
+    type: code
+    hostname: cloud-client
+    path: /root/apps
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/15-update-intentions.html
@@ -1335,4 +1342,4 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "17738216602975894280"
+checksum: "11122533085283211344"
