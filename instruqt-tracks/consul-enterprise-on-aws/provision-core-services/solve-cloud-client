@@ -2,12 +2,12 @@
 
 #provison Vault in the background
 cd /root/terraform/vault
-terraform init
+#terraform init
 nohup terraform apply -auto-approve > /root/terraform/vault/terraform.out &
 
 #provison EKS clusters in the background
 cd /root/terraform/eks
-terraform init
+#terraform init
 nohup terraform apply -auto-approve > /root/terraform/eks/terraform.out &
 
 sleep 30

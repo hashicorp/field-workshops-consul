@@ -88,7 +88,6 @@ challenges:
 
     ```
     cd /root/terraform/vault
-    terraform init
     terraform plan
     nohup terraform apply -auto-approve > /root/terraform/vault/terraform.out &
     ```
@@ -97,7 +96,6 @@ challenges:
 
     ```
     cd /root/terraform/eks
-    terraform init
     terraform plan
     nohup terraform apply -auto-approve > /root/terraform/eks/terraform.out &
     ```
@@ -1343,4 +1341,4 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "10223511919538448283"
+checksum: "5056670972125372270"

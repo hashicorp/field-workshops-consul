@@ -2,4 +2,10 @@
 
 set-workdir /root/terraform
 
+cd /root/terraform/vault
+terraform init
+
+cd /root/terraform/eks
+terraform init
+
 exit 0

@@ -74,7 +74,7 @@ connectInject:
     consulDestinationNamespace: "backend"
 EOF
 
-git clone https://github.com/hashicorp/consul-helm.git
+git clone --branch v0.19.0 https://github.com/hashicorp/consul-helm.git
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
 exit 0
