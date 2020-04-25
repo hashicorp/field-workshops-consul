@@ -17,14 +17,14 @@ fi
 
 #check EKS frontend is provisioning
 status=$(aws eks describe-cluster --name frontend | jq -r .cluster.status)
-if [ "${status}" != "CREATING" ]; then
+if [ "${status}" != "CREATING" ] && [ "${status}" != "ACTIVE" ] ; then
   fail-message "Frontend EKS cluster is not provisioning. Wait a few moments and try again. Current state is: ${status}"
   exit 1
 fi
 
 #check EKS backend is provisioning
 status=$(aws eks describe-cluster --name backend | jq -r .cluster.status)
-if [ "${status}" != "CREATING" ]; then
+if [ "${status}" != "CREATING" ] && [ "${status}" != "ACTIVE" ] ; then
   fail-message "Backend EKS cluster is not provisioning. Wait a few moments and try again. Current state is: ${status}"
   exit 1
 fi
