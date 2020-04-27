@@ -5,16 +5,30 @@ if [ -f /tmp/skip-check ]; then
     exit 0
 fi
 
-#check the clusters
+#check the clusters and worker nodes
+kubectl config use-context eks_frontend
 frontend=$(aws eks describe-cluster --name frontend | jq -r .cluster.status)
 if [ "${frontend}" != "ACTIVE" ]; then
   fail-message "Frontend EKS cluster did not provision. Current state is: ${frontend}"
   exit 1
 fi
+JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}'  && kubectl get nodes -o jsonpath="$JSONPATH" | grep "Ready=True"
+if [ $? -ne 0 ]
+then
+  fail-message "Worker node for frontend cluster is not ready."
+  exit 1
+fi
 
+kubectl config use-context eks_backend
 backend=$(aws eks describe-cluster --name backend | jq -r .cluster.status)
 if [ "${backend}" != "ACTIVE" ]; then
   fail-message "Backend EKS cluster did not provision. Current state is: ${backend}"
+  exit 1
+fi
+JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}'  && kubectl get nodes -o jsonpath="$JSONPATH" | grep "Ready=True"
+if [ $? -ne 0 ]
+then
+  fail-message "Worker node for frontend cluster is not ready."
   exit 1
 fi
 
