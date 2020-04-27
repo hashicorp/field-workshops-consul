@@ -1058,11 +1058,6 @@ challenges:
   - title: Target lab architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
-  - title: Consul
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8500
   - title: Vault
     type: service
     hostname: cloud-client
@@ -1080,6 +1075,11 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
   difficulty: basic
   timelimit: 1200
 - slug: configure-k8s-consul-authentication
@@ -1352,4 +1352,4 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "5466020541210236506"
+checksum: "12306987489038580368"

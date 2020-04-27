@@ -28,7 +28,7 @@ fi
 JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}'  && kubectl get nodes -o jsonpath="$JSONPATH" | grep "Ready=True"
 if [ $? -ne 0 ]
 then
-  fail-message "Worker node for frontend cluster is not ready."
+  fail-message "Worker node for backend cluster is not ready."
   exit 1
 fi
 
