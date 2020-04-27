@@ -1,0 +1,36 @@
+slug: consul-on-azure
+id: uuc9uuzesgao
+type: track
+title: Consul on Azure
+teaser: A short description of the track.
+description: |-
+  A long description of the track.
+
+  You can use any GitHub flavoured markdown.
+icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+tags: []
+owner: hashicorp
+developers:
+- lance@hashicorp.com
+private: false
+published: false
+challenges:
+- slug: provision-azure-virtual-networks
+  id: ey6mtofophbb
+  type: challenge
+  title: 'Infrastructure: Provision Azure Virtual Networks'
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
+checksum: "16408705204785304171"
