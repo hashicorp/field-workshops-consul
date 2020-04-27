@@ -1,8 +1,0 @@
-#!/bin/bash
-
-#create the kube config file
-cd /root/terraform/eks
-mkdir ~/.kube/
-KUBECONFIG=/root/terraform/eks/kubeconfig_frontend:/root/terraform/eks/kubeconfig_backend kubectl config view --merge --flatten > ~/.kube/config
-
-exit 0

@@ -640,12 +640,6 @@ challenges:
   assignment: |-
     The EKS provisioning you kicked off earlier should now be complete. <br>
 
-    Inspect the kube config. <br>
-
-    ```
-    cat ~/.kube/config
-    ```
-
     Validate your clusters are in the correct state.
     Their status will be `ACTIVE`. <br>
 
@@ -654,13 +648,30 @@ challenges:
     aws eks describe-cluster --name backend
     ```
 
+    Create a kube config file so you can access the clusters.
+
+    ```
+    KUBECONFIG=/root/terraform/eks/kubeconfig_frontend:/root/terraform/eks/kubeconfig_backend kubectl config view --merge --flatten > ~/.kube/config
+    cat ~/.kube/config
+    ```
+
+    Check the worker nodes are ready on each cluster.
+
+    ```
+    kubectl config use-context eks_frontend
+    kubectl get nodes -o  wide
+
+    kubectl config use-context eks_backend
+    kubectl get nodes -o wide
+    ```
+
     In the next assignment you will configure connectivity for these clusters back to the shared Consul service.
   notes:
   - type: text
     contents: |-
       Development teams are provided with EKS clusters in their VPCs. <br>
 
-      In this assignment you will provision EKS clusters for application workloads.
+      In this assignment you will create the kube config for the EKS clusters provisioned earlier.
   tabs:
   - title: Cloud Consoles
     type: service
@@ -1341,4 +1352,4 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "5056670972125372270"
+checksum: "8182188434943842100"
