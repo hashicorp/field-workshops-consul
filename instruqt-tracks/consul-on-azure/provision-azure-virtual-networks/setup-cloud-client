@@ -6,7 +6,7 @@ echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
 set-workdir /root/terraform/vnet
 
 #Azure CLI
-curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
 #ssh
 eval `ssh-agent -s`
@@ -45,7 +45,7 @@ cd /root
 
 #get assets
 echo "cloning assets..."
-git clone https://github.com/hashicorp/field-workshops-consul.git
+git clone -b add-consul-instruqt-ent-azure-track https://github.com/hashicorp/field-workshops-consul.git
 cp -r field-workshops-consul/instruqt-tracks/consul-on-azure/assets/terraform .
 cp -r field-workshops-consul/instruqt-tracks/consul-on-azure/assets/packer .
 cp -r field-workshops-consul/instruqt-tracks/consul-on-azure/assets/apps .

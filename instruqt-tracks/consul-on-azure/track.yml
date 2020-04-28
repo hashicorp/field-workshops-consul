@@ -28,9 +28,103 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
-  - title: Cloud CLI
+  - title: Cloud  CLI
     type: terminal
     hostname: cloud-client
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform
+  difficulty: basic
+  timelimit: 1800
+- slug: provision-core-services
+  id: 8orn6rfyoxcr
+  type: challenge
+  title: 'Infrastructure: Provision Core Services'
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform
+  difficulty: basic
+  timelimit: 1800
+- slug: operations-build-consul-image
+  type: challenge
+  title: 'Operations: Build Consul Image'
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: shell
   difficulty: basic
   timelimit: 300
-checksum: "16408705204785304171"
+- slug: provision-consul
+  type: challenge
+  title: 'Operations: Provision Consul'
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: shell
+  difficulty: basic
+  timelimit: 300
+- slug: bootstrap-consul
+  type: challenge
+  title: 'Operations: Bootstrap Consul'
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: shell
+  difficulty: basic
+  timelimit: 300
+- slug: validate-load-balancers
+  type: challenge
+  title: 'Operations: Validate Load Balancers'
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: shell
+  difficulty: basic
+  timelimit: 300
+checksum: "9960476321127346390"

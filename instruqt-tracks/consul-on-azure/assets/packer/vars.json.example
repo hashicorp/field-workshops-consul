@@ -1,0 +1,8 @@
+{
+  "consul_zip": "/Users/somebody/Downloads/hc-enterprise-binaries/consul/prem/1.6.1/consul-enterprise_1.6.1+prem_linux_amd64.zip",
+  "consul_version": "1.6.1",
+  "vault_zip": "/Users/somebody/Downloads/hc-enterprise-binaries/vault/prem/1.2.4/vault_1.2.4+prem_linux_amd64.zip",
+  "vault_version": "1.2.4",
+  "owner": "somebody@hashicorp.com",
+  "release": "0.0.1"
+}

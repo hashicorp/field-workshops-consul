@@ -8,24 +8,41 @@ resource "azurerm_resource_group" "instruqt" {
   location = "East US"
 }
 
-# Create a virtual network within the resource group
-resource "azurerm_virtual_network" "shared-services" {
-  name                = "shared-svcs-vnet"
+module "shared-svcs-network" {
+  source              = "Azure/network/azurerm"
+  vnet_name           = "shared-svcs-vnet"
   resource_group_name = azurerm_resource_group.instruqt.name
-  location            = azurerm_resource_group.instruqt.location
-  address_space       = ["10.1.0.0/16"]
+  address_space       = "10.1.0.0/16"
+  subnet_prefixes     = ["10.1.0.0/24", "10.1.1.0/24", "10.1.2.0/24"]
+  subnet_names        = ["subnet1", "subnet2", "subnet3"]
+
+  tags = {
+    owner = "lance@hashicorp.com"
+  }
 }
 
-resource "azurerm_virtual_network" "frontend" {
-  name                = "frontend-vnet"
+module "frontend-network" {
+  source              = "Azure/network/azurerm"
   resource_group_name = azurerm_resource_group.instruqt.name
-  location            = azurerm_resource_group.instruqt.location
-  address_space       = ["10.2.0.0/16"]
+  vnet_name           = "frontend-vnet"
+  address_space       = "10.2.0.0/16"
+  subnet_prefixes     = ["10.2.0.0/24", "10.2.1.0/24", "10.2.2.0/24"]
+  subnet_names        = ["subnet1", "subnet2", "subnet3"]
+
+  tags = {
+    owner = "lance@hashicorp.com"
+  }
 }
 
-resource "azurerm_virtual_network" "backend" {
-  name                = " backend-vnet"
+module "backend-network" {
+  source              = "Azure/network/azurerm"
   resource_group_name = azurerm_resource_group.instruqt.name
-  location            = azurerm_resource_group.instruqt.location
-  address_space       = ["10.3.0.0/16"]
+  vnet_name           = "backend-vnet"
+  address_space       = "10.3.0.0/16"
+  subnet_prefixes     = ["10.3.0.0/24", "10.3.1.0/24", "10.3.2.0/24"]
+  subnet_names        = ["subnet1", "subnet2", "subnet3"]
+
+  tags = {
+    owner = "lance@hashicorp.com"
+  }
 }
