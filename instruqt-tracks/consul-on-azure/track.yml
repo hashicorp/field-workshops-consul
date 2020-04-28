@@ -60,6 +60,7 @@ challenges:
   difficulty: basic
   timelimit: 1800
 - slug: operations-build-consul-image
+  id: kwb31ylq3s32
   type: challenge
   title: 'Operations: Build Consul Image'
   teaser: A short description of the challenge.
@@ -71,12 +72,17 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
-  - title: Shell
+  - title: Cloud  CLI
     type: terminal
-    hostname: shell
+    hostname: cloud-client
+  - title: Packer
+    type: code
+    hostname: cloud-client
+    path: /root/packer
   difficulty: basic
   timelimit: 300
 - slug: provision-consul
+  id: krmibvoviyur
   type: challenge
   title: 'Operations: Provision Consul'
   teaser: A short description of the challenge.
@@ -88,12 +94,13 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
-  - title: Shell
+  - title: Cloud  CLI
     type: terminal
-    hostname: shell
+    hostname: cloud-client
   difficulty: basic
   timelimit: 300
 - slug: bootstrap-consul
+  id: pxzhp0svamtc
   type: challenge
   title: 'Operations: Bootstrap Consul'
   teaser: A short description of the challenge.
@@ -105,12 +112,13 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
-  - title: Shell
+  - title: Cloud  CLI
     type: terminal
-    hostname: shell
+    hostname: cloud-client
   difficulty: basic
   timelimit: 300
 - slug: validate-load-balancers
+  id: e7fkrpkefznc
   type: challenge
   title: 'Operations: Validate Load Balancers'
   teaser: A short description of the challenge.
@@ -122,9 +130,9 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
-  - title: Shell
+  - title: Cloud  CLI
     type: terminal
-    hostname: shell
+    hostname: cloud-client
   difficulty: basic
   timelimit: 300
-checksum: "9960476321127346390"
+checksum: "17852838122061124388"

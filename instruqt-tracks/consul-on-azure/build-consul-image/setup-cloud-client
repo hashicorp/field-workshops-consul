@@ -1,16 +1,15 @@
 #!/bin/bash
 
 #create variable file
-pubkey=$(cat ~/.ssh/id_rsa.pub)
 cat << EOF > /root/packer/vars.json
 {
+  "azure_resource_group_name": "llarsen-instruqt-resources",
   "consul_zip": "consul_1.7.2+ent_linux_amd64.zip",
   "consul_version": "1.7.2",
-  "username": "instruqt",
-  "pubkey": "${pubkey}",
   "owner": "instruqt@hashicorp.com",
   "release": "0.0.1"
 }
+
 EOF
 
 exit 0

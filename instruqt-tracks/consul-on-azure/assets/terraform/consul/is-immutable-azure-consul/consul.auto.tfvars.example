@@ -1,0 +1,15 @@
+region                = "centralus"
+ssh_public_key        = ""
+
+name_prefix        = "krarey"
+owner              = "krarey@hashicorp.com"
+
+image_resource_group = ""
+
+ttl                = "-1"
+availability_zones = ["1", "2", "3"]
+
+consul_cluster_version = "0.0.1"
+bootstrap              = true
+
+image_prefix = "is-azure-immutable-vault-rhel7-"
