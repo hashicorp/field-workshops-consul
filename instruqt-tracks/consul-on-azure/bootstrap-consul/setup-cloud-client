@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set-workdir /root/terraform/consul
+
+pubkey=$(cat ~/.ssh/id_rsa.pub)
+cat << EOF > /root/terraform/consul/terraform.tfvars
+location = "eastus"
+image_resource_group = "llarsen-instruqt-resources"
+bootstrap = true
+ssh_public_key="${pubkey}"
+
+consul_cluster_version = "0.0.2"
+bootstrap = true
+EOF
+
+exit 0

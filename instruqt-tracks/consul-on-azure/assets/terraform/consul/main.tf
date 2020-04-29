@@ -3,11 +3,19 @@ provider "azurerm" {
   features {}
 }
 
+data "terraform_remote_state" "vnet" {
+  backend = "local"
+
+  config = {
+    path = "/root/terraform/vnet/terraform.tfstate"
+  }
+}
+
 module "consul" {
   source = "./is-immutable-azure-consul"
 
   region         = var.location
-  subnet_id      = var.subnet_id
+  subnet_id      = data.terraform_remote_state.vnet.outputs.shared_svcs_subnets[0]
   ssh_public_key = var.ssh_public_key
 
   owner = "instruqt"

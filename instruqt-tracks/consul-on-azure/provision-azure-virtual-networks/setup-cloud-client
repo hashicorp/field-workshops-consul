@@ -3,8 +3,6 @@
 #path
 echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
 
-set-workdir /root/terraform/vnet
-
 #Azure CLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
@@ -155,5 +153,14 @@ consul acl binding-rule create -method 'hashicorp-consul-k8s-auth-method' \
     -selector 'serviceaccount.namespace==default'
 SCRIPT
 chmod +x /usr/local/bin/setup-k8s-consul-auth
+
+#assignment
+set-workdir /root/terraform/vnet
+cd /root/terraform/vnet
+
+pubkey=$(cat ~/.ssh/id_rsa.pub)
+cat << EOF > /root/terraform/vnet/terraform.tfvars
+ssh_public_key="${pubkey}"
+EOF
 
 exit 0

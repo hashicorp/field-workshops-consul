@@ -97,6 +97,10 @@ challenges:
   - title: Cloud  CLI
     type: terminal
     hostname: cloud-client
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform
   difficulty: basic
   timelimit: 300
 - slug: bootstrap-consul
@@ -135,4 +139,4 @@ challenges:
     hostname: cloud-client
   difficulty: basic
   timelimit: 300
-checksum: "17852838122061124388"
+checksum: "11218675678623537748"
