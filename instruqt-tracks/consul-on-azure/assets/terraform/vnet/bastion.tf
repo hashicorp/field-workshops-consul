@@ -13,7 +13,7 @@ resource "azurerm_network_interface" "bastion" {
 
   ip_configuration {
     name                          = "configuration"
-    subnet_id                     = azurerm_subnet.internal.id
+    subnet_id                     = module.shared-svcs-network.vnet_subnets[0]
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.bastion.id
   }
@@ -24,7 +24,7 @@ resource "azurerm_virtual_machine" "bastion" {
   location              = azurerm_resource_group.instruqt.location
   resource_group_name   = azurerm_resource_group.instruqt.name
   network_interface_ids = [azurerm_network_interface.bastion.id]
-  vm_size               = "Standard_DS1_v2"
+  vm_size               = "Standard_D1_v2"
 
   delete_os_disk_on_termination    = true
   delete_data_disks_on_termination = true
@@ -36,7 +36,7 @@ resource "azurerm_virtual_machine" "bastion" {
     version   = "latest"
   }
   storage_os_disk {
-    name              = "disk1"
+    name              = "bastion-disk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"

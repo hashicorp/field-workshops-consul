@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set-workdir /root/terraform/aks
+
+cd /root/terraform/aks
+terraform init
+
+exit 0

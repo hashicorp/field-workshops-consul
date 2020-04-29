@@ -80,7 +80,7 @@ challenges:
     hostname: cloud-client
     path: /root/packer
   difficulty: basic
-  timelimit: 300
+  timelimit: 1800
 - slug: provision-consul
   id: krmibvoviyur
   type: challenge
@@ -102,7 +102,7 @@ challenges:
     hostname: cloud-client
     path: /root/terraform
   difficulty: basic
-  timelimit: 300
+  timelimit: 1800
 - slug: bootstrap-consul
   id: pxzhp0svamtc
   type: challenge
@@ -120,7 +120,7 @@ challenges:
     type: terminal
     hostname: cloud-client
   difficulty: basic
-  timelimit: 300
+  timelimit: 1800
 - slug: validate-load-balancers
   id: e7fkrpkefznc
   type: challenge
@@ -138,5 +138,5 @@ challenges:
     type: terminal
     hostname: cloud-client
   difficulty: basic
-  timelimit: 300
-checksum: "11218675678623537748"
+  timelimit: 1800
+checksum: "15314770978045745780"
