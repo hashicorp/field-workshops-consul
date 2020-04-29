@@ -7,10 +7,6 @@ variable "image_resource_group" {
   description = "SSH key for the consul instances"
 }
 
-variable "subnet_id" {
-  description = "Subnet to deploy Consul"
-}
-
 variable "ssh_public_key" {
   description = "SSH key for the consul instances"
 }
