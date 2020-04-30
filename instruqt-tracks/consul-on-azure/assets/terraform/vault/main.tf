@@ -13,28 +13,28 @@ data "terraform_remote_state" "vnet" {
 
 resource "azurerm_public_ip" "vault" {
   name                = "vault-ip"
-  location            = azurerm_resource_group.instruqt.location
-  resource_group_name = azurerm_resource_group.instruqt.name
+  location            = data.terraform_remote_state.vnet.outputs.resource_group_location
+  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
   allocation_method   = "Static"
-  sku                 = "Standard"
+  sku                 = "Basic"
 }
 
 resource "azurerm_network_interface" "vault" {
   name                = "vault-nic"
-  location            = azurerm_resource_group.instruqt.location
-  resource_group_name = azurerm_resource_group.instruqt.name
+  location            = data.terraform_remote_state.vnet.outputs.resource_group_location
+  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
 
   ip_configuration {
     name                          = "configuration"
-    subnet_id                     = module.shared-svcs-network.vnet_subnets[0]
+    subnet_id                     = data.terraform_remote_state.vnet.outputs.shared_svcs_subnets[0]
     private_ip_address_allocation = "Dynamic"
   }
 }
 
 resource "azurerm_lb" "vault" {
   name                = "vault-lb"
-  location            = azurerm_resource_group.instruqt.location
-  resource_group_name = azurerm_resource_group.instruqt.name
+  location            = data.terraform_remote_state.vnet.outputs.resource_group_location
+  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
 
   frontend_ip_configuration {
     name                 = "configuration"
@@ -42,10 +42,41 @@ resource "azurerm_lb" "vault" {
   }
 }
 
+resource "azurerm_lb_backend_address_pool" "vault" {
+  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
+  loadbalancer_id     = azurerm_lb.vault.id
+  name                = "BackEndAddressPool"
+}
+
+resource "azurerm_network_interface_backend_address_pool_association" "vault" {
+  network_interface_id    = azurerm_network_interface.vault.id
+  ip_configuration_name   = "configuration"
+  backend_address_pool_id = azurerm_lb_backend_address_pool.vault.id
+}
+
+resource "azurerm_lb_probe" "vault" {
+  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
+  loadbalancer_id     = azurerm_lb.vault.id
+  name                = "vault-http"
+  port                = 8200
+}
+
+resource "azurerm_lb_rule" "vault" {
+  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
+  loadbalancer_id                = azurerm_lb.vault.id
+  name                           = "vault"
+  protocol                       = "Tcp"
+  frontend_port                  = 80
+  backend_port                   = 8200
+  frontend_ip_configuration_name = "configuration"
+  probe_id = azurerm_lb_probe.vault.id
+  backend_address_pool_id = azurerm_lb_backend_address_pool.vault.id
+}
+
 resource "azurerm_virtual_machine" "vault" {
   name                  = "vault-vm"
-  location              = azurerm_resource_group.instruqt.location
-  resource_group_name   = azurerm_resource_group.instruqt.name
+  location              = data.terraform_remote_state.vnet.outputs.resource_group_location
+  resource_group_name   = data.terraform_remote_state.vnet.outputs.resource_group_name
   network_interface_ids = [azurerm_network_interface.vault.id]
   vm_size               = "Standard_D1_v2"
 
@@ -85,8 +116,8 @@ resource "azurerm_virtual_machine" "vault" {
 
 resource "azurerm_network_security_group" "vault" {
   name                = "vault-nsg"
-  location              = azurerm_resource_group.instruqt.location
-  resource_group_name   = azurerm_resource_group.instruqt.name
+  location              = data.terraform_remote_state.vnet.outputs.resource_group_location
+  resource_group_name   = data.terraform_remote_state.vnet.outputs.resource_group_name
 
   security_rule {
     name                       = "allow-ssh-all"
@@ -102,12 +133,12 @@ resource "azurerm_network_security_group" "vault" {
 
   security_rule {
     name                       = "allow-vault-http-all"
-    priority                   = 100
+    priority                   = 110
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "8500"
+    destination_port_range     = "8200"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }

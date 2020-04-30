@@ -78,6 +78,7 @@ resource "azurerm_virtual_machine_scale_set" "consul_cluster" {
       primary                        = true
       subnet_id                      = var.subnet_id
       application_security_group_ids = [azurerm_application_security_group.consul_servers.id]
+      load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.consul.id]
     }
   }
 
