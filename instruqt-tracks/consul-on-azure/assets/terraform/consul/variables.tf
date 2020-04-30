@@ -16,6 +16,6 @@ variable "consul_cluster_version" {
 }
 
 variable "bootstrap" {
-  type        = boolean
+  type        = bool
   description = "Provision in a bootstrap configuration"
 }

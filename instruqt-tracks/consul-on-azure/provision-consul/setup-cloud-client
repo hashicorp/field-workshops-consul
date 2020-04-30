@@ -6,11 +6,10 @@ pubkey=$(cat ~/.ssh/id_rsa.pub)
 cat << EOF > /root/terraform/consul/terraform.tfvars
 location = "eastus"
 image_resource_group = "llarsen-instruqt-resources"
-bootstrap = true
 ssh_public_key="${pubkey}"
 
 consul_cluster_version = "0.0.1"
-bootstrap = false
+bootstrap = true
 EOF
 
 cd /root/terraform/consul
