@@ -21,7 +21,8 @@ cat << EOF > /root/packer/vars.json
   "consul_zip": "consul_1.7.2+ent_linux_amd64.zip",
   "consul_version": "1.7.2",
   "owner": "instruqt@hashicorp.com",
-  "release": "0.0.1"
+  "release": "0.0.1",
+  "azure_resource_group_name": "llarsen-instruqt-resources"
 }
 EOF
 

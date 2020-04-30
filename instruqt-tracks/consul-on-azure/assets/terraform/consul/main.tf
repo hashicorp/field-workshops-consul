@@ -31,5 +31,5 @@ module "consul" {
   vm_managed_disk_type = "Standard_LRS"
 
   bootstrap              = var.bootstrap
-  consul_cluster_version = var.cluster_version
+  consul_cluster_version = var.consul_cluster_version
 }
