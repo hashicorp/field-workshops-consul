@@ -42,3 +42,49 @@ resource "azurerm_virtual_network_gateway" "gateway" {
   }
 
 }
+
+
+resource "azurerm_virtual_network_peering" "shared-frontend" {
+  name                         = "SharedToFrontend"
+  resource_group_name          = data.terraform_remote_state.vnet.outputs.resource_group_name
+  virtual_network_name         = "shared-svcs-vnet"
+  remote_virtual_network_id    = data.terraform_remote_state.vnet.outputs.frontend_vnet
+  allow_virtual_network_access = true
+  allow_forwarded_traffic      = true
+
+  allow_gateway_transit = true
+}
+
+resource "azurerm_virtual_network_peering" "shared-backend" {
+  name                         = "SharedToBackend"
+  resource_group_name          = data.terraform_remote_state.vnet.outputs.resource_group_name
+  virtual_network_name         = "shared-svcs-vnet"
+  remote_virtual_network_id    = data.terraform_remote_state.vnet.outputs.backend_vnet
+  allow_virtual_network_access = true
+  allow_forwarded_traffic      = true
+
+  allow_gateway_transit = true
+}
+
+
+resource "azurerm_virtual_network_peering" "frontend-shared" {
+  name                         = "FrontendToShared"
+  resource_group_name          = data.terraform_remote_state.vnet.outputs.resource_group_name
+  virtual_network_name         = "frontend-vnet"
+  remote_virtual_network_id    = data.terraform_remote_state.vnet.outputs.shared_svcs_vnet
+  allow_virtual_network_access = true
+  allow_forwarded_traffic      = true
+
+  use_remote_gateways =true
+}
+
+resource "azurerm_virtual_network_peering" "backend-shared" {
+  name                         = "BackendToShared"
+  resource_group_name          = data.terraform_remote_state.vnet.outputs.resource_group_name
+  virtual_network_name         = "backend-vnet"
+  remote_virtual_network_id    = data.terraform_remote_state.vnet.outputs.shared_svcs_vnet
+  allow_virtual_network_access = true
+  allow_forwarded_traffic      = true
+
+  use_remote_gateways = true
+}
