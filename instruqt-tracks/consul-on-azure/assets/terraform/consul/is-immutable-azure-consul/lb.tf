@@ -1,15 +1,17 @@
 resource "azurerm_public_ip" "consul" {
   name                = "consul-ip"
-  location            = var.location
+  location            = var.region
   resource_group_name = azurerm_resource_group.consul.name
   allocation_method   = "Static"
-  sku                 = "Basic"
+  sku                 = "Standard"
 }
 
 resource "azurerm_lb" "consul" {
   name                = "consul-lb"
-  location            = var.location
+  location            = var.region
   resource_group_name = azurerm_resource_group.consul.name
+
+  sku                 = "Standard"
 
   frontend_ip_configuration {
     name                 = "configuration"

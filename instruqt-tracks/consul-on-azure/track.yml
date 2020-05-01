@@ -36,7 +36,7 @@ challenges:
     hostname: cloud-client
     path: /root/terraform
   difficulty: basic
-  timelimit: 1800
+  timelimit: 3600
 - slug: provision-core-services
   id: 8orn6rfyoxcr
   type: challenge
@@ -58,7 +58,7 @@ challenges:
     hostname: cloud-client
     path: /root/terraform
   difficulty: basic
-  timelimit: 1800
+  timelimit: 3600
 - slug: operations-build-consul-image
   id: kwb31ylq3s32
   type: challenge
@@ -80,7 +80,7 @@ challenges:
     hostname: cloud-client
     path: /root/packer
   difficulty: basic
-  timelimit: 1800
+  timelimit: 3600
 - slug: provision-consul
   id: krmibvoviyur
   type: challenge
@@ -102,7 +102,7 @@ challenges:
     hostname: cloud-client
     path: /root/terraform
   difficulty: basic
-  timelimit: 1800
+  timelimit: 3600
 - slug: bootstrap-consul
   id: pxzhp0svamtc
   type: challenge
@@ -119,8 +119,12 @@ challenges:
   - title: Cloud  CLI
     type: terminal
     hostname: cloud-client
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform
   difficulty: basic
-  timelimit: 1800
+  timelimit: 3600
 - slug: validate-load-balancers
   id: e7fkrpkefznc
   type: challenge
@@ -138,5 +142,5 @@ challenges:
     type: terminal
     hostname: cloud-client
   difficulty: basic
-  timelimit: 1800
-checksum: "7772036136095283801"
+  timelimit: 3600
+checksum: "10106639371452732316"
