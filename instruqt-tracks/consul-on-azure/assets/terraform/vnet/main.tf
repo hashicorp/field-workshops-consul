@@ -14,7 +14,7 @@ module "shared-svcs-network" {
   resource_group_name = azurerm_resource_group.instruqt.name
   address_space       = "10.1.0.0/16"
   subnet_prefixes     = ["10.1.0.0/24", "10.1.1.0/24", "10.1.2.0/24"]
-  subnet_names        = ["subnet1", "subnet2", "subnet3"]
+  subnet_names        = ["Consul", "Vault", "GatewaySubnet"]
 
   tags = {
     owner = "lance@hashicorp.com"
@@ -26,8 +26,8 @@ module "frontend-network" {
   resource_group_name = azurerm_resource_group.instruqt.name
   vnet_name           = "frontend-vnet"
   address_space       = "10.2.0.0/16"
-  subnet_prefixes     = ["10.2.0.0/24", "10.2.1.0/24", "10.2.2.0/24"]
-  subnet_names        = ["subnet1", "subnet2", "subnet3"]
+  subnet_prefixes     = ["10.2.0.0/24"]
+  subnet_names        = ["aks"]
 
   tags = {
     owner = "lance@hashicorp.com"
@@ -39,8 +39,8 @@ module "backend-network" {
   resource_group_name = azurerm_resource_group.instruqt.name
   vnet_name           = "backend-vnet"
   address_space       = "10.3.0.0/16"
-  subnet_prefixes     = ["10.3.0.0/24", "10.3.1.0/24", "10.3.2.0/24"]
-  subnet_names        = ["subnet1", "subnet2", "subnet3"]
+  subnet_prefixes     = ["10.3.0.0/24"]
+  subnet_names        = ["aks]
 
   tags = {
     owner = "lance@hashicorp.com"

@@ -3,6 +3,8 @@ provider "azurerm" {
   features {}
 }
 
+data "azurerm_subscription" "current" {}
+
 data "terraform_remote_state" "vnet" {
   backend = "local"
 
@@ -34,7 +36,31 @@ module "consul" {
   consul_cluster_version = var.consul_cluster_version
 }
 
-*/
+resource "azurerm_network_security_group" "consul" {
+  name                = "consul-nsg"
+  location            = data.terraform_remote_state.vnet.outputs.resource_group_location
+  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
+
+  security_rule {
+    name                       = "AllowConsulApiInbound"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "8500"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+}
+
+resource "azurerm_subnet_network_security_group_association" "consul" {
+  subnet_id                 = data.terraform_remote_state.vnet.outputs.shared_svcs_subnets[0]
+  network_security_group_id = azurerm_network_security_group.consul.id
+}
+
+/*
 resource "null_resource" "consul-upgrade" {
   depends_on = [module.consul]
   provisioner "local-exec" {
