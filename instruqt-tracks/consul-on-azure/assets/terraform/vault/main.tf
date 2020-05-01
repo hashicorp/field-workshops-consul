@@ -26,7 +26,7 @@ resource "azurerm_network_interface" "vault" {
 
   ip_configuration {
     name                          = "configuration"
-    subnet_id                     = data.terraform_remote_state.vnet.outputs.shared_svcs_subnets[0]
+    subnet_id                     = data.terraform_remote_state.vnet.outputs.shared_svcs_subnets[1]
     private_ip_address_allocation = "Dynamic"
   }
 }
