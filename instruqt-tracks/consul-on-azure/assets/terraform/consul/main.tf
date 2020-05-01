@@ -33,3 +33,12 @@ module "consul" {
   bootstrap              = var.bootstrap
   consul_cluster_version = var.consul_cluster_version
 }
+
+*/
+resource "null_resource" "consul-upgrade" {
+  depends_on = [module.consul]
+  provisioner "local-exec" {
+    command = "azure-cluster-upgrade -r ${module.consul.consul_rg} -v ${module.consul.consul_vmss} -s ${data.azurerm_subscription.current.subscription_id}"
+  }
+}
+*/

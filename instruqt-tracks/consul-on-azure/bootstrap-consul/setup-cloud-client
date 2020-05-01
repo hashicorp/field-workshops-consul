@@ -2,6 +2,13 @@
 
 set-workdir /root/terraform/consul
 
+#get the upgrade utility
+cd /tmp
+curl -L -O https://github.com/krarey/azure-cluster-upgrade/releases/download/v0.0.2/azure-cluster-upgrade_v0.0.2_linux_amd64.tar.gz
+tar -xvzf *.tar.gz
+mv azure-cluster-upgrade /usr/local/bin/azure-cluster-upgrade
+cd -
+
 pubkey=$(cat ~/.ssh/id_rsa.pub)
 cat << EOF > /root/terraform/consul/terraform.tfvars
 location = "eastus"
