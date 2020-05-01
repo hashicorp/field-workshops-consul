@@ -13,7 +13,7 @@ resource "azurerm_network_interface" "bastion" {
 
   ip_configuration {
     name                          = "configuration"
-    subnet_id                     = module.shared-svcs-network.vnet_subnets[2]
+    subnet_id                     = module.shared-svcs-network.vnet_subnets[3]
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.bastion.id
   }
