@@ -73,7 +73,7 @@ resource "azurerm_virtual_machine_scale_set" "consul_cluster" {
   network_profile {
     name    = "${random_id.environment_name.hex}-consul-net"
     primary = true
-    network_security_group_id        = azurerm_network_security_group.consul.id
+    //network_security_group_id        = azurerm_network_security_group.consul.id
     ip_configuration {
       name                           = "${random_id.environment_name.hex}-consul-net-ip"
       primary                        = true
@@ -180,7 +180,7 @@ resource "azurerm_network_security_group" "consul" {
   name                = "consul-nsg"
   resource_group_name = azurerm_resource_group.consul.name
   location            = var.region
-  
+
   tags = {
     environment = "Production"
   }
