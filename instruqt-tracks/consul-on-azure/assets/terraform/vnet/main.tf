@@ -40,7 +40,7 @@ module "backend-network" {
   vnet_name           = "backend-vnet"
   address_space       = "10.3.0.0/16"
   subnet_prefixes     = ["10.3.0.0/24"]
-  subnet_names        = ["aks]
+  subnet_names        = ["aks"]
 
   tags = {
     owner = "lance@hashicorp.com"
