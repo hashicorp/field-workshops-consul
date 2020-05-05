@@ -19,7 +19,6 @@ resource "azurerm_public_ip" "gateway" {
   sku                 = "Basic"
 }
 
-
 resource "azurerm_virtual_network_gateway" "gateway" {
   name                = "gateway"
   resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
@@ -87,4 +86,49 @@ resource "azurerm_virtual_network_peering" "backend-shared" {
   allow_forwarded_traffic      = true
 
   use_remote_gateways = true
+}
+
+
+resource "azurerm_route_table" "frontend" {
+  name                          = "frontend-shared-aks"
+  location                      = data.terraform_remote_state.vnet.outputs.resource_group_location
+  resource_group_name           = data.terraform_remote_state.vnet.outputs.resource_group_name
+  disable_bgp_route_propagation = false
+
+  route {
+    name           = "backend"
+    address_prefix = "10.3.0.0/16"
+    next_hop_type  = "VirtualNetworkGateway"
+  }
+
+  tags = {
+    environment = "Production"
+  }
+}
+
+resource "azurerm_subnet_route_table_association" "frontend" {
+  subnet_id      = data.terraform_remote_state.vnet.outputs.frontend_subnets[0]
+  route_table_id = azurerm_route_table.frontend.id
+}
+
+resource "azurerm_route_table" "backend" {
+  name                          = "backend-shared-aks"
+  location                      = data.terraform_remote_state.vnet.outputs.resource_group_location
+  resource_group_name           = data.terraform_remote_state.vnet.outputs.resource_group_name
+  disable_bgp_route_propagation = false
+
+  route {
+    name           = "frontend"
+    address_prefix = "10.2.0.0/16"
+    next_hop_type  = "VirtualNetworkGateway"
+  }
+
+  tags = {
+    environment = "Production"
+  }
+}
+
+resource "azurerm_subnet_route_table_association" "backend" {
+  subnet_id      = data.terraform_remote_state.vnet.outputs.backend_subnets[0]
+  route_table_id = azurerm_route_table.backend.id
 }
