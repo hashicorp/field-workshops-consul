@@ -1,8 +1,16 @@
 #!/bin/bash
 
-set-workdir /root/terraform/aks
+set-workdir /root/terraform
 
 cd /root/terraform/aks
 terraform init
+
+cd /root/terraform/vault
+terraform init
+
+pubkey=$(cat ~/.ssh/id_rsa.pub)
+cat << EOF > /root/terraform/vault/terraform.tfvars
+ssh_public_key="${pubkey}"
+EOF
 
 exit 0

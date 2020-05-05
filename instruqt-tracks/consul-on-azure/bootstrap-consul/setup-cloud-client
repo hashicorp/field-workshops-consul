@@ -1,6 +1,11 @@
 #!/bin/bash
 
 set-workdir /root/terraform/consul
+cd /root/terraform/consul
+terraform init
+
+consul_lb=$(terraform output -state /root/terraform/consul/terraform.tfstate consul_ip)
+echo "export CONSUL_HTTP_ADDR=http://${consul_lb}" >> ~/.bashrc
 
 #get the upgrade utility
 cd /tmp
@@ -17,6 +22,16 @@ ssh_public_key="${pubkey}"
 
 consul_cluster_version = "0.0.2"
 bootstrap = false
+EOF
+
+cat << 'EOF' >> /root/terraform/consul/main.tf
+
+resource "null_resource" "consul-upgrade" {
+  depends_on = [module.consul]
+  provisioner "local-exec" {
+    command = "azure-cluster-upgrade -r ${module.consul.consul_rg} -v ${module.consul.consul_vmss} -s ${data.azurerm_subscription.current.subscription_id}"
+  }
+}
 EOF
 
 exit 0

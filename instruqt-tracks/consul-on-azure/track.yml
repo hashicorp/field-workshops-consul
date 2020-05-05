@@ -21,12 +21,41 @@ challenges:
   title: 'Infrastructure: Provision Azure Virtual Networks'
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    You can think of the Cloud CLI terminal as your laptop machine preloaded with cloud access credentials for your company. <br>
 
-    You can use any GitHub flavoured markdown.
+    At any time you can use the Azure console to view your environment.
+    Azure CLI commands will be provided for you to interact with Azure throughout this lab. <br>
+
+    Your first task is setting up VPCs for each team.
+
+    Inspect the Terraform code, and then provision the VPCs.
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    You'll notice you have three separate VPCs.
+
+    ```
+    az network vnet list
+    ```
+
+    Their CIDR blocks are listed below:
+
+    ```
+    shared-svcs-vnet: 10.1.0.0/16
+    frontend-vnet: 10.2.0.0/16
+    backend-vnet: 10.3.0.0/16
+    ```
+
+    The shared service VNet will run the core Consul infrastructure.
+    You will provision the Consul servers into this VNet in the next few assignments.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: |-
+      In this assignment you will familiarize yourself with the Azure cloud
+      environment, and provision VNets for your services and applications.
   tabs:
   - title: Cloud  CLI
     type: terminal
@@ -43,12 +72,30 @@ challenges:
   title: 'Infrastructure: Provision Core Services'
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    You will use Terraform to provision these services in the background while you set up Consul in the next few assignments. <br>
 
-    You can use any GitHub flavoured markdown.
+    Start with Vault. <br>
+
+    ```
+    cd /root/terraform/vault
+    terraform plan
+    nohup terraform apply -auto-approve > /root/terraform/vault/terraform.out &
+    ```
+
+    Next, provision AKS. <br>
+
+    ```
+    cd /root/terraform/aks
+    terraform plan
+    nohup terraform apply -auto-approve > /root/terraform/aks/terraform.out &
+    ```
+
+    You can continue immediately to the next assignment while these services are provisioning.
+    Click the check button now to proceed.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: In this assignment you will provision a Vault instance and the AKS clusters
+      that the development teams rely on to run their workloads.
   tabs:
   - title: Cloud  CLI
     type: terminal
@@ -65,12 +112,32 @@ challenges:
   title: 'Operations: Build Consul Image'
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    The Packer build has been set up for you, which you can optionally look through in the code editor.
+    This Packer build is provided by the HashiCorp implementation services team. <br>
 
-    You can use any GitHub flavoured markdown.
+    Inspect the variable file, then build the Azure image.
+
+    ```
+    cat /root/packer/vars.json
+    export AZURE_REGION=eastus
+    export AZURE_SUBSCRIPTION_ID=$(az account show | jq -r .id)
+    packer build -var-file vars.json rhel7.json
+    ```
+
+    Validate your image is available.
+
+    ```
+    az image list
+    ```
+
+    Now that you have a Consul image, you're ready to provision the Consul servers in an VMSS.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: |-
+      In this assignment you will build an immutable image of Consul with [HashiCorp Packer](https://packer.io/). <br>
+
+      Immutability has many advantages for infrastructure management.
+      Consul Enterprise can take advantage of immutable patterns with [Automated Upgrades](https://www.consul.io/docs/enterprise/upgrades/index.html).
   tabs:
   - title: Cloud  CLI
     type: terminal
@@ -87,12 +154,39 @@ challenges:
   title: 'Operations: Provision Consul'
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    A terraform module has been provided for you to provision your Consul immutable image into the VMSS.
+    This module is provided by the HashiCorp implementation services team. <br>
 
-    You can use any GitHub flavoured markdown.
+    Inspect the variable file for Terraform, and deploy Consul.
+
+    ```
+    cat terraform.tfvars
+    cat main.tf
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    Now, validate the Consul servers deployed to your VMSS. <br>
+
+    ```
+    az vmss list
+    ```
+
+    You should see the Consul servers with a ``*-0.0.1` postfix.
+    You will increment the deployment in the next exercise to finish the immutable bootstrap.
+
+    Let's inspect one of the newly provisioned Consul instances.
+    We can access the newly provisioned instance through our bastion host helper script.
+
+    ```
+    check-consul-config /etc/consul.d/consul.hcl
+    ```
+
+    You will finish setting up the Consul servers in the next assignment.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: In this assignment, you'll install Consul into an VMSS using the immutable
+      image you created in the last assignment.
   tabs:
   - title: Cloud  CLI
     type: terminal
@@ -109,13 +203,43 @@ challenges:
   title: 'Operations: Bootstrap Consul'
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In one of the terminal window, you will watch the new servers transition in real time.
 
-    You can use any GitHub flavoured markdown.
+    ```
+    watch 'consul operator raft list-peers ; consul catalog nodes --detailed'
+    ```
+
+    You will notice two changes to the Terraform variables to complete the bootstrapping process.
+      * consul_cluster_version = "0.0.2"
+      * bootstrap = false
+
+    Now run terraform, and watch the servers automatically transition with the watch command you configured earlier.
+
+    ```
+    cat terraform.tfvars
+    cat main.tf
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    You can also see that the `default_policy` for ACLs was updated to deny, the desired production value.
+
+    ```
+    check-consul-config /etc/consul.d/consul.hcl
+    ```
+
+    In the next assignment you will centralize secrets from the Consul bootstrap for service consumers.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: |-
+      Consul Enterprise supports an [upgrade pattern](https://learn.hashicorp.com/consul/day-2-operations/autopilot#upgrade-migrations) that allows operators to deploy a complete cluster of new servers,
+      and safely migrate the new servers until the upgrade is complete. <br>
+
+      This feature allows you to easily apply codified changes to the Consul servers without impacting availability of the service.
   tabs:
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
   - title: Cloud  CLI
     type: terminal
     hostname: cloud-client
@@ -131,16 +255,279 @@ challenges:
   title: 'Operations: Validate Load Balancers'
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In the past few assignments you created Load Balancers for both Vault and Consul. <br>
 
-    You can use any GitHub flavoured markdown.
+    Your Vault LB should be ready by now. Check its health for a 200 code. <br>
+
+    ```
+    vault=$(az network public-ip show -g llarsen-instruqt-resources -n vault-ip | jq -r .ipAddress)
+    curl -s -v http://{$vault}/v1/sys/health | jq
+    ```
+
+    Applications and services that use Consul typically do so through a Consul agent running on the same VM, K8s worker node, etc.
+    In some cases, to make the UI available for example, Consul's API can also be exposed via a load balancer.
+    Check the status of the cluster through the load balancer. <br>
+
+    ```
+    consul=$(az network public-ip show -g hashicorp-2d1133d0-consul-cluster  -n consul-ip | jq -r .ipAddress)
+    curl -s -v http://{$consul}/v1/status/leader | jq
+    ```
+
+    In the next assignment you will retrieve Consul secrets from Vault.
   notes:
   - type: text
-    contents: Replace this text with your own text
+    contents: In this assignment you will validate your AWS ALBs for both Vault and
+      Consul.
   tabs:
   - title: Cloud  CLI
     type: terminal
     hostname: cloud-client
   difficulty: basic
   timelimit: 3600
-checksum: "10106639371452732316"
+- slug: centralize-consul-secrets
+  id: unyvru7onjgb
+  type: challenge
+  title: 'Security: Centralize Consul Secrets'
+  teaser: Use Vault to store Consul secret
+  assignment: |-
+    The Consul bootstrap outputs from the last few assignments have been secured in Vault through the provisioning process. <br>
+
+    Login as an operator and inspect the credentials. <br>
+
+    ```
+    vault login -method=userpass username=operations password=Password1
+    ```
+
+    Now inspect the credentials.
+
+    ```
+    vault kv get secret/consul
+    ```
+
+    You can use the master token to create a management token for Vault to issue [dynamic secrets](https://www.vaultproject.io/docs/secrets/consul/) for Consul.
+
+    Get a management token for Vault to manage Consul tokens with.
+    You can retrieve the privileged token for this operation from Vault.  <br>
+
+    ```
+    export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
+    vault_consul_mgmt_token=$(consul acl token create -policy-name=global-management -description "vault mgmt" | grep SecretID | cut -d ":" -f2 | xargs)
+    ```
+
+    Now configure the secrets engine.
+
+    ```
+    vault write consul/config/access address=${CONSUL_HTTP_ADDR} token=${vault_consul_mgmt_token}
+    vault read consul/config/access
+    ```
+
+    Last, create a policy for the operations team, and link it to the Vault role.
+
+    ```
+    consul acl policy create -name "ops" -description "admin policy for ops" -rules 'acl = "write" operator = "write" namespace_prefix "" {acl = "write"}'
+    vault write consul/roles/ops policies=ops ttl=1h
+    ```
+
+    Now you are ready to get a dynamic Consul token from Vault for an operator.
+    Validate the token after you fetch it. <br>
+
+    ```
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    You will use this role in a later assignment to configure access for Consul service consumers.
+  notes:
+  - type: text
+    contents: |-
+      Terraform and Vault are commonly used together to provide secure provisioning workflows.
+      Terraform Enterprise provides additional features on top of Terraform to make securing this workflow easier. <br>
+
+      In this assignment you will use these highly privileged credentials to configure self-service,
+      least privileged access to the Consul service. <br>
+
+      A Vault instance is provisioning for this assignment. Please be patient as this can take a few minutes.
+  tabs:
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  difficulty: basic
+  timelimit: 500
+- slug: validate-backup-agent
+  id: pigiv1kuwlyp
+  type: challenge
+  title: ' Operations: Validate Backup Agent completed'
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 300
+- slug: create-virtual-network-peering
+  id: sk0x6rwzwbvt
+  type: challenge
+  title: 'Network: Create Virtual Network Peering'
+  teaser: test
+  assignment: |-
+    Run Terraform to setup the Virtual Network Gateway routes between VNets you provisioned earlier. <br>
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    Inspect the the gateway and the peering connections.
+
+    ```
+    az network vnet-gateway list --resource-group llarsen-instruqt-resources
+    az network vnet peering list --resource-group llarsen-instruqt-resources --vnet-name shared-svcs-vnet
+    az network vnet peering list --resource-group llarsen-instruqt-resources --vnet-name frontend-vnet
+    az network vnet peering list --resource-group llarsen-instruqt-resources --vnet-name backend-vnet
+    ```
+
+    In a later assignment you will these peerings to enable remote gateways for the spoke VNets.
+  notes:
+  - type: text
+    contents: |-
+      [Azure transit peering](https://azure.microsoft.com/en-us/blog/create-a-transit-vnet-using-vnet-peering/) can help reduce complexity of VNet peering in Azure
+      environments, and is commonly used to help developers connect their applications to shared services. <br>
+
+      In this assignment you will use TGW to provide connectivity across VPCs.
+  tabs:
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/vgw
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  difficulty: basic
+  timelimit: 500
+- slug: create-remote-gateways
+  id: n3dqzamlwksf
+  type: challenge
+  title: 'Network: Create Remote Gateways'
+  teaser: test
+  assignment: placeholder
+  notes:
+  - type: text
+    contents: With a VGW created you can now use remote gateway transit.
+  tabs:
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/vgw
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  difficulty: basic
+  timelimit: 500
+- slug: validate-aks-clusters
+  id: qq2nccry7db8
+  type: challenge
+  title: 'Infrastructure: Validate AKS clusters'
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 300
+- slug: configure-aks-cluster-segments
+  id: rkth4xwzcexw
+  type: challenge
+  title: 'Operations: Configure AKS cluster segments'
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: create-namespaces-and-policies
+  id: rjjryfzvpeb8
+  type: challenge
+  title: 'Operations: Create Namespaces and Policies completed'
+  teaser: test
+  assignment: 'test    '
+  difficulty: basic
+  timelimit: 500
+- slug: create-consul-roles
+  id: ror3kjud406p
+  type: challenge
+  title: 'Security: Create Consul Roles completed'
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: configure-aks-cluster-secrets
+  id: eh05ghvrqmgi
+  type: challenge
+  title: 'Operations: Configure EKS cluster secrets completed'
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: deploy-consul-in-aks
+  id: ihjof5oqbuii
+  type: challenge
+  title: 'Operations: Deploy Consul in AKS'
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: configure-k8s-consul-authentication
+  id: eukwfkenndty
+  type: challenge
+  title: ' Security: Configure K8s Consul Authentication'
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: deploy-applications
+  id: eaqykkqag6eg
+  type: challenge
+  title: 'Developer: Deploy Applications '
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: update-intentions
+  id: edwi9y8rbdzb
+  type: challenge
+  title: 'Developer: Update Intentions'
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: test-application
+  id: t6wkkohbvmqq
+  type: challenge
+  title: 'Developer: Test Application'
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+checksum: "12176462523078977008"
