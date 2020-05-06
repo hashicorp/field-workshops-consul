@@ -74,7 +74,7 @@ resource "azurerm_virtual_network_peering" "frontend-shared" {
   allow_virtual_network_access = true
   allow_forwarded_traffic      = true
 
-  use_remote_gateways =true
+  use_remote_gateways = var.remote_gateways
 }
 
 resource "azurerm_virtual_network_peering" "backend-shared" {
@@ -85,7 +85,7 @@ resource "azurerm_virtual_network_peering" "backend-shared" {
   allow_virtual_network_access = true
   allow_forwarded_traffic      = true
 
-  use_remote_gateways = true
+  use_remote_gateways = var.remote_gateways
 }
 
 
