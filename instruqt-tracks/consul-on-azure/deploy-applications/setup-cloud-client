@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set-workdir /root/apps
+cd /root/apps
+
+#dns
+apt-get update -y
+apt-get install dnsutils -y
+
+exit 0
