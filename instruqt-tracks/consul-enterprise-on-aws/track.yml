@@ -519,9 +519,6 @@ challenges:
 
       In this assignment you will validate the Snapshot Agent is working correctly.
   tabs:
-  - title: Target lab architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -547,6 +544,9 @@ challenges:
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/05-centralize-consul-secrets.html
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 1200
 - slug: platform-quiz
@@ -1352,4 +1352,4 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "5736099403830407471"
+checksum: "4064829503534250884"

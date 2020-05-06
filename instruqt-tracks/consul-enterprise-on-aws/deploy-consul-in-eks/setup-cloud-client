@@ -10,10 +10,11 @@ cat << EOF > /root/helm/frontend-values.yaml
 global:
   tls:
     enabled: false
-  image: 'hashicorp/consul-enterprise:1.7.2-ent'
+  image: 'hashicorp/consul-enterprise:1.7.3-ent'
   domain: consul
   datacenter: us-east-1
-  bootstrapACLs: true
+  acls:
+    manageSystemACLs: true
   gossipEncryption:
     secretName: hashicorp-consul-gossip-key
     secretKey: key
@@ -30,24 +31,26 @@ client:
         "serf_lan": 8303
         }
     }
-ui:
-  enabled: true
 connectInject:
   enabled: true
   default: false
   k8sAllowNamespaces: ["default"]
   consulNamespaces:
     consulDestinationNamespace: "frontend"
+  aclInjectToken:
+    secretName: hashicorp-consul-connect-inject-acl-token
+    secretKey: token
 EOF
 
 cat << EOF > /root/helm/backend-values.yaml
 global:
   tls:
     enabled: false
-  image: 'hashicorp/consul-enterprise:1.7.2-ent'
+  image: 'hashicorp/consul-enterprise:1.7.3-ent'
   domain: consul
   datacenter: us-east-1
-  bootstrapACLs: true
+  acls:
+    manageSystemACLs: true
   gossipEncryption:
     secretName: hashicorp-consul-gossip-key
     secretKey: key
@@ -64,17 +67,18 @@ client:
         "serf_lan": 8304
         }
     }
-ui:
-  enabled: true
 connectInject:
   enabled: true
   default: false
   k8sAllowNamespaces: ["default"]
   consulNamespaces:
     consulDestinationNamespace: "backend"
+  aclInjectToken:
+    secretName: hashicorp-consul-connect-inject-acl-token
+    secretKey: token
 EOF
 
-git clone --branch v0.19.0 https://github.com/hashicorp/consul-helm.git
+git clone --branch v0.20.1 https://github.com/hashicorp/consul-helm.git
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
 exit 0
