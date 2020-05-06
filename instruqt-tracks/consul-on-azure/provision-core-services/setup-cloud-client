@@ -13,4 +13,9 @@ cat << EOF > /root/terraform/vault/terraform.tfvars
 ssh_public_key="${pubkey}"
 EOF
 
+cd /root/terraform/vgw
+cat << EOF > /root/terraform/vgw/terraform.tfvars
+remote_gateways=false
+EOF
+
 exit 0

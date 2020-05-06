@@ -125,14 +125,12 @@ chmod +x /usr/local/bin/setup-k8s-consul-cluster
 
 #k8s auth methods
 cat << "SCRIPT" > /usr/local/bin/setup-k8s-consul-auth
-#!/bin/bash -xe
-
 namespace=$1
 
-kubectl config use-context eks_${namespace}
+kubectl config use-context ${namespace}-aks
 
-k8s_host=$(aws eks describe-cluster --name ${namespace} | jq -r .cluster.endpoint)
-k8s_ca=$(aws eks describe-cluster --name ${namespace} | jq -r .cluster.certificateAuthority.data | base64 -d)
+k8s_host=$(terraform output -state /root/terraform/vault/terraform.tfstate ${namespace}_cluster_host)
+k8s_ca=$(terraform output -state /root/terraform/vault/terraform.tfstate ${namespace}_cluster_ca| base64 -d)
 
 k8s_sa=$(kubectl  get sa -n consul hashicorp-consul-connect-injector-authmethod-svc-account -o json | jq -r .secrets[0].name)
 k8s_jwt=$(kubectl get secrets -n consul ${k8s_sa} -o json | jq -r .data.token | base64 -d)
