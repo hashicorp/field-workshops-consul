@@ -8,6 +8,9 @@ terraform init
 cd /root/terraform/vault
 terraform init
 
+cd /root/terraform/vgw
+terraform init
+
 pubkey=$(cat ~/.ssh/id_rsa.pub)
 cat << EOF > /root/terraform/vault/terraform.tfvars
 ssh_public_key="${pubkey}"

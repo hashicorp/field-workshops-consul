@@ -72,15 +72,3 @@ resource "azurerm_kubernetes_cluster" "backend" {
     Environment = "Production"
   }
 }
-
-resource "null_resource" "frontend_kube_config" {
-  provisioner "local-exec" {
-    command = "echo ${azurerm_kubernetes_cluster.frontend.kube_config_raw} > kubeconfig_frontend"
-  }
-}
-
-resource "null_resource" "backend_kube_config" {
-  provisioner "local-exec" {
-    command = "echo ${azurerm_kubernetes_cluster.backend.kube_config_raw} > kubeconfig_backend"
-  }
-}

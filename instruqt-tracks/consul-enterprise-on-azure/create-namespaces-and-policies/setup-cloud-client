@@ -36,7 +36,7 @@ ACLs {
 EOF
 
 cat << EOF > /root/policies/frontend-team-agent.hcl
-node_prefix "ip-10-2-" {
+node_prefix "aks-" {
   policy = "write"
 }
 service_prefix "" {
@@ -78,7 +78,7 @@ ACLs {
 EOF
 
 cat << EOF > /root/policies/backend-team-agent.hcl
-node_prefix "ip-10-3-" {
+node_prefix "aks- {
   policy = "write"
 }
 service_prefix "" {

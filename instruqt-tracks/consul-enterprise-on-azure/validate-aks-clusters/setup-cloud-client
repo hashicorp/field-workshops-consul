@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set-workdir /root/terraform/aks
+
+cd /root/terraform/aks
+terraform init
+
+mkdir /root/.kube/
+
+exit 0

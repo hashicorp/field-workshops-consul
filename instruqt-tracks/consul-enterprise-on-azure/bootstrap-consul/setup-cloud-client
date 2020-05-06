@@ -34,4 +34,7 @@ resource "null_resource" "consul-upgrade" {
 }
 EOF
 
+cd /root/terraform/consul
+terraform init
+
 exit 0

@@ -202,7 +202,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root/terraform
+    path: /root/terraform/consul
   difficulty: basic
   timelimit: 3600
 - slug: bootstrap-consul
@@ -382,15 +382,10 @@ challenges:
 - slug: create-virtual-network-peering
   id: sk0x6rwzwbvt
   type: challenge
-  title: 'Network: Create Virtual Gateway & Peering'
+  title: 'Network: Validate Virtual Gateway & Peering'
   teaser: test
   assignment: |-
-    Run Terraform to setup the Virtual Network Gateway routes between VNets you provisioned earlier. <br>
-
-    ```
-    terraform plan
-    terraform apply -auto-approve
-    ```
+    The VGW and VNet peerings provisioned eariler should now be ready. <br>
 
     Inspect the the gateway and the peering connections.
 
@@ -1020,4 +1015,4 @@ challenges:
     path: /root/apps
   difficulty: basic
   timelimit: 500
-checksum: "5113047122714942584"
+checksum: "8959422685504953605"

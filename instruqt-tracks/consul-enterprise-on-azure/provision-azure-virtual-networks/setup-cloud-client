@@ -44,9 +44,9 @@ cd /root
 #get assets
 echo "cloning assets..."
 git clone -b add-consul-instruqt-ent-azure-track https://github.com/hashicorp/field-workshops-consul.git
-cp -r field-workshops-consul/instruqt-tracks/consul-on-azure/assets/terraform .
-cp -r field-workshops-consul/instruqt-tracks/consul-on-azure/assets/packer .
-cp -r field-workshops-consul/instruqt-tracks/consul-on-azure/assets/apps .
+cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-azure/assets/terraform .
+cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-azure/assets/packer .
+cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-azure/assets/apps .
 rm -rf field-workshops-consul
 
 #provision
@@ -129,8 +129,8 @@ namespace=$1
 
 kubectl config use-context ${namespace}-aks
 
-k8s_host=$(terraform output -state /root/terraform/vault/terraform.tfstate ${namespace}_cluster_host)
-k8s_ca=$(terraform output -state /root/terraform/vault/terraform.tfstate ${namespace}_cluster_ca| base64 -d)
+k8s_host=$(terraform output -state /root/terraform/aks/terraform.tfstate ${namespace}_cluster_host)
+k8s_ca=$(terraform output -state /root/terraform/aks/terraform.tfstate ${namespace}_cluster_ca| base64 -d)
 
 k8s_sa=$(kubectl  get sa -n consul hashicorp-consul-connect-injector-authmethod-svc-account -o json | jq -r .secrets[0].name)
 k8s_jwt=$(kubectl get secrets -n consul ${k8s_sa} -o json | jq -r .data.token | base64 -d)
