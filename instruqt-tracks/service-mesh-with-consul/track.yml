@@ -240,7 +240,7 @@ challenges:
 
     Let's use that definition to allow our application to connect to the database. <br>
 
-    Remember, our listener is configured on localhost, so we can just update our properties file to `127.0.0.1`, and establish connectivity. <br>
+    On line 32 of the `App Config` tab, recall our listener is configured on localhost, so we can just update our address to `127.0.0.1`, and establish connectivity. <br>
 
     Go ahead and do this now. Check the `Website` tab.
     Our service mesh blog is back online!
