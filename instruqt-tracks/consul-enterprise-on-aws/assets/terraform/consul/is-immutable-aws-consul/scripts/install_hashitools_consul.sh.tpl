@@ -60,6 +60,29 @@ node_meta = {
 }
 EOF
 
+%{ if consul_key != "" }
+echo "${consul_ca_cert}" > /opt/consul/tls/ca-cert.pem
+echo "${consul_cert}" > /opt/consul/tls/server-cert.pem
+echo "${consul_key}" > /opt/consul/tls/server-key.pem
+
+cat << EOF > /etc/consul.d/tls.hcl
+verify_incoming        = true
+verify_outgoing        = true
+verify_server_hostname = true
+ca_file   = "/opt/consul/tls/ca-cert.pem"
+cert_file = "/opt/consul/tls/server-cert.pem"
+key_file  = "/opt/consul/tls/server-key.pem"
+auto_encrypt {
+  allow_tls = true
+}
+
+ports {
+  https = 8501
+}
+
+EOF
+%{ endif }
+
 %{ if enable_connect }
 cat << EOF > /etc/consul.d/connect.hcl
 connect {

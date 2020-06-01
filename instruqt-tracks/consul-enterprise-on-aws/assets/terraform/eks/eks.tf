@@ -88,7 +88,7 @@ resource "aws_security_group" "frontend-eks-consul" {
     from_port   = 20000
     to_port     = 20000
     protocol    = "tcp"
-    cidr_blocks = ["10.2.0.0/16","10.3.0.0/16"]
+    cidr_blocks = ["10.2.0.0/16", "10.3.0.0/16"]
   }
 
   ingress {
@@ -123,7 +123,7 @@ resource "aws_security_group" "backend-eks-consul" {
     from_port   = 20000
     to_port     = 20000
     protocol    = "tcp"
-    cidr_blocks = ["10.2.0.0/16","10.3.0.0/16"]
+    cidr_blocks = ["10.2.0.0/16", "10.3.0.0/16"]
   }
 
   ingress {

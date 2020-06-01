@@ -150,6 +150,9 @@ locals {
     snapshot_interval      = var.snapshot_interval
     snapshot_retention     = var.snapshot_retention
     consul_config          = var.consul_config
+    consul_ca_cert         = var.consul_tls_config.ca_cert
+    consul_cert            = var.consul_tls_config.cert
+    consul_key             = var.consul_tls_config.key
   }
 }
 
