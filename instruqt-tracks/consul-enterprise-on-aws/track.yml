@@ -326,7 +326,7 @@ challenges:
 
     ```
     consul=$(aws elbv2 describe-load-balancers --names consul-lb --output json | jq -r .LoadBalancers[0].DNSName)
-    curl -s -v http://{$consul}/v1/status/leader | jq
+    curl -k -s -v https://{$consul}/v1/status/leader | jq
     ```
 
     In the next assignment you will retrieve Consul secrets from Vault.
@@ -343,6 +343,16 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/04-bootstrap-consul.html
@@ -962,7 +972,7 @@ challenges:
 
     ```
     kubectl config use-context eks_frontend
-    setup-k8s-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/frontend-agent) $(vault read -field token consul/creds/k8s-injector)
+    setup-k8s-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/k8s-injector)
     kubectl  get secrets -n consul
     ```
 
@@ -970,7 +980,7 @@ challenges:
 
     ```
     kubectl config use-context eks_backend
-    setup-k8s-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/backend-agent) $(vault read -field token consul/creds/k8s-injector)
+    setup-k8s-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/k8s-injector)
     kubectl get secrets -n consul
     ```
 
@@ -1023,7 +1033,7 @@ challenges:
 
     ```
     kubectl config use-context eks_frontend
-    helm install hashicorp -f frontend-values.yaml --namespace consul ./consul-helm --wait
+    helm install hashicorp -f frontend-values.yaml --namespace consul ./consul-helm --debug
     kubectl get pods -n consul
     ```
 
@@ -1031,7 +1041,7 @@ challenges:
 
     ```
     kubectl config use-context eks_backend
-    helm install hashicorp -f backend-values.yaml --namespace consul ./consul-helm --wait
+    helm install hashicorp -f backend-values.yaml --namespace consul ./consul-helm --debug
     kubectl get pods -n consul
     ```
 
@@ -1352,4 +1362,4 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "4064829503534250884"
+checksum: "15409247795806682767"

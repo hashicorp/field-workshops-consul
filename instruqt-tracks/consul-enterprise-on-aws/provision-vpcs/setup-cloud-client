@@ -79,13 +79,12 @@ cat << "SCRIPT" > /usr/local/bin/setup-k8s-consul-cluster
 #!/bin/bash -xe
 
 gossip_key=$1
-acl_token=$2
-injection_token=$3
+injection_token=$2
 
 #base64 the secrets
 gossip_key=$(echo -n $gossip_key | base64 -w 0)
-acl_token=$(echo -n  $acl_token | base64 -w 0)
 injection_token=$(echo -n  $injection_token | base64 -w 0)
+ca_cert=$(terraform output -state /root/terraform/consul/terraform.tfstate ca | base64 -w 0)
 
 #create the consul namespace
 cat <<EOF | kubectl apply -f -
@@ -93,6 +92,18 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: consul
+EOF
+
+#tls cert
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hashicorp-consul-ca-cert
+  namespace: consul
+type: Opaque
+data:
+  tls.crt: $ca_cert
 EOF
 
 #add the gosip key
@@ -110,15 +121,6 @@ cat <<EOF | kubectl apply -n consul -f -
 apiVersion: v1
 kind: Secret
 metadata:
-  name: hashicorp-consul-client-acl-token
-type: Opaque
-data:
-  token: $acl_token
-EOF
-cat <<EOF | kubectl apply -n consul -f -
-apiVersion: v1
-kind: Secret
-metadata:
   name: hashicorp-consul-connect-inject-acl-token
 type: Opaque
 data:
@@ -132,8 +134,64 @@ cat << "SCRIPT" > /usr/local/bin/setup-k8s-consul-auth
 #!/bin/bash -xe
 
 namespace=$1
-
 kubectl config use-context eks_${namespace}
+
+cat <<EOF | kubectl apply -f -
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: hashicorp-consul-connect-injector-authmethod-svc-account
+  namespace: consul
+  labels:
+    app: consul
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: hashicorp-consul-connect-injector-authmethod-role
+  namespace: consul
+  labels:
+    app: consul
+rules:
+  - apiGroups: [""]
+    resources:
+      - serviceaccounts
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: hashicorp-consul-connect-injector-authmethod-authdelegator-role-binding
+  namespace: consul
+  labels:
+    app: consul
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: "system:auth-delegator"
+subjects:
+  - kind: ServiceAccount
+    name: hashicorp-consul-connect-injector-authmethod-svc-account
+    namespace: consul
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: hashicorp-consul-connect-injector-authmethod-serviceaccount-role-binding
+  namespace: consul
+  labels:
+    app: consul
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: "hashicorp-consul-connect-injector-authmethod-role"
+subjects:
+  - kind: ServiceAccount
+    name: hashicorp-consul-connect-injector-authmethod-svc-account
+    namespace: consul
+EOF
 
 k8s_host=$(aws eks describe-cluster --name ${namespace} | jq -r .cluster.endpoint)
 k8s_ca=$(aws eks describe-cluster --name ${namespace} | jq -r .cluster.certificateAuthority.data | base64 -d)

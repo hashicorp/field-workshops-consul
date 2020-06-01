@@ -44,23 +44,6 @@ module "consul" {
 
   consul_tls_config = module.consul_tls.consul_tls_config
 
-  consul_config = {
-    "segments": [
-      {
-        "name": "frontend",
-        "bind": "$${LOCAL_IPV4}",
-        "advertise": "$${LOCAL_IPV4}",
-        "port": 8303
-      },
-      {
-        "name": "backend",
-        "bind": "$${LOCAL_IPV4}",
-        "advertise": "$${LOCAL_IPV4}",
-        "port": 8304
-      }
-    ]
-  }
-
 }
 
 module "consul_tls" {

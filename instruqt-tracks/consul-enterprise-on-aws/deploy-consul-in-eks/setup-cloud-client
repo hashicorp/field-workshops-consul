@@ -4,68 +4,52 @@ mkdir /root/helm
 set-workdir /root/helm
 cd /root/helm
 
-instruqt_env=$(terraform output -state /root/terraform/consul/terraform.tfstate env)
+vault login -method=userpass username=operations password=Password1
+frontend_token=$(vault read -field token consul/creds/frontend-agent)
+backend_token=$(vault read -field token consul/creds/backend-agent)
+
+env=$(terraform output -state /root/terraform/consul/terraform.tfstate env)
+lb=$(terraform output -state /root/terraform/consul/terraform.tfstate lb)
 
 cat << EOF > /root/helm/frontend-values.yaml
 global:
-  tls:
-    enabled: false
-  image: 'hashicorp/consul-enterprise:1.7.3-ent'
+  image: 'hashicorp/consul-enterprise:1.7.2-ent'
   domain: consul
   datacenter: us-east-1
+  tls:
+    enabled: true
+    enableAutoEncrypt: true
+    caCert:
+      secretName: hashicorp-consul-ca-cert
+      secretKey: tls.crt
   acls:
-    manageSystemACLs: true
+    manageSystemACLs: false
   gossipEncryption:
     secretName: hashicorp-consul-gossip-key
     secretKey: key
   enableConsulNamespaces: true
+externalServers:
+  enabled: true
+  hosts: ["${lb}"]
+  httpsPort: 443
 server:
   enabled: false
 client:
   enabled: true
-  join: ["provider=aws tag_key=Environment-Name tag_value=${instruqt_env}-consul"]
+  join: ["provider=aws tag_key=Environment-Name tag_value=${env}-consul"]
   extraConfig: |
     {
       "segment": "frontend",
       "ports": {
         "serf_lan": 8303
+      },
+      "acl": {
+        "enabled": true,
+        "enable_token_persistence": true,
+        "tokens": {
+          "agent": "${frontend_token}"
         }
-    }
-connectInject:
-  enabled: true
-  default: false
-  k8sAllowNamespaces: ["default"]
-  consulNamespaces:
-    consulDestinationNamespace: "frontend"
-  aclInjectToken:
-    secretName: hashicorp-consul-connect-inject-acl-token
-    secretKey: token
-EOF
-
-cat << EOF > /root/helm/backend-values.yaml
-global:
-  tls:
-    enabled: false
-  image: 'hashicorp/consul-enterprise:1.7.3-ent'
-  domain: consul
-  datacenter: us-east-1
-  acls:
-    manageSystemACLs: true
-  gossipEncryption:
-    secretName: hashicorp-consul-gossip-key
-    secretKey: key
-  enableConsulNamespaces: true
-server:
-  enabled: false
-client:
-  enabled: true
-  join: ["provider=aws tag_key=Environment-Name tag_value=${instruqt_env}-consul"]
-  extraConfig: |
-    {
-      "segment": "backend",
-      "ports": {
-        "serf_lan": 8304
-        }
+      }
     }
 connectInject:
   enabled: true
@@ -76,9 +60,62 @@ connectInject:
   aclInjectToken:
     secretName: hashicorp-consul-connect-inject-acl-token
     secretKey: token
+  overrideAuthMethodName: hashicorp-consul-k8s-auth-method
 EOF
 
-git clone --branch v0.20.1 https://github.com/hashicorp/consul-helm.git
+cat << EOF > /root/helm/backend-values.yaml
+global:
+  image: 'hashicorp/consul-enterprise:1.7.2-ent'
+  domain: consul
+  datacenter: us-east-1
+  tls:
+    enabled: true
+    enableAutoEncrypt: true
+    caCert:
+      secretName: hashicorp-consul-ca-cert
+      secretKey: tls.crt
+  acls:
+    manageSystemACLs: false
+  gossipEncryption:
+    secretName: hashicorp-consul-gossip-key
+    secretKey: key
+  enableConsulNamespaces: true
+externalServers:
+  enabled: true
+  hosts: ["${lb}"]
+  httpsPort: 443
+server:
+  enabled: false
+client:
+  enabled: true
+  join: ["provider=aws tag_key=Environment-Name tag_value=${env}-consul"]
+  extraConfig: |
+    {
+      "segment": "backend",
+      "ports": {
+        "serf_lan": 8304
+      },
+      "acl": {
+        "enabled": true,
+        "enable_token_persistence": true,
+        "tokens": {
+          "agent": "${backend_token}"
+        }
+      }
+    }
+connectInject:
+  enabled: true
+  default: false
+  k8sAllowNamespaces: ["default"]
+  consulNamespaces:
+    consulDestinationNamespace: "backend"
+  aclInjectToken:
+    secretName: hashicorp-consul-connect-inject-acl-token
+    secretKey: token
+  overrideAuthMethodName: hashicorp-consul-k8s-auth-method
+EOF
+
+git clone https://github.com/hashicorp/consul-helm.git
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
 exit 0
