@@ -6,6 +6,10 @@ output "lb" {
   value = aws_lb.consul.dns_name
 }
 
+output "ca" {
+  value = module.consul_tls.consul_tls_config.ca_cert
+}
+
 output "master_token" {
   value     = module.consul.master_token
   sensitive = true
@@ -25,3 +29,4 @@ output "gossip_key" {
   value     = module.consul.gossip_key
   sensitive = true
 }
+

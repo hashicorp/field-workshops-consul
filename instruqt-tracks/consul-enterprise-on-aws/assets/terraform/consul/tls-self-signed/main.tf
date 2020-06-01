@@ -43,7 +43,7 @@ resource "tls_cert_request" "consul_server" {
     common_name = "server.${var.consul_datacenter}.consul"
   }
 
-  dns_names    = ["localhost"]
+  dns_names    = var.dns_names
   ip_addresses = ["127.0.0.1"]
 }
 

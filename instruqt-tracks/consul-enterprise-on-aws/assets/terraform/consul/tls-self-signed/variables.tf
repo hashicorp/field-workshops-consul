@@ -19,3 +19,8 @@ variable "environment_name" {
   type        = string
   description = "Environment name to prefix resources with"
 }
+
+variable "dns_names" {
+  type        = list
+  description = "dns names for Consul certs"
+}

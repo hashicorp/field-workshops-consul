@@ -2,8 +2,12 @@ output "env" {
   value = random_id.environment_name.hex
 }
 
-output "target_group" {
-  value = aws_lb_target_group.consul.id
+output "http_target_group" {
+  value = aws_lb_target_group.consul_http.id
+}
+
+output "https_target_group" {
+  value = aws_lb_target_group.consul_https.id
 }
 
 output "master_token" {

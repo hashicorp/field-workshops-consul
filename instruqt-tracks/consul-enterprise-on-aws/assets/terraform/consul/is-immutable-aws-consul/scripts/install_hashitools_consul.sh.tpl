@@ -66,7 +66,7 @@ echo "${consul_cert}" > /opt/consul/tls/server-cert.pem
 echo "${consul_key}" > /opt/consul/tls/server-key.pem
 
 cat << EOF > /etc/consul.d/tls.hcl
-verify_incoming        = true
+verify_incoming_rpc    = true
 verify_outgoing        = true
 verify_server_hostname = true
 ca_file   = "/opt/consul/tls/ca-cert.pem"
