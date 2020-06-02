@@ -855,9 +855,6 @@ challenges:
       to enable network and operations teams to provide self-service for development
       teams.
   tabs:
-  - title: Target lab architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   - title: Policies
     type: code
     hostname: cloud-client
@@ -883,6 +880,9 @@ challenges:
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/06-create-namespaces-and-policies.html
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 1200
 - slug: create-consul-roles
@@ -1203,6 +1203,11 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/apps
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -1211,11 +1216,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8500
-  - title: Vault
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8200
   - title: Cloud Consoles
     type: service
     hostname: cloud-client
@@ -1364,4 +1364,4 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "7456987742587244148"
+checksum: "13465976691794052579"
