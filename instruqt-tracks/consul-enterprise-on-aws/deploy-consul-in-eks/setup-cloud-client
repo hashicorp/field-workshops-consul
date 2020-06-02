@@ -56,7 +56,7 @@ connectInject:
   default: false
   k8sAllowNamespaces: ["default"]
   consulNamespaces:
-    consulDestinationNamespace: "backend"
+    consulDestinationNamespace: "frontend"
   aclInjectToken:
     secretName: hashicorp-consul-connect-inject-acl-token
     secretKey: token

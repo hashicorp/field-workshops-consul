@@ -1,5 +1,7 @@
 #!/bin/bash
 
+terraform output -state /root/terraform/consul/terraform.tfstate ca > /root/terraform/consul/hashicorp-consul-ca-cert.pem
+
 vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate lb)
 echo "export VAULT_ADDR=http://${vault_lb}" >> ~/.bashrc
 cat << EOF > /etc/nginx/conf.d/vault.conf

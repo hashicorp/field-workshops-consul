@@ -324,9 +324,11 @@ challenges:
     In some cases, to make the UI available for example, Consul's API can also be exposed via a load balancer.
     Check the status of the cluster through the load balancer. <br>
 
+    You can use the Consul CA file from your Terraform output in the below curl command. <br>
+
     ```
     consul=$(aws elbv2 describe-load-balancers --names consul-lb --output json | jq -r .LoadBalancers[0].DNSName)
-    curl -k -s -v https://{$consul}/v1/status/leader | jq
+    curl -s -v --cacert /root/terraform/consul/hashicorp-consul-ca-cert.pem https://{$consul}/v1/status/leader | jq
     ```
 
     In the next assignment you will retrieve Consul secrets from Vault.
@@ -425,6 +427,9 @@ challenges:
 
       A Vault instance is provisioning for this assignment. Please be patient as this can take a few minutes.
   tabs:
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -450,9 +455,6 @@ challenges:
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/05-centralize-consul-secrets.html
-  - title: Target lab architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
   difficulty: basic
   timelimit: 1200
 - slug: validate-backup-agent
@@ -1059,6 +1061,11 @@ challenges:
       The k8s clusters are now ready to connect to the Consul shared service.
       You will deploy the Consul client agents with Helm in this assignment.
   tabs:
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -1085,11 +1092,6 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
-  - title: Consul
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8500
   difficulty: basic
   timelimit: 1200
 - slug: configure-k8s-consul-authentication
@@ -1136,9 +1138,6 @@ challenges:
 
       [Consul auth methods](https://www.consul.io/docs/acl/acl-auth-methods.html) make it easy to securely introduce Consul ACL tokens on ephemeral platforms.
   tabs:
-  - title: Cloud CLI
-    type: terminal
-    hostname: cloud-client
   - title: Consul
     type: service
     hostname: cloud-client
@@ -1160,6 +1159,9 @@ challenges:
   - title: Target lab architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/16-final-architecture.html
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
   difficulty: basic
   timelimit: 1200
 - slug: deploy-applications
@@ -1362,4 +1364,4 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "15409247795806682767"
+checksum: "3142983714245973512"

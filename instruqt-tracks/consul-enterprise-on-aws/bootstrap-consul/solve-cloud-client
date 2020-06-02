@@ -3,4 +3,8 @@
 cd /root/terraform/consul
 terraform apply -auto-approve
 
+#provider bug
+sleep 10
+terraform apply -auto-approve
+
 exit 0

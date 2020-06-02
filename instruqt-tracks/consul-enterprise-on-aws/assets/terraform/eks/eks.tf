@@ -21,7 +21,7 @@ module "frontend" {
     kubernetes = kubernetes.frontend
   }
   cluster_name                         = "frontend"
-  cluster_version                      = "1.15"
+  cluster_version                      = "1.16"
   subnets                              = flatten([data.terraform_remote_state.vpc.outputs.frontend_private_subnets])
   vpc_id                               = data.terraform_remote_state.vpc.outputs.frontend_vpc
   worker_additional_security_group_ids = [aws_security_group.frontend-eks-consul.id]
@@ -62,7 +62,7 @@ module "backend" {
     kubernetes = kubernetes.backend
   }
   cluster_name                         = "backend"
-  cluster_version                      = "1.15"
+  cluster_version                      = "1.16"
   subnets                              = flatten([data.terraform_remote_state.vpc.outputs.backend_private_subnets])
   vpc_id                               = data.terraform_remote_state.vpc.outputs.backend_vpc
   worker_additional_security_group_ids = [aws_security_group.backend-eks-consul.id]
