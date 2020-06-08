@@ -21,6 +21,13 @@ then
   exit 1
 fi
 
+kubectl get secret -n consul hashicorp-consul-acl-config
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get acl secret for frontend cluster."
+  exit 1
+fi
+
 kubectl config use-context eks_backend
 
 kubectl get secret -n consul hashicorp-consul-connect-inject-acl-token
@@ -34,6 +41,13 @@ kubectl get secret -n consul hashicorp-consul-gossip-key
 if [ $? -ne 0 ]
 then
   fail-message "Could not get gossip-key secret for backend cluster."
+  exit 1
+fi
+
+kubectl get secret -n consul hashicorp-consul-acl-config
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get acl secret for backend cluster."
   exit 1
 fi
 

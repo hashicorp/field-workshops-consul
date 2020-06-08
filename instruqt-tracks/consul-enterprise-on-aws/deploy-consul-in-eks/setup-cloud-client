@@ -42,15 +42,12 @@ client:
       "segment": "frontend",
       "ports": {
         "serf_lan": 8303
-      },
-      "acl": {
-        "enabled": true,
-        "enable_token_persistence": true,
-        "tokens": {
-          "agent": "${frontend_token}"
-        }
       }
     }
+  extraVolumes:
+  - type: 'secret'
+    name: 'hashicorp-consul-acl-config'
+    load: true
 connectInject:
   enabled: true
   default: false
@@ -94,15 +91,12 @@ client:
       "segment": "backend",
       "ports": {
         "serf_lan": 8304
-      },
-      "acl": {
-        "enabled": true,
-        "enable_token_persistence": true,
-        "tokens": {
-          "agent": "${backend_token}"
-        }
       }
     }
+  extraVolumes:
+  - type: 'secret'
+    name: 'hashicorp-consul-acl-config'
+    load: true
 connectInject:
   enabled: true
   default: false

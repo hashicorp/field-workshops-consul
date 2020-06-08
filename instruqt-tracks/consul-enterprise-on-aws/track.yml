@@ -967,14 +967,14 @@ challenges:
     Inspect the setup script.
 
     ```
-    cat /usr/local/bin/setup-k8s-consul-cluster
+    cat /usr/local/bin/setup-k8s-consul-secrets
     ```
 
     Start with the frontend cluster.
 
     ```
     kubectl config use-context eks_frontend
-    setup-k8s-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/k8s-injector)
+    setup-k8s-consul-secrets $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/frontend-agent) $(vault read -field token consul/creds/k8s-injector)
     kubectl  get secrets -n consul
     ```
 
@@ -982,7 +982,7 @@ challenges:
 
     ```
     kubectl config use-context eks_backend
-    setup-k8s-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/k8s-injector)
+    setup-k8s-consul-secrets $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/backend-agent) $(vault read -field token consul/creds/k8s-injector)
     kubectl get secrets -n consul
     ```
 
@@ -1364,4 +1364,4 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "13465976691794052579"
+checksum: "17556523189847603156"
