@@ -6,4 +6,3 @@ containers:
   ports:
   - 80
   - 8200
-  - 8500
