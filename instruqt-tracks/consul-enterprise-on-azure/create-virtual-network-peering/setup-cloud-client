@@ -1,8 +1,0 @@
-#!/bin/bash
-
-set-workdir /root/terraform/vgw
-
-cd /root/terraform/vgw
-terraform init
-
-exit 0

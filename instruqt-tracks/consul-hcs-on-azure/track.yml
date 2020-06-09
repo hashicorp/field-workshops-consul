@@ -1,0 +1,294 @@
+slug: hcs-on-azure
+id: ztymj0qpq0vy
+version: 0.0.1
+type: track
+title: HCS on Azure
+description: placeholder
+icon: ""
+tags: []
+owner: hashicorp
+developers:
+- lance@hashicorp.com
+private: false
+published: false
+challenges:
+- slug: provision-azure-virtual-networks
+  id: bsyydcckaasv
+  type: challenge
+  title: 'Infrastructure: Provision Azure Virtual Networks'
+  teaser: A short description of the challenge.
+  assignment: |-
+    You can think of the Cloud CLI terminal as your laptop machine preloaded with cloud access credentials for your company. <br>
+
+    At any time you can use the Azure console to view your environment.
+    Azure CLI commands will be provided for you to interact with Azure throughout this lab. <br>
+
+    Your first task is setting up VPCs for each team.
+
+    Inspect the Terraform code, and then provision the VPCs.
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    You'll notice you have three separate VPCs.
+
+    ```
+    az network vnet list
+    ```
+
+    Their CIDR blocks are listed below:
+
+    ```
+    shared-svcs-vnet: 10.1.0.0/16
+    frontend-vnet: 10.2.0.0/16
+    backend-vnet: 10.3.0.0/16
+    ```
+
+    The shared service VNet will run the core Consul infrastructure.
+    You will provision the Consul servers into this VNet in the next few assignments.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
+- slug: provision-core-services
+  id: cmp9zoq1joar
+  type: challenge
+  title: 'Infrastructure: Provision Core Services'
+  teaser: A short description of the challenge.
+  assignment: |-
+    You will use Terraform to provision these services in the background while you set up Consul in the next few assignments. <br>
+
+    Start with Vault. <br>
+
+    ```
+    cd /root/terraform/vault
+    terraform plan
+    nohup terraform apply -auto-approve > /root/terraform/vault/terraform.out &
+    ```
+
+    Next, provision AKS. <br>
+
+    ```
+    cd /root/terraform/aks
+    terraform plan
+    nohup terraform apply -auto-approve > /root/terraform/aks/terraform.out &
+    ```
+
+    Last, provision the Virtual Network Gateway. This resource can take *30 minutes to 1 hour* to provision.
+
+    ```
+    cd /root/terraform/vgw
+    terraform plan
+    nohup terraform apply -auto-approve > /root/terraform/vgw/terraform.out &
+    ```
+
+    You can continue immediately to the next assignment while these services are provisioning.
+    Click the check button now to proceed.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
+- slug: provision-hcs
+  id: ufjqo5xsryqp
+  type: challenge
+  title: 'Infrastructure: Provision HCS'
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
+- slug: centralize-consul-secrets
+  id: 7lfblywioxsc
+  type: challenge
+  title: 'Security: Centralize Consul Secrets'
+  teaser: A short description of the challenge.
+  assignment: |-
+    The Consul bootstrap outputs from the last few assignments have been secured in Vault through the provisioning process. <br>
+
+    Login as an operator and inspect the credentials. <br>
+
+    ```
+    vault login -method=userpass username=operations password=Password1
+    ```
+
+    Now inspect the credentials.
+
+    ```
+    vault kv get secret/consul
+    ```
+
+    You can use the master token to create a management token for Vault to issue [dynamic secrets](https://www.vaultproject.io/docs/secrets/consul/) for Consul.
+
+    Get a management token for Vault to manage Consul tokens with.
+    You can retrieve the privileged token for this operation from Vault.  <br>
+
+    ```
+    export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
+    vault_consul_mgmt_token=$(consul acl token create -policy-name=global-management -description "vault mgmt" | grep SecretID | cut -d ":" -f2 | xargs)
+    ```
+
+    Now configure the secrets engine.
+
+    ```
+    vault write consul/config/access address=${CONSUL_HTTP_ADDR} token=${vault_consul_mgmt_token}
+    vault read consul/config/access
+    ```
+
+    Last, create a policy for the operations team, and link it to the Vault role.
+
+    ```
+    consul acl policy create -name "ops" -description "admin policy for ops" -rules 'acl = "write" operator = "write" namespace_prefix "" {acl = "write"}'
+    vault write consul/roles/ops policies=ops ttl=1h
+    ```
+
+    Now you are ready to get a dynamic Consul token from Vault for an operator.
+    Validate the token after you fetch it. <br>
+
+    ```
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    You will use this role in a later assignment to configure access for Consul service consumers.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
+- slug: validate-virtual-gateway-and-peering
+  id: hufkoyrn9f12
+  type: challenge
+  title: 'Network: Validate Virtual Gateway & Peering'
+  teaser: A short description of the challenge.
+  assignment: |-
+    The VGW and VNet peerings provisioned eariler should now be ready. <br>
+
+    Inspect the the gateway and the peering connections.
+
+    ```
+    az network vnet-gateway list --resource-group hashicorp-instruqt
+    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name shared-svcs-vnet
+    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name frontend-vnet
+    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name backend-vnet
+    ```
+
+    In a later assignment you will use the VNet peers to enable remote gateways for the spoke VNets.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
+- slug: create-remote-gateways
+  id: ug6c6cq6fyxd
+  type: challenge
+  title: 'Network: Create Remote Gateways'
+  teaser: A short description of the challenge.
+  assignment: |-
+    You can now enable spoke VNets to use the shared service gateway.
+
+    Inspect the variable configuration and apply this now.
+
+    ```
+    cat terraform.tfvars
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    Inspect the peering again and notice that remote gateways are enabled.
+
+    ```
+    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name shared-svcs-vnet
+    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name frontend-vnet
+    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name backend-vnet
+    ```
+
+    You will also notice that each AKS VNet has a user defined route to use the remote gateway for cross VNet traffic.
+
+    ```
+    az network route-table show -g hashicorp-instruqt -n frontend-shared-aks
+    az network route-table show -g hashicorp-instruqt -n backend-shared-aks
+    ```
+
+    Now that you have routes in place you can configure the AKS clusters for the Consul deployment.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
+- slug: validate-aks-clusters
+  id: olvgj2uu5trf
+  type: challenge
+  title: 'Infrastructure: Validate AKS Clusters'
+  teaser: A short description of the challenge.
+  assignment: |-
+    Your AKS clusters should now be provisioned and ready.
+
+    ```
+    az aks list
+    ```
+
+    First, create a merged Kube Config file from the Terraform outputs.
+
+    ```
+    terraform output frontend_kube_config > kubeconfig_frontend
+    terraform output backend_kube_config > kubeconfig_backend
+    KUBECONFIG=kubeconfig_frontend:kubeconfig_backend kubectl config view --merge --flatten > ~/.kube/config
+    ```
+
+    Next, check the worker nodes are ready in each cluster.
+    Start with the Frontend cluster.
+
+    ```
+    kubectl config use-context frontend-aks
+    kubectl get nodes -o wide
+    ```
+
+    Now check the Backend cluster.
+
+    ```
+    kubectl config use-context backend-aks
+    kubectl get nodes -o wide
+    ```
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
+checksum: "2975670270457056884"

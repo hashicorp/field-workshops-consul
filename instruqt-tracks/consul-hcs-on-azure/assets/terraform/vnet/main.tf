@@ -4,7 +4,7 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "instruqt" {
-  name     = "llarsen-instruqt-resources"
+  name     = "hashicorp-instruqt-resources"
   location = "East US"
 }
 
