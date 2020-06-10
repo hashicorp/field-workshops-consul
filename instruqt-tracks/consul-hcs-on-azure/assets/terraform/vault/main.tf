@@ -36,7 +36,7 @@ resource "azurerm_lb" "vault" {
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location
   resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
 
-  sku                 = "Standard"
+  sku = "Standard"
 
   frontend_ip_configuration {
     name                 = "configuration"
@@ -64,15 +64,15 @@ resource "azurerm_lb_probe" "vault" {
 }
 
 resource "azurerm_lb_rule" "vault" {
-  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
+  resource_group_name            = data.terraform_remote_state.vnet.outputs.resource_group_name
   loadbalancer_id                = azurerm_lb.vault.id
   name                           = "vault"
   protocol                       = "Tcp"
   frontend_port                  = 80
   backend_port                   = 8200
   frontend_ip_configuration_name = "configuration"
-  probe_id = azurerm_lb_probe.vault.id
-  backend_address_pool_id = azurerm_lb_backend_address_pool.vault.id
+  probe_id                       = azurerm_lb_probe.vault.id
+  backend_address_pool_id        = azurerm_lb_backend_address_pool.vault.id
 }
 
 resource "azurerm_virtual_machine" "vault" {
@@ -100,7 +100,7 @@ resource "azurerm_virtual_machine" "vault" {
   os_profile {
     computer_name  = "vault"
     admin_username = "azure-user"
-    custom_data = file("${path.module}/scripts/vault.sh")
+    custom_data    = file("${path.module}/scripts/vault.sh")
   }
 
   os_profile_linux_config {
@@ -118,8 +118,8 @@ resource "azurerm_virtual_machine" "vault" {
 
 resource "azurerm_network_security_group" "vault" {
   name                = "vault-nsg"
-  location              = data.terraform_remote_state.vnet.outputs.resource_group_location
-  resource_group_name   = data.terraform_remote_state.vnet.outputs.resource_group_name
+  location            = data.terraform_remote_state.vnet.outputs.resource_group_location
+  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
 
   security_rule {
     name                       = "allow-ssh-all"

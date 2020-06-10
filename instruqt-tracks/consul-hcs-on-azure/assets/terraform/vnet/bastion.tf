@@ -61,8 +61,8 @@ resource "azurerm_virtual_machine" "bastion" {
 
 resource "azurerm_network_security_group" "bastion" {
   name                = "bastion-nsg"
-  location              = azurerm_resource_group.instruqt.location
-  resource_group_name   = azurerm_resource_group.instruqt.name
+  location            = azurerm_resource_group.instruqt.location
+  resource_group_name = azurerm_resource_group.instruqt.name
 
   # Allow SSH traffic in from Internet to public subnet.
   security_rule {
