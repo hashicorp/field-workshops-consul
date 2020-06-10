@@ -13,6 +13,7 @@ module "hcs" {
   application_name    = "hcs"
   consul_cluster_name = "instruqt-consul-cluster"
   external_endpoint   = true
+  vnet_starting_ip_address = "10.1.3.0"
 }
 
 output "consul_url" {

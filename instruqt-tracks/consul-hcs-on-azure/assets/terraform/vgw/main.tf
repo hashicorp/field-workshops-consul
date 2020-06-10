@@ -37,7 +37,7 @@ resource "azurerm_virtual_network_gateway" "gateway" {
     name                          = "vnetGatewayConfig"
     public_ip_address_id          = azurerm_public_ip.gateway.id
     private_ip_address_allocation = "Dynamic"
-    subnet_id                     = data.terraform_remote_state.vnet.outputs.shared_svcs_subnets[2]
+    subnet_id                     = data.terraform_remote_state.vnet.outputs.shared_svcs_subnets[1]
   }
 
 }
