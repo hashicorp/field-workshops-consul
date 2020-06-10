@@ -3,6 +3,5 @@ variable "ssh_public_key" {
 }
 
 variable "resource_group" {
-  description = "SSH key for the consul instances"
   default = "hashicorp-instruqt-resources"
 }
