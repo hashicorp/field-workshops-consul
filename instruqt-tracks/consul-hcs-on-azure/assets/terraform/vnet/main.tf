@@ -1,10 +1,10 @@
 provider "azurerm" {
-  version = "=2.0.0"
+  version = "=2.13.0"
   features {}
 }
 
 resource "azurerm_resource_group" "instruqt" {
-  name     = "hashicorp-instruqt-resources"
+  name     = "var.resource_group"
   location = "East US"
 }
 
@@ -13,11 +13,11 @@ module "shared-svcs-network" {
   vnet_name           = "shared-svcs-vnet"
   resource_group_name = azurerm_resource_group.instruqt.name
   address_space       = "10.1.0.0/16"
-  subnet_prefixes     = ["10.1.0.0/24", "10.1.1.0/24", "10.1.2.0/24", "10.1.3.0/24"]
-  subnet_names        = ["Consul", "Vault", "GatewaySubnet","Bastion"]
+  subnet_prefixes     = ["10.1.0.0/24", "10.1.1.0/24", "10.1.2.0/24"]
+  subnet_names        = ["Bastion", "GatewaySubnet","Vault"]
 
   tags = {
-    owner = "lance@hashicorp.com"
+    owner = "instruqt@hashicorp.com"
   }
 }
 
@@ -30,7 +30,7 @@ module "frontend-network" {
   subnet_names        = ["AKS"]
 
   tags = {
-    owner = "lance@hashicorp.com"
+    owner = "instruqt@hashicorp.com"
   }
 }
 
@@ -43,6 +43,6 @@ module "backend-network" {
   subnet_names        = ["AKS"]
 
   tags = {
-    owner = "lance@hashicorp.com"
+    owner = "instruqt@hashicorp.com"
   }
 }
