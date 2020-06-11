@@ -161,7 +161,7 @@ challenges:
     ```
     echo $CONSUL_HTTP_ADDR
     bootstrap_token=$(consul acl bootstrap -format json | jq -r .SecretID)
-    gossip_key=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/hashicorp-instruqt-resources/providers/Microsoft.Solutions/applications/hcs-instruqt/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .encrypt)
+    gossip_key=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/hashicorp-instruqt/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .encrypt)
     vault kv put secret/consul master_token=${bootstrap_token} gossip_key=${gossip_key}
     ```
 
@@ -234,10 +234,10 @@ challenges:
     Inspect the the gateway and the peering connections.
 
     ```
-    az network vnet-gateway list --resource-group hashicorp-instruqt-resources
-    az network vnet peering list --resource-group hashicorp-instruqt-resources --vnet-name shared-svcs-vnet
-    az network vnet peering list --resource-group hashicorp-instruqt-resources --vnet-name frontend-vnet
-    az network vnet peering list --resource-group hashicorp-instruqt-resources --vnet-name backend-vnet
+    az network vnet-gateway list --resource-group hashicorp-instruqt
+    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name shared-svcs-vnet
+    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name frontend-vnet
+    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name backend-vnet
     ```
 
     In a later assignment you will use the VNet peers to enable remote gateways for the spoke VNets.
@@ -272,6 +272,13 @@ challenges:
   assignment: |-
     You can now enable spoke VNets to use the shared service gateway.
 
+    Check that the first Terraform run finished.
+    You may need to wait an additional 10 to 15 minutes. <br>
+
+    ```
+    tail -f terraform.out
+    ```
+
     Inspect the variable configuration and apply this now.
 
     ```
@@ -283,16 +290,16 @@ challenges:
     Inspect the peering again and notice that remote gateways are enabled.
 
     ```
-    az network vnet peering list --resource-group hashicorp-instruqt-resources --vnet-name shared-svcs-vnet
-    az network vnet peering list --resource-group hashicorp-instruqt-resources --vnet-name frontend-vnet
-    az network vnet peering list --resource-group hashicorp-instruqt-resources --vnet-name backend-vnet
+    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name shared-svcs-vnet
+    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name frontend-vnet
+    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name backend-vnet
     ```
 
     You will also notice that each AKS VNet has a user defined route to use the remote gateway for cross VNet traffic.
 
     ```
-    az network route-table show -g hashicorp-instruqt-resources -n frontend-shared-aks
-    az network route-table show -g hashicorp-instruqt-resources -n backend-shared-aks
+    az network route-table show -g hashicorp-instruqt -n frontend-shared-aks
+    az network route-table show -g hashicorp-instruqt -n backend-shared-aks
     ```
 
     Now that you have routes in place you can configure the AKS clusters for the Consul deployment.
@@ -303,6 +310,16 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   difficulty: basic
   timelimit: 3600
 - slug: validate-aks-clusters
@@ -348,7 +365,7 @@ challenges:
     hostname: cloud-client
   difficulty: basic
   timelimit: 3600
-- slug: operations-create-namespaces-and-policies
+- slug: create-namespaces-and-policies
   id: zklbwtiaci0u
   type: challenge
   title: 'Operations: Create Namespaces and Policies'
@@ -425,7 +442,7 @@ challenges:
     path: /root/policies
   difficulty: basic
   timelimit: 300
-- slug: security-create-consul-roles
+- slug: create-consul-roles
   id: vx2qbphc6qgi
   type: challenge
   title: 'Security: Create Consul Roles'
@@ -470,7 +487,7 @@ challenges:
     port: 8200
   difficulty: basic
   timelimit: 300
-- slug: operations-configure-aks-cluster-secrets
+- slug: configure-aks-cluster-secrets
   id: gekjc0ubhf5q
   type: challenge
   title: 'Operations: Configure AKS Cluster Secrets'
@@ -501,7 +518,7 @@ challenges:
 
     ```
     kubectl config use-context frontend-aks
-    setup-k8s-consul-secrets hashicorp-instruqt-resources hcs-instruqt hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/frontend-agent) $(vault read -field token consul/creds/k8s-injector)
+    setup-k8s-consul-secrets hashicorp-instruqt hcs hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/frontend-agent) $(vault read -field token consul/creds/k8s-injector)
     kubectl  get secrets -n consul
     ```
 
@@ -509,7 +526,7 @@ challenges:
 
     ```
     kubectl config use-context backend-aks
-    setup-k8s-consul-secrets hashicorp-instruqt-resources hcs-instruqt hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/backend-agent) $(vault read -field token consul/creds/k8s-injector)
+    setup-k8s-consul-secrets hashicorp-instruqt hcs hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/backend-agent) $(vault read -field token consul/creds/k8s-injector)
     kubectl get secrets -n consul
     ```
 
@@ -533,7 +550,7 @@ challenges:
     port: 8200
   difficulty: basic
   timelimit: 300
-- slug: operations-deploy-consul-in-aks
+- slug: deploy-consul-in-aks
   id: qwpzslmpsjrf
   type: challenge
   title: 'Operations: Deploy Consul in AKS'
@@ -592,7 +609,7 @@ challenges:
     port: 8200
   difficulty: basic
   timelimit: 300
-- slug: security-configure-k8s-consul-authentication
+- slug: configure-k8s-consul-authentication
   id: pizuaunrknfk
   type: challenge
   title: 'Security: Configure K8s Consul Authentication'
@@ -652,7 +669,46 @@ challenges:
   type: challenge
   title: 'Developer: Deploy Application'
   teaser: test
-  assignment: test
+  assignment: |-
+    You can view the K8s spec files for the applications in the code editor. <br>
+
+    Start with the Frontend cluster application. <br>
+
+    ```
+    kubectl config use-context frontend-aks
+    kubectl apply -f frontend
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=web -o name) --timeout=30s
+    ```
+
+    Now deploy the backend cluster applications. <br>
+
+    ```
+    kubectl config use-context backend-aks
+    kubectl apply -f backend
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=api -o name) --timeout=30s
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=cache -o name) --timeout=30s
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=currency -o name) --timeout=30s
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=payments -o name) --timeout=30s
+    ```
+
+    In the next assignment we will update intentions so the new applications will receive traffic over mTLS.
+  tabs:
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   difficulty: basic
   timelimit: 500
 - slug: developer-update-intentions
@@ -705,11 +761,12 @@ challenges:
   title: 'Developer: Test Application'
   teaser: A short description of the challenge.
   assignment: |-
-    You need to fetch the external DNS name for the AWS ELB.
+    You need to fetch the external DNS name for the Azure LB.
 
     ```
-    kubectl config use-context eks_frontend
-    endpoint=$(kubectl get services web -o json | jq -r .status.loadBalancer.ingress[0].hostname)
+    kubectl config use-context frontend-aks
+    endpoint=$(kubectl get services web -o json | jq -r .status.loadBalancer.ingress[0].ip)
+    echo $endpoint
     ```
 
     Test the application. You should receive a `200` status code.
@@ -739,4 +796,4 @@ challenges:
     port: 8200
   difficulty: basic
   timelimit: 300
-checksum: "15555248208327135010"
+checksum: "751858340159758404"
