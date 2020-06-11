@@ -5,11 +5,12 @@ set-workdir /root/terraform/hcs
 #k8s configurations
 cat << "SCRIPT" > /usr/local/bin/setup-k8s-consul-secrets
 #!/bin/bash -xe
-managed_resource_group=$1
-cluster=$2
-gossip_key=$3
-acl_token=$4
-injection_token=$5
+resource_group=$1
+managed_app=$2
+cluster=$3
+gossip_key=$4
+acl_token=$5
+injection_token=$6
 
 acl_string=$( jq -n \
                   --arg token "$acl_token" \
@@ -20,7 +21,7 @@ gossip_key=$(echo -n $gossip_key | base64 -w 0)
 acl_token=$(echo -n  $acl_token | base64 -w 0)
 injection_token=$(echo -n  $injection_token | base64 -w 0)
 acl_config=$(echo -n $acl_string | base64 -w 0)
-ca=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/${managed_resource_group}/providers/Microsoft.Solutions/applications/hcs-instruqt/customconsulClusters/${cluster}" --api-version 2018-09-01-preview | jq -r .properties.consulCaFile | base64 -d)
+ca=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/${resource_group}/providers/Microsoft.Solutions/applications/${managed_app}/customconsulClusters/${cluster}" --api-version 2018-09-01-preview | jq -r .properties.consulCaFile | base64 -d)
 
 #create the consul namespace
 cat <<EOF | kubectl apply -f -
