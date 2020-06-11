@@ -10,7 +10,7 @@ cat << EOF > /root/helm/frontend-values.yaml
 global:
   image: 'hashicorp/consul-enterprise:1.7.2-ent'
   domain: consul
-  datacenter: us-east-1
+  datacenter: east-us
   tls:
     enabled: true
     enableAutoEncrypt: true
@@ -27,6 +27,7 @@ externalServers:
   enabled: true
   hosts: ["${endpoint}"]
   httpsPort: 443
+  useSystemRoots: true
 server:
   enabled: false
 client:
@@ -52,7 +53,7 @@ cat << EOF > /root/helm/backend-values.yaml
 global:
   image: 'hashicorp/consul-enterprise:1.7.2-ent'
   domain: consul
-  datacenter: us-east-1
+  datacenter: east-us
   tls:
     enabled: true
     enableAutoEncrypt: true
@@ -69,6 +70,7 @@ externalServers:
   enabled: true
   hosts: ["${endpoint}"]
   httpsPort: 443
+  useSystemRoots: true
 server:
   enabled: false
 client:

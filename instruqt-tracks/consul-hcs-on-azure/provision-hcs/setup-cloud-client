@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set-workdir /root/terraform/hcs
+
+cd /root/terraform/hcs
+terraform init
+
+exit 0

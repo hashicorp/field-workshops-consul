@@ -26,7 +26,7 @@ cd /root
 #install consul
 cd /tmp
 echo "installing consul..."
-curl -O https://releases.hashicorp.com/consul/1.7.2+ent/consul_1.7.2+ent_linux_amd64.zip
+curl -O https://releases.hashicorp.com/consul/1.7.3+ent/consul_1.7.3+ent_linux_amd64.zip
 unzip *.zip
 mv consul /usr/local/bin/consul
 rm -f *.zip
@@ -43,10 +43,9 @@ cd /root
 
 #get assets
 echo "cloning assets..."
-git clone -b add-consul-instruqt-ent-azure-track https://github.com/hashicorp/field-workshops-consul.git
-cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-azure/assets/terraform .
-cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-azure/assets/packer .
-cp -r field-workshops-consul/instruqt-tracks/consul-enterprise-on-azure/assets/apps .
+git clone -b add-consul-instruqt-hcs-azure-track https://github.com/hashicorp/field-workshops-consul.git
+cp -r field-workshops-consul/instruqt-tracks/consul-hcs-on-azure/assets/terraform .
+cp -r field-workshops-consul/instruqt-tracks/consul-hcs-on-azure/assets/apps .
 rm -rf field-workshops-consul
 
 #provision

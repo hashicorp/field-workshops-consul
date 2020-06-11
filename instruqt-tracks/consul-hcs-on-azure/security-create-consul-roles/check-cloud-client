@@ -1,0 +1,45 @@
+#!/bin/bash
+
+if [ -f /tmp/skip-check ]; then
+    rm /tmp/skip-check
+    exit 0
+fi
+
+vault login -method=userpass username=operations password=Password1
+
+vault read consul/creds/k8s-injector
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get injector cred."
+  exit 1
+fi
+
+vault read consul/creds/frontend-agent
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get frontend agent cred."
+  exit 1
+fi
+
+vault read consul/creds/frontend-developer
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get frontend dev cred."
+  exit 1
+fi
+
+vault read consul/creds/backend-agent
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get backend agent cred."
+  exit 1
+fi
+
+vault read consul/creds/backend-developer
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get backend dev cred."
+  exit 1
+fi
+
+exit 0
