@@ -1,0 +1,81 @@
+#!/bin/bash
+
+set-workdir /root/terraform/hcs
+
+#k8s configurations
+cat << "SCRIPT" > /usr/local/bin/setup-k8s-consul-secrets
+#!/bin/bash -xe
+managed_resource_group=$1
+cluster=$2
+gossip_key=$3
+acl_token=$4
+injection_token=$5
+
+acl_string=$( jq -n \
+                  --arg token "$acl_token" \
+                  '{acl: { enabled: true, enable_token_persistence: true, tokens: { agent: $token } } }' )
+
+#base64 the secrets
+gossip_key=$(echo -n $gossip_key | base64 -w 0)
+acl_token=$(echo -n  $acl_token | base64 -w 0)
+injection_token=$(echo -n  $injection_token | base64 -w 0)
+acl_config=$(echo -n $acl_string | base64 -w 0)
+ca=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/${managed_resource_group}/providers/Microsoft.Solutions/applications/hcs-instruqt/customconsulClusters/${cluster}" --api-version 2018-09-01-preview | jq -r .properties.consulCaFile | base64 -d)
+
+#create the consul namespace
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: consul
+EOF
+
+#acl config
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hashicorp-consul-acl-config
+  namespace: consul
+type: Opaque
+data:
+  acl.json: $acl_config
+EOF
+
+#tls cert
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hashicorp-consul-ca-cert
+  namespace: consul
+type: Opaque
+data:
+  tls.crt: $ca
+EOF
+
+#add the gosip key
+cat <<EOF | kubectl apply -n consul -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hashicorp-consul-gossip-key
+type: Opaque
+data:
+  key: $gossip_key
+EOF
+
+cat <<EOF | kubectl apply -n consul -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hashicorp-consul-connect-inject-acl-token
+type: Opaque
+data:
+  token: $injection_token
+EOF
+
+SCRIPT
+chmod +x /usr/local/bin/setup-k8s-consul-secrets
+
+exit 0
