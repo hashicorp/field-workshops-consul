@@ -4,7 +4,7 @@ mkdir /root/helm
 set-workdir /root/helm
 cd /root/helm
 
-endpoint=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/hashicorp-instruqt-resources/providers/Microsoft.Solutions/applications/hcs-instruqt/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .retry_join[0])
+endpoint=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/hashicorp-instruqt/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .retry_join[0])
 
 cat << EOF > /root/helm/frontend-values.yaml
 global:
