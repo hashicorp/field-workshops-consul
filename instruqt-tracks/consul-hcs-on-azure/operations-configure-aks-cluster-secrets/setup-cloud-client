@@ -21,7 +21,7 @@ gossip_key=$(echo -n $gossip_key | base64 -w 0)
 acl_token=$(echo -n  $acl_token | base64 -w 0)
 injection_token=$(echo -n  $injection_token | base64 -w 0)
 acl_config=$(echo -n $acl_string | base64 -w 0)
-ca=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/${resource_group}/providers/Microsoft.Solutions/applications/${managed_app}/customconsulClusters/${cluster}" --api-version 2018-09-01-preview | jq -r .properties.consulCaFile | base64 -d)
+ca=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/${resource_group}/providers/Microsoft.Solutions/applications/${managed_app}/customconsulClusters/${cluster}" --api-version 2018-09-01-preview | jq -r .properties.consulCaFile)
 
 #create the consul namespace
 cat <<EOF | kubectl apply -f -

@@ -3,5 +3,5 @@ variable "ssh_public_key" {
 }
 
 variable "resource_group" {
-  default = "hashicorp-instruqt-resources"
+  default = "hashicorp-instruqt"
 }

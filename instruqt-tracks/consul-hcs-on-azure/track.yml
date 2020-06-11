@@ -9,8 +9,8 @@ tags: []
 owner: hashicorp
 developers:
 - lance@hashicorp.com
-private: false
-published: false
+private: true
+published: true
 challenges:
 - slug: provision-azure-virtual-networks
   id: bsyydcckaasv
@@ -18,6 +18,13 @@ challenges:
   title: 'Infrastructure: Provision Azure Virtual Networks'
   teaser: A short description of the challenge.
   assignment: |-
+    You need to provide the workstation with credentials from your Azure account.
+    Don't forget to set the correct subscription if your account has multiple subscriptions.
+
+    ```
+    az login
+    ```
+
     You can think of the Cloud CLI terminal as your laptop machine preloaded with cloud access credentials for your company. <br>
 
     At any time you can use the Azure console to view your environment.
@@ -52,11 +59,15 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
-  - title: Shell
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/vnet
+  - title: Cloud  CLI
     type: terminal
     hostname: cloud-client
   difficulty: basic
-  timelimit: 300
+  timelimit: 3600
 - slug: provision-core-services
   id: cmp9zoq1joar
   type: challenge
@@ -95,29 +106,42 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
-  - title: Shell
+  - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform
   difficulty: basic
-  timelimit: 300
+  timelimit: 3600
 - slug: provision-hcs
   id: ufjqo5xsryqp
   type: challenge
   title: 'Infrastructure: Provision HCS'
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    Inspect the Terraform code, and then run Terraform to provision your HCS cluster.
 
-    You can use any GitHub flavoured markdown.
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    This can take 15 minutes to 30 minutes to provision.
   notes:
   - type: text
     contents: Replace this text with your own text
   tabs:
-  - title: Shell
+  - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform
   difficulty: basic
-  timelimit: 300
+  timelimit: 3600
 - slug: centralize-consul-secrets
   id: 7lfblywioxsc
   type: challenge
@@ -130,6 +154,15 @@ challenges:
 
     ```
     vault login -method=userpass username=operations password=Password1
+    ```
+
+    You need to retrieve the bootstrap token from HCS and save it to your Vault instance.
+
+    ```
+    echo $CONSUL_HTTP_ADDR
+    bootstrap_token=$(consul acl bootstrap -format json | jq -r .SecretID)
+    gossip_key=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/hashicorp-instruqt-resources/providers/Microsoft.Solutions/applications/hcs-instruqt/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .encrypt)
+    vault kv put secret/consul master_token=${bootstrap_token} gossip_key=${gossip_key}
     ```
 
     Now inspect the credentials.
@@ -175,11 +208,21 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
-  - title: Shell
+  - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   difficulty: basic
-  timelimit: 300
+  timelimit: 3600
 - slug: validate-virtual-gateway-and-peering
   id: hufkoyrn9f12
   type: challenge
@@ -191,10 +234,10 @@ challenges:
     Inspect the the gateway and the peering connections.
 
     ```
-    az network vnet-gateway list --resource-group hashicorp-instruqt
-    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name shared-svcs-vnet
-    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name frontend-vnet
-    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name backend-vnet
+    az network vnet-gateway list --resource-group hashicorp-instruqt-resources
+    az network vnet peering list --resource-group hashicorp-instruqt-resources --vnet-name shared-svcs-vnet
+    az network vnet peering list --resource-group hashicorp-instruqt-resources --vnet-name frontend-vnet
+    az network vnet peering list --resource-group hashicorp-instruqt-resources --vnet-name backend-vnet
     ```
 
     In a later assignment you will use the VNet peers to enable remote gateways for the spoke VNets.
@@ -202,11 +245,25 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
-  - title: Shell
+  - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform
   difficulty: basic
-  timelimit: 300
+  timelimit: 3600
 - slug: create-remote-gateways
   id: ug6c6cq6fyxd
   type: challenge
@@ -226,16 +283,16 @@ challenges:
     Inspect the peering again and notice that remote gateways are enabled.
 
     ```
-    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name shared-svcs-vnet
-    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name frontend-vnet
-    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name backend-vnet
+    az network vnet peering list --resource-group hashicorp-instruqt-resources --vnet-name shared-svcs-vnet
+    az network vnet peering list --resource-group hashicorp-instruqt-resources --vnet-name frontend-vnet
+    az network vnet peering list --resource-group hashicorp-instruqt-resources --vnet-name backend-vnet
     ```
 
     You will also notice that each AKS VNet has a user defined route to use the remote gateway for cross VNet traffic.
 
     ```
-    az network route-table show -g hashicorp-instruqt -n frontend-shared-aks
-    az network route-table show -g hashicorp-instruqt -n backend-shared-aks
+    az network route-table show -g hashicorp-instruqt-resources -n frontend-shared-aks
+    az network route-table show -g hashicorp-instruqt-resources -n backend-shared-aks
     ```
 
     Now that you have routes in place you can configure the AKS clusters for the Consul deployment.
@@ -243,11 +300,11 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
-  - title: Shell
+  - title: Cloud CLI
     type: terminal
     hostname: cloud-client
   difficulty: basic
-  timelimit: 300
+  timelimit: 3600
 - slug: validate-aks-clusters
   id: olvgj2uu5trf
   type: challenge
@@ -286,9 +343,400 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
-  - title: Shell
+  - title: Cloud CLI
     type: terminal
     hostname: cloud-client
   difficulty: basic
+  timelimit: 3600
+- slug: operations-create-namespaces-and-policies
+  id: zklbwtiaci0u
+  type: challenge
+  title: 'Operations: Create Namespaces and Policies'
+  teaser: A short description of the challenge.
+  assignment: |-
+    You need a privileged operator token to configure Consul for the consuming teams.
+    Authenticate with Vault, and fetch a token. <br>
+
+    ```
+    vault login -method=userpass username=operations password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    The service discovery policy will underpin all development tenants.
+    This will allow the mesh to discover services across teams, however, individuals teams will control what services can connect to them from other namespaces. <br>
+
+    ```
+    consul acl policy create -name "cross-namespace-policy" -description "cross-namespace service discovery" -rules @cross-namespace.hcl
+    ```
+
+    The K8s injector policy will allow read access to the namespaces available within the Consul service.
+    This is required for the Consul K8s integration to work properly. <br>
+
+    ```
+    consul acl policy create -name "k8s-injector-policy" -description "k8s injection" -rules @injector.hcl
+    ```
+
+    Now you can create the namespaces for each development team, that share the namespace discovery policy. <br>
+
+    ```
+    consul namespace write frontend-namespace.hcl
+    consul namespace write backend-namespace.hcl
+    ```
+
+    You also need to create policies for low level client agent permissions for each development VPC.
+    We will create a blast radius for these tokens by CIDR block. <br>
+
+    ```
+    consul acl policy create -name "frontend-agent-policy" -description "frontend agents" -rules @frontend-team-agent.hcl
+    consul acl policy create -name "backend-agent-policy" -description "backend agents" -rules @backend-team-agent.hcl
+    ```
+
+    Last, create policies for the development teams to manage their own intentions.
+    Intentions allow connectivity between services. <br>
+
+    ```
+    consul acl policy create -name "frontend-developer-policy" -description "frontend dev" -rules @frontend-team-developer.hcl
+    consul acl policy create -name "backend-developer-policy" -description "backend dev" -rules @backend-team-developer.hcl
+
+    ```
+
+    In the next assignment we will link these policies to dynamic Vault roles so developers and operators can get access centrally.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Policies
+    type: code
+    hostname: cloud-client
+    path: /root/policies
+  difficulty: basic
   timelimit: 300
-checksum: "2975670270457056884"
+- slug: security-create-consul-roles
+  id: vx2qbphc6qgi
+  type: challenge
+  title: 'Security: Create Consul Roles'
+  teaser: A short description of the challenge.
+  assignment: |-
+    Authenticate with the Consul operations role.
+
+    ```
+    vault login -method=userpass username=operations password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    Next, link the policies. The TTLs are scoped for each task.
+
+    ```
+    vault write consul/roles/k8s-injector           policies=k8s-injector-policy          ttl=720h
+    vault write consul/roles/frontend-agent         policies=frontend-agent-policy        ttl=720h
+    vault write consul/roles/frontend-developer     policies=frontend-developer-policy    ttl=1h
+    vault write consul/roles/backend-agent          policies=backend-agent-policy         ttl=720h
+    vault write consul/roles/backend-developer      policies=backend-developer-policy     ttl=1h
+    ```
+
+    You will use these roles in later assignments to seed K8s clusters with scoped access to the central service,
+    as well as allow developers the ability to configure routing within their tenant.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  difficulty: basic
+  timelimit: 300
+- slug: operations-configure-aks-cluster-secrets
+  id: gekjc0ubhf5q
+  type: challenge
+  title: 'Operations: Configure AKS Cluster Secrets'
+  teaser: A short description of the challenge.
+  assignment: |-
+    You need to authenticate with Vault to gain access to the Consul roles required to provide secrets for the K8s clusters.
+
+    ```
+    vault login -method=userpass username=operations password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    A sample script has been provided to setup each K8s cluster.
+    The script will perform the following tasks:
+
+    * Create a namespace to run Consul pods (injector webhooks, daemonset, etc.)
+    * Provide a Consul gossip key
+    * Provide a Consul ACL token
+
+    Inspect the setup script.
+
+    ```
+    cat /usr/local/bin/setup-k8s-consul-secrets
+    ```
+
+    Start with the frontend cluster.
+
+    ```
+    kubectl config use-context frontend-aks
+    setup-k8s-consul-secrets hashicorp-instruqt-resources hcs-instruqt hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/frontend-agent) $(vault read -field token consul/creds/k8s-injector)
+    kubectl  get secrets -n consul
+    ```
+
+    Repeat, for the backend cluster.
+
+    ```
+    kubectl config use-context backend-aks
+    setup-k8s-consul-secrets hashicorp-instruqt-resources hcs-instruqt hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/backend-agent) $(vault read -field token consul/creds/k8s-injector)
+    kubectl get secrets -n consul
+    ```
+
+    In the next assignment you will use these secrets to deploy the Consul client agents with Helm.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  difficulty: basic
+  timelimit: 300
+- slug: operations-deploy-consul-in-aks
+  id: qwpzslmpsjrf
+  type: challenge
+  title: 'Operations: Deploy Consul in AKS'
+  teaser: A short description of the challenge.
+  assignment: |-
+    Use the code editor to inspect the Helm chart values for each K8s cluster.
+    When you have reviewed the values you can deploy each K8s cluster.
+
+    Start with the frontend cluster.
+
+    ```
+    kubectl config use-context frontend-aks
+    helm install hashicorp -f frontend-values.yaml --namespace consul ./consul-helm --wait --debug
+    kubectl get pods -n consul
+    ```
+
+    Repeat for the backend cluster.
+
+    ```
+    kubectl config use-context backend-aks
+    helm install hashicorp -f backend-values.yaml --namespace consul ./consul-helm --wait --debug
+    kubectl get pods -n consul
+    ```
+
+    Check the nodes for the full working set.
+    You can continue when the Frontend and Backend AKS nodes have joined the peer set. <br>
+
+    ```
+    watch consul members
+    ```
+
+    In the next assignment we will create trust between the K8s API server and the Consul shared service.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Helm
+    type: code
+    hostname: cloud-client
+    path: /root/helm
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  difficulty: basic
+  timelimit: 300
+- slug: security-configure-k8s-consul-authentication
+  id: pizuaunrknfk
+  type: challenge
+  title: 'Security: Configure K8s Consul Authentication'
+  teaser: A short description of the challenge.
+  assignment: |-
+    Configuring Consul auth methods is a privileged action.
+    You need a Consul operator token to perform these tasks. <br>
+
+    ```
+    vault login -method=userpass username=operations password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    The cross namespace policy you created earlier will be attached to the token.
+    You need three key pieces of information to complete this task. <br>
+
+    * K8s endpoint
+    * K8s CA
+    * Service Account JWT
+
+    The helper script will assist you. Review it now. <br>
+
+    ```
+    cat /usr/local/bin/setup-k8s-consul-auth
+    ```
+
+    Run the script for each K8s cluster.
+
+    ```
+    setup-k8s-consul-auth frontend
+    setup-k8s-consul-auth backend
+    ```
+
+    In the next assignment you'll use the trust relationship you just created to deploy applications into the mesh.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  difficulty: basic
+  timelimit: 300
+- slug: deploy-application
+  id: aayejvgkybat
+  type: challenge
+  title: 'Developer: Deploy Application'
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: developer-update-intentions
+  id: t11vsafayxq1
+  type: challenge
+  title: 'Developer: Update Intentions'
+  teaser: A short description of the challenge.
+  assignment: |-
+    Retrieve a Consul token as backend developer team. <br>
+
+    ```
+    vault login -method=userpass username=backend password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/backend-developer)
+    consul acl token read -self
+    ```
+
+    Create the intentions for services within your namespace.
+    Also allow access from the Frontend Web application to the Backend API application. <br>
+
+    ```
+    consul intention create --allow frontend/web backend/api
+    consul intention create --allow backend/api backend/cache
+    consul intention create --allow backend/api backend/payments
+    consul intention create --allow backend/payments backend/currency
+    ```
+
+    In the next assignment you will send traffic to the Web application in the Frontend namespace.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  difficulty: basic
+  timelimit: 300
+- slug: developer-test-application
+  id: kpys2gyuzhal
+  type: challenge
+  title: 'Developer: Test Application'
+  teaser: A short description of the challenge.
+  assignment: |-
+    You need to fetch the external DNS name for the AWS ELB.
+
+    ```
+    kubectl config use-context eks_frontend
+    endpoint=$(kubectl get services web -o json | jq -r .status.loadBalancer.ingress[0].hostname)
+    ```
+
+    Test the application. You should receive a `200` status code.
+    Take note of the IP addresses of each service.
+
+    ```
+    curl -v -s $endpoint
+    ```
+
+    Well done! You just securely connected application workloads across multiple K8s clusters!!!
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  difficulty: basic
+  timelimit: 300
+checksum: "15555248208327135010"

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+vault login -method=userpass username=operations password=Password1
+
+kubectl config use-context eks_frontend
+setup-k8s-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/frontend-agent) $(vault read -field token consul/creds/k8s-injector)
+
+kubectl config use-context eks_backend
+setup-k8s-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/backend-agent) $(vault read -field token consul/creds/k8s-injector)
+
+exit 0
