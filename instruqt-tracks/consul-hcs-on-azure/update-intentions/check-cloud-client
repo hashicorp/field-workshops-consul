@@ -1,0 +1,39 @@
+#!/bin/bash
+
+if [ -f /tmp/skip-check ]; then
+    rm /tmp/skip-check
+    exit 0
+fi
+
+vault login -method=userpass username=backend password=Password1
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/backend-developer)
+
+consul intention check frontend/web backend/api
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking web <> api intention."
+  exit 1
+fi
+
+consul intention check backend/api backend/cache
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking api <> cache intention."
+  exit 1
+fi
+
+consul intention check backend/api backend/payments
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking api <> payments intention."
+  exit 1
+fi
+
+consul intention check backend/payments backend/currency
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking payments <> currency intention."
+  exit 1
+fi
+
+exit 0
