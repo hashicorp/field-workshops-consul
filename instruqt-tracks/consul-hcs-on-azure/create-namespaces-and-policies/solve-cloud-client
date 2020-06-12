@@ -1,0 +1,15 @@
+#!/bin/bash
+
+vault login -method=userpass username=operations password=Password1
+export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
+
+consul acl policy create -name "cross-namespace-policy" -description "cross-namespace service discovery" -rules @cross-namespace.hcl
+consul namespace write frontend-namespace.hcl
+consul namespace write backend-namespace.hcl
+consul acl policy create -name "k8s-injector-policy" -description "k8s injection" -rules @injector.hcl
+consul acl policy create -name "frontend-agent-policy" -description "frontend agents" -rules @frontend-team-agent.hcl
+consul acl policy create -name "backend-agent-policy" -description "backend agents" -rules @backend-team-agent.hcl
+consul acl policy create -name "frontend-developer-policy" -description "frontend dev" -rules @frontend-team-developer.hcl
+consul acl policy create -name "backend-developer-policy" -description "backend dev" -rules @backend-team-developer.hcl
+
+exit 0

@@ -664,7 +664,7 @@ challenges:
     port: 8200
   difficulty: basic
   timelimit: 300
-- slug: deploy-application
+- slug: deploy-applications
   id: aayejvgkybat
   type: challenge
   title: 'Developer: Deploy Application'
@@ -711,7 +711,7 @@ challenges:
     port: 8200
   difficulty: basic
   timelimit: 500
-- slug: developer-update-intentions
+- slug: update-intentions
   id: t11vsafayxq1
   type: challenge
   title: 'Developer: Update Intentions'
@@ -755,7 +755,7 @@ challenges:
     port: 8200
   difficulty: basic
   timelimit: 300
-- slug: developer-test-application
+- slug: test-application
   id: kpys2gyuzhal
   type: challenge
   title: 'Developer: Test Application'
@@ -796,4 +796,4 @@ challenges:
     port: 8200
   difficulty: basic
   timelimit: 300
-checksum: "751858340159758404"
+checksum: "2029156296767640858"

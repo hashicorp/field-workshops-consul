@@ -1,0 +1,14 @@
+#!/bin/bash
+
+vault login -method=userpass username=operations password=Password1
+
+export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
+vault_consul_mgmt_token=$(consul acl token create -policy-name=global-management -description "vault mgmt" | grep SecretID | cut -d ":" -f2 | xargs)
+
+consul acl policy create -name "ops" -description "admin policy for ops" -rules 'acl = "write" operator = "write" namespace_prefix "" {acl = "write"}'
+vault write consul/roles/ops policies=ops ttl=1h
+
+vault write consul/config/access address=${CONSUL_HTTP_ADDR} token=${vault_consul_mgmt_token}
+
+
+exit 0
