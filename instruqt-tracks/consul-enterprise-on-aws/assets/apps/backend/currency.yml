@@ -20,8 +20,6 @@ spec:
     metadata:
       labels:
         app: currency
-      annotations:
-        "consul.hashicorp.com/connect-inject": "true"
     spec:
       serviceAccountName: currency
       containers:

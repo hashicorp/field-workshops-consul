@@ -36,7 +36,6 @@ spec:
       labels:
         app: web
       annotations:
-        "consul.hashicorp.com/connect-inject": "true"
         "consul.hashicorp.com/connect-service-upstreams": "api.backend:9091"
     spec:
       serviceAccountName: web
