@@ -4,10 +4,6 @@ mkdir /root/helm
 set-workdir /root/helm
 cd /root/helm
 
-vault login -method=userpass username=operations password=Password1
-frontend_token=$(vault read -field token consul/creds/frontend-agent)
-backend_token=$(vault read -field token consul/creds/backend-agent)
-
 env=$(terraform output -state /root/terraform/consul/terraform.tfstate env)
 lb=$(terraform output -state /root/terraform/consul/terraform.tfstate lb)
 
