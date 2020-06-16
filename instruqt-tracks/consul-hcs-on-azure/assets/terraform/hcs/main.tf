@@ -31,7 +31,7 @@ resource "random_string" "blobcontainername" {
 }
 
 resource "azurerm_managed_application" "hcs" {
-  //depends_on = [azurerm_marketplace_agreement.hcs]
+  depends_on = [azurerm_marketplace_agreement.hcs]
 
   name                        = "hcs"
   location                    = data.terraform_remote_state.vnet.outputs.resource_group_location

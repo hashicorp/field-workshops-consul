@@ -5,19 +5,19 @@ if [ -f /tmp/skip-check ]; then
     exit 0
 fi
 
-kubectl config use-context eks_frontend
+kubectl config use-context frontend-aks
 kubectl wait -n consul --for=condition=Ready $(kubectl get pod -n consul --selector=app=consul -o name) --timeout=10s
 if [ $? -ne 0 ]
 then
-  fail-message "Consul pod is not ready for eks_frontend."
+  fail-message "Consul pod is not ready for aks frontend."
   exit 1
 fi
 
-kubectl config use-context eks_backend
+kubectl config use-context backend-aks
 kubectl wait -n consul --for=condition=Ready $(kubectl get pod -n consul --selector=app=consul -o name) --timeout=10s
 if [ $? -ne 0 ]
 then
-  fail-message "Consul pod is not ready for eks_backend."
+  fail-message "Consul pod is not ready for aks backend."
   exit 1
 fi
 
