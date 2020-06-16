@@ -168,6 +168,7 @@ challenges:
     Now inspect the credentials.
 
     ```
+    echo $VAULT_ADDR
     vault kv get secret/consul
     ```
 
@@ -796,4 +797,4 @@ challenges:
     port: 8200
   difficulty: basic
   timelimit: 300
-checksum: "2029156296767640858"
+checksum: "3478628384872544161"
