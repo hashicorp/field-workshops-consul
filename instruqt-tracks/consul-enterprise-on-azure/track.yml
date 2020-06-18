@@ -12,8 +12,8 @@ tags: []
 owner: hashicorp
 developers:
 - lance@hashicorp.com
-private: false
-published: false
+private: true
+published: true
 challenges:
 - slug: provision-azure-virtual-networks
   id: ey6mtofophbb
@@ -520,6 +520,11 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/aks
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   - title: Cloud  CLI
     type: terminal
     hostname: cloud-client
@@ -528,11 +533,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8500
-  - title: Vault
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8200
   difficulty: basic
   timelimit: 300
 - slug: configure-aks-cluster-segments
@@ -802,7 +802,7 @@ challenges:
 - slug: configure-k8s-consul-authentication
   id: eukwfkenndty
   type: challenge
-  title: ' Security: Configure K8s Consul Authentication'
+  title: 'Security: Configure K8s Consul Authentication'
   teaser: test
   assignment: |-
     Configuring Consul auth methods is a privileged action.
@@ -861,7 +861,7 @@ challenges:
 - slug: deploy-applications
   id: eaqykkqag6eg
   type: challenge
-  title: 'Developer: Deploy Applications '
+  title: 'Developer: Deploy Applications'
   teaser: test
   assignment: |-
     You can view the K8s spec files for the applications in the code editor. <br>
@@ -1015,4 +1015,4 @@ challenges:
     path: /root/apps
   difficulty: basic
   timelimit: 500
-checksum: "8959422685504953605"
+checksum: "9802904420531056277"
