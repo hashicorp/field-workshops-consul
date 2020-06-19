@@ -8,8 +8,8 @@ icon: ""
 tags: []
 owner: hashicorp
 developers:
-- lance@hashicorp.com
 - cpu@hashicorp.com
+- lance@hashicorp.com
 private: true
 published: true
 challenges:
@@ -888,4 +888,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
   difficulty: basic
   timelimit: 300
-checksum: "3478628384872544161"
+checksum: "9325295190497005254"
