@@ -1,0 +1,70 @@
+#!/bin/bash
+
+echo "waiting for SSH..."
+while ! ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 root@bigip
+do
+    echo "Trying again..."
+    sleep 5
+done
+
+ssh root@bigip 'echo from bigip'
+
+#allow the self ip for gotty, turn off PAM validate, and save it
+ssh root@bigip 'tmsh modify /net self-allow defaults all; tmsh modify /sys httpd auth-pam-validate-ip off; tmsh save /sys config'
+
+#create the modified bootstrap for bigip on instruqt
+cat << 'SCRIPT' > bootstrap.sh
+#!/bin/bash
+
+echo "killing instruqt processes"
+pkill dumb-init
+pkill gotty
+pkill instruqt
+
+echo "cloning assets"
+rm -rf /opt/instruqt
+git clone https://github.com/instruqt/participant-host-bootstrap.git /opt/instruqt
+
+echo "creating setup script"
+cat << 'EOF' > /opt/instruqt/bootstrap/setup.sh
+BASEDIR=/opt/instruqt/bootstrap
+
+GOTTY_SHELL=/bin/tmsh
+GOTTY_PORT=15778
+
+# Create a clean .bash_history
+rm -f ~/.bash_history && touch ~/.bash_history
+
+# Set environment variables
+export TERM=xterm-color
+export PROMPT_COMMAND='history -a'
+
+# Start instruqt agent
+${BASEDIR}/bin/dumb-init ${BASEDIR}/bin/instruqt-agent >/var/log/instruqt-agent.log 2>&1 &
+
+echo "Setup completed, starting Gotty"
+touch ${BASEDIR}/host-bootstrap-completed
+
+# Start Gotty
+${BASEDIR}/bin/dumb-init --rewrite 2:15 --rewrite 15:9 ${BASEDIR}/bin/gotty \
+        --title-format "Instruqt Shell" \
+        --permit-write \
+        --port "$GOTTY_PORT" \
+        /bin/sh -c "$GOTTY_SHELL" > /var/log/gotty.log 2>&1 &
+EOF
+SCRIPT
+
+#send it to the bigip and execute it
+scp bootstrap.sh root@bigip:/var/tmp/bootstrap.sh
+ssh root@bigip 'chmod +x /var/tmp/bootstrap.sh; /var/tmp/bootstrap.sh'
+ssh root@bigip '/opt/instruqt/bootstrap/setup.sh'
+ssh root@bigip 'ps -ef | grep instruqt'
+
+#create the UI info
+. /etc/profile.d/instruqt-env.sh
+cat << EOF > /tmp/ui.txt
+URL: https://bigip-8443-${INSTRUQT_PARTICIPANT_ID}.env.play.instruqt.com
+Username: admin
+Password: kF!g78w8KQnZvm
+EOF
+exit 0

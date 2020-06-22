@@ -1,0 +1,10 @@
+version: "2"
+virtualmachines:
+- name: bastion
+  image: ubuntu-1804-lts
+  shell: /bin/bash
+  machine_type: n1-standard-1
+- name: bigip
+  image: instruqt-hashicorp/f5-bigip-15-1-0-3-0-0-12-byol-ltm-1slot-igfpcmcnz-root-3
+  shell: /bin/bash
+  machine_type: n1-standard-2

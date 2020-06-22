@@ -1,0 +1,37 @@
+slug: consul-and-f5
+id: y5qihzhe79bu
+type: track
+title: Consul and F5
+teaser: A short description of the track.
+description: |-
+  A long description of the track.
+
+  You can use any GitHub flavoured markdown.
+icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+tags: []
+owner: hashicorp
+developers:
+- lance@hashicorp.com
+private: true
+published: true
+challenges:
+- slug: test
+  id: bdjgguveapxx
+  type: challenge
+  title: test
+  teaser: test
+  assignment: test
+  tabs:
+  - title: workstation
+    type: terminal
+    hostname: bastion
+  - title: bigip
+    type: terminal
+    hostname: bigip
+  - title: bigip-ui
+    type: code
+    hostname: bastion
+    path: /tmp/ui.txt
+  difficulty: basic
+  timelimit: 10000
+checksum: "3964588531350934101"
