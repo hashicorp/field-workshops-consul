@@ -9,7 +9,7 @@ lb=$(terraform output -state /root/terraform/consul/terraform.tfstate lb)
 
 cat << EOF > /root/helm/frontend-values.yaml
 global:
-  image: 'hashicorp/consul-enterprise:1.7.2-ent'
+  image: 'hashicorp/consul-enterprise:1.8.0-ent'
   domain: consul
   datacenter: us-east-1
   tls:
@@ -58,7 +58,7 @@ EOF
 
 cat << EOF > /root/helm/backend-values.yaml
 global:
-  image: 'hashicorp/consul-enterprise:1.7.2-ent'
+  image: 'hashicorp/consul-enterprise:1.8.0-ent'
   domain: consul
   datacenter: us-east-1
   tls:
