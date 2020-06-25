@@ -86,6 +86,8 @@ spec:
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
         "consul.hashicorp.com/connect-service-upstreams": "emojify-website:8000,emojify-api:8001,emojify-payments:8002"
+        "prometheus.io/scrape": "true"
+        "prometheus.io/port": "9901"
     spec:
       volumes:
       - name: config
@@ -100,21 +102,6 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
-
         volumeMounts:
         - name: config
           mountPath: /etc/nginx/
-
-      - name: prometheus-statsd
-        image: "prom/statsd-exporter:v0.13.0"
-        ports:
-          - name: metrics
-            containerPort: 9102
-          - name: statsd
-            containerPort: 9125
-        resources:
-          limits:
-            memory: 100Mi
-          requests:
-            cpu: 100m
-            memory: 100Mi
