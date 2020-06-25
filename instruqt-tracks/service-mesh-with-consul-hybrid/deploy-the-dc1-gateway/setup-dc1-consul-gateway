@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#Get enovy for us
+curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
+getenvoy run standard:1.14.1 -- --version
+cp /root/.getenvoy/builds/standard/1.14.1/linux_glibc/bin/envoy /usr/local/bin/envoy
+envoy --version
+
 #ip
 local_ipv4=$(curl -s -H "Metadata-Flavor: Google" http://metadata/computeMetadata/v1/instance/network-interfaces/0/ip)
 

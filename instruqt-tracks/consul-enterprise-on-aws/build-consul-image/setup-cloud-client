@@ -11,14 +11,14 @@ cd /root
 
 #Download Consul
 cd /root/packer
-curl -O https://releases.hashicorp.com/consul/1.7.2+ent/consul_1.7.2+ent_linux_amd64.zip
+curl -O https://releases.hashicorp.com/consul/1.8.0+ent/consul_1.8.0+ent_linux_amd64.zip
 
 #create variable file
 pubkey=$(cat ~/.ssh/id_rsa.pub)
 cat << EOF > /root/packer/vars.json
 {
-  "consul_zip": "consul_1.7.2+ent_linux_amd64.zip",
-  "consul_version": "1.7.2",
+  "consul_zip": "consul_1.8.0+ent_linux_amd64.zip",
+  "consul_version": "1.8.0",
   "username": "instruqt",
   "pubkey": "${pubkey}",
   "owner": "instruqt@hashicorp.com",
