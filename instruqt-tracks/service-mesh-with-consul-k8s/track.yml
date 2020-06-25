@@ -34,7 +34,7 @@ challenges:
     Navigate to the `_K8s` shell to install Consul. Note, Helm has been pre-initialized in this environment. Copy or type the following command in the shell.<br>
 
     ```
-    helm install -f consul-values.yaml lab ./consul-helm --wait
+    helm install -f consul-values.yaml lab ./consul-helm --wait --debug
     ```
 
     The status output should indicate Consul was `DEPLOYED`. <br>
@@ -230,11 +230,6 @@ challenges:
       Now that your app is working, you can Emojify some faces.
       Feel free to use your colleagues, or our sample. <br>
   tabs:
-  - title: Emojify - Website
-    type: service
-    hostname: kubernetes
-    path: /
-    port: 30000
   - title: Api -  Service
     type: code
     hostname: kubernetes
@@ -251,6 +246,11 @@ challenges:
     type: service
     hostname: kubernetes
     port: 30443
+  - title: Emojify - Website
+    type: service
+    hostname: kubernetes
+    path: /
+    port: 30000
   difficulty: basic
   timelimit: 600
 - slug: scale-the-app
@@ -377,6 +377,11 @@ challenges:
     type: code
     hostname: kubernetes
     path: /tmp/grafana-pass.txt
+  - title: Prometheus - UI
+    type: service
+    hostname: kubernetes
+    path: /targets#job-kubernetes-pods
+    port: 30090
   - title: K8s UI
     type: service
     hostname: kubernetes
@@ -924,15 +929,15 @@ challenges:
 
       Try it out with Ambassador and Connect!
   tabs:
+  - title: K8s UI
+    type: service
+    hostname: kubernetes
+    port: 30443
   - title: Consul UI
     type: service
     hostname: kubernetes
     path: /ui/
     port: 30085
-  - title: K8s UI
-    type: service
-    hostname: kubernetes
-    port: 30443
   - title: K8s
     type: terminal
     hostname: kubernetes
@@ -988,4 +993,4 @@ challenges:
     port: 31877
   difficulty: basic
   timelimit: 5400
-checksum: "16665529334278321764"
+checksum: "9440313427978466554"

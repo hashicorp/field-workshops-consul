@@ -296,7 +296,7 @@ connectInject:
     defaultProtocol: "http"
     proxyDefaults: |
       {
-      "envoy_dogstatsd_url": "udp://127.0.0.1:9125"
+      "envoy_prometheus_bind_addr": "0.0.0.0:9901"
       }
 EOF
 
