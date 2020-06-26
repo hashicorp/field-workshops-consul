@@ -1,0 +1,170 @@
+slug: tf-azure-consul-f5-workshop
+id: oieqph6wyzjr
+type: track
+title: Consul F5 Service Discovery
+teaser: Use Terraform to provision F5 BIG-IP instance on Microsoft Azure and dynamically
+  discover pool members using Consul
+description: |-
+  In this track you will explore the ability to automate provisioning of F5 BIG-IP VE into Microsoft Azure using Terraform infrastructure as code.
+  Additionally, you will see how the provisioned services pool members can be dynamically synchronized
+icon: https://storage.googleapis.com/instruqt-hashicorp-tracks/logo/terraform.png
+tags:
+- terraform
+- azure
+- aws
+- gcp
+- template
+owner: hashicorp
+developers:
+- scarolan@hashicorp.com
+- kcorbin@hashicorp.com
+private: true
+published: true
+challenges:
+- slug: setup-our-environment
+  id: zctrlcbfawu0
+  type: challenge
+  title: Provision Lab infrastructure
+  teaser: In this challenge you will provision your lab environment using Terraform
+  assignment: |2-
+
+    From the Shell tab, change directories into the Terraform code base that has been cloned
+
+    ```
+    cd terraform-bigip-consul-azure
+    ```
+
+    Now initialize Terraform, this will automatically download all the necessary providers and modules that is defined in our infrastructure as code repository.
+
+    ```
+    terraform init
+    ```
+
+    Terraform allows for us to perform a "dry-run" of changes that would be made if we apply the configuration.  This is called a "plan"
+
+
+    ```
+    terraform plan
+    ```
+
+    Take a moment to review the output of this command, you will see that several resources are going to be provisioned, including a Consul server, a BIG-IP load balancer, as well as a VM scale set that contains our application.
+
+
+    Now, apply the configuration
+
+    ```
+    terraform apply --auto-approve
+    ```
+
+    This will take several moments, while your waiting you can open the Code Editor tab and review the Terraform configuration that defines our lab environment.
+  notes:
+  - type: text
+    contents: |
+      Setting up your environment...
+      Keep an eye on the bottom right corner to know when you can get started.
+  - type: text
+    contents: The terraform command line tool is available for MacOS, FreeBSD, OpenBSD,
+      Windows, Solaris and Linux.
+  - type: text
+    contents: The terraform language is designed to be both human and machine-readable.
+  - type: text
+    contents: Most modern text editors support Terraform syntax highlighting.
+  tabs:
+  - title: Code Editor
+    type: service
+    hostname: workstation
+    port: 8443
+  - title: Text Editor
+    type: code
+    hostname: workstation
+    path: /root
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  difficulty: basic
+  timelimit: 1200
+- slug: verify-environment
+  id: amnxvpxpp5v8
+  type: challenge
+  title: Explore Lab Environment
+  teaser: Let's explore the lab environment that has been provisioned with Terraform
+  assignment: |-
+    First, you can verify that all of our nodes are properly registered with consul.  From the consul tab you should see several nodes registered.  These are the members of the VM Scale set, as well as our Consul server
+
+    You can  login to the BIG-IP management UI from the BIG-IP tab. **NOTE:** you will need to use the link provided in the Terraform output in a separate browser tab.
+
+    In the application tab, you can view the application, which is comprised of the VM Scale set running NGINX web servers, being load balanced by the BIG-IP virtual instance.
+
+    TODO: add step-by-step instructions
+  tabs:
+  - title: Code Editor
+    type: service
+    hostname: workstation
+    port: 8443
+  - title: Text Editor
+    type: code
+    hostname: workstation
+    path: /root
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8080
+  - title: App
+    type: service
+    hostname: workstation
+    path: /
+    port: 8081
+  difficulty: basic
+  timelimit: 1200
+- slug: scale-the-application
+  id: frmtylxrssg1
+  type: challenge
+  title: Explore Lab Environment
+  teaser: Let's explore the lab environment that has been provisioned with Terraform
+  assignment: |-
+    In this excercise we will scale the application by way of increasing the number of instances in the VM scale set.
+
+    In the code editor open the folder containing the terraform code, and open the `webservers.tf` file.  In this file near the top you will find the definition of the VM scale set.
+
+    Change the capacity parameter from `2` to `3` and save the file.
+
+    Next we will apply the updated configuration using Terraform. In the shell tab, run the following commands.
+
+
+    ```
+
+    TODO: add step-by-step instructions
+  tabs:
+  - title: Code Editor
+    type: service
+    hostname: workstation
+    port: 8443
+  - title: Text Editor
+    type: code
+    hostname: workstation
+    path: /root
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: App
+    type: service
+    hostname: workstation
+    path: /
+    port: 8081
+  difficulty: basic
+  timelimit: 1200
+checksum: "1245594081016180140"

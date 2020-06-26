@@ -1,0 +1,52 @@
+
+consul_ui=$(terraform output -state /root/terraform-bigip-consul-azure/terraform.tfstate consul_ui)
+app_url=$(terraform output -state /root/terraform-bigip-consul-azure/terraform.tfstate app_url)
+mgmt_url=$(terraform output -state /root/terraform-bigip-consul-azure/terraform.tfstate mgmt_url)
+
+
+cat << EOF > /etc/nginx/conf.d/consul.conf
+server {
+  listen 8500;
+  location / {
+    proxy_pass ${consul_ui};
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect off;
+    proxy_buffer_size          128k;
+    proxy_buffers              4 256k;
+    proxy_busy_buffers_size    256k;    
+  }
+  access_log /var/log/nginx/consul.log;
+}
+EOF
+
+cat << EOF > /etc/nginx/conf.d/f5.conf
+server {
+  listen 8080;
+  location / {
+    proxy_pass ${mgmt_url};
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect off;
+    proxy_buffer_size          128k;
+    proxy_buffers              4 256k;
+    proxy_busy_buffers_size    256k;    
+  }
+  access_log /var/log/nginx/consul.log;
+}
+EOF
+
+cat << EOF > /etc/nginx/conf.d/app.conf
+server {
+  listen 8081;
+  location / {
+    proxy_pass ${app_url};
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect off;
+    proxy_buffer_size          128k;
+    proxy_buffers              4 256k;
+    proxy_busy_buffers_size    256k;    
+  }
+  access_log /var/log/nginx/consul.log;
+}
+EOF
+
+/usr/sbin/service nginx restart
