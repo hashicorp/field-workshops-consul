@@ -1,0 +1,109 @@
+slug: f5-on-azure-app-modernization-with-terraform-consul
+id: mi8hobhrlh96
+version: 0.0.1
+type: track
+title: F5 on Azure - App Modernization with Terraform & Consul
+teaser: test
+description: test
+icon: ""
+tags: []
+owner: hashicorp
+developers:
+- lance@hashicorp.com
+- kcorbin@hashicorp.com
+private: true
+published: false
+challenges:
+- slug: provision-azure-vnets
+  id: tmsnsut54k9f
+  type: challenge
+  title: Provision Azure VNETs
+  teaser: test
+  assignment: test
+  tabs:
+  - title: Code Editor
+    type: service
+    hostname: workstation
+    port: 8443
+  - title: Text Editor
+    type: code
+    hostname: workstation
+    path: /root
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  difficulty: basic
+  timelimit: 500
+- slug: provision-core-services
+  id: gipovssxptby
+  type: challenge
+  title: Provision Core Services
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: provision-f5
+  id: tddd2tm78rzu
+  type: challenge
+  title: Provision F5
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: validate-hcs
+  id: zkxpyr3mokid
+  type: challenge
+  title: Validate HCS
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: deploy-legacy-environments
+  id: pp5dlxxhxsxu
+  type: challenge
+  title: Deploy legacy environments
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: review-legacy-environment
+  id: uduxezyej08m
+  type: challenge
+  title: Review legacy environment
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: scale-the-application
+  id: xlknkvvmbhdz
+  type: challenge
+  title: Scale the application
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: deploy-consul-in-aks
+  id: kl3g4mrevbng
+  type: challenge
+  title: Deploy Consul in AKS
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: deploy-app-in-k8s
+  id: 6jjypzuphebv
+  type: challenge
+  title: Deploy App in k8s
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: test-terminating-gateway
+  id: z9j7j1geznsv
+  type: challenge
+  title: Test Terminating Gateway
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+checksum: "16828602477514437349"
