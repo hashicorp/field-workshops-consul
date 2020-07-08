@@ -368,4 +368,5 @@ challenges:
     path: /tmp/bootstrap.txt
   difficulty: basic
   timelimit: 600
-checksum: "11229467966935187233"
+checksum: "4253193431379042696"
+show_timer: true

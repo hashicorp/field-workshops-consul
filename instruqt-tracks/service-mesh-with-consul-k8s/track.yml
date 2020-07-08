@@ -993,4 +993,5 @@ challenges:
     port: 31877
   difficulty: basic
   timelimit: 5400
-checksum: "14710557690339687171"
+checksum: "7851765628511036842"
+show_timer: true

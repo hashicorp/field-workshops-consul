@@ -299,4 +299,5 @@ challenges:
     hostname: app
   difficulty: basic
   timelimit: 900
-checksum: "2832862485848427096"
+checksum: "9764133920270800113"
+show_timer: true

@@ -1364,4 +1364,5 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "12277090290398835055"
+checksum: "770548641135685574"
+show_timer: true
