@@ -71,13 +71,13 @@ resource "azurerm_managed_application" "hcs" {
 data "azurerm_virtual_network" "hcs" {
   depends_on          = [azurerm_managed_application.hcs]
   name                = "hvn-consul-ama-hashicorp-consul-cluster-vnet"
-  resource_group_name = var.managed_resource_group
+  resource_group_name = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
 }
 
 resource "azurerm_virtual_network_peering" "hcs-legacy" {
   depends_on                = [azurerm_managed_application.hcs]
   name                      = "HCSToLegacy"
-  resource_group_name       = var.managed_resource_group
+  resource_group_name       = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
   virtual_network_name      = "hvn-consul-ama-hashicorp-consul-cluster-vnet"
   remote_virtual_network_id = data.terraform_remote_state.vnet.outputs.legacy_vnet
 }
@@ -93,7 +93,7 @@ resource "azurerm_virtual_network_peering" "legacy-hcs" {
 resource "azurerm_virtual_network_peering" "hcs-aks" {
   depends_on                = [azurerm_managed_application.hcs]
   name                      = "HCSToAKS"
-  resource_group_name       = var.managed_resource_group
+  resource_group_name       = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
   virtual_network_name      = "hvn-consul-ama-hashicorp-consul-cluster-vnet"
   remote_virtual_network_id = data.terraform_remote_state.vnet.outputs.aks_vnet
 }

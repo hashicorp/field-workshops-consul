@@ -19,7 +19,25 @@ challenges:
   type: challenge
   title: Provision Azure VNETs
   teaser: test
-  assignment: test
+  assignment: |-
+    In this assignment you will provision the VNets we will use in the following assignments. <br>
+
+    Inspect and deploy the terraform code.
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    Their CIDR blocks are listed below:
+    ```
+    hcs-vnet: 10.1.0.0/16
+    shared-svcs-vnet: 10.2.0.0/16
+    legacy-vnet: 10.3.0.0/16
+    aks-vnet: 10.4.0.0/16
+    ```
+
+    You will leverage these VNet in the next few assignments.
   tabs:
   - title: Code Editor
     type: service
@@ -33,31 +51,163 @@ challenges:
     type: terminal
     hostname: workstation
   difficulty: basic
-  timelimit: 500
+  timelimit: 3000
 - slug: provision-core-services
   id: gipovssxptby
   type: challenge
   title: Provision Core Services
   teaser: test
-  assignment: test
+  assignment: |-
+    You will use Terraform to provision these services in the background while you set up Consul in the next few assignments. <br>
+
+    Start with Vault. <br>
+    ```
+    cd /root/terraform/vault
+    terraform plan
+    nohup terraform apply -auto-approve > /root/terraform/vault/terraform.out &
+    ```
+    Next, provision AKS. <br>
+    ```
+    cd /root/terraform/aks
+    terraform plan
+    nohup terraform apply -auto-approve > /root/terraform/aks/terraform.out &
+    ```
+    Last, provision the HashiCorp Consul service. This resource can take *30 minutes to 1 hour* to provision.
+    ```
+    cd /root/terraform/hcs
+    terraform plan
+    nohup terraform apply -auto-approve > /root/terraform/hcs/terraform.out &
+    ```
+    You can continue immediately to the next assignment while these services are provisioning.
+    Click the check button now to proceed.
+  tabs:
+  - title: Code Editor
+    type: service
+    hostname: workstation
+    port: 8443
+  - title: Text Editor
+    type: code
+    hostname: workstation
+    path: /root
+  - title: Shell
+    type: terminal
+    hostname: workstation
   difficulty: basic
-  timelimit: 500
+  timelimit: 3000
 - slug: provision-f5
   id: tddd2tm78rzu
   type: challenge
   title: Provision F5
   teaser: test
-  assignment: test
+  assignment: |-
+    You will use Terraform to provision these services in the background while you set up Consul in the next few assignments. <br>
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    Navigate to the BIG-IP at the IP address in the terraform output.
+  tabs:
+  - title: Code Editor
+    type: service
+    hostname: workstation
+    port: 8443
+  - title: Text Editor
+    type: code
+    hostname: workstation
+    path: /root
+  - title: Shell
+    type: terminal
+    hostname: workstation
   difficulty: basic
-  timelimit: 500
+  timelimit: 3000
 - slug: validate-hcs
   id: zkxpyr3mokid
   type: challenge
   title: Validate HCS
   teaser: test
-  assignment: test
+  assignment: |-
+    The Consul bootstrap outputs from the last few assignments have been secured in Vault through the provisioning process. <br>
+    Login as an operator and inspect the credentials. <br>
+
+    ```
+    vault login -method=userpass username=operations password=Password1
+    ```
+
+    You need to retrieve the bootstrap token from HCS and save it to your Vault instance.
+
+    ```
+    echo $CONSUL_HTTP_ADDR
+    echo $VAULT_ADDR
+    bootstrap_token=$(consul acl bootstrap -format json | jq -r .SecretID)
+    gossip_key=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .encrypt)
+    vault kv put secret/consul master_token=${bootstrap_token} gossip_key=${gossip_key}
+    ```
+
+    Now inspect the credentials.
+
+    ```
+    echo $VAULT_ADDR
+    vault kv get secret/consul
+    ```
+
+    You can use the master token to create a management token for Vault to issue [dynamic secrets](https://www.vaultproject.io/docs/secrets/consul/) for Consul.
+    Get a management token for Vault to manage Consul tokens with.
+    You can retrieve the privileged token for this operation from Vault.  <br>
+
+    ```
+    export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
+    vault_consul_mgmt_token=$(consul acl token create -policy-name=global-management -description "vault mgmt" | grep SecretID | cut -d ":" -f2 | xargs)
+
+    ```
+    Now configure the secrets engine.
+
+    ```
+    vault write consul/config/access address=${CONSUL_HTTP_ADDR} token=${vault_consul_mgmt_token}
+    vault read consul/config/access
+    ```
+
+    Last, create a policy for the operations team, and link it to the Vault role.
+
+    ```
+    consul acl policy create -name "ops" -description "admin policy for ops" -rules 'acl = "write" operator = "write" namespace_prefix "" {acl = "write"}'
+    vault write consul/roles/ops policies=ops ttl=1h
+    ```
+
+    Now you are ready to get a dynamic Consul token from Vault for an operator.
+    Validate the token after you fetch it. <br>
+
+    ```
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    You will use this role in a later assignment to configure access for Consul service consumers.
+  tabs:
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
+  - title: Code Editor
+    type: service
+    hostname: workstation
+    port: 8443
+  - title: Text Editor
+    type: code
+    hostname: workstation
+    path: /root
+  - title: Shell
+    type: terminal
+    hostname: workstation
   difficulty: basic
-  timelimit: 500
+  timelimit: 3000
 - slug: deploy-legacy-environments
   id: pp5dlxxhxsxu
   type: challenge
@@ -65,7 +215,7 @@ challenges:
   teaser: test
   assignment: test
   difficulty: basic
-  timelimit: 500
+  timelimit: 3000
 - slug: review-legacy-environment
   id: uduxezyej08m
   type: challenge
@@ -73,7 +223,7 @@ challenges:
   teaser: test
   assignment: test
   difficulty: basic
-  timelimit: 500
+  timelimit: 3000
 - slug: scale-the-application
   id: xlknkvvmbhdz
   type: challenge
@@ -81,7 +231,7 @@ challenges:
   teaser: test
   assignment: test
   difficulty: basic
-  timelimit: 500
+  timelimit: 3000
 - slug: deploy-consul-in-aks
   id: kl3g4mrevbng
   type: challenge
@@ -89,7 +239,7 @@ challenges:
   teaser: test
   assignment: test
   difficulty: basic
-  timelimit: 500
+  timelimit: 3000
 - slug: deploy-app-in-k8s
   id: 6jjypzuphebv
   type: challenge
@@ -97,7 +247,7 @@ challenges:
   teaser: test
   assignment: test
   difficulty: basic
-  timelimit: 500
+  timelimit: 3000
 - slug: test-terminating-gateway
   id: z9j7j1geznsv
   type: challenge
@@ -105,5 +255,5 @@ challenges:
   teaser: test
   assignment: test
   difficulty: basic
-  timelimit: 500
-checksum: "16828602477514437349"
+  timelimit: 3000
+checksum: "14468017493485353334"
