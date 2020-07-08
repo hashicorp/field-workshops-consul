@@ -30,6 +30,9 @@ server {
 EOF
 /usr/sbin/service nginx restart
 
+#clean
+
+
 #inital vault
 export VAULT_ADDR=http://${vault_lb}
 vault login root

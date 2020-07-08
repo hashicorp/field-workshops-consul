@@ -99,7 +99,7 @@ resource "azurerm_public_ip" "sip_public_ip" {
   allocation_method   = "Static"   # Static is required due to the use of the Standard sku
   sku                 = "Standard" # the Standard sku is required due to the use of availability zones
   // zones               =  [element(local.azs, count.index)]
-  domain_name_label   = "bigip"
+  domain_name_label   = data.terraform_remote_state.vnet.outputs.resource_group_name
   tags = {
     environment = "instruqt"
   }

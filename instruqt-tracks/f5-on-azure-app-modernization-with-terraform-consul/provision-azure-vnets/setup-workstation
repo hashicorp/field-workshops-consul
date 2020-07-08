@@ -45,8 +45,9 @@ EOF
 systemctl start code-server
 
 # Import VAULT_TOKEN into shell
-echo "export VAULT_TOKEN=\$(cat /var/vault_token)" >> /root/.bashrc
+#echo "export VAULT_TOKEN=\$(cat /var/vault_token)" >> /root/.bashrc
 export VAULT_TOKEN=$(cat /var/vault_token)
+export VAULT_NAMESPACE=Sales/SE
 
 # Generate the Azure creds setup script
 cat <<-EOF > /bin/setup_azure.sh
@@ -86,6 +87,7 @@ while read id secret; do
     exit 1
   fi
 done || exit 1
+unset VAULT_TOKEN
 
 echo "\${grn}Ready to run Terraform on...\${end}"
 echo "${blu}"
@@ -117,7 +119,7 @@ cd /root
 #install vault
 cd /tmp
 echo "installing vault..."
-curl -O https://releases.hashicorp.com/vault/1.3.4/vault_1.3.4_linux_amd64.zip
+curl -O https://releases.hashicorp.com/vault/1.4.3/vault_1.4.3_linux_amd64.zip
 unzip *.zip
 mv vault /usr/local/bin/vault
 rm -f *.zip
@@ -126,13 +128,12 @@ cd /root
 
 #get assets
 git clone -b f5-tf-consul-app-mod https://github.com/hashicorp/field-workshops-consul.git
-cp -r field-workshops-consul/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul//assets/terraform .
-cp -r field-workshops-consul/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul//assets/apps .
+cp -r field-workshops-consul/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/terraform .
+#cp -r field-workshops-consul/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/apps .
 rm -rf field-workshops-consul
 
 #provision
 cd /root/terraform/vnet
-echo "running terraform..."
 /usr/local/bin/terraform init
 
 #assignment

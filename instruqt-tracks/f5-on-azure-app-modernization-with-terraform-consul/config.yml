@@ -9,5 +9,4 @@ virtualmachines:
     TEST_PIPELINE: "true"
     VAULT_ADDR: https://cam-vault.hashidemos.io:8200
     VAULT_CREDS_ENDPOINT: azure/creds/se-training-workstation
-    VAULT_NAMESPACE: Sales/SE
   machine_type: n1-standard-1
