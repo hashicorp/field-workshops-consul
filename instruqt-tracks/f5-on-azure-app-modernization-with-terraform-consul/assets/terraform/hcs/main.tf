@@ -49,7 +49,7 @@ resource "azurerm_managed_application" "hcs" {
   }
 
   parameters = {
-    initialConsulVersion  = "v1.7.2"
+    initialConsulVersion  = "v1.8.0"
     storageAccountName    = "${random_string.storageaccountname.result}"
     blobContainerName     = "${random_string.blobcontainername.result}"
     clusterMode           = "PRODUCTION"
