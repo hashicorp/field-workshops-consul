@@ -8,10 +8,10 @@ sudo apt-get install unzip
 
 #Download Consul
 CONSUL_VERSION="1.7.2"
-curl --silent --remote-name https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip
+curl --silent --remote-name https://releases.hashicorp.com/consul/$${CONSUL_VERSION}/consul_$${CONSUL_VERSION}_linux_amd64.zip
 
 #Install Consul
-unzip consul_${CONSUL_VERSION}_linux_amd64.zip
+unzip consul_$${CONSUL_VERSION}_linux_amd64.zip
 sudo chown root:root consul
 sudo mv consul /usr/local/bin/
 consul -autocomplete-install
@@ -44,11 +44,37 @@ LimitNOFILE=65536
 WantedBy=multi-user.target
 EOF
 
-#Create config dir
+sudo cat << EOF > /etc/systemd/system/consul-template.service
+[Unit]
+Description="Template rendering, notifier, and supervisor for @hashicorp Consul and Vault data."
+Documentation=https://www.consul.io/
+Requires=network-online.target
+After=network-online.target
+[Service]
+User=root
+Group=root
+ExecStart=/usr/local/bin/consul-template -config=/etc/consul-template/consul-template-config.hcl
+ExecReload=/usr/local/bin/consul reload
+KillMode=process
+Restart=always
+LimitNOFILE=65536
+[Install]
+WantedBy=multi-user.target
+EOF
+
+#Create config dirs
 sudo mkdir --parents /etc/consul.d
+sudo mkdir --parents /etc/nginx/conf.d
+sudo mkdir --parents /etc/consul-template
+
 sudo touch /etc/consul.d/consul.hcl
+sudo touch /etc/consul-template/consul-template-config.hcl
+
 sudo chown --recursive consul:consul /etc/consul.d
+sudo chown --recursive consul:consul /etc/consul-template
 sudo chmod 640 /etc/consul.d/consul.hcl
+sudo chmod 640 /etc/consul-template/consul-template-config.hcl
+
 
 cat << EOF > /etc/consul.d/consul.hcl
 datacenter = "dc1"
@@ -56,18 +82,19 @@ data_dir = "/opt/consul"
 ui = true
 EOF
 
+
 cat << EOF > /etc/consul.d/client.hcl
-retry_join = ["10.1.1.100"]
+retry_join = ["${endpoint}"]
 EOF
 
 cat << EOF > /etc/consul.d/nginx.json
 {
   "service": {
-    "name": "nginx",
+    "name": "web",
     "port": 80,
     "checks": [
       {
-        "id": "nginx",
+        "id": "web",
         "name": "nginx TCP Check",
         "tcp": "localhost:80",
         "interval": "10s",
@@ -80,8 +107,13 @@ EOF
 
 #Enable the service
 sudo systemctl enable consul
+sudo systemctl enable consul-template
+
 sudo service consul start
+sudo service consul-template start
 sudo service consul status
+sudo service consul-template status
+
 
 
 # create consul template for nginx config
@@ -96,7 +128,7 @@ server {
     server_name  localhost;
     
     location / {
-       proxy_pass http://api;
+       proxy_pass http://app;
     }
 }
 EOF
@@ -109,6 +141,8 @@ destination = "/etc/nginx/conf.d/default.conf"
 command = "docker-compose -f /home/ubuntu/docker-compose.yml restart"
 }
 EOF
+
+
 #Install Dockers
 sudo snap install docker
 sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose

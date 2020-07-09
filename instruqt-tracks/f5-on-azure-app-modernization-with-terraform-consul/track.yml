@@ -213,7 +213,35 @@ challenges:
   type: challenge
   title: Deploy legacy environments
   teaser: test
-  assignment: test
+  assignment: |-
+    Grab the HCS endpoint using the az cli command.  <br>
+
+    ```
+    export TF_VAR_endpoint=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output --state ../vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .retry_join[0])
+    echo $TF_VAR_endpoint
+    ```
+  tabs:
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
+  - title: Code Editor
+    type: service
+    hostname: workstation
+    port: 8443
+  - title: Text Editor
+    type: code
+    hostname: workstation
+    path: /root
+  - title: Shell
+    type: terminal
+    hostname: workstation
   difficulty: basic
   timelimit: 3000
 - slug: review-legacy-environment
@@ -256,4 +284,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 3000
-checksum: "4447683680018707532"
+checksum: "15620241711390113939"

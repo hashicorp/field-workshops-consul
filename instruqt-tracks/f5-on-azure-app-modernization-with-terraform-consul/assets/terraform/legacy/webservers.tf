@@ -39,7 +39,7 @@ resource "azurerm_virtual_machine_scale_set" "web_vmss" {
     computer_name_prefix = "web-vm-"
     admin_username       = data.terraform_remote_state.bigip.outputs.username
     admin_password       = data.terraform_remote_state.bigip.outputs.admin_password
-    custom_data          = base64encode(file("./templates/web_server.sh"))
+    custom_data          = base64encode(templatefile("./templates/web_server.sh", { endpoint = var.endpoint }))
   }
 
   os_profile_linux_config {

@@ -8,7 +8,7 @@ resource "null_resource" "virtualserverAS3" {
               --retry 10 \
               --retry-delay 30 \
               --retry-max-time 600 \
-              -u "${data.terraform_remote_state.bigip.outputs.username}:${data.terraform_remote_state.bigip.outputs.admin_password} \
+              -u "${data.terraform_remote_state.bigip.outputs.username}:${data.terraform_remote_state.bigip.outputs.admin_password}" \
               -d '${data.template_file.virtualserverAS3.rendered}'
         EOT
   }
