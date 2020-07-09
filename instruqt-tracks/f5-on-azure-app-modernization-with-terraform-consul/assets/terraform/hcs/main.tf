@@ -13,7 +13,7 @@ data "terraform_remote_state" "vnet" {
 /*
 resource "azurerm_marketplace_agreement" "hcs" {
   publisher = "hashicorp-4665790"
-  offer     = "hcs-production"
+  offer     = "hcs-production-preview"
   plan      = "public-beta"
 }
 */

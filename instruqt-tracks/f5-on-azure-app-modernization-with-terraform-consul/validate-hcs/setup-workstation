@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#hcs extension
+az extension add --source https://releases.hashicorp.com/hcs/0.0.1/hcs-0.0.1-py2.py3-none-any.whl --yes
+
+#nginx
 set-workdir /root/terraform/vault
 
 vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate vault_lb)
@@ -29,9 +33,6 @@ server {
 }
 EOF
 /usr/sbin/service nginx restart
-
-#clean
-
 
 #inital vault
 export VAULT_ADDR=http://${vault_lb}
