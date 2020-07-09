@@ -43,9 +43,9 @@ resource "azurerm_managed_application" "hcs" {
 
   plan {
     name      = "public-beta"
-    product   = "hcs-production"
+    product   = "hcs-production-preview"
     publisher = "hashicorp-4665790"
-    version   = "0.0.28"
+    version   = "0.0.34"
   }
 
   parameters = {

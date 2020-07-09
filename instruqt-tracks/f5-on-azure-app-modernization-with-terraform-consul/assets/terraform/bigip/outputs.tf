@@ -13,3 +13,7 @@ output "username" {
 output "admin_password" {
   value = random_password.bigippassword.result
 }
+
+output "vip_internal_address" {
+  value = azurerm_network_interface.ext-nic.private_ip_address
+}

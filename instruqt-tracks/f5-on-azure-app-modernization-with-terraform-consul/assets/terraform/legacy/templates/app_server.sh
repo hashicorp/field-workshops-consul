@@ -57,19 +57,19 @@ ui = true
 EOF
 
 cat << EOF > /etc/consul.d/client.hcl
-retry_join = ["10.0.0.100"]
+retry_join = ["10.1.1.100"]
 EOF
 
 cat << EOF > /etc/consul.d/nginx.json
 {
   "service": {
-    "name": "nginx",
-    "port": 80,
+    "name": "app",
+    "port": 9091,
     "checks": [
       {
         "id": "nginx",
         "name": "nginx TCP Check",
-        "tcp": "localhost:80",
+        "tcp": "localhost:9091",
         "interval": "10s",
         "timeout": "1s"
       }
@@ -93,12 +93,23 @@ sleep 10
 cat << EOF > docker-compose.yml
 version: "3.7"
 services:
-  web:
-    image: nginxdemos/hello
-    ports:
-    - "80:80"
-    restart: always
-    command: [nginx-debug, '-g', 'daemon off;']
-    network_mode: "host"
+  api:
+    image: nicholasjackson/fake-service:v0.4.1
+    ports: 
+      - 9091:9091
+    environment:
+      LISTEN_ADDR: 0.0.0.0:9091
+      NAME: app
+      MESSAGE: "API V1"
+      SERVER_TYPE: "http"
+      UPSTREAM_URIS: "http://currency:9092"
+  currency:
+    image: nicholasjackson/fake-service:v0.4.1
+    environment:
+      LISTEN_ADDR: 0.0.0.0:9092
+      NAME: currency
+      MESSAGE: "Currency RPC Successful"
+      SERVER_TYPE: "http"
+
 EOF
 sudo docker-compose up -d

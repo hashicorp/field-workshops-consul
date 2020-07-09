@@ -1,0 +1,69 @@
+{
+    "class": "ADC",
+    "schemaVersion": "3.7.0",
+    "id": "Consul_SD",
+    "Consul_SD": {
+      "class": "Tenant",
+      "Web": {
+        "class": "Application",
+        "template": "generic",
+        "Web_VIP": {
+          "class": "Service_HTTP",
+          "virtualPort": 8080,
+          "virtualAddresses": [
+            "${vip_address}"
+          ],
+          "pool": "web_pool",
+          "persistenceMethods": [],
+          "profileMultiplex": {
+            "bigip": "/Common/oneconnect"
+           }
+        },
+        
+        "web_pool": {
+          "class": "Pool",
+          "monitors": [
+            "http"
+          ],
+          "members": [
+            {
+              "servicePort": 80,
+              "addressDiscovery": "consul",
+              "updateInterval": 10,
+              "uri": "${consul_url}/v1/catalog/service/web"
+            }
+          ]
+        }
+      },
+      "Payments": {
+        "class": "Application",
+        "template": "generic",
+        "Payments_VIP": {
+          "class": "Service_HTTP",
+          "virtualPort": 9093,
+          "virtualAddresses": [
+            "${vip_address}"
+          ],
+          "pool": "payments_pool",
+          "persistenceMethods": [],
+          "profileMultiplex": {
+            "bigip": "/Common/oneconnect"
+           }
+        },
+        "payments_pool": {
+          "class": "Pool",
+          "monitors": [
+            "http"
+          ],
+          "members": [
+            {
+              "servicePort": 9093,
+              "addressDiscovery": "consul",
+              "updateInterval": 10,
+              "uri": "${consul_url}/v1/catalog/service/payments"
+            }
+          ]
+        }
+      }
+    }
+  }
