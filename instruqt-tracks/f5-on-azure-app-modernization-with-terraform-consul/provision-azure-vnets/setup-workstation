@@ -136,6 +136,11 @@ rm -rf field-workshops-consul
 cd /root/terraform/vnet
 /usr/local/bin/terraform init
 
+pubkey=$(cat ~/.ssh/id_rsa.pub)
+cat << EOF > /root/terraform/vnet/terraform.tfvars
+ssh_public_key = "$(ssh-keygen -i -m pkcs8 -f ~/.ssh/id_rsa.pub)"
+EOF
+
 #assignment
 set-workdir /root/terraform/vnet
 cd /root/terraform/vnet

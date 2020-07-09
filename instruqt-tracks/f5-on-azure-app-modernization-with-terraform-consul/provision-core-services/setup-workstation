@@ -11,7 +11,7 @@ terraform init
 #test with dummy key
 pubkey=$(cat ~/.ssh/id_rsa.pub)
 cat << EOF > /root/terraform/vault/terraform.tfvars
-ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDU2o7tNKFF5IPQXNqm+19/9DVoj/G98juu9XhWhZ9WRMxnU8tK0Mh84STHIzNu2Uck8W0GBjEBGyZMVEzoTFuOkQmvUkppR2Gp9s4YFVjOomCls2eoAWnEMmHa6crGzItQRaYgzEyzbGXyqKjQAVjVLkVlBZHY3jFSn3/G2CEFM8FI0vi/n9lgEP214t3UTAHPj/Vb/2cSf+UEBpEzxiCp7BXAoZFQm+WiI4UnZfcwjNjYyt6YBwshIqicFgGsavMzzueh0RcrZX18L2m91dxMLx2JqwCw4iAakzli9To0DA8Ey6dFUUVAPGWIbAsTkf4cy+0c09U0lgGXFKqlV7wn"
+ssh_public_key = "$(ssh-keygen -i -m pkcs8 -f ~/.ssh/id_rsa.pub)"
 EOF
 
 cd /root/terraform/hcs
