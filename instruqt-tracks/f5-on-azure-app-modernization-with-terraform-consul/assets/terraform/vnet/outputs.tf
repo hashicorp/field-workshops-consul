@@ -29,3 +29,7 @@ output "aks_vnet" {
 output "aks_subnets" {
   value = module.aks-network.vnet_subnets
 }
+
+output "bastion_ip" {
+  value = azurerm_public_ip.bastion.ip_address
+}
