@@ -13,7 +13,7 @@ data "terraform_remote_state" "vnet" {
 /*
 resource "azurerm_marketplace_agreement" "hcs" {
   publisher = "hashicorp-4665790"
-  offer     = "hcs-production"
+  offer     = "hcs-production-preview"
   plan      = "public-beta"
 }
 */
@@ -43,13 +43,13 @@ resource "azurerm_managed_application" "hcs" {
 
   plan {
     name      = "public-beta"
-    product   = "hcs-production"
+    product   = "hcs-production-preview"
     publisher = "hashicorp-4665790"
-    version   = "0.0.28"
+    version   = "0.0.34"
   }
 
   parameters = {
-    initialConsulVersion  = "v1.7.3"
+    initialConsulVersion  = "v1.8.0"
     storageAccountName    = "${random_string.storageaccountname.result}"
     blobContainerName     = "${random_string.blobcontainername.result}"
     clusterMode           = "PRODUCTION"
