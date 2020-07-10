@@ -220,6 +220,26 @@ challenges:
     export TF_VAR_endpoint=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output --state ../vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .retry_join[0])
     echo $TF_VAR_endpoint
     ```
+
+    Grab the consul client configuration for communicating with the HCS cluster
+
+    ```
+    export TF_VAR_consulconfig=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d)
+    echo $TF_VAR_consulconfig
+    ```
+
+    And the ca certificate for HCS
+
+    ```
+    export TF_VAR_ca_cert=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulCaFile | base64 -d)
+    echo $TF_VAR_ca_cert
+    ```
+    Generate a token for the legacy nodes
+
+    ```
+    export TF_VAR_consul_token=$(vault kv get -field=master_token secret/consul)
+    ```
+    
   tabs:
   - title: Consul
     type: service

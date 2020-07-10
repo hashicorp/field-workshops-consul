@@ -77,14 +77,24 @@ sudo chmod 640 /etc/consul-template/consul-template-config.hcl
 
 
 cat << EOF > /etc/consul.d/consul.hcl
-datacenter = "dc1"
 data_dir = "/opt/consul"
 ui = true
 EOF
 
-
 cat << EOF > /etc/consul.d/client.hcl
 retry_join = ["${endpoint}"]
+EOF
+
+cat << EOF > /etc/consul.d/ca.pem
+${ca_cert}
+EOF
+
+cat << EOF > /etc/consul.d/hcs.json
+${consulconfig}
+EOF
+
+cat << EOF > /etc/consul.d/zz_acl.json
+{"acl":{"tokens": {"default": "${consul_token}"}, "enabled":true,"down_policy":"async-cache","default_policy":"deny"}
 EOF
 
 cat << EOF > /etc/consul.d/nginx.json

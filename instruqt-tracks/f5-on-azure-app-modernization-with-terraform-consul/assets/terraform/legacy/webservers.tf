@@ -39,11 +39,15 @@ resource "azurerm_virtual_machine_scale_set" "web_vmss" {
     computer_name_prefix = "web-vm-"
     admin_username       = data.terraform_remote_state.bigip.outputs.username
     admin_password       = data.terraform_remote_state.bigip.outputs.admin_password
-    custom_data          = base64encode(templatefile("./templates/web_server.sh", { endpoint = var.endpoint }))
+    custom_data          = base64encode(templatefile("./templates/web_server.sh", { endpoint = var.endpoint, consulconfig = var.consulconfig, ca_cert = var.ca_cert, consul_token = var.consul_token }))
   }
 
   os_profile_linux_config {
     disable_password_authentication = false
+    ssh_keys {
+      path     = "/home/${data.terraform_remote_state.bigip.outputs.username}/.ssh/authorized_keys" 
+      key_data = var.ssh_public_key
+    }
   }
 
   network_profile {

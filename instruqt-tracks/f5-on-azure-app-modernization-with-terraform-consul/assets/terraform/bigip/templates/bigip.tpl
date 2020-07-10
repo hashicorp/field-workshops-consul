@@ -60,6 +60,10 @@ curl -L -o ${libs_dir}/$DO_FN $DO_URL
 echo -e "\n"$(date) "Download AS3 Pkg"
 curl -L -o ${libs_dir}/$AS3_FN $AS3_URL
 
+# WAF 
+echo -e "\n"$(date) "Download ASM Policy"
+curl -L -o /tm/asm/file-transfer/uploads/asm_policy.xml $ASM_POLICY_URL
+
 # Copy the RPM Pkg to the file location
 cp ${libs_dir}/*.rpm /var/config/rest/downloads/
 
@@ -144,3 +148,5 @@ do
   fi
   sleep 10
 done
+
+
