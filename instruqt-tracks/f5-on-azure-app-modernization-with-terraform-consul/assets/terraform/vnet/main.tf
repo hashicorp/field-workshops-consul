@@ -138,3 +138,45 @@ resource "azurerm_network_interface_security_group_association" "bastion" {
   network_interface_id      = azurerm_network_interface.bastion.id
   network_security_group_id = azurerm_network_security_group.bastion.id
 }
+
+resource "azurerm_virtual_network_peering" "shared-legacy" {
+  name                      = "SharedToLegacy"
+  resource_group_name       = azurerm_resource_group.instruqt.name
+  virtual_network_name      = "shared-svcs-vnet"
+  remote_virtual_network_id = module.legacy-network.vnet_id
+}
+
+resource "azurerm_virtual_network_peering" "legacy-shared" {
+  name                      = "LegacyToShared"
+  resource_group_name = azurerm_resource_group.instruqt.name
+  virtual_network_name      = "legacy-vnet"
+  remote_virtual_network_id = module.shared-svcs-network.vnet_id
+}
+
+resource "azurerm_virtual_network_peering" "shared-aks" {
+  name                      = "SharedToAKS"
+  resource_group_name       = azurerm_resource_group.instruqt.name
+  virtual_network_name      = "shared-svcs-vnet"
+  remote_virtual_network_id = module.aks-network.vnet_id
+}
+
+resource "azurerm_virtual_network_peering" "aks-shared" {
+  name                      = "AKSToShared"
+  resource_group_name = azurerm_resource_group.instruqt.name
+  virtual_network_name      = "aks-vnet"
+  remote_virtual_network_id = module.shared-svcs-network.vnet_id
+}
+
+resource "azurerm_virtual_network_peering" "aks-legacy" {
+  name                      = "AksToLegacy"
+  resource_group_name       = azurerm_resource_group.instruqt.name
+  virtual_network_name      = "aks-vnet"
+  remote_virtual_network_id = module.legacy-network.vnet_id
+}
+
+resource "azurerm_virtual_network_peering" "legacy-aks" {
+  name                      = "LegacyToAKS"
+  resource_group_name = azurerm_resource_group.instruqt.name
+  virtual_network_name      = "legacy-vnet"
+  remote_virtual_network_id = module.aks-network.vnet_id
+}
