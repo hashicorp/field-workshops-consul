@@ -84,8 +84,7 @@ curl -u $CREDS -X POST http://localhost:8100/mgmt/shared/iapp/package-management
 
 sleep 10
 
-# TODO enable WAF
-DATA="{\"operation\":\"INSTALL\",\"packageFilePath\":\"/var/config/rest/downloads/$AS3_FN\"}"
+DATA="{\"level\":\"nominal\"}"
 echo -e "\n"$(date) "Enable WAF"
 curl -u $CREDS -X PATCH http://localhost:8100/mgmt/tm/sys/provision/asm -d $DATA
 
