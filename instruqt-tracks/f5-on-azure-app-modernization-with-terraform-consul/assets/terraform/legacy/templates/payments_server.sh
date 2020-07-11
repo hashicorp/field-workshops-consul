@@ -7,11 +7,11 @@
 sudo apt-get install unzip
 
 #Download Consul
-CONSUL_VERSION="1.7.2"
-curl --silent --remote-name https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip
+CONSUL_VERSION="1.8.0+ent"
+curl --silent --remote-name https://releases.hashicorp.com/consul/$${CONSUL_VERSION}/consul_$${CONSUL_VERSION}_linux_amd64.zip
 
 #Install Consul
-unzip consul_${CONSUL_VERSION}_linux_amd64.zip
+unzip consul_$${CONSUL_VERSION}_linux_amd64.zip
 sudo chown root:root consul
 sudo mv consul /usr/local/bin/
 consul -autocomplete-install
@@ -29,7 +29,6 @@ Description="HashiCorp Consul - A service mesh solution"
 Documentation=https://www.consul.io/
 Requires=network-online.target
 After=network-online.target
-ConditionFileNotEmpty=/etc/consul.d/consul.hcl
 
 [Service]
 User=consul
@@ -49,18 +48,30 @@ sudo mkdir --parents /etc/consul.d
 sudo touch /etc/consul.d/consul.hcl
 sudo chown --recursive consul:consul /etc/consul.d
 sudo chmod 640 /etc/consul.d/consul.hcl
+cat << EOF > /etc/consul.d/ca.pem
+${ca_cert}
+EOF
 
-cat << EOF > /etc/consul.d/consul.hcl
-datacenter = "dc1"
+cat << EOF > /etc/consul.d/hcs.json
+${consulconfig}
+EOF
+
+cat << EOF > /etc/consul.d/zz_override.hcl
 data_dir = "/opt/consul"
 ui = true
+ca_file = "/etc/consul.d/ca.pem"
+acl = {
+  tokens = {
+    default = "${consul_token}"
+  }
+  enabled = true
+  default_policy = "deny"
+  enable_token_persistence = true
+}
 EOF
 
-cat << EOF > /etc/consul.d/client.hcl
-retry_join = ["10.1.1.100"]
-EOF
 
-cat << EOF > /etc/consul.d/nginx.json
+cat << EOF > /etc/consul.d/payments.json
 {
   "service": {
     "name": "payments",
@@ -68,7 +79,7 @@ cat << EOF > /etc/consul.d/nginx.json
     "checks": [
       {
         "id": "nginx",
-        "name": "nginx TCP Check",
+        "name": "payments TCP Check",
         "tcp": "localhost:9093",
         "interval": "10s",
         "timeout": "1s"
