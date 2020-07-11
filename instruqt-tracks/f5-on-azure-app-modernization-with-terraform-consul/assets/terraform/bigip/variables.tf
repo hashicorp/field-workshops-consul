@@ -52,7 +52,6 @@ variable onboard_log {
   default     = "/var/log/startup-script.log"
 }
 
-
 variable ASM_POLICY_URL {
   description = "URL to download the BIG-IP ASM Policy from"
   type        = string

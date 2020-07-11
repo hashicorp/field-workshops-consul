@@ -108,6 +108,38 @@ challenges:
     ```
 
     Navigate to the BIG-IP at the IP address in the terraform output.
+
+    This can take several minutes to complete, while you are waiting
+    take the opportunity to review the terraform code located at `/root/terraform/bigip`
+
+    Once the apply is complete, you can Navigate to the BIG-IP at the IP address in the terraform output.
+
+    **NOTE:** you will need open the URL provided by the output in a separate tab.  If you are using chrome, you
+    may be presented with a certificate error, to bypass this you can type "thisisunsafe" into the Chrome window.
+
+    Now you will upload a [provided](https://github.com/hashicorp/field-workshops-consul/blob/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/terraform/bigip/templates/asm_policy.xml) ASM policy to the BIG-IP
+
+    ```
+    export CREDS=$(terraform output username):$(terraform output admin_password)
+    curl -v -sku $CREDS -X POST \
+      -H "Content-Type: application/octet-stream" \
+      -H "Content-Range: 0-942124/942125" \
+      $(terraform output mgmt_url)/mgmt/tm/asm/file-transfer/uploads/asm_policy.xml \
+      --data-binary "@templates/asm_policy.xml" | jq .
+
+
+    ```
+
+    Next, import the policy
+
+    ```
+
+    curl -k -u $CREDS \
+      -H "Content-Type: application/json" \
+      -X POST $(terraform output mgmt_url)/mgmt/tm/asm/tasks/import-policy \
+      -d '{"filename": "asm_policy.xml", "name": "WAFPolicy"}'
+
+      ```
   tabs:
   - title: Code Editor
     type: service
@@ -326,4 +358,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 3000
-checksum: "8359015689114907422"
+checksum: "9629462252584184855"
