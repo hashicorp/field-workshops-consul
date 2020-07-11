@@ -36,13 +36,17 @@ resource "azurerm_virtual_machine_scale_set" "app_vmss" {
 
   os_profile {
     computer_name_prefix = "app-vm-"
-    admin_username       = data.terraform_remote_state.bigip.outputs.username
-    admin_password       = data.terraform_remote_state.bigip.outputs.admin_password
+    admin_username = "azure-user"
     custom_data          = base64encode(file("./templates/app_server.sh"))
   }
 
   os_profile_linux_config {
-    disable_password_authentication = false
+    disable_password_authentication = true
+    ssh_keys {
+      path     = "/home/azure-user/.ssh/authorized_keys" 
+      key_data = var.ssh_public_key
+    }
+
   }
 
   network_profile {

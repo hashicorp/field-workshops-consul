@@ -7,7 +7,7 @@
 sudo apt-get install unzip
 
 #Download Consul
-CONSUL_VERSION="1.7.2"
+CONSUL_VERSION="1.8.0+ent"
 curl --silent --remote-name https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip
 
 #Install Consul
@@ -29,7 +29,6 @@ Description="HashiCorp Consul - A service mesh solution"
 Documentation=https://www.consul.io/
 Requires=network-online.target
 After=network-online.target
-ConditionFileNotEmpty=/etc/consul.d/consul.hcl
 
 [Service]
 User=consul
@@ -50,25 +49,37 @@ sudo touch /etc/consul.d/consul.hcl
 sudo chown --recursive consul:consul /etc/consul.d
 sudo chmod 640 /etc/consul.d/consul.hcl
 
-cat << EOF > /etc/consul.d/consul.hcl
-datacenter = "dc1"
+cat << EOF > /etc/consul.d/ca.pem
+${ca_cert}
+EOF
+
+cat << EOF > /etc/consul.d/hcs.json
+${consulconfig}
+EOF
+
+cat << EOF > /etc/consul.d/zz_override.hcl
 data_dir = "/opt/consul"
 ui = true
+ca_file = "/etc/consul.d/ca.pem"
+acl = {
+  tokens = {
+    default = "${consul_token}"
+  }
+  enabled = true
+  default_policy = "deny"
+  enable_token_persistence = true
+}
 EOF
 
-cat << EOF > /etc/consul.d/client.hcl
-retry_join = ["10.1.1.100"]
-EOF
-
-cat << EOF > /etc/consul.d/nginx.json
+cat << EOF > /etc/consul.d/app.json
 {
   "service": {
     "name": "app",
     "port": 9091,
     "checks": [
       {
-        "id": "nginx",
-        "name": "nginx TCP Check",
+        "id": "app",
+        "name": "App TCP Check",
         "tcp": "localhost:9091",
         "interval": "10s",
         "timeout": "1s"
@@ -93,22 +104,14 @@ sleep 10
 cat << EOF > docker-compose.yml
 version: "3.7"
 services:
-  api:
+  app:
     image: nicholasjackson/fake-service:v0.4.1
     ports: 
       - 9091:9091
     environment:
       LISTEN_ADDR: 0.0.0.0:9091
       NAME: app
-      MESSAGE: "API V1"
-      SERVER_TYPE: "http"
-      UPSTREAM_URIS: "http://currency:9092"
-  currency:
-    image: nicholasjackson/fake-service:v0.4.1
-    environment:
-      LISTEN_ADDR: 0.0.0.0:9092
-      NAME: currency
-      MESSAGE: "Currency RPC Successful"
+      MESSAGE: "Hello, Monolith!"
       SERVER_TYPE: "http"
 
 EOF

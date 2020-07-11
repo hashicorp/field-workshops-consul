@@ -25,6 +25,7 @@ data "template_file" "vm_onboard" {
     TS_URL      = var.TS_URL
     libs_dir    = var.libs_dir
     onboard_log = var.onboard_log
+    ASM_POLICY_URL = var.ASM_POLICY_URL
   }
 }
 
