@@ -56,5 +56,5 @@ variable onboard_log {
 variable ASM_POLICY_URL {
   description = "URL to download the BIG-IP ASM Policy from"
   type        = string
-  default     = "https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/terraform/legacy/templates/asm_policy.xml"
+  default     = "https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/terraform/bigip/templates/asm_policy.xml"
 }

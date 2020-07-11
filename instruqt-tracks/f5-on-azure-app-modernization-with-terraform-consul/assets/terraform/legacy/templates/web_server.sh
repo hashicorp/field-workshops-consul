@@ -7,7 +7,7 @@
 sudo apt-get install unzip
 
 #Download Consul
-CONSUL_VERSION="1.7.2"
+CONSUL_VERSION="1.8.0+ent"
 curl --silent --remote-name https://releases.hashicorp.com/consul/$${CONSUL_VERSION}/consul_$${CONSUL_VERSION}_linux_amd64.zip
 
 #Install Consul
@@ -29,12 +29,11 @@ Description="HashiCorp Consul - A service mesh solution"
 Documentation=https://www.consul.io/
 Requires=network-online.target
 After=network-online.target
-ConditionFileNotEmpty=/etc/consul.d/consul.hcl
 
 [Service]
 User=consul
 Group=consul
-ExecStart=/usr/local/bin/consul agent -config-dir=/etc/consul.d/
+ExecStart=/usr/local/bin/consul agent -bind '{{ GetInterfaceIP "eth0" }}' -config-dir=/etc/consul.d/
 ExecReload=/usr/local/bin/consul reload
 KillMode=process
 Restart=always
@@ -75,16 +74,6 @@ sudo chown --recursive consul:consul /etc/consul-template
 sudo chmod 640 /etc/consul.d/consul.hcl
 sudo chmod 640 /etc/consul-template/consul-template-config.hcl
 
-
-cat << EOF > /etc/consul.d/consul.hcl
-data_dir = "/opt/consul"
-ui = true
-EOF
-
-cat << EOF > /etc/consul.d/client.hcl
-retry_join = ["${endpoint}"]
-EOF
-
 cat << EOF > /etc/consul.d/ca.pem
 ${ca_cert}
 EOF
@@ -93,9 +82,20 @@ cat << EOF > /etc/consul.d/hcs.json
 ${consulconfig}
 EOF
 
-cat << EOF > /etc/consul.d/zz_acl.json
-{"acl":{"tokens": {"default": "${consul_token}"}, "enabled":true,"down_policy":"async-cache","default_policy":"deny"}
+cat << EOF > /etc/consul.d/zz_override.hcl
+data_dir = "/opt/consul"
+ui = true
+ca_file = "/etc/consul.d/ca.pem"
+acl = {
+  tokens = {
+    default = "${consul_token}"
+  }
+  enabled = true
+  default_policy = "deny"
+  enable_token_persistence = true
+}
 EOF
+
 
 cat << EOF > /etc/consul.d/nginx.json
 {

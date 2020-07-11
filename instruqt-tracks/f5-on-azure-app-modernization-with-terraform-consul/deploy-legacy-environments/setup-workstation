@@ -5,6 +5,9 @@ set -e
 # Allow instruqt time to do its thing
 sleep 10
 
+set-workdir /root/terraform/legacy
+
+
 cat << EOF > /root/terraform/legacy/terraform.tfvars
 ssh_public_key = "$(ssh-keygen -i -m pkcs8 -f ~/.ssh/id_rsa.pub)"
 EOF
