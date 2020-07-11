@@ -60,17 +60,6 @@ curl -L -o ${libs_dir}/$DO_FN $DO_URL
 echo -e "\n"$(date) "Download AS3 Pkg"
 curl -L -o ${libs_dir}/$AS3_FN $AS3_URL
 
-# WAF 
-echo -e "\n"$(date) "Download and install ASM Policy"
-
-curl -L -o /tmp/asm_policy.xml ${ASM_POLICY_URL}
-curl -H "Content-Type: application/octet-stream" -H "Content-Range: 0-402287/402288" \
-  -L -u $CREDS -X POST http://localhost:8100/mgmt/tm/asm/file-transfer/uploads/asm_policy.xml \
-  -d "@/tmp/asm_policy.xml"
-DATA="{\"filename\": \"asm_policy.xml\", \"name\": \"WAFPolicy\"}"
-curl -u $CREDS -H "Content-Type: application/json" \
-  -X POST http://localhost:8100/mgmt/tm/asm/tasks/import-policy -d $DATA
-
 # Copy the RPM Pkg to the file location
 cp ${libs_dir}/*.rpm /var/config/rest/downloads/
 
