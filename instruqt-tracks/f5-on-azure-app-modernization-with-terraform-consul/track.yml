@@ -183,6 +183,28 @@ challenges:
     consul acl token read -self
     ```
 
+    You can use this token to set up the anonymous policy.
+
+    ```
+    echo '
+    node_prefix "" {
+      policy = "read"
+    }
+    service_prefix "" {
+      policy = "read"
+    }
+    session_prefix "" {
+      policy = "read"
+    }
+    agent_prefix "" {
+      policy = "read"
+    }
+    query_prefix "" {
+      policy = "read"
+    }
+    operator = "read"' |  consul acl policy create -name anonymous -rules -
+    ```
+
     You will use this role in a later assignment to configure access for Consul service consumers.
   tabs:
   - title: Consul
@@ -239,7 +261,6 @@ challenges:
     ```
     export TF_VAR_consul_token=$(vault kv get -field=master_token secret/consul)
     ```
-    
   tabs:
   - title: Consul
     type: service
@@ -304,4 +325,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 3000
-checksum: "13292849119317863532"
+checksum: "17418086624236097905"
