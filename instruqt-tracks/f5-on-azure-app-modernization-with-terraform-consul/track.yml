@@ -203,6 +203,7 @@ challenges:
       policy = "read"
     }
     operator = "read"' |  consul acl policy create -name anonymous -rules -
+    consul acl token update -id anonymous -policy-name anonymous
     ```
 
     You will use this role in a later assignment to configure access for Consul service consumers.
@@ -325,4 +326,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 3000
-checksum: "17418086624236097905"
+checksum: "1131906077059136944"
