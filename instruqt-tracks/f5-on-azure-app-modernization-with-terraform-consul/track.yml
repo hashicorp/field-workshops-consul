@@ -294,6 +294,13 @@ challenges:
     ```
     export TF_VAR_consul_token=$(vault kv get -field=master_token secret/consul)
     ```
+
+    Now you can deploy the legacy application using terraform.
+
+    ```
+    terraform plan
+    terraform apply --auto-approve
+    ```
   tabs:
   - title: Consul
     type: service
@@ -358,4 +365,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 3000
-checksum: "11422925837890323537"
+checksum: "9040749494677703767"
