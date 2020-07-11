@@ -78,7 +78,7 @@ cat << EOF > /etc/consul.d/payments.json
     "port": 9093,
     "checks": [
       {
-        "id": "nginx",
+        "id": "payments",
         "name": "payments TCP Check",
         "tcp": "localhost:9093",
         "interval": "10s",
