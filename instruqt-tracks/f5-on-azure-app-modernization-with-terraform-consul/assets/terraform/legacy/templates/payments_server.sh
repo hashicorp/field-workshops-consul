@@ -99,13 +99,12 @@ sudo snap install docker
 sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-#Run  nginx
 sleep 10
 cat << EOF > docker-compose.yml
 version: "3.7"
 services:
   payments:
-    image: nicholasjackson/fake-service:v0.4.1
+    image: nicholasjackson/fake-service:v0.7.8
     ports: 
       - 9093:9093
     environment:

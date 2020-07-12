@@ -40,17 +40,13 @@ challenges:
 
     You will leverage these VNet in the next few assignments.
   tabs:
-  - title: Code Editor
-    type: service
-    hostname: workstation
-    port: 8443
-  - title: Text Editor
-    type: code
-    hostname: workstation
-    path: /root
   - title: Shell
     type: terminal
     hostname: workstation
+  - title: Text Editor
+    type: code
+    hostname: workstation
+    path: /root/terraform/vnet
   difficulty: basic
   timelimit: 3000
 - slug: provision-core-services
@@ -91,7 +87,7 @@ challenges:
   - title: Text Editor
     type: code
     hostname: workstation
-    path: /root
+    path: /root/terraform
   - title: Shell
     type: terminal
     hostname: workstation
@@ -145,17 +141,13 @@ challenges:
 
       You can review the configured policy by navigating to the `Security -> Application Security -> Security Policies` tab in the F5 management console. <br>
   tabs:
-  - title: Code Editor
-    type: service
-    hostname: workstation
-    port: 8443
-  - title: Text Editor
-    type: code
-    hostname: workstation
-    path: /root
   - title: Shell
     type: terminal
     hostname: workstation
+  - title: Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/bigip
   difficulty: basic
   timelimit: 3000
 - slug: validate-hcs
@@ -255,10 +247,6 @@ challenges:
     hostname: workstation
     path: /
     port: 8200
-  - title: Code Editor
-    type: service
-    hostname: workstation
-    port: 8443
   - title: Text Editor
     type: code
     hostname: workstation
@@ -279,7 +267,7 @@ challenges:
 
     As part of the cloud migration, the VM's will also be configured to run a consul agent that registers these services with Consul.  This will make it easy to refactor the application, as the application is no longer dependent upon static IP addresses which are hardcoded into configuration and application code. <br>
 
-    Additionally, by registering these services in Consul, it is no longer required to manually manage pool members on the F5 applicances, instead, VIP's can be configured to populate backend pool members by monitoring services in Consul. Whenever the application scales up, down, or moves the BIG-IP will automatically update it's configuration. <br>
+    Additionally, by registering these services in Consul, it is no longer required to manually manage pool members on the F5 appliances, instead, VIP's can be configured to populate backend pool members by monitoring services in Consul. Whenever the application scales up, down, or moves the BIG-IP will automatically update it's configuration. <br>
 
 
     To get started, we first need to collect some information from HCS. This information will be stored as environment variables used during the terraform run to deploy the application. <br>
@@ -299,7 +287,7 @@ challenges:
     echo $TF_VAR_consulconfig
     ```
 
-    And the CA certificate for securely communicating with the HCS cluster.
+    Grab the CA certificate for HCS cluster.
 
     ```
     export TF_VAR_ca_cert=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulCaFile | base64 -d)
@@ -327,19 +315,24 @@ challenges:
     hostname: workstation
     path: /
     port: 8500
+  - title: App
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 9090
   - title: Vault
     type: service
     hostname: workstation
     path: /
     port: 8200
-  - title: Code Editor
-    type: service
-    hostname: workstation
-    port: 8443
-  - title: Text Editor
+  - title: Terraform Code
     type: code
     hostname: workstation
-    path: /root
+    path: /root/terraform/legacy
+  - title: App Access Info
+    type: code
+    hostname: workstation
+    path: /info.txt
   - title: Shell
     type: terminal
     hostname: workstation
@@ -385,4 +378,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 3000
-checksum: "1417506315462159062"
+checksum: "10472413000598560398"

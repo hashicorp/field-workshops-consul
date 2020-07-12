@@ -4,18 +4,18 @@
 #local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
 
 #Utils
-sudo apt-get install unzip nginx
+sudo apt-get install -y unzip nginx
 
 
 #Download Consul
 CONSUL_TEMPLATE_VERSION="0.22.0"
 CONSUL_VERSION="1.8.0+ent"
 curl --silent --remote-name https://releases.hashicorp.com/consul/$${CONSUL_VERSION}/consul_$${CONSUL_VERSION}_linux_amd64.zip
-curl --silent --remote-name https://releases.hashicorp.com/consul-template/${CONSUL_TEMPLATE_VERSION}/consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.zip
+curl --silent --remote-name https://releases.hashicorp.com/consul-template/$${CONSUL_TEMPLATE_VERSION}/consul-template_$${CONSUL_TEMPLATE_VERSION}_linux_amd64.zip
 
 #Install Consul
 unzip consul_$${CONSUL_VERSION}_linux_amd64.zip
-unzip consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.zip
+unzip consul-template_$${CONSUL_TEMPLATE_VERSION}_linux_amd64.zip
 sudo chown root:root consul
   sudo chown root:root consul consul-template
   sudo mv consul* /usr/local/bin/
@@ -122,14 +122,12 @@ EOF
 
 #Enable the service
 sudo systemctl enable consul
-sudo systemctl enable consul-template
 sudo systemctl enable nginx
 
 sudo service nginx start
 sudo service consul start
-sudo service consul-template start
 sudo service consul status
-sudo service consul-template status
+
 
 
 
@@ -155,23 +153,25 @@ cat << EOF > /etc/consul-template/consul-template-config.hcl
 template {
 source      = "/etc/nginx/conf.d/load-balancer.conf.ctmpl"
 destination = "/etc/nginx/conf.d/default.conf"
-command = "docker-compose -f /home/ubuntu/docker-compose.yml restart"
+command = "service nginx reload"
 }
 EOF
 
+sudo systemctl enable consul-template
+sudo service consul-template start
+sudo service consul-template status
 
 #Install Dockers
 sudo snap install docker
 sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-#Run  nginx
 sleep 10
 cat << EOF > docker-compose.yml
 version: "3.7"
 services:
   web:
-    image: nicholasjackson/fake-service:v0.4.1
+    image: nicholasjackson/fake-service:v0.7.8
     network_mode: "host"
     environment:
       LISTEN_ADDR: 0.0.0.0:9090
