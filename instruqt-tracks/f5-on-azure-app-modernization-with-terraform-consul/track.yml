@@ -139,6 +139,8 @@ challenges:
       -d '{"filename": "asm_policy.xml", "name": "WAFPolicy"}' | jq .
 
       ```
+
+      You can review the configured policy by navigating to the `Security -> Application Security -> Security Policies tab in the F5 management console. <br>
   tabs:
   - title: Code Editor
     type: service
@@ -378,4 +380,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 3000
-checksum: "2368623137473666025"
+checksum: "8488954266042039925"
