@@ -4,16 +4,21 @@
 #local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
 
 #Utils
-sudo apt-get install unzip
+sudo apt-get install unzip nginx
+
 
 #Download Consul
+CONSUL_TEMPLATE_VERSION="0.22.0"
 CONSUL_VERSION="1.8.0+ent"
 curl --silent --remote-name https://releases.hashicorp.com/consul/$${CONSUL_VERSION}/consul_$${CONSUL_VERSION}_linux_amd64.zip
+curl --silent --remote-name https://releases.hashicorp.com/consul-template/${CONSUL_TEMPLATE_VERSION}/consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.zip
 
 #Install Consul
 unzip consul_$${CONSUL_VERSION}_linux_amd64.zip
+unzip consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.zip
 sudo chown root:root consul
-sudo mv consul /usr/local/bin/
+  sudo chown root:root consul consul-template
+  sudo mv consul* /usr/local/bin/
 consul -autocomplete-install
 complete -C /usr/local/bin/consul consul
 
@@ -101,12 +106,12 @@ cat << EOF > /etc/consul.d/nginx.json
 {
   "service": {
     "name": "web",
-    "port": 80,
+    "port": 9090,
     "checks": [
       {
         "id": "web",
-        "name": "nginx TCP Check",
-        "tcp": "localhost:80",
+        "name": "web TCP Check",
+        "tcp": "localhost:9090",
         "interval": "10s",
         "timeout": "1s"
       }
@@ -118,7 +123,9 @@ EOF
 #Enable the service
 sudo systemctl enable consul
 sudo systemctl enable consul-template
+sudo systemctl enable nginx
 
+sudo service nginx start
 sudo service consul start
 sudo service consul-template start
 sudo service consul status
@@ -164,11 +171,14 @@ cat << EOF > docker-compose.yml
 version: "3.7"
 services:
   web:
-    image: nginxdemos/hello
-    ports:
-    - "80:80"
-    restart: always
-    command: [nginx-debug, '-g', 'daemon off;']
+    image: nicholasjackson/fake-service:v0.4.1
     network_mode: "host"
+    environment:
+      LISTEN_ADDR: 0.0.0.0:9090
+      NAME: web 
+      MESSAGE: "Hello, Web!"
+      SERVER_TYPE: "http"
+      UPSTREAM_URIS: "http://localhost:9091"
+
 EOF
 sudo docker-compose up -d

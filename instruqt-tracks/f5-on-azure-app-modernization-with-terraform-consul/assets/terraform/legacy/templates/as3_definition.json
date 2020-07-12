@@ -27,7 +27,7 @@
           ],
           "members": [
             {
-              "servicePort": 80,
+              "servicePort": 9090,
               "addressDiscovery": "consul",
               "updateInterval": 10,
               "uri": "${consul_url}/v1/catalog/service/web"

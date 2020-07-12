@@ -24,6 +24,7 @@ challenges:
 
     Inspect and deploy the terraform code.
 
+    In the `Shell` tab run the following commands.
     ```
     terraform plan
     terraform apply -auto-approve
@@ -61,6 +62,8 @@ challenges:
     You will use Terraform to provision these services in the background while you set up Consul in the next few assignments. <br>
 
     Start with Vault. Vault is a secrets management solution that we will use to securely store sensitive information such as usernames, passwords, certificates, and tokens.<br>
+
+    In the `Shell` tab run the following commands.
     ```
     cd /root/terraform/vault
     terraform plan
@@ -102,7 +105,7 @@ challenges:
   assignment: |-
     Now we will provision the F5 BIG-IP Virtual Edition using Terraform. <br>
 
-
+    In the `Shell` tab run the following commands.
     ```
     terraform plan
     terraform apply -auto-approve
@@ -140,7 +143,7 @@ challenges:
 
       ```
 
-      You can review the configured policy by navigating to the `Security -> Application Security -> Security Policies tab in the F5 management console. <br>
+      You can review the configured policy by navigating to the `Security -> Application Security -> Security Policies` tab in the F5 management console. <br>
   tabs:
   - title: Code Editor
     type: service
@@ -164,6 +167,7 @@ challenges:
     The Consul bootstrap outputs from the last few assignments have been secured in Vault through the provisioning process. <br>
     Login as an operator and inspect the credentials. <br>
 
+    In the `Shell` tab run the following commands.
     ```
     vault login -method=userpass username=operations password=Password1
     ```
@@ -282,6 +286,7 @@ challenges:
 
     Grab the HCS endpoint using the az cli command. This endpoint represents the managed Consul cluster and will be used by the agents to connect to the cluster. <br>
 
+    In the `Shell` tab run the following commands.
     ```
     export TF_VAR_endpoint=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output --state ../vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .retry_join[0])
     echo $TF_VAR_endpoint
@@ -380,4 +385,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 3000
-checksum: "8488954266042039925"
+checksum: "1417506315462159062"

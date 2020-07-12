@@ -33,7 +33,7 @@ After=network-online.target
 [Service]
 User=consul
 Group=consul
-ExecStart=/usr/local/bin/consul agent -config-dir=/etc/consul.d/
+ExecStart=/usr/local/bin/consul agent  -bind '{{ GetInterfaceIP "eth0" }}' -config-dir=/etc/consul.d/
 ExecReload=/usr/local/bin/consul reload
 KillMode=process
 Restart=always
