@@ -3,8 +3,8 @@ id: mi8hobhrlh96
 version: 0.0.1
 type: track
 title: F5 on Azure - App Modernization with Terraform & Consul
-teaser: test
-description: test
+teaser: test-teaser
+description: test-description
 icon: ""
 tags: []
 owner: hashicorp
@@ -18,7 +18,7 @@ challenges:
   id: tmsnsut54k9f
   type: challenge
   title: Provision Azure VNETs
-  teaser: test
+  teaser: Deploy basic network infrastructure using Terraform
   assignment: |-
     In this assignment you will provision the VNets we will use in the following assignments. <br>
 
@@ -53,7 +53,7 @@ challenges:
   id: gipovssxptby
   type: challenge
   title: Provision Core Services
-  teaser: test
+  teaser: Provision Vault, HCS, and AKS using Terraform
   assignment: |-
     You will use Terraform to provision these services in the background while you set up Consul in the next few assignments. <br>
 
@@ -77,27 +77,30 @@ challenges:
     terraform plan
     nohup terraform apply -auto-approve > /root/terraform/hcs/terraform.out &
     ```
-    You can continue immediately to the next assignment while these services are provisioning.
-    Click the check button now to proceed.
+    These services will take some time to provision, you can continue at anytime and they will continue to run.  You will validate and configure them in later chapters, for now take a few moments to review the Terraform code used to provision each of these services.   There are tabs for each of the three components.
   tabs:
-  - title: Code Editor
-    type: service
-    hostname: workstation
-    port: 8443
-  - title: Text Editor
-    type: code
-    hostname: workstation
-    path: /root/terraform
   - title: Shell
     type: terminal
     hostname: workstation
+  - title: Vault Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/vault
+  - title: AKS Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/aks
+  - title: HCS Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/hcs
   difficulty: basic
   timelimit: 3000
 - slug: provision-f5
   id: tddd2tm78rzu
   type: challenge
   title: Provision F5
-  teaser: test
+  teaser: Provision an F5 BIG-IP VE using Terraform
   assignment: |-
     Now we will provision the F5 BIG-IP Virtual Edition using Terraform. <br>
 
@@ -108,7 +111,7 @@ challenges:
     ```
 
     This can take several minutes to complete, while you are waiting
-    take the opportunity to review the terraform code located at `/root/terraform/bigip`
+    take the opportunity to review the `Terraform Code` tab to see the IaC definition.
 
     Once the apply is complete, you can Navigate to the BIG-IP at the IP address in the terraform output.
 
@@ -117,9 +120,15 @@ challenges:
 
     Now you will upload a [provided](https://github.com/hashicorp/field-workshops-consul/blob/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/terraform/bigip/templates/asm_policy.xml) ASM policy to the BIG-IP
 
+    Get the credentials from the Terraform output and save them as environment variables.
+
     ```
     export CREDS=$(terraform output username):$(terraform output admin_password)
+    ```
 
+    Upload the provided ASM XML policy via API.
+
+    ```
     curl -sku $CREDS -X POST \
       -H "Content-Type: application/octet-stream" \
       -H "Content-Range: 0-783595/783596" \
@@ -128,7 +137,8 @@ challenges:
 
     ```
 
-    Next, import the policy
+
+    Next, import the uploaded policy.
 
     ```
 
@@ -140,6 +150,10 @@ challenges:
       ```
 
       You can review the configured policy by navigating to the `Security -> Application Security -> Security Policies` tab in the F5 management console. <br>
+  notes:
+  - type: text
+    contents: |
+      In this exercise we will be provisioning an F5 BIG-IP Virtual Edition.
   tabs:
   - title: Shell
     type: terminal
@@ -154,17 +168,19 @@ challenges:
   id: zkxpyr3mokid
   type: challenge
   title: Validate HCS
-  teaser: test
-  assignment: |-
-    The Consul bootstrap outputs from the last few assignments have been secured in Vault through the provisioning process. <br>
-    Login as an operator and inspect the credentials. <br>
+  teaser: Verify Vault, HCS, and Consul are operational
+  assignment: |2-
+
+    Consul HCS and Vault should now be provisioned and accessible from the corresponding tabs.
+
+    In this exercise we will gather the information required to connect to HCS and securely store this information in Vault.
 
     In the `Shell` tab run the following commands.
     ```
     vault login -method=userpass username=operations password=Password1
     ```
 
-    You need to retrieve the bootstrap token from HCS and save it to your Vault instance.
+    Retrieve the bootstrap token and gossip key from HCS and save it to your Vault instance.
 
     ```
     echo $CONSUL_HTTP_ADDR
@@ -180,8 +196,8 @@ challenges:
     echo $VAULT_ADDR
     vault kv get secret/consul
     ```
+    You can use this token to login and explore the Consul UI, use of the master token should be highly restricted, instead let's configure Vault to issue [dynamic secrets](https://www.vaultproject.io/docs/secrets/consul/) for Consul. <br>
 
-    You can use the master token to create a management token for Vault to issue [dynamic secrets](https://www.vaultproject.io/docs/secrets/consul/) for Consul.
     Get a management token for Vault to manage Consul tokens with.
     You can retrieve the privileged token for this operation from Vault.  <br>
 
@@ -259,8 +275,8 @@ challenges:
 - slug: deploy-legacy-environments
   id: pp5dlxxhxsxu
   type: challenge
-  title: Deploy legacy environments
-  teaser: test
+  title: Deploy Legacy environments
+  teaser: Migrate an existing VM based application.
   assignment: |2-
 
     In this assignment we will be deploying the current application into Azure based VM's. <br>
@@ -306,7 +322,7 @@ challenges:
     terraform apply --auto-approve
     ```
 
-    Once this is provisioning is done, you should be able to see the application in the Application tab.  <br>
+    Once this is provisioning is done, you should be able to see the application in the Application tab althought you may need to refresh the tab (not your browser window) <br>
 
     The application has now been migrated to the cloud!!! You will explore the environment in the next challange. <br>
   tabs:
@@ -378,4 +394,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 3000
-checksum: "10472413000598560398"
+checksum: "17895412865318001494"
