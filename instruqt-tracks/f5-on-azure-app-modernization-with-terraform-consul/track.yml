@@ -60,19 +60,19 @@ challenges:
   assignment: |-
     You will use Terraform to provision these services in the background while you set up Consul in the next few assignments. <br>
 
-    Start with Vault. <br>
+    Start with Vault. Vault is a secrets management solution that we will use to securely store sensitive information such as usernames, passwords, certificates, and tokens.<br>
     ```
     cd /root/terraform/vault
     terraform plan
     nohup terraform apply -auto-approve > /root/terraform/vault/terraform.out &
     ```
-    Next, provision AKS. <br>
+    Next, provision AKS. This will be the target environment for the microservices based architecture that applications will be refactored to. <br>
     ```
     cd /root/terraform/aks
     terraform plan
     nohup terraform apply -auto-approve > /root/terraform/aks/terraform.out &
     ```
-    Last, provision the HashiCorp Consul service. This resource can take *30 minutes to 1 hour* to provision.
+    Last, provision the HashiCorp Consul service. HCS provides Consul as a Managed service on Azure <br>
     ```
     cd /root/terraform/hcs
     terraform plan
@@ -100,14 +100,13 @@ challenges:
   title: Provision F5
   teaser: test
   assignment: |-
-    You will use Terraform to provision these services in the background while you set up Consul in the next few assignments. <br>
+    Now we will provision the F5 BIG-IP Virtual Edition using Terraform. <br>
+
 
     ```
     terraform plan
     terraform apply -auto-approve
     ```
-
-    Navigate to the BIG-IP at the IP address in the terraform output.
 
     This can take several minutes to complete, while you are waiting
     take the opportunity to review the terraform code located at `/root/terraform/bigip`
@@ -268,28 +267,38 @@ challenges:
   type: challenge
   title: Deploy legacy environments
   teaser: test
-  assignment: |-
-    Grab the HCS endpoint using the az cli command.  <br>
+  assignment: |2-
+
+    In this assignment we will be deploying the current application into Azure based VM's. <br>
+
+    As part of the cloud migration, the VM's will also be configured to run a consul agent that registers these services with Consul.  This will make it easy to refactor the application, as the application is no longer dependent upon static IP addresses which are hardcoded into configuration and application code. <br>
+
+    Additionally, by registering these services in Consul, it is no longer required to manually manage pool members on the F5 applicances, instead, VIP's can be configured to populate backend pool members by monitoring services in Consul. Whenever the application scales up, down, or moves the BIG-IP will automatically update it's configuration. <br>
+
+
+    To get started, we first need to collect some information from HCS. This information will be stored as environment variables used during the terraform run to deploy the application. <br>
+
+    Grab the HCS endpoint using the az cli command. This endpoint represents the managed Consul cluster and will be used by the agents to connect to the cluster. <br>
 
     ```
     export TF_VAR_endpoint=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output --state ../vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .retry_join[0])
     echo $TF_VAR_endpoint
     ```
 
-    Grab the consul client configuration for communicating with the HCS cluster
+    Grab the consul client configuration for communicating with the HCS cluster.
 
     ```
     export TF_VAR_consulconfig=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d)
     echo $TF_VAR_consulconfig
     ```
 
-    And the ca certificate for HCS
+    And the CA certificate for securely communicating with the HCS cluster.
 
     ```
     export TF_VAR_ca_cert=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulCaFile | base64 -d)
     echo $TF_VAR_ca_cert
     ```
-    Generate a token for the legacy nodes
+    Next, we will grab the token which is securely stored in Vault. This token will be used by the clients to register themselves, and associated services.
 
     ```
     export TF_VAR_consul_token=$(vault kv get -field=master_token secret/consul)
@@ -301,6 +310,10 @@ challenges:
     terraform plan
     terraform apply --auto-approve
     ```
+
+    Once this is provisioning is done, you should be able to see the application in the Application tab.  <br>
+
+    The application has now been migrated to the cloud!!! You will explore the environment in the next challange. <br>
   tabs:
   - title: Consul
     type: service
@@ -365,4 +378,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 3000
-checksum: "9040749494677703767"
+checksum: "2368623137473666025"
