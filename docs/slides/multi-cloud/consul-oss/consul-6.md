@@ -47,7 +47,12 @@ Service Mesh Architecture - Control Plane
 -------------------------
 .center[![:scale 100%](images/connect_control_plane.png)]
 
-The Control Plane is responsible for making decisions about where to send the traffic and to configure the data plane. Additionally, it is also responsible for features like network policy enforcement and providing service discovery data to the data plane.
+* Single source of truth
+* Manage node services
+* Manage access
+
+???
+The Control Plane is responsible for making decisions about where to send the traffic and to configure the data plane. It's also responsible for features like network policy enforcement and providing service discovery data to the data plane.
 
 Consul is the control plane for the Connect service mesh:
 
@@ -62,6 +67,11 @@ Service Mesh Architecture - Data Plane
 -------------------------
 .center[![:scale 100%](images/connect_control_plane.png)]
 
+* Manage application requests
+* High throughput, low latency
+* Advanced Layer 7 features
+
+???
 The Data Plane provides the ability to forward requests from the applications, including more sophisticated features like health checking, load balancing, circuit breaking, authentication, and authorization.
 
 The Data Plane is in the critical path of data flow from one application to the other and hence the need for high throughput and low latency.
