@@ -166,7 +166,7 @@ The F5 BIG-IP AS3 service discovery integration with Consul queries Consul's cat
 ]
 
 ???
-We've been working tirelessly with our partners to provide solid and reliable integrations with the tools you already have. One of those partners is F5. The resources on this page will show you how to dynamically configure your F5 BIG-IP load balancer so you can help your engineering team automate software delivery.
+We've been working tirelessly with our partners to provide solid and reliable integrations with the tools you may already have. One of those partners is F5. The resources on this page will show you how to dynamically configure your F5 BIG-IP load balancers so you can help your engineering team automate software delivery.
 
 ---
 name: Service-Discovery-Lab

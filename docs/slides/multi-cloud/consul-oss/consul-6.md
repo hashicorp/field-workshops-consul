@@ -10,9 +10,15 @@ Service Segmentation - Intro
 -------------------------
 .center[![:scale 100%](images/consul_segmentation_intro.png)]
 
+* Service naming
+* Segmentation
+* Authorization
+* Routing
+
+???
 In a sophisticated environment, Consul provides a distributed service mesh to connect, secure, and configure services across any runtime platform and cloud.
 
-Consul provides an API driven control plane, which integrates with proxies for the data plane.
+It provides an API driven control plane, which integrates with proxies for the data plane.
 
 This allows critical functionality like naming, segmentation and authorization, and routing to be handled by proxies at the edge rather than using centralized middleware.
 
@@ -23,9 +29,14 @@ Service Segmentation - Intro
 -------------------------
 .center[![:scale 100%](images/consul_segmentation_intro.png)]
 
-Consul enables fine grained service segmentation to secure service-to-service communication with automatic TLS encryption and identity-based authorization.
+* Automatic mTLS
+* PKI certificate management
+* API-driven
 
-Consul can be integrated with common centralized PKI and certificate management.
+???
+In addtition, Consul enables fine grained service segmentation to secure service-to-service communication with automatic TLS encryption and identity-based authorization.
+
+You can also integrate it with common centralized PKI and certificate management.
 
 Service configuration is achieved through API-driven Key/Value store that can be used to easily configure services at runtime in any environment.
 
