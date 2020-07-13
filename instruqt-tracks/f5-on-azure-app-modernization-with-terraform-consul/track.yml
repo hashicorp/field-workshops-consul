@@ -285,44 +285,12 @@ challenges:
 
     Additionally, by registering these services in Consul, it is no longer required to manually manage pool members on the F5 appliances, instead, VIP's can be configured to populate backend pool members by monitoring services in Consul. Whenever the application scales up, down, or moves the BIG-IP will automatically update it's configuration. <br>
 
-
-    To get started, we first need to collect some information from HCS. This information will be stored as environment variables used during the terraform run to deploy the application. <br>
-
-    Grab the HCS endpoint using the az cli command. This endpoint represents the managed Consul cluster and will be used by the agents to connect to the cluster. <br>
-
-    In the `Shell` tab run the following commands.
-    ```
-    export TF_VAR_endpoint=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output --state ../vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .retry_join[0])
-    echo $TF_VAR_endpoint
-    ```
-
-    Grab the consul client configuration for communicating with the HCS cluster.
-
-    ```
-    export TF_VAR_consulconfig=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d)
-    echo $TF_VAR_consulconfig
-    ```
-
-    Grab the CA certificate for HCS cluster.
-
-    ```
-    export TF_VAR_ca_cert=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulCaFile | base64 -d)
-    echo $TF_VAR_ca_cert
-    ```
-    Next, we will grab the token which is securely stored in Vault. This token will be used by the clients to register themselves, and associated services.
-
-    ```
-    export TF_VAR_consul_token=$(vault kv get -field=master_token secret/consul)
-    ```
-
-    Now you can deploy the legacy application using terraform.
+    To get started, we've automated the collection of this information, and seeded a `terraform.tfvars` file in the `/root/terraform/legacy` folder.  Review this information, and then kick off the terraform run.
 
     ```
     terraform plan
     terraform apply --auto-approve
     ```
-
-    Once this is provisioning is done, you should be able to see the application in the Application tab althought you may need to refresh the tab (not your browser window) <br>
 
     The application has now been migrated to the cloud!!! You will explore the environment in the next challange. <br>
   tabs:
@@ -358,8 +326,46 @@ challenges:
   id: uduxezyej08m
   type: challenge
   title: Review legacy environment
-  teaser: test
-  assignment: test
+  teaser: Review the components of the legacy application
+  assignment: |-
+    Now take a few moments and familiarize yourself with the application environment. <br>
+
+    The VM based application is now configured as part of a VM scale set on Azure.  One of the first challenges that comes up is that instances of the scale set will be provisioned with dynamic IP addresses. <br>
+
+    This makes it difficult to maintain any configuration files which require hard coded IP addresses, luckily Consul can help solve this.
+
+    Consul maintains a real-time catalog of all of the nodes and services in the environment.  You can see this catalog in the Consul UI tab, or by running the following command:
+
+    ```
+    consul members
+    ```
+  tabs:
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: App
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 9090
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
+  - title: Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/legacy
+  - title: App Access Info
+    type: code
+    hostname: workstation
+    path: /info.txt
+  - title: Shell
+    type: terminal
+    hostname: workstation
   difficulty: basic
   timelimit: 3000
 - slug: scale-the-application
@@ -394,4 +400,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 3000
-checksum: "17895412865318001494"
+checksum: "16273119131858690357"
