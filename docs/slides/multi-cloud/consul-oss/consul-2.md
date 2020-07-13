@@ -42,6 +42,9 @@ Introduction to Consul - Gossip
 * Using Gossip this allows high scalability vs. traditional heartbeat schemes
 * Node failure can be inferred by an agent failure
 
+???
+Consul uses the gossip protocol for agent communication. This provides much greater efficiency with overall Consul communications. Agents can communicate with one another and either provide information to its peers, or disseminate information to its neighbors.
+
 ---
 name: Introduction-to-Consul-Consensus
 class: img-right
@@ -84,8 +87,14 @@ Now you have a high level understanding of Consul's two primary Protocols:
 
 If you want to learn more these protocols, check out the appendix.
 
+???
+We've touched briefly on the two main protocols Consul uses. If you'd like to dive a little deeper into both of these, you can find more information at the end of this slide deck.
+
 ---
 name: Introduction-to-Gossip-Skeptical
 Introduction to Consul - Skeptical ?
 -------------------------
 .center[![:scale 60%](images/mitchell_tweet.png)]
+
+???
+Just one quick note before we move on to the next chapter, if you remember I mentioned there's no limit to the number of nodes, take a look at this metric. Where one of our customer scaled out to 35,000 nodes in a single datacenter. And we do have larger deployments of around 350,000 nodes which are spread across multiple datacenters.

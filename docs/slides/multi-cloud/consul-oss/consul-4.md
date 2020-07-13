@@ -63,6 +63,9 @@ Consul prepared queries allow you to build logic into your DNS based service cat
 }
 ```
 
+???
+Because consul is now at the heart of service routing based on service name then failover becomes defined at the service level.  Simply by setting the failover path in your registration you have defined what happens in a failure situation at the service level. Having this granular path allows for built-in resiliency for downstream dependencies.
+
 ---
 name: Myriad-Use-Cases-Example
 Example
@@ -76,7 +79,7 @@ There are many other practical use cases that can be solved with the Consul cata
 
 
 ???
-Because consul is now at the heart of service routing based on service name then failover becomes defined at the service level.  Simply by setting the failover path in your registration you have defined what happens in a failure situation at the service level.  Having this granular path allows for built-in resiliency for downstream dependencies.
+When you have some time, this is a great talk from HashiConf which dives into a number different Consul use cases and give you some bit-size recipes.
 
 ---
 name: Secure-Networking-is-Hard
@@ -91,7 +94,7 @@ Secure Networking is Hard
 * Huge lists of firewall rules
 
 ???
-
+Okay, so the bottom line is secure networking is hard. We need devices and services to be able to communicate with one another, and even discover one another, but it can't just be a free-for-all. Our network needs rules to govern who can talk to who, and what information can be passed over it. We usually do this with firewalls, but that adds a huge burden to the network.
 
 ---
 name: Firewalls-Wont-Scale
@@ -143,7 +146,7 @@ services {
 ```
 
 ???
-As you can see in this example all the connection definition is simply defined as a part of the service definition.  
+As you can see in this example, the connection definition is simply defined as a part of the service definition.  
 
 ---
 name: How-do-we-secure-this
