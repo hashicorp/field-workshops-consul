@@ -41,6 +41,11 @@ challenges:
     ```
 
     You will leverage these VNet in the next few assignments.
+  notes:
+  - type: text
+    contents: |
+      Setting up your environment...
+      Keep an eye on the bottom right corner to know when you can get started.
   tabs:
   - title: Shell
     type: terminal
@@ -80,6 +85,10 @@ challenges:
     nohup terraform apply -auto-approve > /root/terraform/hcs/terraform.out &
     ```
     These services will take some time to provision, you can continue at anytime and they will continue to run.  You will validate and configure them in later chapters, for now take a few moments to review the Terraform code used to provision each of these services.   There are tabs for each of the three components.
+  notes:
+  - type: text
+    contents: |
+      Terraform allows you to document, share, and deploy environments in one workflow by using Infrastructure as Code!
   tabs:
   - title: Shell
     type: terminal
@@ -155,7 +164,7 @@ challenges:
   notes:
   - type: text
     contents: |
-      In this exercise we will be provisioning an F5 BIG-IP Virtual Edition.
+      In this exercise we will be provisioning an F5 BIG-IP Virtual Edition using Terraform.
   tabs:
   - title: Shell
     type: terminal
@@ -278,7 +287,7 @@ challenges:
   id: pp5dlxxhxsxu
   type: challenge
   title: Deploy Legacy environments
-  teaser: Migrate an existing VM based application.
+  teaser: Migrate an existing VM based application to the cloud.
   assignment: |2-
 
     In this assignment we will be deploying the current application into Azure based VM's. <br>
@@ -301,6 +310,10 @@ challenges:
     The application has now been migrated to the cloud!!! You can visit the application in the `App` tab, you may need to hit the refresh button **within** that tab. <br>
 
     You will explore the environment in more detail in the next challange. <br>
+  notes:
+  - type: text
+    contents: |
+      For a lot of organizations digital transformation may start with a simple "lift and shift" to the cloud for existing workloads!
   tabs:
   - title: Consul
     type: service
@@ -413,6 +426,10 @@ challenges:
     ```
 
     We are now able to connect things together using **Service Names** instead of IP addresses. In the next exercise we will scale the application and watch Consul take care of the rest! <br>
+  notes:
+  - type: text
+    contents: |
+      Now let's review the application environment we've deployed!
   tabs:
   - title: Consul
     type: service
@@ -451,7 +468,7 @@ challenges:
   id: xlknkvvmbhdz
   type: challenge
   title: Scale the application
-  teaser: test
+  teaser: Let Consul take care of routine adds/moves/changes of services instances.
   assignment: |-
     Now let's re-run the terraform code for the legacy application, but pass in some new variables for the scale parameters.
 
@@ -501,13 +518,21 @@ challenges:
     curl -s $CONSUL_HTTP_ADDR/v1/health/checks/web | jq
     curl -s $CONSUL_HTTP_ADDR/v1/health/checks/app | jq
     ```
-    3. Consul can even estimate round trip times between nodes.
+    3. Consul can even estimate [round trip](https://www.consul.io/docs/internals/coordinates) times between nodes/datacenter. This is useful for finding the closest service instance, or datacenter for failover operations.
     ```
     consul rtt web-vm-000001 app-vm-000000
     ```
     **NOTE:** you may need to update the node names to match your environment
 
     Now that we are routing traffic based upon **service identity** we gain a lot of flexibility as more modern microservices architectures are adopted.
+  notes:
+  - type: text
+    contents: |
+      75% companies surveyed take Days or even Weeks to complete networking tasks.
+
+      Organizations seeking to improve application delivery cycle are often blocked at the networking layer
+
+      [source](https://zkresearch.com/research/2017-application-delivery-controller-study)
   tabs:
   - title: Consul
     type: service
@@ -546,7 +571,7 @@ challenges:
   id: kl3g4mrevbng
   type: challenge
   title: Deploy Consul in AKS
-  teaser: test
+  teaser: Installing Consul in Kubernetes based environments is easy!
   assignment: |-
     Now that part of application is containerized you can start move it into AKS.
 
@@ -597,6 +622,10 @@ challenges:
     ```
 
     Move to the next assignment when they are ready.
+  notes:
+  - type: text
+    contents: |
+      HashiCorp maintains an official helm chart, which makes installing Consul in k8s easy!
   tabs:
   - title: Consul
     type: service
@@ -621,7 +650,7 @@ challenges:
   id: 6jjypzuphebv
   type: challenge
   title: Deploy App in k8s
-  teaser: test
+  teaser: Deploy a microservices based application into the service mesh.
   assignment: |-
     With AKS connected to HCS you can deploy your application pods.
     Consul will auto inject sidecars for each pod.
@@ -743,6 +772,10 @@ challenges:
         }
     EOF
     ```
+  notes:
+  - type: text
+    contents: |
+      Consul works equally well in public, private, virtual, physical, or microservices based environments.
   tabs:
   - title: Consul
     type: service
@@ -767,4 +800,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 3000
-checksum: "2719662994211969780"
+checksum: "2000416021436862689"
