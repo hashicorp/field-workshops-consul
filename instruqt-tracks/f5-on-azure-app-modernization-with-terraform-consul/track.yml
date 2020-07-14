@@ -128,7 +128,6 @@ challenges:
 
     **NOTE:** you will need open the URL provided by the output in a separate tab.  If you are using chrome, you
     may be presented with a certificate error, to bypass this you can type "thisisunsafe" into the Chrome window.
-
   notes:
   - type: text
     contents: |
@@ -754,4 +753,4 @@ challenges:
     path: /root/helm/aks.yaml
   difficulty: basic
   timelimit: 3000
-checksum: "787629240537964904"
+checksum: "10472288344251002842"
