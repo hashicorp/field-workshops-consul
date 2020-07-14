@@ -344,7 +344,18 @@ challenges:
 
     Let's review the components of the application and see how Consul is leveraged in different ways.
 
-    ** Web Tier **
+    ** F5 LTM ** <br>
+
+    You can view the VIP in the BIG-IP UI by naviagating to the `Local Traffic -> Virtual Servers`
+
+    You can view the pool members navigating to `Local Traffic -> Pools`
+
+    The VIP and pools are provisioned in the `Consul_SD` partition, make sure you select it from the drop down menu in the top right corner of the screen.
+
+    **Remember you will need to view this UI in a different browser tab**, for convenenience we have put all the required information in the `info.txt` file in the `App Access Info` tab <br>
+
+    ** Web Tier ** <br>
+
     The VIP for the web tier of the application lives on the F5 BIG-IP virtual appliance. The pools servicing this VIP are dynamically populated by querying consul for all instances of the service called `web` <br>
 
     The mapping between Consul and the pools was declared in the AS3 declaration of the VIP.
@@ -356,16 +367,6 @@ challenges:
     cat templates/as3_definition.json
     ```
 
-    ** F5 LTM **
-
-
-    You can view the VIP in the BIG-IP UI by naviagating to the `Local Traffic -> Virtual Servers`
-
-    You can view the pool members navigating to `Local Traffic -> Pools`
-
-    The VIP and pools are provisioned in the `Consul_SD` partition, make sure you select it from the drop down menu in the top right corner of the screen.
-
-    **Remember you will need to view this UI in a different browser tab**, for convenenience we have put all the required information in the `info.txt` file in the `App Access Info` tab <br>
 
     View the nodes and services via CLI
 
@@ -377,8 +378,41 @@ challenges:
     You can also retrieve information programatically via the API.  In this example you will be determining the IP address of the first web servers returned by the API. <br>
 
     ```
-    web_server=$()
+    web_server=$(curl -s $CONSUL_HTTP_ADDR/v1/catalog/service/web | jq -r '.[0].Address')
+    echo $web_server
     ```
+
+    ** NGiNX **
+
+    Nginx is running on each of the web servers and is used to proxy and load balance requests to the app tier.
+
+    Rather than managing the configuration files for the proxy manually, we'll instead rely on Consul and a library called [Consul Template](https://github.com/hashicorp/consul-template) <br>
+
+    Consul Template is responsible for monitoring Consul for changes to the `app` service, and when changes are detected, render a new configuration file and restart NGiNX automatically.
+
+    **Pro Tip:** Consul template can render any ASCII based configuration files you may need for other purposes, and fire a user defined handler after (re)rendering. <br>
+
+    The next few steps will show how this is configured, by accessing the `$web_server` you discovered and stored previously through a bastion host that has also been configured.
+
+    1. Review the consul-template configuration
+    ```
+    ssh -q -A -J azure-user@$bastion_ip azure-user@$web_server \
+      sudo cat /etc/consul-template/consul-template-config.hcl
+    ```
+
+    2. Review the templated nginx configuration
+
+    ```
+    ssh -q -A -J azure-user@$bastion_ip azure-user@$web_server sudo cat /etc/nginx/conf.d/load-balancer.conf.ctmpl
+    ```
+
+    3. Review the rendered configuration, and compare it to the information you've discovered via the other consul interfaces.
+
+    ```
+    ssh -q -A -J azure-user@$bastion_ip azure-user@$web_server sudo cat /etc/nginx/conf.d/default.conf
+    ```
+
+    We are now able to connect things together using **Service Names** instead of IP addresses. In the next exercise we will scale the application and watch Consul take care of the rest! <br>
   tabs:
   - title: Consul
     type: service
@@ -418,7 +452,94 @@ challenges:
   type: challenge
   title: Scale the application
   teaser: test
-  assignment: test
+  assignment: |-
+    Now let's re-run the terraform code for the legacy application, but pass in some new variables for the scale parameters.
+
+    ```
+    terraform apply -var app_count=3 -var web_count=3 -auto-approve
+    ```
+
+    After the terraform run completes, you can monitor the status of your nodes and services using the Consul UI. Once all of the new instances are online and healthy, you can revisit some of the things we reviewed in the previous exercise.
+
+    View the nodes and services via CLI
+
+    ```
+    consul members
+    consul catalog services
+    ```
+
+    Review all of the web instances
+    ```
+    curl -s $CONSUL_HTTP_ADDR/v1/catalog/service/web | jq
+    ```
+
+    Review all of the app instances
+    ```
+    curl -s $CONSUL_HTTP_ADDR/v1/catalog/service/app | jq
+    ```
+
+    Review the updated nginx configuration on the web_server
+    ```
+    ssh -q -A -J azure-user@$bastion_ip azure-user@$web_server sudo cat /etc/nginx/conf.d/default.conf
+    ```
+
+    Review the VIP and pool configuration on LTM once again.
+
+    The resources for this lab will self-destruct in 8 hours, but to save a little money, **please scale the application back down.**
+
+    Re-run terraform, and monitor the various integration points once again. We'll do so in the background so that you can move on whenever you're ready. <br>
+
+    ```
+    nohup terraform apply -var app_count=1 -var web_count=1 -auto-approve > /root/terraform/legacy/scaledown.out &
+    ```
+
+    **Some other things you can try:**
+
+    1. Refresh the application page several times, and notice the load balancing occur.
+    2. Explore the [Consul API](https://www.consul.io/api-docs/index) a bit more, Consul is a wonderful real-time source of truth for dynamic network environments.
+    ```
+    curl -s $CONSUL_HTTP_ADDR/v1/health/checks/web | jq
+    curl -s $CONSUL_HTTP_ADDR/v1/health/checks/app | jq
+    ```
+    3. Consul can even estimate round trip times between nodes.
+    ```
+    consul rtt web-vm-000001 app-vm-000000
+    ```
+    **NOTE:** you may need to update the node names to match your environment
+
+    Now that we are routing traffic based upon **service identity** we gain a lot of flexibility as more modern microservices architectures are adopted.
+  tabs:
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: App
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 9090
+  - title: F5 BIG-IP
+    type: service
+    hostname: workstation
+    path: /tmui/login.jsp
+    port: 8080
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
+  - title: Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/legacy
+  - title: App Access Info
+    type: code
+    hostname: workstation
+    path: /info.txt
+  - title: Shell
+    type: terminal
+    hostname: workstation
   difficulty: basic
   timelimit: 3000
 - slug: deploy-consul-in-aks
@@ -646,4 +767,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 3000
-checksum: "6147747474143991963"
+checksum: "2059115902154731837"
