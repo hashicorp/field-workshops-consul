@@ -43,7 +43,7 @@ Introduction to Consul - Gossip
 * Node failure can be inferred by an agent failure
 
 ???
-Consul uses the gossip protocol for agent communication. This provides much greater efficiency with overall Consul communications. Agents can communicate with one another and either provide information to its peers, or disseminate information to its neighbors.
+Consul uses the gossip protocol for agent communication. This provides much greater efficiency with overall Consul communications. Agents can communicate with one another and either obtain information to its peers, or disseminate information to its neighbors.
 
 ---
 name: Introduction-to-Consul-Consensus
