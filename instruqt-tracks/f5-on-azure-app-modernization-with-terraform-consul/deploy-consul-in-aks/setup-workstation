@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#creds
+vault login -method=userpass username=operations password=Password1
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+
 #dirs
 mkdir /root/helm
 mkdir /root/policies
@@ -286,7 +290,7 @@ spec:
             "--bigip-username=f5admin",
             "--bigip-password=${f5_admin_password}",
             "--bigip-url=${f5_mgmt_url}",
-            "--bigip-partition=Consul_SD",
+            "--bigip-partition=Kube",
             "--pool-member-type=nodeport",
             "--insecure=true",
             "--agent=as3",
