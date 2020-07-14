@@ -222,46 +222,6 @@ spec:
   service: "127.0.0.1:8500"
 
 ######################################################################
-# Create the 'ambassador' and 'ambassador-admin' Services.
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: ambassador
-  namespace: ambassador
-  labels:
-    product: aes
-    app.kubernetes.io/component: ambassador-service
-spec:
-  type: NodePort
-  ports:
-  - name: http
-    port: 80
-    targetPort: http
-  - name: https
-    port: 443
-    targetPort: https
-  selector:
-    service: ambassador
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    service: ambassador-admin
-    product: aes
-  name: ambassador-admin
-  namespace: ambassador
-spec:
-  type: NodePort
-  ports:
-  - name: ambassador-admin
-    port: 8877
-    targetPort: admin
-  selector:
-    service: ambassador
-
-######################################################################
 # Create the Deployment backing the 'ambassador' and
 # 'ambassador-admin' Services.
 ---
