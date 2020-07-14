@@ -85,12 +85,13 @@ Service Mesh - Identity
 -------------------------
 .center[![:scale 100%](images/connect_certificate_service_identity.png)]
 
-Consul provides each service with an identity encoded as a TLS certificate.
-
 * Provide service identity
 * Encryption of all traffic
 * Standard TLS certificate with SPIFFE compatibility
 * Built-in certificate authority (CA) or integrated with 3rd party CA, such as Vault
+
+???
+Consul provides each service with an identity encoded as a SPIFFE-compatible TLS certificate. This way, all traffic between services is encrypted. You can use either the build-in certificate authority, or you can use Vault's CA.
 
 
 ---
@@ -100,13 +101,17 @@ Service Mesh - Service Access Graph
 -------------------------
 .center[![:scale 100%](images/service_access_graph.png)]
 
-Allows or denies service-to-service communication with Intentions
-
 * Logical service name (not IP)
 * Scales independent of instances
 * Consistency insured with Raft
 * Manage with web UI, CLI, and API
 * Multi-datacenter support
+
+???
+With each service having its own identity, we're able to allow or deny service-to-service communication with Intentions. Intentions follow the same concept as firewall rules, where you grant or deny access based on source and destination. Except we're not specifying IPs or IP ranges. Instead, we're specifying service names and letting Consul deal with the underlying networking.
+
+So now, we can scale out without adding more firewall rules, and federation between clusters in different datacenters and clouds, we can easily find services no matter where they reside.
+
 
 ---
 name: Segmentation-Access-Graph
@@ -115,13 +120,16 @@ Service Mesh - Advanced Routing
 -------------------------
 .center[![:scale 100%](images/consul_L7_routing.png)]
 
-Layer 7 traffic management allows operators to divide L7 traffic between different subsets of service instances when using Connect.
-
-There are many ways you may wish to carve up a single datacenter's pool of services beyond simply returning all healthy instances for load balancing:
-
 * Canary testing
 * A/B tests
 * Blue/Green deploys
+
+???
+Layer 7 traffic management allows operators to divide L7 traffic between different subsets of service instances when using Connect.
+
+There are many ways you may wish to carve up a single datacenter's pool of services beyond simply returning all healthy instances for load balancing.
+
+
 ---
 name: Segmentation-Mesh-Gateways
 class: img-right compact
@@ -129,12 +137,16 @@ Service Mesh - Mesh Gateways
 -------------------------
 .center[![:scale 80%](images/connect_mesh_gateways.png)]
 
+* Route Connect traffic between clusters
+* Overcome interconnectivity issues
+* Encryption remains intact
+
+???
 Mesh gateways enable routing of Connect traffic between different Consul datacenters:
 
 * Datacenters can reside in different clouds or runtime environments where general interconnectivity between all services in all datacenters isn't feasible.
 * Gateways operate by sniffing the SNI header out of the Connect session and then route the connection to the appropriate destination based on the server name requested.
 * The data within the Connect session is not decrypted by the Gateway.
-
 
 ---
 name: Segmentation-Lab
