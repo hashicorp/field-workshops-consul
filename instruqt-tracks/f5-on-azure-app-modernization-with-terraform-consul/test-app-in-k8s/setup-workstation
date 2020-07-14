@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd /root/terraform/bigip
 set-workdir /root/terraform/bigip
 
 cat <<'EOF' >> /root/terraform/bigip/outputs.tf

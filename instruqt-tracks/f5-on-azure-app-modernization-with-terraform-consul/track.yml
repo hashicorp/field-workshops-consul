@@ -753,4 +753,4 @@ challenges:
     path: /root/helm/aks.yaml
   difficulty: basic
   timelimit: 3000
-checksum: "10396304432873976124"
+checksum: "435924352178034800"
