@@ -10,7 +10,7 @@ resource "azurerm_virtual_machine_scale_set" "app_vmss" {
   sku {
     name     = "Standard_DS1_v2"
     tier     = "Standard"
-    capacity = 2
+    capacity = var.app_count
   }
 
   storage_profile_image_reference {
