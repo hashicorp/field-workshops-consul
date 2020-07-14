@@ -3,8 +3,10 @@ id: mi8hobhrlh96
 version: 0.0.1
 type: track
 title: F5 on Azure - App Modernization with Terraform & Consul
-teaser: test-teaser
-description: test-description
+teaser: Use Terraform and Consul to manage day one and day two operations of F5 in
+  Azure
+description: Use Terraform and Consul to manage day one and day two operations of
+  F5 in Azure
 icon: ""
 tags: []
 owner: hashicorp
@@ -292,7 +294,13 @@ challenges:
     terraform apply --auto-approve
     ```
 
-    The application has now been migrated to the cloud!!! You will explore the environment in the next challange. <br>
+    While the apply is running, review the code in the `Terraform Code` this defines the VMSS for the web, app and payment tiers of the application.
+
+    You can also monitor Consul to watch the nodes come online.
+
+    The application has now been migrated to the cloud!!! You can visit the application in the `App` tab, you may need to hit the refresh button **within** that tab. <br>
+
+    You will explore the environment in more detail in the next challange. <br>
   tabs:
   - title: Consul
     type: service
@@ -328,16 +336,48 @@ challenges:
   title: Review legacy environment
   teaser: Review the components of the legacy application
   assignment: |-
-    Now take a few moments and familiarize yourself with the application environment. <br>
-
     The VM based application is now configured as part of a VM scale set on Azure.  One of the first challenges that comes up is that instances of the scale set will be provisioned with dynamic IP addresses. <br>
 
     This makes it difficult to maintain any configuration files which require hard coded IP addresses, luckily Consul can help solve this.
 
-    Consul maintains a real-time catalog of all of the nodes and services in the environment.  You can see this catalog in the Consul UI tab, or by running the following command:
+    Consul maintains a real-time catalog of all of the nodes and services in the environment.  This catalog can be queried using a UI, CLI, API, or simple DNS interface.
+
+    Let's review the components of the application and see how Consul is leveraged in different ways.
+
+    ** Web Tier **
+    The VIP for the web tier of the application lives on the F5 BIG-IP virtual appliance. The pools servicing this VIP are dynamically populated by querying consul for all instances of the service called `web` <br>
+
+    The mapping between Consul and the pools was declared in the AS3 declaration of the VIP.
+
+    Examine the AS3 declaration for the application.  You will see where the members are referencing a Consul API endpoint.
+
+    From the `Shell` tab
+    ```
+    cat templates/as3_definition.json
+    ```
+
+    ** F5 LTM **
+
+
+    You can view the VIP in the BIG-IP UI by naviagating to the `Local Traffic -> Virtual Servers`
+
+    You can view the pool members navigating to `Local Traffic -> Pools`
+
+    The VIP and pools are provisioned in the `Consul_SD` partition, make sure you select it from the drop down menu in the top right corner of the screen.
+
+    **Remember you will need to view this UI in a different browser tab**, for convenenience we have put all the required information in the `info.txt` file in the `App Access Info` tab <br>
+
+    View the nodes and services via CLI
 
     ```
     consul members
+    consul catalog services
+    ```
+
+    You can also retrieve information programatically via the API.  In this example you will be determining the IP address of the first web servers returned by the API. <br>
+
+    ```
+    web_server=$()
     ```
   tabs:
   - title: Consul
@@ -350,6 +390,11 @@ challenges:
     hostname: workstation
     path: /ui
     port: 9090
+  - title: F5 BIG-IP
+    type: service
+    hostname: workstation
+    path: /tmui/login.jsp
+    port: 8080
   - title: Vault
     type: service
     hostname: workstation
@@ -601,5 +646,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 3000
-checksum: "1441152906046363188"
-show_timer: true
+checksum: "6147747474143991963"
