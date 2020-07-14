@@ -7,31 +7,14 @@ metadata:
   labels:
     product: aes
     app.kubernetes.io/component: ambassador-service
+    cis.f5.com/as3-tenant: Kube
+    cis.f5.com/as3-app: Ambassador
+    cis.f5.com/as3-pool: gateway_pool
 spec:
   type: NodePort
   ports:
-  - name: http
-    port: 80
-    targetPort: http
   - name: https
     port: 443
     targetPort: https
-  selector:
-    service: ambassador
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    service: ambassador-admin
-    product: aes
-  name: ambassador-admin
-  namespace: ambassador
-spec:
-  type: NodePort
-  ports:
-  - name: ambassador-admin
-    port: 8877
-    targetPort: admin
   selector:
     service: ambassador
