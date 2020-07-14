@@ -1,10 +1,34 @@
 #!/bin/bash
 
+#dirs
 mkdir /root/helm
-set-workdir /root/helm
-cd /root/helm
+mkdir /root/policies
+
+#k8s config
+curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+mv ./kubectl /usr/local/bin/kubectl
+mkdir ~/.kube
+terraform output -state /root/terraform/aks/terraform.tfstate aks_kube_config > ~/.kube/config
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+#ambassador
+cat << EOF > /root/policies/ambassador.hcl
+service "ambassador" {
+  policy = "write"
+}
+EOF
+consul acl policy create -name "ambassador" -description "ambassador connect" -rules @/root/policies/ambassador.hcl
+kubectl create namespace ambassador
+kubectl create secret -n ambassador generic ambassador-acl-token --from-literal=token=$(consul acl token create  -policy-name ambassador  -format=json | jq -r .SecretID)
+#ambassador
+kubectl apply -f https://www.getambassador.io/yaml/aes-crds.yaml && \
+kubectl wait --for condition=established --timeout=90s crd -lproduct=aes && \
+kubectl apply -f /root/ambassador/aes.yaml
+kubectl apply -n ambassador -f /root/ambassador/consul-connector.yaml
 
 #helm chart values
+helm repo add hashicorp https://helm.releases.hashicorp.com
 endpoint=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .retry_join[0])
 cat << EOF > /root/helm/aks.yaml
 global:
@@ -36,6 +60,14 @@ client:
   - type: 'secret'
     name: 'hashicorp-consul-acl-config'
     load: true
+syncCatalog:
+  enabled: true
+  default: false
+  toConsul: true
+  toK8S: false
+  aclSyncToken :
+    secretName: hashicorp-consul-connect-inject-acl-token
+    secretKey: token
 connectInject:
   enabled: true
   default: false
@@ -45,6 +77,7 @@ connectInject:
     secretKey: token
   overrideAuthMethodName: hashicorp-consul-k8s-auth-method
 EOF
+#helm install hashicorp hashicorp/consul -f aks.yaml --namespace consul --wait --debug
 
 #script to add secrets
 cat << "SCRIPT" > /usr/local/bin/setup-k8s-consul-secrets
@@ -57,7 +90,7 @@ acl_token=$5
 injection_token=$6
 acl_string=$( jq -n \
                   --arg token "$acl_token" \
-                  '{acl: { enabled: true, enable_token_persistence: true, tokens: { agent: $token } } }' )
+                  '{acl: { enabled: true, enable_token_persistence: true, default_policy: "deny", tokens: { agent: $token } } }' )
 #base64 the secrets
 gossip_key=$(echo -n $gossip_key | base64 -w 0)
 acl_token=$(echo -n  $acl_token | base64 -w 0)
@@ -114,6 +147,7 @@ data:
 EOF
 SCRIPT
 chmod +x /usr/local/bin/setup-k8s-consul-secrets
+#setup-k8s-consul-secrets $(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name) hcs hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault kv get -field master_token secret/consul) $(vault kv get -field master_token secret/consul)
 
 cat << "SCRIPT" > /usr/local/bin/setup-k8s-consul-auth
 cat <<EOF | kubectl apply -f -
@@ -190,122 +224,76 @@ consul acl binding-rule create -method 'hashicorp-consul-k8s-auth-method' \
 SCRIPT
 chmod +x /usr/local/bin/setup-k8s-consul-auth
 
-#ambassador
-#k8s
-kubectl apply -f https://www.getambassador.io/yaml/aes-crds.yaml && \
-kubectl wait --for condition=established --timeout=90s crd -lproduct=aes && \
-kubectl apply -f https://www.getambassador.io/yaml/aes.yaml && \
-kubectl -n ambassador wait --for condition=available --timeout=90s deploy -lproduct=aes
+f5_admin_password=$(terraform output -state /root/terraform/bigip/terraform.tfstate admin_password)
+f5_mgmt_url=$(terraform output -state /root/terraform/bigip/terraform.tfstate mgmt_url)
 
-#kubectl apply -f  https://www.getambassador.io/yaml/consul/ambassador-consul-connector.yaml
-cat <<EOF | kubectl apply -n ambassador -f -
+#bigip
+kubectl create serviceaccount bigip-ctlr -n kube-system
+cat <<EOF | kubectl apply -f -
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
-metadata:
-  name: ambassador-consul-connect
-rules:
-  - apiGroups: [""]
-    resources:
-      - secrets
-    verbs: ["get", "list", "create", "delete", "patch"]
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: ambassador-consul-connect
----
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
 metadata:
-  name: ambassador-consul-connect
+  name: bigip-ctlr-clusterrole
+rules:
+- apiGroups: ["", "extensions"]
+  resources: ["nodes", "services", "endpoints", "namespaces", "ingresses", "pods"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["", "extensions"]
+  resources: ["configmaps", "events", "ingresses/status"]
+  verbs: ["get", "list", "watch", "update", "create", "patch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: bigip-ctlr-clusterrole-binding
+  namespace: kube-system
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: ambassador-consul-connect
+  name: bigip-ctlr-clusterrole
 subjects:
-  - kind: ServiceAccount
-    name: ambassador-consul-connect
-    namespace: ambassador
----
-apiVersion: getambassador.io/v2
-kind: TLSContext
-metadata:
-  name: ambassador-consul
-spec:
-  hosts: []
-  secret: ambassador-consul-connect
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: ambassador-consul-connector
-spec:
-  ports:
-  - name: ambassador-consul-connector
-    port: 80
-  selector:
-    component: consul-connect
----
+- apiGroup: ""
+  kind: ServiceAccount
+  name: bigip-ctlr
+  namespace: kube-system
+EOF
+
+cat <<EOF | kubectl apply -f -
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ambassador-consul-connect-integration
-  labels:
-    app: ambassador
-    component: consul-connect
+  name: k8s-bigip-ctlr-deployment
+  namespace: kube-system
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ambassador
-      component: consul-connect
-  strategy:
-    type: RollingUpdate
+      app: k8s-bigip-ctlr
   template:
     metadata:
+      name: k8s-bigip-ctlr
       labels:
-        app: ambassador
-        component: consul-connect
-      annotations:
-        "consul.hashicorp.com/connect-inject": "false"
+        app: k8s-bigip-ctlr
     spec:
-      serviceAccountName: ambassador-consul-connect
-      terminationGracePeriodSeconds: 0
+      serviceAccountName: bigip-ctlr
       containers:
-        - name: consul-connect-integration
-          image: quay.io/datawire/ambassador_pro:consul_connect_integration-0.11.0
-          imagePullPolicy: Always
-          resources:
-            limits:
-              cpu: 200m
-              memory: 200Mi
-            requests:
-              cpu: 100m
-              memory: 50Mi
-          env:
-            # Consul runs as a DaemonSet on each Node therefore we need to talk to the Host machine.
-            # See: https://www.consul.io/docs/platform/k8s/run.html#architecture
-            - name: _CONSUL_HOST
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
+        - name: k8s-bigip-ctlr
+          image: "f5networks/k8s-bigip-ctlr"
+          command: ["/app/bin/k8s-bigip-ctlr"]
+          args: [
+            "--bigip-username=f5admin",
+            "--bigip-password=${f5_admin_password}",
+            "--bigip-url=${f5_mgmt_url}",
+            "--bigip-partition=Consul_SD",
+            "--pool-member-type=nodeport",
+            "--insecure=true",
+            "--agent=as3",
+            "--namespace=default",
+            "--log-level=DEBUG",
+            "--verify-interval=10",
+            "--node-poll-interval=10",
+            "--log-as3-response=true",
+            ]
 EOF
-
-#cat <<EOF | kubectl apply -n ambassador -f -
-#---
-#apiVersion: getambassador.io/v2
-#kind: TracingService
-#metadata:
-#  name: tracing
-#spec:
-#  service: "jaeger-collector.default.svc.cluster.local:9411"
-#  driver: zipkin
-#  config: {}
-#EOF
-
-#reset the deployment to pick up tracing changes
-kubectl rollout restart deployment/ambassador -n ambassador
-kubectl wait --for=condition=available --timeout=90s deployment/ambassador -n ambassador
-
 exit 0
