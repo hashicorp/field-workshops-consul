@@ -12,7 +12,7 @@ developers:
 - lance@hashicorp.com
 - kcorbin@hashicorp.com
 private: true
-published: false
+published: true
 challenges:
 - slug: provision-azure-vnets
   id: tmsnsut54k9f
@@ -381,7 +381,74 @@ challenges:
   type: challenge
   title: Deploy Consul in AKS
   teaser: test
-  assignment: test
+  assignment: |-
+    Now that part of application is containerized you can start move it into AKS.
+
+    The AKS cluster is already provisioned with the following services:
+      * [Ambassador Ingress w/Consul](https://www.getambassador.io/docs/latest/howtos/consul/)
+      * [F5-BIG Kubernetes Controller](https://clouddocs.f5.com/containers/v2/)
+
+
+    We can use the BIG-IP as an entry point and continue to use our WAF policy from earlier in the lab.
+    The BIG-IP controller can keep track of the Ambassador NodePorts so we can dynamically route traffic into the Connect mesh.
+    Ambassador is connect aware, so we can secure it's ingress sidecar with Consul intentions.
+
+    Verify these pods are running.
+
+    ```
+    kubectl get pods -n ambassador
+    kubectl get pods -n kube-system
+    ```
+
+    Get a Consul Ops token from Vault before starting your deployment.
+
+    ```
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    Helm is the recommended way to deploy Consul connect into AKS.
+    Inspect the deployment.
+
+    ```
+    cat /root/helm/aks.yaml
+    ```
+
+    You will run a few setup scripts typically performed by Kubernetes operators, inspect the chart, and then deploy it.
+    These scripts seed the AKS worker nodes with screts to talk with the HCS service,
+    as well as set up the auth method to establish trust between the Kubernetes API, and Consul.
+
+    ```
+    setup-k8s-consul-secrets $(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name) hcs hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault kv get -field master_token secret/consul) $(vault kv get -field master_token secret/consul)
+    setup-k8s-consul-auth
+    helm install hashicorp hashicorp/consul -f aks.yaml --namespace consul --wait --debug
+    ```
+
+    Check the components.
+
+    ```
+    kubectl get pods -n consul
+    ```
+
+    Move to the next assignment when they are ready.
+  tabs:
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Helm
+    type: code
+    hostname: workstation
+    path: /root/helm/aks.yaml
   difficulty: basic
   timelimit: 3000
 - slug: deploy-app-in-k8s
@@ -389,7 +456,141 @@ challenges:
   type: challenge
   title: Deploy App in k8s
   teaser: test
-  assignment: test
+  assignment: |-
+    With AKS connected to HCS you can deploy your application pods.
+    Consul will auto inject sidecars for each pod.
+
+    Deploy the Pods and wait until they are ready.
+
+    ```
+    kubectl apply -f apps
+    kubectl get pods
+    ```
+
+    Now you need to expose the Web application the outside world.
+    You will first set up an Ambassador mapping, and then expose Ambassador to the outside world with annotations for BIG-IP
+
+    ```
+    cat <<EOF | kubectl apply -f -
+    ---
+    apiVersion: getambassador.io/v2
+    kind: Mapping
+    metadata:
+      name: consul-web-mapping-tls
+    spec:
+      prefix: /
+      service: web-sidecar-proxy
+      resolver: consul-east-us
+      tls: ambassador-consul
+      load_balancer:
+        policy: round_robin
+    EOF
+    ```
+
+    Next we need to make sure the traffic is allowed between our gateway and the backend pods.
+    Update the intentions now.
+
+    ```
+    consul intention create --allow default/ambassador default/web
+    consul intention create --allow default/web default/api
+    consul intention create --allow default/api default/cache
+    consul intention create --allow default/api default/currency
+    ```
+
+    Annotate the Ambassador service.
+
+    ```
+    cat <<EOF | kubectl apply -f -
+    ---
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: ambassador
+      namespace: ambassador
+      labels:
+        product: aes
+        app.kubernetes.io/component: ambassador-service
+        cis.f5.com/as3-tenant: Consul_SD
+        cis.f5.com/as3-app: Ambassador
+        cis.f5.com/as3-pool: gateway_pool
+    spec:
+      type: NodePort
+      ports:
+      - name: https
+        port: 443
+        targetPort: https
+      selector:
+        service: ambassador
+    EOF
+    ```
+
+    Deploy the AS3 declaration.
+
+    ```
+    cat <<EOF | kubectl apply -f -
+    kind: ConfigMap
+    apiVersion: v1
+    metadata:
+      name: f5-ambassador
+      namespace: default
+      labels:
+        f5type: virtual-server
+        as3: "true"
+    data:
+      template: |
+        {
+            "class": "AS3",
+            "declaration": {
+                "class": "ADC",
+                "schemaVersion": "3.10.0",
+                "id": "urn:uuid:33045210-3ab8-4636-9b2a-c98d22ab915d",
+                "label": "http",
+                "remark": "A1 example",
+                "Consul_SD": {
+                    "class": "Tenant",
+                    "Ambassador": {
+                        "class": "Application",
+                        "template": "http",
+                        "serviceMain": {
+                            "class": "Service_HTTP",
+                            "virtualPort": 443,
+                            "virtualAddresses": [
+                                "10.3.0.4"
+                            ],
+                            "pool": "gateway_pool"
+                        },
+                        "gateway_pool": {
+                            "class": "Pool",
+                            "monitors": [
+                                "https"
+                            ],
+                            "members": [
+                                {
+                                    "servicePort": 443,
+                                    "serverAddresses": []
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    EOF
+    ```
+  tabs:
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
+  - title: Shell
+    type: terminal
+    hostname: workstation
   difficulty: basic
   timelimit: 3000
 - slug: test-terminating-gateway
@@ -400,4 +601,5 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 3000
-checksum: "16273119131858690357"
+checksum: "1441152906046363188"
+show_timer: true

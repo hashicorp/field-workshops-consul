@@ -265,6 +265,12 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
+        - name: _CONSUL_PORT
+          value: "8501"
+        - name: CONSUL_HTTP_SSL
+          value: "true"
+        - name: CONSUL_HTTP_SSL_VERIFY
+          value: "false"
         - name: REDIS_URL
           value: ambassador-redis:6379
         - name: AMBASSADOR_URL

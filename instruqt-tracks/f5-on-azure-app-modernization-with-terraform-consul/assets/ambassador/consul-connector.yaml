@@ -98,3 +98,11 @@ spec:
               value: "true"
             - name: CONSUL_HTTP_SSL_VERIFY
               value: "false"
+---
+apiVersion: getambassador.io/v2
+kind: ConsulResolver
+metadata:
+  name: consul-east-us
+spec:
+  address: "${HOST_IP}:8501"
+  datacenter: east-us
