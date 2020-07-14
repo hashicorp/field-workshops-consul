@@ -1,6 +1,0 @@
-#!/bin/bash
-# This is the setup script for the workstation container. Use it to set the stage for your terraform training, demo, or lab.
-set -e
-
-# Allow instruqt time to do its thing
-sleep 10

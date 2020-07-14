@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set-workdir /root/terraform/bigip
+
+cat <<'EOF' >> /root/terraform/bigip/outputs.tf
+
+output "ambassador_url" {
+  value = "https://${azurerm_public_ip.sip_public_ip.ip_address}/"
+}
+EOF
+
+terraform refresh
+
+exit 0

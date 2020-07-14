@@ -7,7 +7,7 @@ export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
 #dirs
 mkdir /root/helm
 mkdir /root/policies
-set-workdir /root/terraform/helm
+set-workdir /root/helm
 
 #k8s config
 curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl

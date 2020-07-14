@@ -293,11 +293,6 @@ challenges:
     hostname: workstation
     path: /ui
     port: 9090
-  - title: Vault
-    type: service
-    hostname: workstation
-    path: /
-    port: 8200
   - title: Terraform Code
     type: code
     hostname: workstation
@@ -306,6 +301,11 @@ challenges:
     type: code
     hostname: workstation
     path: /info.txt
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
   - title: Shell
     type: terminal
     hostname: workstation
@@ -503,11 +503,6 @@ challenges:
 
       [source](https://zkresearch.com/research/2017-application-delivery-controller-study)
   tabs:
-  - title: Consul
-    type: service
-    hostname: workstation
-    path: /
-    port: 8500
   - title: App
     type: service
     hostname: workstation
@@ -534,6 +529,11 @@ challenges:
   - title: Shell
     type: terminal
     hostname: workstation
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
   difficulty: basic
   timelimit: 3000
 - slug: deploy-consul-in-aks
@@ -651,96 +651,21 @@ challenges:
     EOF
     ```
 
-    Next we need to make sure the traffic is allowed between our gateway and the backend pods.
-    Update the intentions now.
-
-    ```
-    consul intention create --allow default/ambassador default/web
-    consul intention create --allow default/web default/api
-    consul intention create --allow default/api default/cache
-    consul intention create --allow default/api default/currency
-    ```
-
     Annotate the Ambassador service.
 
     ```
-    cat <<EOF | kubectl apply -f -
-    ---
-    apiVersion: v1
-    kind: Service
-    metadata:
-      name: ambassador
-      namespace: ambassador
-      labels:
-        product: aes
-        app.kubernetes.io/component: ambassador-service
-        cis.f5.com/as3-tenant: Consul_SD
-        cis.f5.com/as3-app: Ambassador
-        cis.f5.com/as3-pool: gateway_pool
-    spec:
-      type: NodePort
-      ports:
-      - name: https
-        port: 443
-        targetPort: https
-      selector:
-        service: ambassador
-    EOF
+    cat /root/ambassador/aes-service.yaml
+    kubectl apply -f /root/ambassador/aes-service.yaml
     ```
 
     Deploy the AS3 declaration.
 
     ```
-    cat <<EOF | kubectl apply -f -
-    kind: ConfigMap
-    apiVersion: v1
-    metadata:
-      name: f5-ambassador
-      namespace: default
-      labels:
-        f5type: virtual-server
-        as3: "true"
-    data:
-      template: |
-        {
-            "class": "AS3",
-            "declaration": {
-                "class": "ADC",
-                "schemaVersion": "3.10.0",
-                "id": "urn:uuid:33045210-3ab8-4636-9b2a-c98d22ab915d",
-                "label": "http",
-                "remark": "A1 example",
-                "Consul_SD": {
-                    "class": "Tenant",
-                    "Ambassador": {
-                        "class": "Application",
-                        "template": "http",
-                        "serviceMain": {
-                            "class": "Service_HTTP",
-                            "virtualPort": 443,
-                            "virtualAddresses": [
-                                "10.3.0.4"
-                            ],
-                            "pool": "gateway_pool"
-                        },
-                        "gateway_pool": {
-                            "class": "Pool",
-                            "monitors": [
-                                "https"
-                            ],
-                            "members": [
-                                {
-                                    "servicePort": 443,
-                                    "serverAddresses": []
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        }
-    EOF
+    cat /root/ambassador/f5-ambassador.yaml
+    kubectl apply -f /root/ambassador/f5-ambassador.yaml
     ```
+
+    In the next assignment we will use the application.
   notes:
   - type: text
     contents: |
@@ -759,14 +684,74 @@ challenges:
   - title: Shell
     type: terminal
     hostname: workstation
+  - title: Apps
+    type: code
+    hostname: workstation
+    path: /root/apps
   difficulty: basic
   timelimit: 3000
-- slug: test-terminating-gateway
+- slug: test-app-in-k8s
   id: z9j7j1geznsv
   type: challenge
-  title: Test Terminating Gateway
+  title: Test App in K8s
   teaser: test
-  assignment: test
+  assignment: |-
+    Your application should now be available over BIG-IP. Test it below.
+
+    ```
+    ambassador=$(terraform output ambassador_url)
+    echo $ambassador
+    curl -ksv $ambassador
+    ```
+
+    You should see the following error: `upstream connect error or disconnect/reset before headers. reset reason: connection termination` <br>
+
+    We need to configure mTLS between the applications to resolve this error. Consul intentions for mTLS are deny by default. <br>
+
+    Fetch credentials
+
+    ```
+    vault login -method=userpass username=operations password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
+    consul acl token read -self
+    ```
+
+    Now update the intentions
+
+    ```
+    consul intention create --allow default/ambassador default/web
+    consul intention create --allow default/web default/api
+    consul intention create --allow default/api default/cache
+    consul intention create --allow default/api default/payments
+    ```
+
+    Now try the application again.
+
+    ```
+    ambassador=$(terraform output ambassador_url)
+    echo $ambassador
+    curl -ksv $ambassador
+    ```
+
+    Congrats! You just migrated to Consul mesh with BIG-IP.
+  tabs:
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Helm
+    type: code
+    hostname: workstation
+    path: /root/helm/aks.yaml
   difficulty: basic
   timelimit: 3000
 checksum: "787629240537964904"
