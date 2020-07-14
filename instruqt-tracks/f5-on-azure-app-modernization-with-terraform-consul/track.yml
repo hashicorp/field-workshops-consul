@@ -129,38 +129,6 @@ challenges:
     **NOTE:** you will need open the URL provided by the output in a separate tab.  If you are using chrome, you
     may be presented with a certificate error, to bypass this you can type "thisisunsafe" into the Chrome window.
 
-    Now you will upload a [provided](https://github.com/hashicorp/field-workshops-consul/blob/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/terraform/bigip/templates/asm_policy.xml) ASM policy to the BIG-IP
-
-    Get the credentials from the Terraform output and save them as environment variables.
-
-    ```
-    export CREDS=$(terraform output username):$(terraform output admin_password)
-    ```
-
-    Upload the provided ASM XML policy via API.
-
-    ```
-    curl -sku $CREDS -X POST \
-      -H "Content-Type: application/octet-stream" \
-      -H "Content-Range: 0-783595/783596" \
-      $(terraform output mgmt_url)/mgmt/tm/asm/file-transfer/uploads/asm_policy.xml \
-      --data-binary "@templates/asm_policy.xml" | jq .
-
-    ```
-
-
-    Next, import the uploaded policy.
-
-    ```
-
-    curl -sku $CREDS \
-      -H "Content-Type: application/json" \
-      -X POST $(terraform output mgmt_url)/mgmt/tm/asm/tasks/import-policy \
-      -d '{"filename": "asm_policy.xml", "name": "WAFPolicy"}' | jq .
-
-      ```
-
-      You can review the configured policy by navigating to the `Security -> Application Security -> Security Policies` tab in the F5 management console. <br>
   notes:
   - type: text
     contents: |
@@ -380,6 +348,7 @@ challenges:
     cat templates/as3_definition.json
     ```
 
+    The AS3 definition also includes a WAF policy. You can review the configured policy by navigating to the `Security -> Application Security -> Security Policies` tab in the `Consul_SD` partition <br>
 
     View the nodes and services via CLI
 
@@ -800,4 +769,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 3000
-checksum: "2000416021436862689"
+checksum: "787629240537964904"

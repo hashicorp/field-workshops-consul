@@ -31,9 +31,8 @@ variable DO_URL {
 variable AS3_URL {
   description = "URL to download the BIG-IP Application Service Extension 3 (AS3) module"
   type        = string
-  default     = "https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.18.0/f5-appsvcs-3.18.0-4.noarch.rpm"
-}
-## Please check and update the latest TS URL from https://github.com/F5Networks/f5-telemetry-streaming/releases/latest 
+  default     = "https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.20.0/f5-appsvcs-3.20.0-3.noarch.rpm"
+}## Please check and update the latest TS URL from https://github.com/F5Networks/f5-telemetry-streaming/releases/latest 
 # always point to a specific version in order to avoid inadvertent configuration inconsistency
 variable TS_URL {
   description = "URL to download the BIG-IP Telemetry Streaming Extension (TS) module"
