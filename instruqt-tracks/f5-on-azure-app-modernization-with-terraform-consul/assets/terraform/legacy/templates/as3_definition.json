@@ -74,5 +74,12 @@
         ]
       }
     }
+  },
+  "Kube": {
+    "class": "Tenant",
+    "Kube": {
+      "class": "Application",
+      "template": "generic"
+      } 
   }
 }
