@@ -693,7 +693,7 @@ challenges:
   id: z9j7j1geznsv
   type: challenge
   title: Test App in K8s
-  teaser: test
+  teaser: Access your Consul service mesh with BIG-IP
   assignment: |-
     Your application should now be available over BIG-IP. Test it below.
 
@@ -753,4 +753,4 @@ challenges:
     path: /root/apps
   difficulty: basic
   timelimit: 3000
-checksum: "13981136973445841559"
+checksum: "11993240607912437047"
