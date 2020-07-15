@@ -147,6 +147,7 @@ set-workdir /root/terraform/vnet
 cd /root/terraform/vnet
 
 #ssh agent
+ssh-keygen -f ~/.ssh/id_rsa -y > ~/.ssh/id_rsa.pub
 eval $(ssh-agent)
 ssh-add ~/.ssh/id_rsa
 
