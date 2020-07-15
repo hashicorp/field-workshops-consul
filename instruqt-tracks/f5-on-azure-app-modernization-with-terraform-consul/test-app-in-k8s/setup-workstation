@@ -12,7 +12,7 @@ terraform refresh
 
 ambassador=$(terraform output ambassador_url)
 cat <<EOF > /tmp/app-ui.txt
-App UI: "${ambassador}/ui"
+App UI: ${ambassador}/ui
 EOF
 
 #app_lb=$(terraform output -state /root/terraform/bigip/terraform.tfstate ambassador_url)
