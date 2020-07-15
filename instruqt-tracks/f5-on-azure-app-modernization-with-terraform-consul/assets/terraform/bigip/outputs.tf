@@ -2,6 +2,10 @@ output "mgmt_url" {
   value = "https://${azurerm_public_ip.sip_public_ip.ip_address}:8443/"
 }
 
+output "mgmt_ip" {
+  value = azurerm_public_ip.sip_public_ip.ip_address
+}
+
 output "app_url" {
   value = "http://${azurerm_public_ip.sip_public_ip.ip_address}:8080/"
 }
