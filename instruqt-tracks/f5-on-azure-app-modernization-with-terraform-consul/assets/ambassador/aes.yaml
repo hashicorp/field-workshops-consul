@@ -233,7 +233,7 @@ metadata:
   name: ambassador
   namespace: ambassador
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       service: ambassador

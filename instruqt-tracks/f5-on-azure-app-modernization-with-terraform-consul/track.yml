@@ -747,10 +747,10 @@ challenges:
   - title: Shell
     type: terminal
     hostname: workstation
-  - title: Helm
+  - title: Apps
     type: code
     hostname: workstation
-    path: /root/helm/aks.yaml
+    path: /root/apps
   difficulty: basic
   timelimit: 3000
-checksum: "435924352178034800"
+checksum: "13981136973445841559"
