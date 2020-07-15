@@ -328,11 +328,12 @@ challenges:
 
     **Remember you will need to view this UI in a different browser tab**, for convenenience we have put all the required information in the `info.txt` file in the `App Access Info` tab <br>
 
+    The VIP and pools are provisioned in the `Consul_SD` partition, make sure you select it from the drop down menu in the top right corner of the screen.
+
     You can view the VIP in the BIG-IP UI by naviagating to the `Local Traffic -> Virtual Servers`
 
     You can view the pool members navigating to `Local Traffic -> Pools`
 
-    The VIP and pools are provisioned in the `Consul_SD` partition, make sure you select it from the drop down menu in the top right corner of the screen.
 
 
     ** Web Tier ** <br>
@@ -758,4 +759,4 @@ challenges:
     path: /tmp/app-ui.txt
   difficulty: basic
   timelimit: 3000
-checksum: "2640123213031612513"
+checksum: "6080669233312517355"
