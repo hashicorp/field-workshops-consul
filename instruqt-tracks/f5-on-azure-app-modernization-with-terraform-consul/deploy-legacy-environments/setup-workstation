@@ -37,7 +37,7 @@ ca_cert=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/
 token=$(vault kv get -field=master_token secret/consul)
 
 cat << EOF > /root/terraform/legacy/terraform.tfvars
-ssh_public_key = "$(ssh-keygen -i -m pkcs8 -f ~/.ssh/id_rsa.pub)"
+ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
 endpoint = "${endpoint}"
 consulconfig = <<-EOT
 ${consulconfig}

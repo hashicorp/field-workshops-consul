@@ -125,7 +125,6 @@ mv vault /usr/local/bin/vault
 rm -f *.zip
 cd /root
 
-
 #get assets
 git clone -b f5-tf-consul-app-mod https://github.com/hashicorp/field-workshops-consul.git
 cp -r field-workshops-consul/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/terraform .
@@ -133,22 +132,23 @@ cp -r field-workshops-consul/instruqt-tracks/f5-on-azure-app-modernization-with-
 cp -r field-workshops-consul/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/ambassador .
 rm -rf field-workshops-consul
 
+#ssh agent
+ssh-keygen -f ~/.ssh/id_rsa -y > ~/.ssh/id_rsa.pub
+eval $(ssh-agent)
+ssh-add ~/.ssh/id_rsa
+
 #provision
 cd /root/terraform/vnet
 /usr/local/bin/terraform init
 
 pubkey=$(cat ~/.ssh/id_rsa.pub)
 cat << EOF > /root/terraform/vnet/terraform.tfvars
-ssh_public_key = "$(ssh-keygen -i -m pkcs8 -f ~/.ssh/id_rsa.pub)"
+ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
 EOF
 
 #assignment
 set-workdir /root/terraform/vnet
 cd /root/terraform/vnet
 
-#ssh agent
-ssh-keygen -f ~/.ssh/id_rsa -y > ~/.ssh/id_rsa.pub
-eval $(ssh-agent)
-ssh-add ~/.ssh/id_rsa
 
 exit 0

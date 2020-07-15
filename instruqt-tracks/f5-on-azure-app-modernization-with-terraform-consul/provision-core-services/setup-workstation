@@ -8,10 +8,9 @@ terraform init
 cd /root/terraform/vault
 terraform init
 
-#test with dummy key
 pubkey=$(cat ~/.ssh/id_rsa.pub)
 cat << EOF > /root/terraform/vault/terraform.tfvars
-ssh_public_key = "$(ssh-keygen -i -m pkcs8 -f ~/.ssh/id_rsa.pub)"
+ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
 EOF
 
 cd /root/terraform/hcs
