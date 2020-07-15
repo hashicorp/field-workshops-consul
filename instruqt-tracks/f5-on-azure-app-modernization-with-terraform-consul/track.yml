@@ -751,6 +751,10 @@ challenges:
     type: code
     hostname: workstation
     path: /root/apps
+  - title: App UI
+    type: code
+    hostname: workstation
+    path: /tmp/app-ui.txt
   difficulty: basic
   timelimit: 3000
-checksum: "5994900413774334946"
+checksum: "10066106576419739702"
