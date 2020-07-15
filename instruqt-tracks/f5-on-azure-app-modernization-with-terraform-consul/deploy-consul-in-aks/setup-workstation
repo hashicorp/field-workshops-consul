@@ -301,4 +301,12 @@ spec:
             "--log-as3-response=true",
             ]
 EOF
+
+
+#wait for pods
+kubectl wait -n ambassador --for=condition=available --timeout=120s deployment/ambassador
+kubectl wait -n ambassador --for=condition=Ready $(kubectl get pod -n ambassador --selector=service=ambassador -o name)
+
+kubectl wait -n kube-system --for=condition=available --timeout=120s deployment/k8s-bigip-ctlr-deployment
+kubectl wait -n kube-system --for=condition=Ready $(kubectl get pod -n kube-system --selector=app=k8s-bigip-ctlr -o name)
 exit 0
