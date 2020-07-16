@@ -1,100 +1,169 @@
 name: Chapter-2
 class: title
 # Chapter 2
-## HashiCorp Consul Architecture
+## Consul Use Cases
 
 ---
-name: Introduction-to-Consul
-Introduction to Consul
+name: Consul-Use-Cases
+Consul Adoption Journey
 -------------------------
-.center[![:scale 45%](images/multi-datacenter-federation.png)]
+.center[![:scale 70%](images/use_cases.png)]
 
 ???
-Consul is a complex system that has many different moving parts. To help users and developers of Consul form a mental model of how it works, this page documents the system architecture.
-
-In the next sections, we will dive deeper into how  Consul works.
+As we start to dive into how to use consul it is important to think about how you would go about adopting this in your environments.  First and foremost adopting a standard way of service discovery across a single application of federation of applications is a critical first step.  Because of this we will begin with looking at consul's robust feature set around service discovery.
 
 ---
-name: Introduction-to-Consul-Overview
-class: img-right
-Introduction to Consul - Overview
+name: Load-Balancers-Service-Discovery
+class: compact
+Service Discovery and Load Balancers
 -------------------------
-.center[![:scale 100%](images/multi-datacenter-federation.png)]
 
-* A consul cluster is referred to as a datacenter
-* A consul datacenter is made up of server nodes and client nodes
-* 3 or 5 server nodes per datacenter
-* 100s - 10,000s of client nodes
+.center[![:scale 45%](images/consul-service-discovery.001.png)]
 
+* Services location is paramount
+* Traditionally done with load balancers
+   * Expensive
+   * Hard to maintain
+   * Load grows as you scale
+   * Requires health probes for every backend system
 ???
-Within each datacenter, we have a mixture of clients and servers. It is expected that there be between three to five servers. This strikes a balance between availability in the case of failure and performance, as consensus gets progressively slower as more machines are added. However, there is no limit to the number of clients, and they can easily scale into the thousands or tens of thousands.
+The current mode of operation for handling service discovery is usually done with load balancers as seen her in the diagram.  When I want to provision a new service it gets deployed and then the network team is notified that they need to configure the virtual IPs on the load balancer to pick up the service and start routing traffic to it.  This is time consuming, error prone, and can typically have long lead times.  Consul can solve this problem.
 
 ---
-name: Introduction-to-Consul-Gossip
-class: img-right
-Introduction to Consul - Gossip
+name: Service-Discovery-with-Consul
+class: compact
+Service Discovery with Consul
 -------------------------
-.center[![:scale 100%](images/multi-datacenter-federation.png)]
-
-* All agent communication is done via the Gossip Protocol
-* Automatic configuration and datacenter discovery for Consul agents
-* Agent failures is done at the collective agent level not at the server level
-* Using Gossip this allows high scalability vs. traditional heartbeat schemes
-* Node failure can be inferred by an agent failure
+.center[![:scale 60%](images/consul-service-discovery.002.png)]
+* Services self-register
+* Service health is defined by the service and maintained by the consul agent
+* Services are able to query each other via DNS or HTTP
 
 ???
-Consul uses the gossip protocol for agent communication. This provides much greater efficiency with overall Consul communications. Agents can communicate with one another and either obtain information to its peers, or disseminate information to its neighbors.
+In a consul environment services are able to self register along with their unique health check requirements.  This makes it easy to define and healthy service.  This coupled with consul using gossip service routing and availability is near real time.  This allows for service discovery to be offloaded from the network and load balancer teams to the application deployment pipeline.  This is a crucial first step esp if an organization wants to take advantage of the benefits of a service mesh.
+
 
 ---
-name: Introduction-to-Consul-Consensus
-class: img-right
-Introduction to Consul - Consensus
+name: Myriad-Use-Cases
+class: compact
+Solve Network Problems with Service Discovery
 -------------------------
-.center[![:scale 100%](images/multi-datacenter-federation.png)]
+Consul prepared queries allow you to build logic into your DNS based service catalog. This enables transparent failover when the primary datacenter becomes unavailable.
 
-* Every Consul datacenter has a group of server nodes that work together to manage connected agents
-* Using Raft the server nodes elect a leader
-* A leader is responsible for processing all queries and has write authority to the KV store
-* It is also responsible for transaction replication
-* All requests to the server nodes are routed to the leader
+```json
+{
+  "Name": "banking-app",
+  "Service": {
+    "Service": "banking-app",
+    "Tags": ["v1.2.3"],
+    "Failover": {
+      "Datacenters": ["dc2", "dc3"]
+    }
+  }
+}
+```
 
 ???
-The servers in each datacenter are all part of a single Raft peer set. This means that they work together to elect a single leader, a selected server which has extra duties. The leader is responsible for processing all queries and transactions. Transactions must also be replicated to all peers as part of the consensus protocol. Because of this requirement, when a non-leader server receives an RPC request, it forwards it to the cluster leader.
+Because consul is now at the heart of service routing based on service name then failover becomes defined at the service level.  Simply by setting the failover path in your registration you have defined what happens in a failure situation at the service level. Having this granular path allows for built-in resiliency for downstream dependencies.
 
 ---
-name: Introduction-to-Consul-Multi-DC
-class: img-right
-Introduction to Consul - Multi-DC
+name: Myriad-Use-Cases-Example
+Example
 -------------------------
-.center[![:scale 100%](images/multi-datacenter-federation.png)]
 
-* Gossip over a WAN connection is also possible
-* Allows for request from one datacenter to be forwarded to another
-* This allows for service level DR
-* This allows for geographical service request handling
+There are many other practical use cases that can be solved with the Consul catalog. Some of these scenarios include: automatic routing of traffic to healthy nodes, blue/green deployments, service locks, configuration management and more. Learn more about practical, real-world uses for Consul in this HashiConf talk:
+
+.center[
+<a href="https://www.youtube.com/watch?v=XZZDVUCCilM" target=_blank>Consul Infrastructure Recipes - the story of Taco Hub 🌮</a>
+]
+
 
 ???
-The server agents also operate as part of a WAN gossip pool. This pool is different from the LAN pool as it is optimized for the higher latency of the internet and is expected to contain only other Consul server agents. The purpose of this pool is to allow datacenters to discover each other in a low-touch manner. When a server receives a request for a different datacenter, it forwards it to a random server in the correct datacenter. That server may then forward to the local leader, so cross-datacenter requests are relatively fast and reliable.
+When you have some time, this is a great talk from HashiConf which dives into a number different Consul use cases and give you some bit-size recipes.
 
 ---
-name: Introduction-to-Consul-Protocols
-Introduction to Consul - Protocols
+name: Secure-Networking-is-Hard
+class: compact
+Secure Networking is Hard
 -------------------------
-Now you have a high level understanding of Consul's two primary Protocols:
+.center[![:scale 50%](images/consul-service-discovery.003.png)]
 
-* Consensus
-* Gossip
-
-If you want to learn more these protocols, check out the appendix.
+* Once applications can find each other security becomes the next concern
+* This is usually done with a heavy dose of firewalls
+* This adds significant burden to the network organization
+* Huge lists of firewall rules
 
 ???
-We've touched briefly on the two main protocols Consul uses. If you'd like to dive a little deeper into both of these, you can find more information at the end of this slide deck.
+Okay, so the bottom line is secure networking is hard. We need devices and services to be able to communicate with one another, and even discover one another, but it can't just be a free-for-all. Our network needs rules to govern who can talk to who, and what information can be passed over it. We usually do this with firewalls, but that adds a huge burden to the network.
 
 ---
-name: Introduction-to-Gossip-Skeptical
-Introduction to Consul - Skeptical ?
+name: Firewalls-Wont-Scale
+Firewalls Won't Scale
 -------------------------
-.center[![:scale 60%](images/mitchell_tweet.png)]
+.center[![:scale 70%](images/consul-service-discovery.004.png)]
+* Heavy interdependencies
+* Hard to automate
+* Hard to optimize
 
 ???
-Just one quick note before we move on to the next chapter, if you remember I mentioned there's no limit to the number of nodes, take a look at this metric. Where one of our customer scaled out to 35,000 nodes in a single datacenter. And we do have larger deployments of around 350,000 nodes which are spread across multiple datacenters.
+If you take this mindset to its logical conclusion you will end up with something like this.  Firewalls at every service trying to maintain all the up and downstream communications channels.  At scale this is completely unmanageable.
+---
+name: Consul-Service-Mesh
+Consul Connect - A Modern Service Mesh
+-------------------------
+.center[![:scale 80%](images/consul-service-discovery.005.png)]
+
+???
+Using consul in conjunction with a proxy (in this case Envoy) will allow for several things.
+First using consul ACL tokens you give a service an identity that is not IP based.  With this token the service is able to present an identity that is tied to the service no matter where it is running.
+Second you have defined intentions.  This construct is how you define what service is allowed to talk to what service.  And thirdly it provides all the near real time configurations to support a mTLS connection between services.  Things like Certificates and proxy configs are all automatically handled by consul.
+The power of this is that all of this can be defined in a simple service definition.
+
+---
+name: Consul-Service-Definition
+class: compact
+Consul Service Definition
+-------------------------
+
+```hcl
+services {
+  name = “web-app"
+  port = 9090
+  connect {
+    sidecar_service {
+      port = 20000
+      proxy {
+        local_service_address = "127.0.0.1"
+        local_service_port = 9090
+        upstreams {
+          destination_name = “order-processing”
+          local_bind_port = 8003
+        }
+      }
+    }
+  }
+}
+```
+
+???
+As you can see in this example, the connection definition is simply defined as a part of the service definition.  
+
+---
+name: How-do-we-secure-this
+How do we secure this?
+-------------------------
+.center[![:scale 70%](images/consul-service-discovery.006.png)]
+.center[With great power comes great responsibility...🕸️]
+
+???
+Now at scale inside a service mesh there might start to be some issue with all these connection zipping around between datacenters and clouds.  It becomes a lot more difficult to maintain good network edge security when you have a wide berth of communication happening even if the port range is well defined.  
+
+---
+name: Mesh-Gateways
+Consul Mesh Gateways
+-------------------------
+.center[![:scale 70%](images/consul-service-discovery.007.png)]
+.center[Secure connections between any app or service across disparate environments]
+
+???
+This problem is addressed with the availability of mesh gateways.  This allows a single point at the edge that all mesh traffic flows over.  This allows the network teams to control the ingress/egress points at the edge of the network while still allowing the app teams the flexibility to run application components on the platform of their choosing.  In the next lab we are going to explore the concepts of a service mesh in instruqt.
