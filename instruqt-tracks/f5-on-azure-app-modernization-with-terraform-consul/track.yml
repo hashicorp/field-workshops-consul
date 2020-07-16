@@ -783,4 +783,5 @@ challenges:
     path: /tmp/app-ui.txt
   difficulty: basic
   timelimit: 3000
-checksum: "8230058239631914695"
+checksum: "15196973800934254702"
+show_timer: true
