@@ -7,6 +7,9 @@ set-workdir /root/terraform/legacy
 cd /root/terraform/bigip
 terraform output > /info.txt
 
+cd /root/terraform/legacy/as3
+terraform init
+
 cd /root/terraform/legacy
 terraform init
 

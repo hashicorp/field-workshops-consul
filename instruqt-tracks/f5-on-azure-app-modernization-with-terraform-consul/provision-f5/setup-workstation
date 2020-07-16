@@ -2,8 +2,6 @@
 
 set-workdir /root/terraform/bigip
 
-cd /root/terraform/as3
-terraform init
 cd /root/terraform/bigip
 terraform init
 

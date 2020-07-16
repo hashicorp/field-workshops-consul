@@ -2,7 +2,7 @@ data "terraform_remote_state" "bigip" {
   backend = "local"
 
   config = {
-    path = "../bigip/terraform.tfstate"
+    path = "../../bigip/terraform.tfstate"
   }
 }
 
@@ -11,7 +11,7 @@ data "terraform_remote_state" "hcs" {
   backend = "local"
 
   config = {
-    path = "../hcs/terraform.tfstate"
+    path = "../../hcs/terraform.tfstate"
   }
 }
 
