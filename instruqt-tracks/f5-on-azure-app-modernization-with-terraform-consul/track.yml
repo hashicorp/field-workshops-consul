@@ -261,20 +261,40 @@ challenges:
 
     As part of the cloud migration, the VM's will also be configured to run a consul agent that registers these services with Consul.  This will make it easy to refactor the application, as the application is no longer dependent upon static IP addresses which are hardcoded into configuration and application code. <br>
 
-    Additionally, by registering these services in Consul, it is no longer required to manually manage pool members on the F5 appliances, instead, VIP's can be configured to populate backend pool members by monitoring services in Consul. Whenever the application scales up, down, or moves the BIG-IP will automatically update it's configuration. <br>
+    This also means that IP addresses no longer have to be known before provisioning can occur, thus, decoupling steps in the provisioning workflow.
 
-    To get started, we've automated the collection of this information, and seeded a `terraform.tfvars` file in the `/root/terraform/legacy` folder.  Review this information, and then kick off the terraform run.
+
+    Review the code in the `Terraform Code` this defines the VMSS for the web and app tiers of the application.
+
+    Begin provisioning the application in the background.
 
     ```
+    terraform plan
+    nohup terraform apply --auto-approve > deploy_app.log 2>&1 &
+    ```
+
+    By registering nodes and services in Consul, other services can easily discover their status and location. <br>
+
+    For example, it is no longer required to manually manage pool members on the F5 appliances, instead, VIP's can be configured to populate backend pool members by monitoring services in Consul. Whenever the application scales up, down, fails a check, or moves the BIG-IP will automatically update it's configuration. <br>
+
+    VIP deployment is also automated by way of an AS3 declaration which is deployed via Terraform. The AS3 declaration for the legacy application defines a VIP, a corresponding node pool which will be dynamically populated by Consul, and a WAF policy that helps protect the application from bad actors.
+
+    Inspect the AS3 declaration
+    ```
+    cd /root/terraform/legacy/as3
+    cat templates/as3_declaration.json
+    ```
+
+    Provision the VIP using Terraform
+    ```
+    cd /root/terraform/legacy/as3
     terraform plan
     terraform apply --auto-approve
     ```
 
-    While the apply is running, review the code in the `Terraform Code` this defines the VMSS for the web, app and payment tiers of the application.
+    The application is now being migrated to the cloud!!! You can monitor the status of your application via Consul. <br>
 
-    You can also monitor Consul to watch the nodes come online.
-
-    The application has now been migrated to the cloud!!! You can visit the application in the `App` tab, you may need to hit the refresh button **within** that tab. <br>
+    Once everything looks good you can visit the application in the `App` tab, you may need to hit the refresh button **within** that tab. <br>
 
     You will explore the environment in more detail in the next challange. <br>
   notes:
@@ -346,10 +366,14 @@ challenges:
 
     From the `Shell` tab
     ```
-    cat templates/as3_definition.json
+    cat as3/templates/as3_definition.json
     ```
 
     The AS3 definition also includes a WAF policy. You can review the configured policy by navigating to the `Security -> Application Security -> Security Policies` tab in the `Consul_SD` partition <br>
+
+    The WAF policy contains a URL blocking strategy that prevents users from attempting to access sensitive portions of the application.
+
+    Test WAF Policy
 
     View the nodes and services via CLI
 
@@ -406,6 +430,13 @@ challenges:
     hostname: workstation
     path: /
     port: 8500
+  - title: App Access Info
+    type: code
+    hostname: workstation
+    path: /info.txt
+  - title: Shell
+    type: terminal
+    hostname: workstation
   - title: App
     type: service
     hostname: workstation
@@ -425,13 +456,6 @@ challenges:
     type: code
     hostname: workstation
     path: /root/terraform/legacy
-  - title: App Access Info
-    type: code
-    hostname: workstation
-    path: /info.txt
-  - title: Shell
-    type: terminal
-    hostname: workstation
   difficulty: basic
   timelimit: 3000
 - slug: scale-the-application
@@ -759,4 +783,4 @@ challenges:
     path: /tmp/app-ui.txt
   difficulty: basic
   timelimit: 3000
-checksum: "15167844034231518546"
+checksum: "8230058239631914695"

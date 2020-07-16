@@ -23,7 +23,7 @@ provider "bigip" {
 }
 
 data "template_file" "virtualserverAS3" {
-  template = file("${path.module}/templates/as3_definition.json")
+  template = file("${path.module}/templates/as3_declaration.json")
   vars = {
     vip_address = data.terraform_remote_state.bigip.outputs.vip_internal_address
     consul_url  = data.terraform_remote_state.hcs.outputs.consul_url
