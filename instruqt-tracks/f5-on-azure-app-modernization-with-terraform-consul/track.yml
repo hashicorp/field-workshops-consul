@@ -24,7 +24,7 @@ challenges:
   assignment: |-
     In this assignment you will provision the VNets we will use in the following assignments. <br>
 
-    Inspect and deploy the terraform code.
+    Inspect and deploy the Terraform code.
 
     In the `Shell` tab run the following commands.
     ```
@@ -78,7 +78,7 @@ challenges:
     terraform plan
     nohup terraform apply -auto-approve > /root/terraform/aks/terraform.out &
     ```
-    Last, provision the HashiCorp Consul service. HCS provides Consul as a Managed service on Azure <br>
+    Last, provision the HashiCorp Consul service. HCS provides Consul as a Managed service on Azure. <br>
     ```
     cd /root/terraform/hcs
     terraform plan
@@ -124,7 +124,7 @@ challenges:
     This can take several minutes to complete, while you are waiting
     take the opportunity to review the `Terraform Code` tab to see the IaC definition.
 
-    Once the apply is complete, you can Navigate to the BIG-IP at the IP address in the terraform output.
+    Once the apply is complete, you can Navigate to the BIG-IP at the IP address in the Terraform output.
 
     **NOTE:** you will need open the URL provided by the output in a separate tab.  If you are using chrome, you
     may be presented with a certificate error, to bypass this you can type "thisisunsafe" into the Chrome window.
@@ -259,7 +259,7 @@ challenges:
 
     In this assignment we will be deploying the current application into Azure based VM's. <br>
 
-    As part of the cloud migration, the VM's will also be configured to run a consul agent that registers these services with Consul.  This will make it easy to refactor the application, as the application is no longer dependent upon static IP addresses which are hardcoded into configuration and application code. <br>
+    As part of the cloud migration, the VM's will also be configured to run a Consul agent that registers these services with Consul.  This will make it easy to refactor the application, as the application is no longer dependent upon static IP addresses which are hardcoded into configuration and application code. <br>
 
     This also means that IP addresses no longer have to be known before provisioning can occur, thus, decoupling steps in the provisioning workflow.
 
@@ -270,31 +270,31 @@ challenges:
 
     ```
     terraform plan
-    nohup terraform apply --auto-approve > deploy_app.log 2>&1 &
+    nohup terraform apply -auto-approve > deploy_app.log 2>&1 &
     ```
 
-    By registering nodes and services in Consul, other services can easily discover their status and location. <br>
+    By registering nodes and services in Consul other services can easily discover their status and location. <br>
 
-    For example, it is no longer required to manually manage pool members on the F5 appliances, instead, VIP's can be configured to populate backend pool members by monitoring services in Consul. Whenever the application scales up, down, fails a check, or moves the BIG-IP will automatically update it's configuration. <br>
+    For example, it is no longer required to manually manage pool members on the F5 appliances. Instead, VIPs can be configured to populate backend pool members by monitoring services in Consul. Whenever the application scales up, down, fails a check, or moves the BIG-IP will automatically update it's configuration. <br>
 
     VIP deployment is also automated by way of an AS3 declaration which is deployed via Terraform. The AS3 declaration for the legacy application defines a VIP, a corresponding node pool which will be dynamically populated by Consul, and a WAF policy that helps protect the application from bad actors.
 
-    Inspect the AS3 declaration
+    Inspect the AS3 declaration.
     ```
     cd /root/terraform/legacy/as3
     cat templates/as3_declaration.json
     ```
 
-    Provision the VIP using Terraform
+    Provision the VIP using Terraform.
     ```
     cd /root/terraform/legacy/as3
     terraform plan
-    terraform apply --auto-approve
+    terraform apply -auto-approve
     ```
 
     The application is now being migrated to the cloud!!! You can monitor the status of your application via Consul. <br>
 
-    Once everything looks good you can visit the application in the `App` tab, you may need to hit the refresh button **within** that tab. <br>
+    Once everything looks good you can visit the application in the `App` tab. You may need to hit the refresh button **within** that tab. <br>
 
     You will explore the environment in more detail in the next challange. <br>
   notes:
@@ -346,7 +346,7 @@ challenges:
 
     ** F5 LTM ** <br>
 
-    **Remember you will need to view this UI in a different browser tab**, for convenenience we have put all the required information in the `info.txt` file in the `App Access Info` tab <br>
+    **Remember you will to need to view this UI in a different browser tab**, for convenenience we have put all the required information in the `info.txt` file in the `App Access Info` tab <br>
 
     The VIP and pools are provisioned in the `Consul_SD` partition, make sure you select it from the drop down menu in the top right corner of the screen.
 
@@ -358,7 +358,7 @@ challenges:
 
     ** Web Tier ** <br>
 
-    The VIP for the web tier of the application lives on the F5 BIG-IP virtual appliance. The pools servicing this VIP are dynamically populated by querying consul for all instances of the service called `web` <br>
+    The VIP for the web tier of the application lives on the F5 BIG-IP virtual appliance. The pools servicing this VIP are dynamically populated by querying Consul for all instances of the service called `web` <br>
 
     The mapping between Consul and the pools was declared in the AS3 declaration of the VIP.
 
@@ -366,14 +366,16 @@ challenges:
 
     From the `Shell` tab
     ```
-    cat as3/templates/as3_definition.json
+    cat as3/templates/as3_declaration.json
     ```
 
     The AS3 definition also includes a WAF policy. You can review the configured policy by navigating to the `Security -> Application Security -> Security Policies` tab in the `Consul_SD` partition <br>
 
     The WAF policy contains a URL blocking strategy that prevents users from attempting to access sensitive portions of the application.
 
-    Test WAF Policy
+    ** Test WAF Policy **
+
+    The sample WAF policy includes a rule that ensures that the `/admin` path of the application is not available externally.  Open a new tab using the URL of the application contained within the `App Access Info` tab.  The application should come up, add `/admin` to the URL in your browser.
 
     View the nodes and services via CLI
 
@@ -399,21 +401,22 @@ challenges:
 
     **Pro Tip:** Consul template can render any ASCII based configuration files you may need for other purposes, and fire a user defined handler after (re)rendering. <br>
 
-    The next few steps will show how this is configured, by accessing the `$web_server` you discovered and stored previously through a bastion host that has also been configured.
+    The next few steps will show how this is configured, by accessing the `$web_server` you discovered and stored previously through a bastion host that has also been configured. <br><br>
 
     1. Review the consul-template configuration
     ```
     ssh -q -A -J azure-user@$bastion_ip azure-user@$web_server \
       sudo cat /etc/consul-template/consul-template-config.hcl
     ```
+    <br>
 
     2. Review the templated nginx configuration
 
     ```
     ssh -q -A -J azure-user@$bastion_ip azure-user@$web_server sudo cat /etc/nginx/conf.d/load-balancer.conf.ctmpl
     ```
-
-    3. Review the rendered configuration, and compare it to the information you've discovered via the other consul interfaces.
+    <br>
+    3. Review the rendered configuration, and compare it to the information you've discovered via the other Consul interfaces.
 
     ```
     ssh -q -A -J azure-user@$bastion_ip azure-user@$web_server sudo cat /etc/nginx/conf.d/default.conf
@@ -464,13 +467,13 @@ challenges:
   title: Scale the application
   teaser: Let Consul take care of routine adds/moves/changes of services instances.
   assignment: |-
-    Now let's re-run the terraform code for the legacy application, but pass in some new variables for the scale parameters.
+    Now let's re-run the Terraform code for the legacy application, but pass in some new variables for the scale parameters.
 
     ```
     terraform apply -var app_count=3 -var web_count=3 -auto-approve
     ```
 
-    After the terraform run completes, you can monitor the status of your nodes and services using the Consul UI. Once all of the new instances are online and healthy, you can revisit some of the things we reviewed in the previous exercise.
+    After the Terraform run completes, you can monitor the status of your nodes and services using the Consul UI. Once all of the new instances are online and healthy, you can revisit some of the things we reviewed in the previous exercise.
 
     View the nodes and services via CLI
 
@@ -498,7 +501,7 @@ challenges:
 
     The resources for this lab will self-destruct in 8 hours, but to save a little money, **please scale the application back down.**
 
-    Re-run terraform, and monitor the various integration points once again. We'll do so in the background so that you can move on whenever you're ready. <br>
+    Re-run Terraform, and monitor the various integration points once again. We'll do so in the background so that you can move on whenever you're ready. <br>
 
     ```
     nohup terraform apply -var app_count=1 -var web_count=1 -auto-approve > /root/terraform/legacy/scaledown.out &
@@ -656,7 +659,7 @@ challenges:
     kubectl get pods
     ```
 
-    Now you need to expose the Web application the outside world.
+    Now you need to expose the Web application to the outside world.
     You will first set up an Ambassador mapping, and then expose Ambassador to the outside world with annotations for BIG-IP
 
     ```
@@ -718,7 +721,7 @@ challenges:
 - slug: test-app-in-k8s
   id: z9j7j1geznsv
   type: challenge
-  title: Test App in K8s
+  title: Test App in k8s
   teaser: Access your Consul service mesh with BIG-IP
   assignment: |-
     Your application should now be available over BIG-IP. Test it below.
@@ -733,7 +736,7 @@ challenges:
 
     We need to configure mTLS between the applications to resolve this error. Consul intentions for mTLS are deny by default. <br>
 
-    Fetch credentials
+    Fetch credentials.
 
     ```
     vault login -method=userpass username=operations password=Password1
@@ -741,7 +744,7 @@ challenges:
     consul acl token read -self
     ```
 
-    Now update the intentions
+    Now update the intentions.
 
     ```
     consul intention create --allow default/ambassador default/web
@@ -783,5 +786,5 @@ challenges:
     path: /tmp/app-ui.txt
   difficulty: basic
   timelimit: 3000
-checksum: "15196973800934254702"
+checksum: "2566759140769163463"
 show_timer: true
