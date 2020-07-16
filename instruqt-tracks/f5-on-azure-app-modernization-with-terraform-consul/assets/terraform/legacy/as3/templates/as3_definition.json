@@ -12,7 +12,7 @@
          "class": "Application",
          "WAF_Policy": {
              "class": "WAF_Policy",
-             "url": "https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/terraform/bigip/templates/asm_policy.xml",
+             "url": "https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/terraform/legacy/as3/templates/asm_policy.xml",
              "ignoreChanges": false,
              "enforcementMode": "blocking"
          },        
