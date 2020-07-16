@@ -10,7 +10,7 @@ metadata:
   labels:
     product: aes
     app.kubernetes.io/component: ambassador-service
-    cis.f5.com/as3-tenant: Consul_SD
+    cis.f5.com/as3-tenant: Microservices
     cis.f5.com/as3-app: Ambassador
     cis.f5.com/as3-pool: gateway_pool
 spec:
