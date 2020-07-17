@@ -555,7 +555,7 @@
     <web_services_security_settings policy_builder_tracking="enabled" name="XML_WSS_UNSIGNED_TIMESTAMP">enabled</web_services_security_settings>
     <response_page cause="default">
       <response_type>custom</response_type>
-      <response_header>HTTP/1.1 200 OK
+      <response_header>HTTP/1.1 403 Forbidden 
 Cache-Control: no-cache
 Pragma: no-cache
 Connection: close</response_header>
