@@ -3,19 +3,6 @@
 cd /root/terraform/bigip
 set-workdir /root/terraform/bigip
 
-cat <<'EOF' >> /root/terraform/bigip/outputs.tf
-
-output "ambassador_url" {
-  value = "https://${azurerm_public_ip.sip_public_ip.ip_address}"
-}
-EOF
-terraform refresh
-
-ambassador=$(terraform output ambassador_url)
-cat <<EOF > /tmp/app-ui.txt
-App UI: ${ambassador}/ui
-EOF
-
 #app_lb=$(terraform output -state /root/terraform/bigip/terraform.tfstate ambassador_url)
 #cat << EOF > /etc/nginx/conf.d/ambassador.conf
 #server {

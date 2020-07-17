@@ -687,7 +687,7 @@ challenges:
     Deploy the Pods and wait until they are ready.
 
     ```
-    kubectl apply -f apps
+    kubectl apply -f /root/apps
     kubectl get pods
     ```
 
@@ -824,5 +824,5 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
-checksum: "2927815108814796867"
+checksum: "42728677992704600"
 show_timer: true
