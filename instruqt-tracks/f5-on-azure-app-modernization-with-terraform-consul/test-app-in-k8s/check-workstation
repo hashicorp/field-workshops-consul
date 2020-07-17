@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#check the bigip service is up - we should get a 200 at this point
+ambassador=$(terraform output -state /root/terraform/bigip/terraform.tfstate ambassador_url)
+api=$(curl -ks -o /dev/null -w "%{http_code}" $ambassador)
+
+if [ "$api" != "200" ]; then
+  fail-message "Could not reach the app through BIG-IP. BIG-IP returned status code: ${api}"
+  exit 1
+fi
+
+exit 0
