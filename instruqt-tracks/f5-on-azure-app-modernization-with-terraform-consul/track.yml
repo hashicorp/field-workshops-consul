@@ -265,6 +265,9 @@ challenges:
   - title: Shell
     type: terminal
     hostname: workstation
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/provision-core-services.html
   difficulty: basic
   timelimit: 3000
 - slug: deploy-legacy-environments
@@ -345,6 +348,9 @@ challenges:
   - title: Shell
     type: terminal
     hostname: workstation
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
 - slug: review-legacy-environment
@@ -476,6 +482,9 @@ challenges:
     type: code
     hostname: workstation
     path: /root/terraform/legacy
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
 - slug: scale-the-application
@@ -579,6 +588,9 @@ challenges:
     hostname: workstation
     path: /
     port: 8500
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
 - slug: deploy-consul-in-aks
@@ -658,6 +670,9 @@ challenges:
     type: code
     hostname: workstation
     path: /root/helm/aks.yaml
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
 - slug: deploy-app-in-k8s
@@ -733,6 +748,9 @@ challenges:
     type: code
     hostname: workstation
     path: /root/apps
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
 - slug: test-app-in-k8s
@@ -801,7 +819,10 @@ challenges:
     type: code
     hostname: workstation
     path: /tmp/app-ui.txt
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
-checksum: "14572478941210678555"
+checksum: "2927815108814796867"
 show_timer: true
