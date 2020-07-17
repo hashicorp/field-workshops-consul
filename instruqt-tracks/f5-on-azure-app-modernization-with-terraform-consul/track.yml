@@ -471,11 +471,6 @@ challenges:
     hostname: workstation
     path: /ui
     port: 9090
-  - title: F5 BIG-IP
-    type: service
-    hostname: workstation
-    path: /tmui/login.jsp
-    port: 8080
   - title: Vault
     type: service
     hostname: workstation
@@ -565,11 +560,6 @@ challenges:
     hostname: workstation
     path: /ui
     port: 9090
-  - title: F5 BIG-IP
-    type: service
-    hostname: workstation
-    path: /tmui/login.jsp
-    port: 8080
   - title: Vault
     type: service
     hostname: workstation
@@ -841,5 +831,5 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
-checksum: "300215301102560652"
+checksum: "16563466332558442294"
 show_timer: true

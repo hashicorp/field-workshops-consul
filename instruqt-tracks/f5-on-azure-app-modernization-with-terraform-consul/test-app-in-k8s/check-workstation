@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ -f /tmp/skip-check ]; then
+    rm /tmp/skip-check
+    exit 0
+fi
+
 #check the bigip service is up - we should get a 200 at this point
 ambassador=$(terraform output -state /root/terraform/bigip/terraform.tfstate ambassador_url)
 api=$(curl -ks -o /dev/null -w "%{http_code}" $ambassador)
