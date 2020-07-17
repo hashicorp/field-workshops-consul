@@ -325,16 +325,6 @@ challenges:
     contents: |
       For a lot of organizations digital transformation may start with a simple "lift and shift" to the cloud for existing workloads!
   tabs:
-  - title: Consul
-    type: service
-    hostname: workstation
-    path: /
-    port: 8500
-  - title: App
-    type: service
-    hostname: workstation
-    path: /ui
-    port: 9090
   - title: Terraform Code
     type: code
     hostname: workstation
@@ -354,6 +344,16 @@ challenges:
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/final-architecture.html
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: App
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 9090
   difficulty: basic
   timelimit: 3000
 - slug: review-legacy-environment
@@ -832,10 +832,6 @@ challenges:
     type: code
     hostname: workstation
     path: /root/apps
-  - title: App UI
-    type: code
-    hostname: workstation
-    path: /tmp/app-ui.txt
   - title: App Access Info
     type: code
     hostname: workstation
@@ -845,5 +841,5 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
-checksum: "15485599969585278082"
+checksum: "16420162679904053115"
 show_timer: true

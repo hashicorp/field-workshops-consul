@@ -24,4 +24,6 @@ EOF
 kubectl apply -f /root/ambassador/aes-service.yaml
 kubectl apply -f /root/ambassador/f5-ambassador.yaml
 
+sleep 30
+
 exit 0
