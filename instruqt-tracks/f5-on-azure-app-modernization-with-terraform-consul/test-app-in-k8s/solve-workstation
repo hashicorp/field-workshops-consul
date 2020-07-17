@@ -9,5 +9,6 @@ consul intention create --allow default/web default/api
 consul intention create --allow default/api default/cache
 consul intention create --allow default/api default/payments
 
+sleep 30
 
 exit 0
