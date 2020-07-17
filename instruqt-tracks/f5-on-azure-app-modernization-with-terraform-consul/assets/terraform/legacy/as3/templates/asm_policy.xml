@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<policy integrity_check="422cd245435d51d50e99daa6bd30e923" bigip_version="14.1.0" name="/Consul_SD/Web/WAF_Policy">
+<policy integrity_check="a7a92d552def70dea7e69f1b61deeab1" bigip_version="14.1.0" name="/Consul_SD/Web/WAF_Policy">
   <type>Security</type>
   <policy_version>
-    <timestamp>2020-07-16T03:37:11Z</timestamp>
+    <timestamp>2020-07-17T17:08:29Z</timestamp>
     <device_name>bigip1</device_name>
     <policy_name>/Consul_SD/Web/WAF_Policy</policy_name>
-    <last_change>Updated Response Page</last_change>
+    <last_change>URL Content Profile Any:Any on [HTTPS] /admin [add] { audit: policy = /Consul_SD/Web/WAF_Policy, username = f5admin, client IP = 1.1.1.1 }</last_change>
   </policy_version>
   <encoding>utf-8</encoding>
   <description>Rapid Deployment Policy</description>
@@ -37,7 +37,7 @@
     <csrf_url>
       <target_pattern>*</target_pattern>
       <wildcard_order>1</wildcard_order>
-      <last_updated>2020-07-16T03:15:37Z</last_updated>
+      <last_updated>2020-07-17T16:55:28Z</last_updated>
       <csrf_url_method>POST</csrf_url_method>
       <csrf_url_enforcement_action>verify-csrf-token</csrf_url_enforcement_action>
       <required_parameters>ignore</required_parameters>
@@ -1830,7 +1830,7 @@ Connection: close</response_header>
       <post_data_length>4096</post_data_length>
       <check_response>false</check_response>
       <in_staging>false</in_staging>
-      <last_updated>2020-07-16T03:15:37Z</last_updated>
+      <last_updated>2020-07-17T16:55:28Z</last_updated>
       <check_url_length>false</check_url_length>
       <check_request_length>false</check_request_length>
       <check_query_string_length>false</check_query_string_length>
@@ -1898,7 +1898,7 @@ Connection: close</response_header>
       <check_metachars>false</check_metachars>
       <check_methods>false</check_methods>
       <in_staging>false</in_staging>
-      <last_updated>2020-07-16T03:15:46Z</last_updated>
+      <last_updated>2020-07-17T16:55:38Z</last_updated>
       <clickjacking_protection>
         <enabled>false</enabled>
         <allow_rendering_in_frames>Never</allow_rendering_in_frames>
@@ -1918,16 +1918,11 @@ Connection: close</response_header>
       <in_classification>false</in_classification>
       <is_allowed>false</is_allowed>
       <content_profile>
-        <header_name>*</header_name>
-        <header_value>*</header_value>
-        <header_order>0</header_order>
-        <enforcement_type>apply_value_signatures</enforcement_type>
-      </content_profile>
-      <content_profile>
+        <profile_name>Default</profile_name>
         <header_name>Content-Type</header_name>
-        <header_value>*form*</header_value>
-        <header_order>1</header_order>
-        <enforcement_type>http</enforcement_type>
+        <header_value>*xml*</header_value>
+        <header_order>3</header_order>
+        <enforcement_type>xml</enforcement_type>
       </content_profile>
       <content_profile>
         <profile_name>Default</profile_name>
@@ -1937,11 +1932,73 @@ Connection: close</response_header>
         <enforcement_type>json</enforcement_type>
       </content_profile>
       <content_profile>
+        <header_name>Content-Type</header_name>
+        <header_value>*form*</header_value>
+        <header_order>1</header_order>
+        <enforcement_type>http</enforcement_type>
+      </content_profile>
+      <content_profile>
+        <header_name>*</header_name>
+        <header_value>*</header_value>
+        <header_order>0</header_order>
+        <enforcement_type>apply_value_signatures</enforcement_type>
+      </content_profile>
+    </url>
+    <url protocol="HTTPS" type="explicit" name="/admin">
+      <learning_mode>Never</learning_mode>
+      <check_flows>false</check_flows>
+      <is_entry_point>false</is_entry_point>
+      <is_referrer>false</is_referrer>
+      <can_change_domain_cookie>false</can_change_domain_cookie>
+      <description></description>
+      <user_config_level>basic</user_config_level>
+      <check_metachars>false</check_metachars>
+      <check_methods>false</check_methods>
+      <in_staging>false</in_staging>
+      <last_updated>2020-07-17T17:08:29Z</last_updated>
+      <clickjacking_protection>
+        <enabled>false</enabled>
+        <allow_rendering_in_frames>Never</allow_rendering_in_frames>
+      </clickjacking_protection>
+      <cors_enforcement_enable>false</cors_enforcement_enable>
+      <allow_cors>false</allow_cors>
+      <cors_allow_credentials_handling>unmodified</cors_allow_credentials_handling>
+      <cors_allow_credentials_value>disallow</cors_allow_credentials_value>
+      <cors_check_maximum_age>false</cors_check_maximum_age>
+      <cors_maximum_age>1800</cors_maximum_age>
+      <cors_allowed_origins_handling>unmodified</cors_allowed_origins_handling>
+      <cors_allowed_methods_handling>unmodified</cors_allowed_methods_handling>
+      <cors_allowed_headers_handling>unmodified</cors_allowed_headers_handling>
+      <cors_exposed_headers_handling>unmodified</cors_exposed_headers_handling>
+      <flg_wildcard_includes_slash>false</flg_wildcard_includes_slash>
+      <check_attack_signatures>true</check_attack_signatures>
+      <in_classification>false</in_classification>
+      <is_allowed>false</is_allowed>
+      <content_profile>
         <profile_name>Default</profile_name>
         <header_name>Content-Type</header_name>
         <header_value>*xml*</header_value>
         <header_order>3</header_order>
         <enforcement_type>xml</enforcement_type>
+      </content_profile>
+      <content_profile>
+        <profile_name>Default</profile_name>
+        <header_name>Content-Type</header_name>
+        <header_value>*json*</header_value>
+        <header_order>2</header_order>
+        <enforcement_type>json</enforcement_type>
+      </content_profile>
+      <content_profile>
+        <header_name>Content-Type</header_name>
+        <header_value>*form*</header_value>
+        <header_order>1</header_order>
+        <enforcement_type>http</enforcement_type>
+      </content_profile>
+      <content_profile>
+        <header_name>*</header_name>
+        <header_value>*</header_value>
+        <header_order>0</header_order>
+        <enforcement_type>apply_value_signatures</enforcement_type>
       </content_profile>
     </url>
     <url protocol="HTTPS" type="wildcard" name="*">
@@ -1956,7 +2013,7 @@ Connection: close</response_header>
       <check_metachars>false</check_metachars>
       <check_methods>false</check_methods>
       <in_staging>false</in_staging>
-      <last_updated>2020-07-16T03:15:46Z</last_updated>
+      <last_updated>2020-07-17T16:55:38Z</last_updated>
       <clickjacking_protection>
         <enabled>false</enabled>
         <allow_rendering_in_frames>Never</allow_rendering_in_frames>
@@ -1977,16 +2034,11 @@ Connection: close</response_header>
       <in_classification>false</in_classification>
       <is_allowed>true</is_allowed>
       <content_profile>
-        <header_name>*</header_name>
-        <header_value>*</header_value>
-        <header_order>0</header_order>
-        <enforcement_type>apply_value_signatures</enforcement_type>
-      </content_profile>
-      <content_profile>
+        <profile_name>Default</profile_name>
         <header_name>Content-Type</header_name>
-        <header_value>*form*</header_value>
-        <header_order>1</header_order>
-        <enforcement_type>http</enforcement_type>
+        <header_value>*json*</header_value>
+        <header_order>2</header_order>
+        <enforcement_type>json</enforcement_type>
       </content_profile>
       <content_profile>
         <profile_name>Default</profile_name>
@@ -1996,11 +2048,16 @@ Connection: close</response_header>
         <enforcement_type>xml</enforcement_type>
       </content_profile>
       <content_profile>
-        <profile_name>Default</profile_name>
         <header_name>Content-Type</header_name>
-        <header_value>*json*</header_value>
-        <header_order>2</header_order>
-        <enforcement_type>json</enforcement_type>
+        <header_value>*form*</header_value>
+        <header_order>1</header_order>
+        <enforcement_type>http</enforcement_type>
+      </content_profile>
+      <content_profile>
+        <header_name>*</header_name>
+        <header_value>*</header_value>
+        <header_order>0</header_order>
+        <enforcement_type>apply_value_signatures</enforcement_type>
       </content_profile>
     </url>
     <url protocol="HTTP" type="wildcard" name="*">
@@ -2015,7 +2072,7 @@ Connection: close</response_header>
       <check_metachars>false</check_metachars>
       <check_methods>false</check_methods>
       <in_staging>false</in_staging>
-      <last_updated>2020-07-16T03:15:46Z</last_updated>
+      <last_updated>2020-07-17T16:55:38Z</last_updated>
       <clickjacking_protection>
         <enabled>false</enabled>
         <allow_rendering_in_frames>Never</allow_rendering_in_frames>
@@ -2036,16 +2093,11 @@ Connection: close</response_header>
       <in_classification>false</in_classification>
       <is_allowed>true</is_allowed>
       <content_profile>
-        <header_name>*</header_name>
-        <header_value>*</header_value>
-        <header_order>0</header_order>
-        <enforcement_type>apply_value_signatures</enforcement_type>
-      </content_profile>
-      <content_profile>
+        <profile_name>Default</profile_name>
         <header_name>Content-Type</header_name>
-        <header_value>*form*</header_value>
-        <header_order>1</header_order>
-        <enforcement_type>http</enforcement_type>
+        <header_value>*json*</header_value>
+        <header_order>2</header_order>
+        <enforcement_type>json</enforcement_type>
       </content_profile>
       <content_profile>
         <profile_name>Default</profile_name>
@@ -2055,11 +2107,16 @@ Connection: close</response_header>
         <enforcement_type>xml</enforcement_type>
       </content_profile>
       <content_profile>
-        <profile_name>Default</profile_name>
         <header_name>Content-Type</header_name>
-        <header_value>*json*</header_value>
-        <header_order>2</header_order>
-        <enforcement_type>json</enforcement_type>
+        <header_value>*form*</header_value>
+        <header_order>1</header_order>
+        <enforcement_type>http</enforcement_type>
+      </content_profile>
+      <content_profile>
+        <header_name>*</header_name>
+        <header_value>*</header_value>
+        <header_order>0</header_order>
+        <enforcement_type>apply_value_signatures</enforcement_type>
       </content_profile>
     </url>
     <character_set>
@@ -2329,7 +2386,7 @@ Connection: close</response_header>
       <user_config_level>advanced</user_config_level>
       <check_metachars>false</check_metachars>
       <in_staging>false</in_staging>
-      <last_updated>2020-07-16T03:15:41Z</last_updated>
+      <last_updated>2020-07-17T16:55:32Z</last_updated>
       <cors_enforcement_enable>false</cors_enforcement_enable>
       <allow_cors>false</allow_cors>
       <wildcard_includes_slash>true</wildcard_includes_slash>
@@ -2356,7 +2413,7 @@ Connection: close</response_header>
       <user_config_level>advanced</user_config_level>
       <check_metachars>false</check_metachars>
       <in_staging>false</in_staging>
-      <last_updated>2020-07-16T03:15:41Z</last_updated>
+      <last_updated>2020-07-17T16:55:32Z</last_updated>
       <cors_enforcement_enable>false</cors_enforcement_enable>
       <allow_cors>false</allow_cors>
       <wildcard_includes_slash>true</wildcard_includes_slash>
@@ -2389,7 +2446,7 @@ Connection: close</response_header>
       <match_regular_expression></match_regular_expression>
       <is_sensitive>false</is_sensitive>
       <in_staging>false</in_staging>
-      <last_updated>2020-07-16T03:15:37Z</last_updated>
+      <last_updated>2020-07-17T16:55:28Z</last_updated>
       <parameter_name_metachars>
         <check_metachars>false</check_metachars>
       </parameter_name_metachars>
@@ -2414,7 +2471,7 @@ Connection: close</response_header>
       <match_regular_expression></match_regular_expression>
       <is_sensitive>false</is_sensitive>
       <in_staging>false</in_staging>
-      <last_updated>2020-07-16T03:15:37Z</last_updated>
+      <last_updated>2020-07-17T16:55:28Z</last_updated>
       <parameter_name_metachars>
         <check_metachars>false</check_metachars>
       </parameter_name_metachars>
@@ -23033,7 +23090,7 @@ Connection: close</response_header>
     <identify_device>false</identify_device>
     <maximum_prevention_time>3600</maximum_prevention_time>
     <flg_enabled>false</flg_enabled>
-    <last_updated>1594869337</last_updated>
+    <last_updated>1595004928</last_updated>
     <detection_threshold_credentials_stuffing_matches_reached>100</detection_threshold_credentials_stuffing_matches_reached>
     <detection_threshold_action>alarm-and-captcha</detection_threshold_action>
     <login_attempts_from_the_same_user_threshold>3</login_attempts_from_the_same_user_threshold>
