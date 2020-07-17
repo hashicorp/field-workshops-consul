@@ -134,6 +134,17 @@ challenges:
 
     **NOTE:** you will need open the URL provided by the output in a separate tab.  If you are using chrome, you
     may be presented with a certificate error, to bypass this you can type "thisisunsafe" into the Chrome window.
+
+    The AKS, HCS services may not be running quite yet, you can monitor their progress with the following commands.
+
+    Montior HCS provisioning
+    ```
+    cat /root/terraform/hcs/terraform.out
+    ```
+    Montior AKS provisioning
+    ```
+    cat /root/terraform/aks/terraform.out
+    ```
   notes:
   - type: text
     contents: |
@@ -792,5 +803,5 @@ challenges:
     path: /tmp/app-ui.txt
   difficulty: basic
   timelimit: 3000
-checksum: "7777091523864421092"
+checksum: "14572478941210678555"
 show_timer: true

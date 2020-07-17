@@ -1,0 +1,9 @@
+
+
+cd /root/terraform/legacy
+terraform apply -auto-approve
+
+cd /root/terraform/legacy/as3
+terraform apply -auto-approve
+
+

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd /root/terraform/bigip
+terraform apply -auto-approve > /root/terraform/vault/terraform.out 
+
+exit 0

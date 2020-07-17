@@ -1,0 +1,12 @@
+#!/bin/bash
+
+cd /root/terraform/vault
+nohup terraform apply -auto-approve > /root/terraform/vault/terraform.out &
+
+cd /root/terraform/aks
+nohup terraform apply -auto-approve > /root/terraform/aks/terraform.out &
+
+cd /root/terraform/hcs
+nohup terraform apply -auto-approve > /root/terraform/hcs/terraform.out &
+
+exit 0
