@@ -43,10 +43,10 @@ Table of Contents
 =========================
 
 1. Consul Overview
+1. Consul Use Cases
 1. Consul Architecture
 1. Consul Basics
     * Lab - Meet Consul
-1. Consul Use Cases
 1. Service Discovery
     * Lab - Service Discovery with Consul
 1. Service Segmentation
