@@ -34,7 +34,7 @@ challenges:
 
     Their CIDR blocks are listed below:
     ```
-    hcs-vnet: 10.1.0.0/16
+    hcs-vnet: 10.0.0.0/16
     shared-svcs-vnet: 10.2.0.0/16
     legacy-vnet: 10.3.0.0/16
     aks-vnet: 10.4.0.0/16
@@ -54,6 +54,9 @@ challenges:
     type: code
     hostname: workstation
     path: /root/terraform/vnet
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/provision-azure-vnets.html
   difficulty: basic
   timelimit: 3000
 - slug: provision-core-services
@@ -105,6 +108,9 @@ challenges:
     type: code
     hostname: workstation
     path: /root/terraform/hcs
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/provision-core-services.html
   difficulty: basic
   timelimit: 3000
 - slug: provision-f5
@@ -786,5 +792,5 @@ challenges:
     path: /tmp/app-ui.txt
   difficulty: basic
   timelimit: 3000
-checksum: "2566759140769163463"
+checksum: "7777091523864421092"
 show_timer: true
