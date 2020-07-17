@@ -6,6 +6,7 @@ if [ -f /tmp/skip-check ]; then
 fi
 
 #Check we have 3 VNETs in RG
+echo "Verifying Azure VNETs"
 rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
 vnet_count=$(az network vnet list -g $rg | jq '. | length')
 echo $vnet_count

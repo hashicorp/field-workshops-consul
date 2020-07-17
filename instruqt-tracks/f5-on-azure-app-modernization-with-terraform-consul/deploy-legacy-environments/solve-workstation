@@ -1,9 +1,11 @@
-
+#!/bin/bash
 
 cd /root/terraform/legacy
-terraform apply -auto-approve
+terraform apply -auto-approve > /root/terraform/legacy/terraform.out
 
 cd /root/terraform/legacy/as3
-terraform apply -auto-approve
+terraform apply -auto-approve >  /root/terraform/legacy/as3/terraform.out
 
+sleep 30
 
+exit 0 

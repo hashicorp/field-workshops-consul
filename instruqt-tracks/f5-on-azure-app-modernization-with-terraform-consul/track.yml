@@ -159,7 +159,7 @@ challenges:
     path: /root/terraform/bigip
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/provision-core-services.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/provision-f5.html
   difficulty: basic
   timelimit: 3000
 - slug: validate-hcs
@@ -673,6 +673,10 @@ challenges:
     type: code
     hostname: workstation
     path: /root/helm/aks.yaml
+  - title: App Access Info
+    type: code
+    hostname: workstation
+    path: /info.txt
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/final-architecture.html
@@ -751,6 +755,10 @@ challenges:
     type: code
     hostname: workstation
     path: /root/apps
+  - title: App Access Info
+    type: code
+    hostname: workstation
+    path: /info.txt
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/final-architecture.html
@@ -799,6 +807,12 @@ challenges:
     curl -ksv $ambassador
     ```
 
+    Also verify that our WAF policy is still working
+
+    ```
+    curl -ksv $ambassador/admin
+    ```
+
     Congrats! You just migrated to Consul mesh with BIG-IP.
   tabs:
   - title: Consul
@@ -822,10 +836,14 @@ challenges:
     type: code
     hostname: workstation
     path: /tmp/app-ui.txt
+  - title: App Access Info
+    type: code
+    hostname: workstation
+    path: /info.txt
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
-checksum: "42728677992704600"
+checksum: "15485599969585278082"
 show_timer: true

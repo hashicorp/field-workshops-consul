@@ -1,0 +1,3 @@
+#!/bin/bash
+
+terraform apply -var app_count=1 -var web_count=1 -auto-approve
