@@ -263,6 +263,46 @@ jobs:
               echo "Instruqt track test failed three times."
               exit 1
             fi
+  f5-hashicorp:
+    docker:
+      - image: ubuntu:latest
+    steps:
+      - checkout
+      - run:
+          name: Hashicorp & F5
+          no_output_timeout: 30m
+          command: |
+            VERSION=$INSTRUQT_VERSION
+            apt -y update
+            apt -y install wget unzip
+            wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
+            cd /tmp
+            unzip instruqt.zip
+            cp instruqt /usr/local/bin/instruqt
+            chmod +x /usr/local/bin/instruqt
+            echo "yes" | instruqt version
+            RETVAL=$?
+            if [[ $RETVAL -ne 0 ]]; then
+              echo "Instruqt is not installed correctly."
+              exit 1
+            else
+              echo "Instruqt is installed and updated to most recent version."
+            fi
+            cd /root/project/instruqt-tracks/f5-hashicorp-app-mod-tf-consul
+            echo "Running instruqt track push..."
+            instruqt track push --force
+            echo "Running instruqt track test..."
+            # Retry instruqt track test up to 3 times
+            n=0
+            until [ $n -ge 3 ]; do
+              instruqt track test --skip-fail-check && break
+              n=$[$n+1]
+              sleep 5
+            done
+            if [ $n -ge 3 ]; then
+              echo "Instruqt track test failed three times."
+              exit 1
+            fi
 workflows:
   version: 2
   build-and-deploy:
@@ -314,6 +354,13 @@ workflows:
             branches:
               only:
                 - master
+      - f5-hashicorp:
+          requires:
+            - validate
+          filters:
+            branches:
+              only:
+                - master
   nightly-build:
     triggers:
       - schedule:
@@ -340,5 +387,8 @@ workflows:
           requires:
             - validate
       - consul-on-aws:
+          requires:
+            - validate
+      - f5-hashicorp:
           requires:
             - validate
