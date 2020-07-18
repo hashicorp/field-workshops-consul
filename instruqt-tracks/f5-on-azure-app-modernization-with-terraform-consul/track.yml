@@ -353,7 +353,7 @@ challenges:
     type: service
     hostname: workstation
     path: /ui
-    port: 9090
+    port: 8080
   difficulty: basic
   timelimit: 3000
 - slug: review-legacy-environment
@@ -470,7 +470,7 @@ challenges:
     type: service
     hostname: workstation
     path: /ui
-    port: 9090
+    port: 8080
   - title: Vault
     type: service
     hostname: workstation
@@ -559,7 +559,7 @@ challenges:
     type: service
     hostname: workstation
     path: /ui
-    port: 9090
+    port: 8080
   - title: Vault
     type: service
     hostname: workstation
@@ -659,6 +659,11 @@ challenges:
   - title: Shell
     type: terminal
     hostname: workstation
+  - title: App
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8080
   - title: Helm
     type: code
     hostname: workstation
@@ -745,6 +750,11 @@ challenges:
     type: code
     hostname: workstation
     path: /root/apps
+  - title: App
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8080
   - title: App Access Info
     type: code
     hostname: workstation
@@ -792,9 +802,9 @@ challenges:
     Now try the application again.
 
     ```
-    ambassador=$(terraform output ambassador_url)
-    echo $ambassador
-    curl -ksv $ambassador
+    app=$(terraform output app_url)
+    echo $app
+    curl -ksv $app
     ```
 
     Also verify that our WAF policy is still working
@@ -818,6 +828,11 @@ challenges:
   - title: Shell
     type: terminal
     hostname: workstation
+  - title: App
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8080
   - title: Apps
     type: code
     hostname: workstation
@@ -831,5 +846,5 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
-checksum: "9942964485947748211"
+checksum: "16609802619764221253"
 show_timer: true

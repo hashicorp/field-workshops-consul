@@ -26,12 +26,11 @@ data:
               "ignoreChanges": false,
               "enforcementMode": "blocking"
             },
-            "template": "https",
+            "template": "http",
             "serviceMain": {
-              "class": "Service_HTTPS",
-              "virtualPort": 443,
+              "class": "Service_HTTP",
+              "virtualPort": 8080,
               "clientTLS": {"bigip":"/Common/serverssl"},
-              "serverTLS": {"bigip":"/Common/clientssl"},
               "policyWAF": {
                 "use": "/Consul_SD/Ambassador/WAF_Policy"
               },

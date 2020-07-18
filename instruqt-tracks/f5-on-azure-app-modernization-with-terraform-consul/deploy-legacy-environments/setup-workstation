@@ -19,7 +19,7 @@ sleep 10
 app_lb=$(terraform output -state /root/terraform/bigip/terraform.tfstate app_url)
 cat << EOF > /etc/nginx/conf.d/app.conf
 server {
-  listen 9090;
+  listen 8080;
   location / {
     proxy_pass ${app_lb};
     proxy_set_header X-Real-IP \$remote_addr;
