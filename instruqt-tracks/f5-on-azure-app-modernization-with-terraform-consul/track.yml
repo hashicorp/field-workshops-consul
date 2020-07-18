@@ -846,5 +846,5 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/f5-tf-consul-app-mod/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
-checksum: "10007995079570853030"
+checksum: "11100673795420054799"
 show_timer: true
