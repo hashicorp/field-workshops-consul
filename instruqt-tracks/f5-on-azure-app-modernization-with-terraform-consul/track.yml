@@ -773,9 +773,9 @@ challenges:
     Your application should now be available over BIG-IP. Test it below.
 
     ```
-    ambassador=$(terraform output ambassador_url)
-    echo $ambassador
-    curl -ksv $ambassador
+    app=$(terraform output app_url)
+    echo $app
+    curl -sv $app
     ```
 
     You should see the following error: `upstream connect error or disconnect/reset before headers. reset reason: connection termination` <br>
@@ -804,13 +804,13 @@ challenges:
     ```
     app=$(terraform output app_url)
     echo $app
-    curl -ksv $app
+    curl -sv $app
     ```
 
     Also verify that our WAF policy is still working
 
     ```
-    curl -ksv $ambassador/admin
+    curl -sv $app/admin
     ```
 
     Congrats! You just migrated to Consul mesh with BIG-IP.
