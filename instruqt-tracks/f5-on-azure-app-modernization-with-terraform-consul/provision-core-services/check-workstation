@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sleep 10
+
 if [ -f /tmp/skip-check ]; then
     rm /tmp/skip-check
     exit 0
