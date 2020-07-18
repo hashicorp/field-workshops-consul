@@ -129,10 +129,10 @@ rm -f *.zip
 cd /root
 
 #get assets
-git clone -b f5-tf-consul-app-mod https://github.com/hashicorp/field-workshops-consul.git
-cp -r field-workshops-consul/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/terraform .
-cp -r field-workshops-consul/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/apps .
-cp -r field-workshops-consul/instruqt-tracks/f5-on-azure-app-modernization-with-terraform-consul/assets/ambassador .
+git clone -b https://github.com/hashicorp/field-workshops-consul.git
+cp -r field-workshops-consul/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/terraform .
+cp -r field-workshops-consul/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/apps .
+cp -r field-workshops-consul/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/ambassador .
 rm -rf field-workshops-consul
 
 #ssh agent
