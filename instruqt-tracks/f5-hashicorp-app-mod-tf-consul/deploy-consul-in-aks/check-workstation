@@ -1,0 +1,10 @@
+#!/bin/bash
+
+kubectl wait -n consul --for=condition=Ready $(kubectl get pod -n consul --selector=app=consul --selector=component=client -o name) --timeout=10s
+if [ $? -ne 0 ]
+then
+  fail-message "Consul pod(s) is not ready on AKS."
+  exit 1
+fi
+
+exit 0

@@ -1,0 +1,108 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: ambassador-consul-connect
+rules:
+  - apiGroups: [""]
+    resources:
+      - secrets
+    verbs: ["get", "list", "create", "delete", "patch"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ambassador-consul-connect
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ambassador-consul-connect
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ambassador-consul-connect
+subjects:
+  - kind: ServiceAccount
+    name: ambassador-consul-connect
+    namespace: ambassador
+---
+apiVersion: getambassador.io/v2
+kind: TLSContext
+metadata:
+  name: ambassador-consul
+spec:
+  hosts: []
+  secret: ambassador-consul-connect
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ambassador-consul-connector
+spec:
+  ports:
+  - name: ambassador-consul-connector
+    port: 80
+  selector:
+    component: consul-connect
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ambassador-consul-connect-integration
+  labels:
+    app: ambassador
+    component: consul-connect
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ambassador
+      component: consul-connect
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: ambassador
+        component: consul-connect
+      annotations:
+        "consul.hashicorp.com/connect-inject": "false"
+    spec:
+      serviceAccountName: ambassador-consul-connect
+      terminationGracePeriodSeconds: 0
+      containers:
+        - name: consul-connect-integration
+          image: quay.io/datawire/ambassador_pro:consul_connect_integration-0.11.0
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: 200m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 50Mi
+          env:
+            - name: CONSUL_HTTP_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: ambassador-acl-token
+                  key: token
+            - name: _CONSUL_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: _CONSUL_PORT
+              value: "8501"
+            - name: CONSUL_HTTP_SSL
+              value: "true"
+            - name: CONSUL_HTTP_SSL_VERIFY
+              value: "false"
+---
+apiVersion: getambassador.io/v2
+kind: ConsulResolver
+metadata:
+  name: consul-east-us
+spec:
+  address: "${HOST_IP}:8501"
+  datacenter: east-us

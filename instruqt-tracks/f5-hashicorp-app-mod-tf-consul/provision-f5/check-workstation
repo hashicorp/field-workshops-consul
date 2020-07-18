@@ -1,0 +1,67 @@
+#!/bin/bash
+
+if [ -f /tmp/skip-check ]; then
+    rm /tmp/skip-check
+    exit 0
+fi
+
+# check that bigip is provisioned
+url=$(terraform output -state /root/terraform/bigip/terraform.tfstate mgmt_url)
+echo "F5 Management URL is: $url"
+if [ -z "${url}" ]; then
+  fail-message "BIG-IP is not provisoned yet"
+  exit 1
+fi
+
+vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate vault_lb)
+echo "Vault Load balancer is: $vault_lb"
+if [ -z "${vault_lb}" ]; then
+  fail-message "Vault is not provisioned yet"
+  exit 1
+fi
+
+consul_lb=$(terraform output -state /root/terraform/hcs/terraform.tfstate consul_url)
+echo "Consul Load balancer is: $consul_lb"
+
+if [ -z "${vault_lb}" ]; then
+  fail-message "Vault is not provisioned yet"
+  exit 1
+fi
+
+# need to make sure that HCS, AKS, and Vault are ready for the next step
+rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+
+# Check vault instance is provisioning
+echo "Checking vault instance"
+status=$(az vm get-instance-view -g $rg --name vault-vm | jq -r .provisioningState)
+echo $status
+if [ "${status}" != "Succeeded" ] ; then
+  fail-message "Vault instance is not provisioning/provisioned. Wait a few moments and try again. Current state is: ${status}"
+  exit 1
+fi
+
+# check aks is provisioning
+echo "Checking aks instance"
+status=$(az aks list -g $rg | jq -r  '.[0].provisioningState')
+echo $status
+if [ "${status}" != "Succeeded" ] ; then
+  fail-message "AKS cluster is not provisioning/provisioned. Wait a few moments and try again. Current state is: ${status}"
+  exit 1
+fi
+
+# check hcs is provisioning
+echo "Checking HCS cluster"
+status=$(az hcs list -g ${rg} | jq -r '.[0].provisioningState')
+echo $status
+if [ "${status}" != "Succeeded" ] ; then
+  fail-message "HCS cluster is not provisioning/provisioned. Wait a few moments and try again. Current state is: ${status}"
+  exit 1
+fi
+exit 0
+
+consul_lb=$(terraform output -state /root/terraform/hcs/terraform.tfstate consul_url)
+if [ -z "${consul_lb}" ] ; then
+  fail-message "Consul cluster is not available yet!"
+  exit 1
+fi
+

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ -f /tmp/skip-check ]; then
+    rm /tmp/skip-check
+    exit 0
+fi
+
+#check we get a 200 from App
+app=$(terraform output -state /root/terraform/bigip/terraform.tfstate app_url)
+api=$(curl -s -o /dev/null -w "%{http_code}" {$app})
+echo $api
+if [ "${api}" != "200" ]; then
+  fail-message "Your app is not running yet"
+  exit 1
+fi

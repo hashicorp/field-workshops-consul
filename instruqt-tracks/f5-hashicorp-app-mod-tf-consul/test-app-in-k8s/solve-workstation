@@ -1,0 +1,14 @@
+#!/bin/bash
+
+vault login -method=userpass username=operations password=Password1
+export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
+consul acl token read -self
+
+consul intention create --allow default/ambassador default/web
+consul intention create --allow default/web default/api
+consul intention create --allow default/api default/cache
+consul intention create --allow default/api default/payments
+
+sleep 30
+
+exit 0

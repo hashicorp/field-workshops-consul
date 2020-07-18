@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd /root/terraform/bigip
+set-workdir /root/terraform/bigip
+
+ambassador=$(terraform output -state /root/terraform/bigip/terraform.tfstate ambassador_url)
+echo "New Microservices URL = $ambassador" >> /info.txt
+
+exit 0
