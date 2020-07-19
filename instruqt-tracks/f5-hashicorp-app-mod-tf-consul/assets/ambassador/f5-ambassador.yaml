@@ -30,7 +30,6 @@ data:
             "serviceMain": {
               "class": "Service_HTTP",
               "virtualPort": 8080,
-              "clientTLS": {"bigip":"/Common/serverssl"},
               "policyWAF": {
                 "use": "/Consul_SD/Ambassador/WAF_Policy"
               },
@@ -42,11 +41,11 @@ data:
             "gateway_pool": {
               "class": "Pool",
               "monitors": [
-                "https"
+                "http"
               ],
               "members": [
                 {
-                  "servicePort": 443,
+                  "servicePort": 8080,
                   "serverAddresses": []
                 }
               ]

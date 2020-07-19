@@ -17,7 +17,7 @@ mkdir ~/.kube
 terraform output -state /root/terraform/aks/terraform.tfstate aks_kube_config > ~/.kube/config
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
-#ambassador
+#ambassador secrets
 cat << EOF > /root/policies/ambassador.hcl
 service "ambassador" {
   policy = "write"
@@ -26,11 +26,26 @@ EOF
 consul acl policy create -name "ambassador" -description "ambassador connect" -rules @/root/policies/ambassador.hcl
 kubectl create namespace ambassador
 kubectl create secret -n ambassador generic ambassador-acl-token --from-literal=token=$(consul acl token create  -policy-name ambassador  -format=json | jq -r .SecretID)
+
 #ambassador
 kubectl apply -f https://www.getambassador.io/yaml/aes-crds.yaml && \
 kubectl wait --for condition=established --timeout=90s crd -lproduct=aes && \
 kubectl apply -f /root/ambassador/aes.yaml
 kubectl apply -n ambassador -f /root/ambassador/consul-connector.yaml
+cat <<EOF | kubectl apply -f -
+apiVersion: getambassador.io/v2
+kind: Host
+metadata:
+  name: ambassador-host
+spec:
+  hostname: ""
+  acmeProvider:
+    authority: none
+  requestPolicy:
+    insecure:
+      action: Route
+      additionalPort: 8080
+EOF
 
 #helm chart values
 helm repo add hashicorp https://helm.releases.hashicorp.com
