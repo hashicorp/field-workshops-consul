@@ -32,11 +32,23 @@ then
 fi
 
 #check the bigip service is up - we should get a 503 at this point
-ambassador=$(terraform output -state /root/terraform/bigip/terraform.tfstate app_url)
-api=$(curl -s -o /dev/null -w "%{http_code}" $ambassador)
-
-if [ "$api" != "503" ]; then
-  fail-message "Could not get to Ambassador backend gateway. Check your BIG-IP. Status code is: ${api}"
+app=$(terraform output -state /root/terraform/bigip/terraform.tfstate app_url)
+n=0
+until [ $n -ge 3 ]; do
+  status=$(curl --output /dev/null --silent --head -w "%{http_code}" ${app})
+  if [ "${status}" = "503" ]; then
+    break
+  fi
+  n=$[$n+1]
+  echo "retrying api..."
+  sleep 5
+done
+if [ $n -ge 3 ]; then
+  echo "Logging a BIG-IP API status response for debug: $(curl --output /dev/null --silent --head --fail -w "%{http_code}" ${app})"
+  echo "Logging a verbose API request for debug..."
+  response=$(curl -v --silent ${app})
+  echo ${response}
+  fail-message "Service did not return an expected 503. Check BIG-IP."
   exit 1
 fi
 
