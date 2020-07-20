@@ -25,9 +25,6 @@
              ],
              "pool": "web_pool",
              "persistenceMethods": [],
-             "profileMultiplex": {
-             "bigip": "/Common/oneconnect"
-             },
              "policyWAF": {
              "use": "/Consul_SD/Web/WAF_Policy"
              }
