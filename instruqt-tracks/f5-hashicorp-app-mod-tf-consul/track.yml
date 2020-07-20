@@ -401,7 +401,23 @@ challenges:
 
     ** Test WAF Policy **
 
-    The sample WAF policy includes a rule that ensures that the `/admin` path of the application is not available externally.  Open a new tab using the URL of the application contained within the `App Access Info` tab.  The application should come up, add `/admin` to the URL in your browser.
+    The sample WAF policy includes a rule that ensures that the `/admin` path of the application is not available externally.  You open a new tab using the URL of the application contained within the `App Access Info` tab.  The application should come up, add `/admin` to the URL in your browser. We can also test the WAF policy using curl in the local shell.
+
+    Test a URL allowed by the WAF policy
+    ```
+    vip=$(terraform output -state /root/terraform/bigip/terraform.tfstate  app_url)
+    curl $vip
+
+    ```
+
+    Test a URL blocked by the WAF policy
+    ```
+    vip=$(terraform output -state /root/terraform/bigip/terraform.tfstate  app_url)
+    curl $vip/admin
+
+    ```
+
+    Next you can explore some of the service discovery capabilities of Consul.
 
     View the nodes and services via CLI
 
@@ -846,5 +862,5 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
-checksum: "11383964858139974263"
+checksum: "4143266467998108297"
 show_timer: true
