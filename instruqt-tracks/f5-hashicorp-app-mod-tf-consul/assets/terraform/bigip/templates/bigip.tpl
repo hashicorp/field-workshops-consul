@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# disable UI timeout for convenience
+tmsh modify sys httpd auth-pam-idle-timeout 86400
+tmsh save sys config
+bigstart restart httpd
+
 # BIG-IPS ONBOARD SCRIPT
 
 LOG_FILE=${onboard_log}
