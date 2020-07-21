@@ -16,11 +16,11 @@ Service Segmentation - Intro
 * Routing
 
 ???
-In a sophisticated environment, Consul provides a distributed service mesh to connect, secure, and configure services across any runtime platform and cloud.
+Consul provides a distributed service mesh to connect, secure, and configure services across any runtime platform and cloud.
 
-It provides an API driven control plane, which integrates with proxies for the data plane.
+It provides a highly scalable API driven control plane, and integrates with an array of common proxies that serve as the data plane. Envoy is the most widely used in most service meshes.
 
-This allows critical functionality like naming, segmentation and authorization, and routing to be handled by proxies at the edge rather than using centralized middleware.
+This allows critical functionality like naming, segmentation and authorization, at the edge rather than using centralized middleware.  But Consul is flexible.  I can also be used in hybrid environments that employ traditional networking techniques.
 
 ---
 name: Segmentation-Intro-Security
@@ -34,11 +34,11 @@ Service Segmentation - Intro
 * API-driven
 
 ???
-In addtition, Consul enables fine grained service segmentation to secure service-to-service communication with automatic TLS encryption and identity-based authorization.
+Consul enables fine grained service segmentation to secure service-to-service communication with automatic TLS encryption and identity-based authorization.
 
-You can also integrate it with common centralized PKI and certificate management.
+Consul is flexible and can also integrate it with common centralized PKI and certificate management systems like HashiCorp Vault.
 
-Service configuration is achieved through API-driven Key/Value store that can be used to easily configure services at runtime in any environment.
+Service configuration is achieved through an API-driven Key/Value store that can be used to easily configure services at runtime in any environment.
 
 ---
 name: Segmentation-Control-Plane
@@ -52,7 +52,7 @@ Service Mesh Architecture - Control Plane
 * Manage access
 
 ???
-The Control Plane is responsible for making decisions about where to send the traffic and to configure the data plane. It's also responsible for features like network policy enforcement and providing service discovery data to the data plane.
+The Control Plane is responsible for configuring the data plane. It's responsible for features like network policy enforcement and providing service discovery data to the data plane. It is designed to be highly scalable by not making direct decisions on traffic by sending instructions to the data plane only when something changes.   This leverages capabilities such as long polling and integrated K/V that have been part of Consul since the beginning.
 
 Consul is the control plane for the Connect service mesh:
 
@@ -77,6 +77,8 @@ The Data Plane provides the ability to forward requests from the applications, i
 The Data Plane is in the critical path of data flow from one application to the other and hence the need for high throughput and low latency.
 
 The Consul Envoy integration is currently the primary way to utilize advanced layer 7 features provided by Consul, but can integrate with other third party proxies.
+
+The Consul data plane caches instructions from the control plane and only changes on updates making it extremely fast and highly scalable. 
 
 ---
 name: Segmentation-Identity
@@ -110,7 +112,7 @@ Service Mesh - Service Access Graph
 ???
 With each service having its own identity, we're able to allow or deny service-to-service communication with Intentions. Intentions follow the same concept as firewall rules, where you grant or deny access based on source and destination. Except we're not specifying IPs or IP ranges. Instead, we're specifying service names and letting Consul deal with the underlying networking.
 
-So now, we can scale out without adding more firewall rules, and federation between clusters in different datacenters and clouds, we can easily find services no matter where they reside.
+Now, we can scale out without adding or deleting firewall rules when service endpoints come alive or die. Because Consul provides a way to federate services between clusters and datacenters, we can securely connect services no matter where they reside.
 
 
 ---
@@ -127,7 +129,7 @@ Service Mesh - Advanced Routing
 ???
 Layer 7 traffic management allows operators to divide L7 traffic between different subsets of service instances when using Connect.
 
-There are many ways you may wish to carve up a single datacenter's pool of services beyond simply returning all healthy instances for load balancing.
+There are many ways you may wish to segment services beyond simply returning all healthy instances for load balancing. This includes patterns like Canary Testing, A/B or Blue/Green deployments.  
 
 
 ---
