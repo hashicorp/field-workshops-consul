@@ -30,6 +30,12 @@ data:
             "serviceMain": {
               "class": "Service_HTTP",
               "virtualPort": 8080,
+              "profileHTTP": {
+                  "bigip": "/Common/http"
+              },
+              "profileTCP": {
+                  "bigip": "/Common/tcp"
+              },
               "policyWAF": {
                 "use": "/Consul_SD/Ambassador/WAF_Policy"
               },

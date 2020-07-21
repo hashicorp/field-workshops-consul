@@ -20,6 +20,12 @@
          "Web_VIP": {
              "class": "Service_HTTP",
              "virtualPort": 8080,
+             "profileHTTP": {
+                 "bigip": "/Common/http"
+             },
+             "profileTCP": {
+                 "bigip": "/Common/tcp"
+             },
              "virtualAddresses": [
              "${vip_address}"
              ],
