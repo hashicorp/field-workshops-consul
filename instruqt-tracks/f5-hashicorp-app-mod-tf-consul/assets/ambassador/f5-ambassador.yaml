@@ -28,7 +28,7 @@ data:
               "ignoreChanges": false,
               "enforcementMode": "blocking"
             },
-            "template": "http",
+            "template": "generic",
             "Ambassador_VIP": {
               "class": "Service_HTTP",
               "virtualPort": 8080,
