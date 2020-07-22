@@ -1,6 +1,6 @@
 
 resource "azurerm_virtual_machine_scale_set" "app_vmss" {
-  name                = "app-vmss"
+  name = "app-vmss"
 
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location
   resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
@@ -36,14 +36,14 @@ resource "azurerm_virtual_machine_scale_set" "app_vmss" {
 
   os_profile {
     computer_name_prefix = "app-vm-"
-    admin_username = "azure-user"
-    custom_data          = base64encode(templatefile("./templates/app_server.sh",  { endpoint = var.endpoint, consulconfig = var.consulconfig, ca_cert = var.ca_cert, consul_token = var.consul_token }))
+    admin_username       = "azure-user"
+    custom_data          = base64encode(templatefile("./templates/app_server.sh", { endpoint = var.endpoint, consulconfig = var.consulconfig, ca_cert = var.ca_cert, consul_token = var.consul_token }))
   }
 
   os_profile_linux_config {
     disable_password_authentication = true
     ssh_keys {
-      path     = "/home/azure-user/.ssh/authorized_keys" 
+      path     = "/home/azure-user/.ssh/authorized_keys"
       key_data = var.ssh_public_key
     }
 

@@ -19,19 +19,19 @@ data "template_file" "vm_onboard" {
   vars = {
     uname = var.admin_username
     # replace this with a reference to the secret id
-    upassword   = random_password.bigippassword.result
-    DO_URL      = var.DO_URL
-    AS3_URL     = var.AS3_URL
-    TS_URL      = var.TS_URL
-    libs_dir    = var.libs_dir
-    onboard_log = var.onboard_log
+    upassword      = random_password.bigippassword.result
+    DO_URL         = var.DO_URL
+    AS3_URL        = var.AS3_URL
+    TS_URL         = var.TS_URL
+    libs_dir       = var.libs_dir
+    onboard_log    = var.onboard_log
     ASM_POLICY_URL = var.ASM_POLICY_URL
   }
 }
 
 # Create F5 BIGIP VMs
 resource "azurerm_linux_virtual_machine" "f5bigip" {
-  name                  = "bigip"
+  name = "bigip"
 
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location
   resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
@@ -84,7 +84,7 @@ resource "azurerm_public_ip" "sip_public_ip" {
   allocation_method   = "Static"   # Static is required due to the use of the Standard sku
   sku                 = "Standard" # the Standard sku is required due to the use of availability zones
   // zones               =  [element(local.azs, count.index)]
-  domain_name_label   = data.terraform_remote_state.vnet.outputs.resource_group_name
+  domain_name_label = data.terraform_remote_state.vnet.outputs.resource_group_name
   tags = {
     environment = "instruqt"
   }

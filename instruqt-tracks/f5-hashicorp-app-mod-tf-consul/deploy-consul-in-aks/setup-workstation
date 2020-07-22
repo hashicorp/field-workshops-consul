@@ -314,6 +314,7 @@ spec:
             "--verify-interval=10",
             "--node-poll-interval=10",
             "--log-as3-response=true",
+            "--as3-validation=false",
             ]
 EOF
 

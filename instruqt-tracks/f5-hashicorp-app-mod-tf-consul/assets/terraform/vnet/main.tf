@@ -4,10 +4,10 @@ provider "azurerm" {
 }
 
 resource "random_string" "participant" {
-  length = 4
+  length  = 4
   special = false
-  upper = false
-  number = false
+  upper   = false
+  number  = false
 }
 
 resource "azurerm_resource_group" "instruqt" {
@@ -20,8 +20,8 @@ module "shared-svcs-network" {
   vnet_name           = "shared-svcs-vnet"
   resource_group_name = azurerm_resource_group.instruqt.name
   address_space       = "10.2.0.0/16"
-  subnet_prefixes     = ["10.2.0.0/24","10.2.1.0/24"]
-  subnet_names        = ["Bastion","Vault"]
+  subnet_prefixes     = ["10.2.0.0/24", "10.2.1.0/24"]
+  subnet_names        = ["Bastion", "Vault"]
 
   tags = {
     owner = "instruqt@hashicorp.com"
@@ -148,7 +148,7 @@ resource "azurerm_virtual_network_peering" "shared-legacy" {
 
 resource "azurerm_virtual_network_peering" "legacy-shared" {
   name                      = "LegacyToShared"
-  resource_group_name = azurerm_resource_group.instruqt.name
+  resource_group_name       = azurerm_resource_group.instruqt.name
   virtual_network_name      = "legacy-vnet"
   remote_virtual_network_id = module.shared-svcs-network.vnet_id
 }
@@ -162,7 +162,7 @@ resource "azurerm_virtual_network_peering" "shared-aks" {
 
 resource "azurerm_virtual_network_peering" "aks-shared" {
   name                      = "AKSToShared"
-  resource_group_name = azurerm_resource_group.instruqt.name
+  resource_group_name       = azurerm_resource_group.instruqt.name
   virtual_network_name      = "aks-vnet"
   remote_virtual_network_id = module.shared-svcs-network.vnet_id
 }
@@ -176,7 +176,7 @@ resource "azurerm_virtual_network_peering" "aks-legacy" {
 
 resource "azurerm_virtual_network_peering" "legacy-aks" {
   name                      = "LegacyToAKS"
-  resource_group_name = azurerm_resource_group.instruqt.name
+  resource_group_name       = azurerm_resource_group.instruqt.name
   virtual_network_name      = "legacy-vnet"
   remote_virtual_network_id = module.aks-network.vnet_id
 }
