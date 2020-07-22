@@ -1,154 +1,47 @@
-#!/bin/bash
+#cloud-config
+write_files:
+  - path: /config/custom-config.sh
+    permissions: 0755
+    owner: root:root
+    content: |
+      #!/bin/bash
 
-# disable UI timeout for convenience
-tmsh modify sys httpd auth-pam-idle-timeout 86400
-tmsh save sys config
-bigstart restart httpd
+      # Wait for MCPD to be up before running tmsh commands
+      source /usr/lib/bigstart/bigip-ready-functions
+      wait_bigip_ready
 
-# BIG-IPS ONBOARD SCRIPT
+      # Begin BIG-IP configuration
+      tmsh modify auth user admin shell bash
 
-LOG_FILE=${onboard_log}
+      # disable gui idle timeout for lab
+      tmsh modify sys httpd auth-pam-idle-timeout 86400
+      tmsh modify sys global-settings gui-setup disabled
 
-if [ ! -e $LOG_FILE ]
-then
-    touch $LOG_FILE
-    exec &>>$LOG_FILE
-else
-    #if file exists, exit as only want to run once
-    exit
-fi
+      # custom banner
+      tmsh modify sys global-settings gui-security-banner-text "Provisioned via Terraform!"
+      tmsh save /sys config
+      bigstart restart httpd
 
-exec 1>$LOG_FILE 2>&1
-
-# CHECK TO SEE NETWORK IS READY 
-# specifically if we can reach github where all of the assets are located
-CNT=0
-while true
-do
-  STATUS=$(curl -L -s -k -I github.com | grep HTTP)
-  if [[ $STATUS == *"200"* ]]; then
-    echo "Got 200! VE is Ready!"
-    break
-  elif [ $CNT -le 6 ]; then
-    echo "Status code: $STATUS  Not done yet..."
-    CNT=$[$CNT+1]
-  else
-    echo "GIVE UP..."
-    break
-  fi
-  sleep 10
-done
-
-sleep 60
-
-### DOWNLOAD ONBOARDING PKGS
-# Could be pre-packaged or hosted internally
-
-admin_username='${uname}'
-admin_password='${upassword}'
-CREDS="admin:"$admin_password
-TS_URL='${TS_URL}'
-TS_FN=$(basename "$TS_URL")
-DO_URL='${DO_URL}'
-DO_FN=$(basename "$DO_URL")
-AS3_URL='${AS3_URL}'
-AS3_FN=$(basename "$AS3_URL")
-
-mkdir -p ${libs_dir}
-
-echo -e "\n"$(date) "Download TS Pkg"
-curl -L -o ${libs_dir}/$TS_FN $TS_URL
-
-echo -e "\n"$(date) "Download Declarative Onboarding Pkg"
-curl -L -o ${libs_dir}/$DO_FN $DO_URL
-
-echo -e "\n"$(date) "Download AS3 Pkg"
-curl -L -o ${libs_dir}/$AS3_FN $AS3_URL
-
-# Copy the RPM Pkg to the file location
-cp ${libs_dir}/*.rpm /var/config/rest/downloads/
-
-# Install Telemetry Streaming Pkg
-DATA="{\"operation\":\"INSTALL\",\"packageFilePath\":\"/var/config/rest/downloads/$TS_FN\"}"
-echo -e "\n"$(date) "Install TS Pkg"
-curl -u $CREDS -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d $DATA
-
-sleep 10
-
-# Install Declarative Onboarding Pkg
-DATA="{\"operation\":\"INSTALL\",\"packageFilePath\":\"/var/config/rest/downloads/$DO_FN\"}"
-echo -e "\n"$(date) "Install DO Pkg"
-curl -u $CREDS -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d $DATA
-
-sleep 10
-
-# Install AS3 Pkg
-DATA="{\"operation\":\"INSTALL\",\"packageFilePath\":\"/var/config/rest/downloads/$AS3_FN\"}"
-echo -e "\n"$(date) "Install AS3 Pkg"
-curl -u $CREDS -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d $DATA
-
-sleep 10
-
-DATA="{\"level\":\"nominal\"}"
-echo -e "\n"$(date) "Enable WAF"
-curl -u $CREDS -H "Content-Type: application/json" \
-  -X PATCH http://localhost:8100/mgmt/tm/sys/provision/asm -d $DATA
-
-sleep 10
-
-
-# Check DO Ready
-CNT=0
-while true
-do
-  STATUS=$(curl -u $CREDS -X GET -s -k -I https://localhost/mgmt/shared/declarative-onboarding | grep HTTP)
-  if [[ $STATUS == *"200"* ]]; then
-    echo "Got 200! Declarative Onboarding is Ready!"
-    break
-  elif [ $CNT -le 6 ]; then
-    echo "Status code: $STATUS  DO Not done yet..."
-    CNT=$[$CNT+1]
-  else
-    echo "GIVE UP..."
-    break
-  fi
-  sleep 10
-done
-
-# Check AS3 Ready
-CNT=0
-while true
-do
-  STATUS=$(curl -u $CREDS -X GET -s -k -I https://localhost/mgmt/shared/appsvcs/info | grep HTTP)
-  if [[ $STATUS == *"200"* ]]; then
-    echo "Got 200! AS3 is Ready!"
-    break
-  elif [ $CNT -le 6 ]; then
-    echo "Status code: $STATUS  AS3 Not done yet..."
-    CNT=$[$CNT+1]
-  else
-    echo "GIVE UP..."
-    break
-  fi
-  sleep 10
-done
-
-# Check TS Ready
-CNT=0
-while true
-do
-  STATUS=$(curl -u $CREDS -X GET -s -k -I https://localhost/mgmt/shared/telemetry/declare | grep HTTP)
-  if [[ $STATUS == *"200"* ]]; then
-    echo "Got 200! TS is Ready!"
-    break
-  elif [ $CNT -le 6 ]; then
-    echo "Status code: $STATUS  TS Not done yet..."
-    CNT=$[$CNT+1]
-  else
-    echo "GIVE UP..."
-    break
-  fi
-  sleep 10
-done
-
-
+tmos_declared:
+  enabled: true
+  icontrollx_trusted_sources: false
+  icontrollx_package_urls:
+    - ${TS_URL}
+    - ${DO_URL}
+    - ${AS3_URL}
+  do_declaration:
+    schemaVersion: 1.0.0
+    class: Device
+    async: true
+    label: Cloudinit Onboarding
+    Common:
+      class: Tenant
+      provisioningLevels:
+        class: Provision
+        ltm: nominal
+        asm: nominal
+  post_onboard_enabled: true
+  post_onboard_commands:
+    - /config/custom-config.sh &
+    
+    

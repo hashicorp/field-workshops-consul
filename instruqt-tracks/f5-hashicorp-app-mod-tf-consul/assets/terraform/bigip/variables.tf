@@ -18,7 +18,7 @@ variable instance_type { default = "Standard_DS3_v2" }
 variable image_name { default = "f5-bigip-virtual-edition-25m-best-hourly" }
 variable publisher { default = "f5-networks" }
 variable product { default = "f5-big-ip-best" }
-variable bigip_version { default = "14.1.003000" }
+variable bigip_version { default = "15.1.002000" }
 variable admin_username { default = "f5admin" }
 
 variable DO_URL {

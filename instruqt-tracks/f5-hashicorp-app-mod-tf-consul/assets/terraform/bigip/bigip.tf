@@ -29,22 +29,6 @@ data "template_file" "vm_onboard" {
   }
 }
 
-# Run Startup Script
-resource "azurerm_virtual_machine_extension" "run_startup_cmd" {
-  name                 = "bigip-startup"
-  virtual_machine_id   = azurerm_linux_virtual_machine.f5bigip.id
-  publisher            = "Microsoft.OSTCExtensions"
-  type                 = "CustomScriptForLinux"
-  type_handler_version = "1.2"
-
-  settings = <<SETTINGS
-        {
-            "commandToExecute": "bash /var/lib/waagent/CustomData"
-        }
-    SETTINGS
-}
-
-
 # Create F5 BIGIP VMs
 resource "azurerm_linux_virtual_machine" "f5bigip" {
   name                  = "bigip"
