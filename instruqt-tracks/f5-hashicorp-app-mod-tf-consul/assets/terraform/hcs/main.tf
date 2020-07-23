@@ -42,10 +42,10 @@ resource "azurerm_managed_application" "hcs" {
   managed_resource_group_name = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
 
   plan {
-    name      = "public-beta"
-    product   = "hcs-production-preview"
+    name      = "on-demand"
+    product   = "hcs-production"
     publisher = "hashicorp-4665790"
-    version   = "0.0.34"
+    version   = "0.0.39"
   }
 
   parameters = {
@@ -64,7 +64,8 @@ resource "azurerm_managed_application" "hcs" {
     snapshotRetention     = "1m"
     consulVnetCidr        = "10.0.0.0/24"
     location              = data.terraform_remote_state.vnet.outputs.resource_group_location
-    providerBaseURL       = "https://ama-api.hashicorp.cloud/consulama/2020-04-21"
+    providerBaseURL       = "https://ama-api.hashicorp.cloud/consulama/2020-07-09"
+    email                 = "instruqt@hashicorp.com"
   }
 }
 
