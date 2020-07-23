@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#temp fix
+cd /root/terraform/legacy/as3
+terraform destroy -auto-approve
+
 cd /root/terraform/bigip
 set-workdir /root/terraform/bigip
 

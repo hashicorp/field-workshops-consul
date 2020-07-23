@@ -743,7 +743,18 @@ challenges:
     kubectl apply -f /root/ambassador/f5-ambassador.yaml
     ```
 
-    In the next assignment we will use the application.
+    Your application should now be available over BIG-IP. Test it below.
+
+    ```
+    app=$(terraform output app_url)
+    echo $app
+    curl -sv $app
+    ```
+
+    You should see the following error: `upstream connect error or disconnect/reset before headers. reset reason: connection termination` <br>
+    We need to configure mTLS between the applications to resolve this error. Consul intentions for mTLS are deny by default. <br>
+
+    You will perform this task in the next assignment.
   notes:
   - type: text
     contents: |
@@ -786,19 +797,7 @@ challenges:
   title: Test App in k8s
   teaser: Access your Consul service mesh with BIG-IP
   assignment: |-
-    Your application should now be available over BIG-IP. Test it below.
-
-    ```
-    app=$(terraform output app_url)
-    echo $app
-    curl -sv $app
-    ```
-
-    You should see the following error: `upstream connect error or disconnect/reset before headers. reset reason: connection termination` <br>
-
-    We need to configure mTLS between the applications to resolve this error. Consul intentions for mTLS are deny by default. <br>
-
-    Fetch credentials.
+    Fetch credentials so you can authenticate to Consul and configure intentions.
 
     ```
     vault login -method=userpass username=operations password=Password1
@@ -862,5 +861,5 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
-checksum: "16590876399105795235"
+checksum: "4196286563193015887"
 show_timer: true
