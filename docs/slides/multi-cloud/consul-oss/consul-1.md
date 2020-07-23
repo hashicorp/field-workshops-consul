@@ -17,7 +17,7 @@ For additional descriptions or instructions that expand on this workshop, please
 * https://learn.hashicorp.com/consul/
 
 ???
-Consul is a service-based networking tool, which allows you to manage your applications and services in a much more dynamic and fluid way. It has a full API and enables you to automate deployments and secure service across any cloud--public or private.
+Consul is a service-based networking tool, which allows you to manage your applications and services in a much more dynamic and fluid way. It has a full API and enables you to automate deployments and secure services across any cloud--public or private.
 
 Hopefully you're following along with this slide deck on your computer so you can follow the links you see on this page. Of course, you can do so at any time.
 
@@ -28,7 +28,7 @@ The shift from static to dynamic
 .center[![:scale 50%](images/static_to_dynamic.png)]
 .center[Physical servers, to VMs, to containers...]
 
-As our applications have shifted from monoliths to microservices, the networking landscape has changed drastically. Let's briefly explore the history  of this shift, and how Consul can help us with its  challenges.
+As our applications have shifted from monoliths to microservices, the networking landscape has changed drastically. Let's briefly explore the history of this shift, and how Consul can help us solve some of its challenges.
 
 ???
 Our traditional approach to networking has always had its challenges. But even more so today with the dynamic nature of cloud computing and software delivery. And with the move from monolithic applications to microservices, even more demand is put on the networking infrastructure.
@@ -50,11 +50,11 @@ Introduction of Client & Server
 * High trust zones and perimeter
 
 ???
-The Client-Server model was a pretty big shift back in the day, and many didn't think it would survive. The traditional mainframes didn't require near the network demand that the Client/Server model did, and as you can imagine, it was very expensive to upgrade network equipment to support Client/Server. But the benefits outweighed the cons, so companies made the investments.
+The Client-Server model was a pretty big shift back in the day, and many didn't think it would survive. The traditional mainframes didn't require near the network demand that the Client/Server model did, and as you can imagine, it was very expensive to upgrade network equipment to support Client/Server. But the pros outweighed the cons, so companies made the investments.
 
 It wasn't long before we started running into new challenges. With the advent of the world wide web and the dot com boom which followed soon after, we found our computing capabilities were severely lacking.
 
-Each application had its own server (typically over-powered to handle peak times), and that application would've been setup by hand, meaning it would be very difficult to move the app to another server. IP addresses were hard-coded in order to secure the server and app. Horizontal scaling was expensive and very manual, and inside the private network, it was a free for all with high-trust zones.
+Each application had its own server (typically over-powered to handle peak times), and that application was often setup by hand, meaning it would be very difficult to move the application to another server. IP addresses were hard-coded in order to secure the server and application. Horizontal scaling was expensive and very manual. Inside the private network, it was a free for all with high-trust zones and all applications could typically talk to one another unhindered.
 
 ---
 name: Introduction-of-VMs
@@ -72,7 +72,7 @@ Introduction of the VM
 * Spanning trees
 
 ???
-Fortunately, a relic from the distant past was found, dusted off, restored, vastly improved, and delivered as a new, shiny toy: the Virtual Machine. This gave us with better resource utilization of our servers. VMs images could be moved from host to host, which meant horizontal scaling was a little easier to achieve. Virtual computing environments also gave way to broader adoption of load balancing tools, which is still an integral part of servicing applications today.
+Fortunately, a relic from the distant past was found, dusted off, restored, vastly improved, and delivered as a new, shiny toy: the Virtual Machine. This gave us better resource utilization of our servers. VMs images could be moved from host to host, which meant horizontal scaling was a little easier to achieve. Virtual computing environments also gave way to broader adoption of load balancing tools, which is still an integral part of servicing applications today.
 
 ---
 name: Introduction-of-the-Fabric
@@ -122,7 +122,7 @@ Introduction of the SDN
 * Lower visibility for network admin
 
 ???
-Next up is Software Defined Networking, enabling network automation and self service. Seems to be the next logical step, right? Just use a little python to script up a network. Sounds easy, right? Well, maybe if you're a developer. Oh wait, but a developer doesn't know how to setup a network. This left us at the crossroads with not really knowing who should maintain this type of network.
+Next up came Software Defined Networking, which enabled network automation and self service. This seems to be the next logical step, right? We could just use a little python to script up a network. Sounds easy, right? Well, maybe if you were a developer. But wait, typically a developer doesn't know how to setup a network. This left us at the crossroads of network administration with signs with questions marks on them to show us who would maintain this kind of network.
 
 ---
 name: Introduction-of-the-Multi-Cloud-Hybrid
@@ -135,7 +135,7 @@ Introduction of Multi-Cloud - Hybrid
 * Where is my app instance?
 
 ???
-Cloud computing brought us new solutions to old problems, like auto-scaling, managed services, things like that, but connecting our private cloud to a public cloud introduced new challenges. For instance, how does your cloud app connect to your on-premise database? Or how do two different networks communicate when they are both using the same ip address space?
+Cloud computing brought us new solutions to old problems, like auto-scaling, managed services, and network security. But connecting our private cloud to a public clouds introduced new challenges. For instance, how does your cloud app connect to your on-premise database? Or how do two different networks communicate when they are both using the same RFC 1918 ip address space?
 
 ---
 name: Introduction-of-the-Multi-Cloud-K8s

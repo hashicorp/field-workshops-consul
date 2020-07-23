@@ -17,9 +17,9 @@ Service Discovery - Intro
 * Multi-cloud, multi-DC
 
 ???
-The starting point for networking with Consul is typically a common service registry. This would integrate health checks and provide DNS and API interfaces to enable any service to discover and be discovered by other services.
+The starting point for networking with Consul is the service registry. This integrates health checks and provides DNS and API interfaces to enable any service to discover and be discovered by other services.
 
-Consul can be integrated with other services that manage existing north-south traffic such as a traditional load balancers, and distributed application platforms such as Kubernetes, to provide a consistent registry and discovery service across multi-data center, cloud, and platform environments.
+Consul can be integrated with other services that manage existing north-south traffic such as a traditional load balancers, and distributed application platforms such as Kubernetes, to provide a consistent registry and discovery service across multiple data centers, clouds, and application platforms.
 
 ---
 name: Service-Discovery-Lab-Servers
@@ -34,7 +34,7 @@ Service Discovery - Servers
 ???
 Consul's service discovery is backed by a service catalog. The catalog maintains the high-level view of the cluster and is used to expose this information via the various interfaces Consul provides, including DNS and HTTP.
 
-The catalog is maintained only by server nodes because the it's replicated via the Raft log to provide a consolidated and consistent view of the cluster.
+The catalog is maintained only by server nodes because it's replicated via the Raft log to provide a consolidated and consistent view of the cluster.
 
 ---
 name: Service-Discovery-Lab-Clients
@@ -50,7 +50,8 @@ Service Discovery - Clients
 * Check types - HTTP, TCP, scripts, etc.
 
 ???
-Each Consul agent maintains its own set of service and check registrations as well as health information. The agents are responsible for executing their own health checks and updating their local state.
+Each Consul agent maintains its own set of service registrations and health checks to include overall node health. The agents are responsible for executing their own health checks and updating their local state.
+
 
 ---
 name: Service-Discovery-Registration
@@ -60,7 +61,7 @@ Service Discovery - Config
 .center[Nginx example] <br>
 
 ???
-Configuring a service is pretty straight-forward. Here's an example of a config file to register a simple NGINX service, and our health check is going to be a quick check on port 80.
+Configuring a service is pretty straight-forward. Here's an example of a config file to register a simple NGINX service, the health check simple HTTP query on port 80.
 
 ---
 name: Service-Registry-API
@@ -70,7 +71,7 @@ Service Registry - API Interface
 .center[API Catalog Request] <br>
 
 ???
-There are a couple of different ways to discover services. The first is by using the API. The example here uses curl, which is convenient for shell scripts. But for application integration, your development teams will likely use HTTP requests which are native to the language they're using.
+There are a couple of different ways to discover services. The first is by using the API. The example here uses curl, which is convenient for shell scripts. Applications can do direct HTTP requests using a library that fits the language they are using.
 
 ---
 name: Service-Registry-DNS
@@ -80,7 +81,7 @@ Service Registry - DNS Interface
 .center[DNS Catalog Request] <br>
 
 ???
-The second way is by using DNS. You can actually query a consul name using standard hostname resolution either on the command line using tools like dig, or within applications using native functions for hostname resolution.
+The second way is by using DNS. You can query consul using standard hostname resolution either on the command line using tools like dig, nslookup or host, or within applications using native libraries for hostname resolution.
 
 ---
 name: Service-Registry-UI
@@ -90,7 +91,7 @@ Service Registry - UI Interface
 .center[UI Catalog Request] <br>
 
 ???
-And finally, you can just login to the Consul UI and lookup the details right there in the console.
+Finally, you can login to the Consul UI and lookup the details in the web UI.
 
 ---
 name: Service-Registry-Integration-Consul-Template
@@ -104,9 +105,9 @@ Integrations - Consul Template
 * Manage load balancer configs
 
 ???
-Rolling out service discovery doesn't need to be complicated. Consul Template is a standalone application that populates values from Consul and dynamically renders updates to any third party configurations.  
+Rolling out service discovery doesn't need to be complicated. Consul Template is a standalone application that populates values from Consul and dynamically renders updates to any third party configuration files.
 
-A common use case is managing load balancer configuration files that need to be updated regularly in a dynamic infrastructure on machines many not be able to directly connect to the Consul cluster.
+A common use case is managing load balancer or proxy configuration files that need to be updated in near-real time. In this way, applications that are not Consul aware can benefit from its dynamic capabilities.
 
 It is also ideal for replacing complicated API queries that often require custom formatting.
 
