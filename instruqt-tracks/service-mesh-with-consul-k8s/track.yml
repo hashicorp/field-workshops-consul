@@ -14,9 +14,6 @@ tags: []
 owner: hashicorp
 developers:
 - lance@hashicorp.com
-- kcorbin@hashicorp.com
-- rpeteuil@hashicorp.com
-- jcolandro@hashicorp.com
 private: false
 published: true
 challenges:
@@ -993,5 +990,5 @@ challenges:
     port: 31877
   difficulty: basic
   timelimit: 5400
-checksum: "7851765628511036842"
+checksum: "13320107809007628379"
 show_timer: true
