@@ -27,7 +27,7 @@ Introduction to Consul - Overview
 * 100s - 10,000s of client nodes
 
 ???
-Within each datacenter, we have a mixture of clients and servers. It is expected that there be between three to five servers. This strikes a balance between availability in the case of failure and performance, as consensus gets progressively slower as more machines are added. However, there is no limit to the number of clients, and they can easily scale into the thousands or tens of thousands.
+Within each datacenter, we have a mixture of Consul clients and servers. Typically there are three or five Consul servers. This strikes a balance between availability in the case of failure and performance, as consensus gets progressively slower as more machines are added. However, most operations will not hit the limit in the number of clients, they can easily scale into the thousands or tens of thousands.
 
 ---
 name: Introduction-to-Consul-Gossip
@@ -39,11 +39,11 @@ Introduction to Consul - Gossip
 * All agent communication is done via the Gossip Protocol
 * Automatic configuration and datacenter discovery for Consul agents
 * Agent failures is done at the collective agent level not at the server level
-* Using Gossip this allows high scalability vs. traditional heartbeat schemes
+* Using Gossip allows for high scalability vs. traditional heartbeat schemes
 * Node failure can be inferred by an agent failure
 
 ???
-Consul uses the gossip protocol for agent communication. This provides much greater efficiency with overall Consul communications. Agents can communicate with one another and either obtain information to its peers, or disseminate information to its neighbors.
+Consul uses the gossip protocol for agent-to-agent communication. This provides much greater efficiency with overall Consul communications. Agents can communicate with one another and either obtain information about its peers, or disseminate information to its neighbors.
 
 ---
 name: Introduction-to-Consul-Consensus
@@ -97,4 +97,4 @@ Introduction to Consul - Skeptical ?
 .center[![:scale 60%](images/mitchell_tweet.png)]
 
 ???
-Just one quick note before we move on to the next chapter, if you remember I mentioned there's no limit to the number of nodes, take a look at this metric. Where one of our customer scaled out to 35,000 nodes in a single datacenter. And we do have larger deployments of around 350,000 nodes which are spread across multiple datacenters.
+Just one quick note before we move on to the next chapter, if you remember I mentioned there's no limit to the number of nodes, take a look at this metric. Here one of our customers scaled out to 35,000 nodes in a single datacenter. We have larger customer deployments of around 350,000 nodes that are spread across multiple datacenters.
