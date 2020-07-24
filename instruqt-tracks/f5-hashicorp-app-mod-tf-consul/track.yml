@@ -662,6 +662,9 @@ challenges:
     contents: |
       HashiCorp maintains an official helm chart, which makes installing Consul in k8s easy!
   tabs:
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/final-architecture.html
   - title: Consul
     type: service
     hostname: workstation
@@ -688,9 +691,6 @@ challenges:
     type: code
     hostname: workstation
     path: /info.txt
-  - title: Current lab setup
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
 - slug: deploy-app-in-k8s
@@ -864,5 +864,5 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
-checksum: "14076331634526195086"
+checksum: "17745430322445524886"
 show_timer: true
