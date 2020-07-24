@@ -29,3 +29,8 @@ output "backend_vnet" {
 output "backend_subnets" {
   value = module.backend-network.vnet_subnets
 }
+
+output "bastion_ip" {
+  value = azurerm_public_ip.bastion.ip_address
+}
+
