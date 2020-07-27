@@ -28,20 +28,20 @@ consul acl policy create \
 consul acl role create \
   -name "payments-role" \
   -description "Role for the API service" \
-  -policy-name "api-policy" \
+  -policy-name "payments-policy"
+
+# Get the JWKS URL
+# https://login.microsoftonline.com/[ARM Client ID]/v2.0/discovery/v2.0/keys
 
 # Create the Authentication Config for Azure
 # The issuer needs to have the tennant id dynamically added to the bound issuer
-export TENNANT_ID=0e3e2e88-8caf-41ca-b4da-e3b33b6c52ecl
 cat <<EOF > ./jwt_auth_config.json
 {
   "BoundAudiences": [
     "https://management.azure.com/"
   ],
-  "BoundIssuer": "https://sts.windows.net/${TENNANT_ID}/",
-  "JWTValidationPubKeys": [
-      "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6lldKm5Rc/vMKa1RM/Tt\nUv3tmtj52wLRrJqu13yGM3/h0dwru2ZP53y65wDfz6/tLCjoYuRCuVsjoW37+0zX\nUORJvZ0L90CAX+58lW7NcE4bAzA1pXv7oR9kQw0X8dp0atU4HnHeaTU8LZxcjJO7\n9/H9cxgwa+clKfGxllcos8TsuurM8xi2dx5VqwzqNMB2s62l3MTN7AzctHUiQCiX\n2iJArGjAhs+mxS1wmyMIyOSipdodhjQWRAcseW+aFVyRTFVi8okl2cT1HJjPXdx0\nb1WqYSOzeRdrrLUcA0oR2Tzp7xzOYJZSGNnNLQqa9f6h6h52XbX0iAgxKgEDlRpb\nJwIDAQAB\n-----END PUBLIC KEY-----"
-  ],
+  "BoundIssuer": "https://sts.windows.net/${ARM_TENANT_ID}/",
+  "JWKSURL":"https://login.microsoftonline.com/${ARM_TENANT_ID}/discovery/v2.0/keys",
   "ClaimMappings": {
       "id": "xms_mirid"
   }

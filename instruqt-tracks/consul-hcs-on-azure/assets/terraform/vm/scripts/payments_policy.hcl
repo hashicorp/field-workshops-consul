@@ -14,7 +14,7 @@ service "payments" {
 	policy = "write"
 }
 
-service_prefix "payments-1-sidecar-proxy" {
+service "payments-sidecar-proxy" {
 	policy = "write"
 }
 
