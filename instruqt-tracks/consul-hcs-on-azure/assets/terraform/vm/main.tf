@@ -76,7 +76,9 @@ resource "azurerm_virtual_machine" "vm" {
       "${path.module}/scripts/vm.sh",
       {
         ca = "${base64decode(data.terraform_remote_state.hcs.outputs.hcs_config.ca_file)}"
-        config = "${base64decode(data.terraform_remote_state.hcs.outputs.hcs_config.consulConfigFile)}"
+        consul_join_addr = "${jsondecode(base64decode(data.terraform_remote_state.hcs.outputs.hcs_config.consulConfigFile)).retry_join[0]}"
+        consul_datacenter = "${jsondecode(base64decode(data.terraform_remote_state.hcs.outputs.hcs_config.consulConfigFile)).datacenter}"
+        consul_gossip_key = "${jsondecode(base64decode(data.terraform_remote_state.hcs.outputs.hcs_config.consulConfigFile)).encrypt}"
       }
     )
   }
