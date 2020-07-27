@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#block VGW
+while [ -f /root/terraform/vgw/.terraform.tfstate.lock.info ]; do echo 'vgw still provisioning'; sleep 5;  done
+sleep 30
+
+exit 0

@@ -31,29 +31,29 @@ resource "random_string" "blobcontainername" {
 }
 
 resource "azurerm_managed_application" "hcs" {
-  depends_on = [azurerm_marketplace_agreement.hcs]
+  //depends_on = [azurerm_marketplace_agreement.hcs]
 
   name                        = "hcs"
   location                    = data.terraform_remote_state.vnet.outputs.resource_group_location
   resource_group_name         = data.terraform_remote_state.vnet.outputs.resource_group_name
   kind                        = "MarketPlace"
-  managed_resource_group_name = var.managed_resource_group
+  managed_resource_group_name = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
 
   plan {
-    name      = "public-beta"
+    name      = "on-demand"
     product   = "hcs-production"
     publisher = "hashicorp-4665790"
-    version   = "0.0.28"
+    version   = "0.0.39"
   }
 
   parameters = {
-    initialConsulVersion  = "v1.7.2"
+    initialConsulVersion  = "v1.8.0"
     storageAccountName    = "${random_string.storageaccountname.result}"
     blobContainerName     = "${random_string.blobcontainername.result}"
-    clusterMode           = "PRODUCTION"
+    clusterMode           = "DEVELOPMENT"
     clusterName           = "hashicorp-consul-cluster"
     consulDataCenter      = "east-us"
-    numServers            = "3"
+    numServers            = "1"
     numServersDevelopment = "1"
     automaticUpgrades     = "disabled"
     consulConnect         = "enabled"
@@ -62,20 +62,21 @@ resource "azurerm_managed_application" "hcs" {
     snapshotRetention     = "1m"
     consulVnetCidr        = "10.0.0.0/24"
     location              = data.terraform_remote_state.vnet.outputs.resource_group_location
-    providerBaseURL       = "https://ama-api.hashicorp.cloud/consulama/2020-04-21"
+    providerBaseURL       = "https://ama-api.hashicorp.cloud/consulama/2020-07-09"
+    email                 = "lance@hashicorp.com"
   }
 }
 
 data "azurerm_virtual_network" "hcs" {
   depends_on          = [azurerm_managed_application.hcs]
   name                = "hvn-consul-ama-hashicorp-consul-cluster-vnet"
-  resource_group_name = var.managed_resource_group
+  resource_group_name = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
 }
 
 resource "azurerm_virtual_network_peering" "hcs-frontend" {
   depends_on                = [azurerm_managed_application.hcs]
   name                      = "HCSToFrontend"
-  resource_group_name       = var.managed_resource_group
+  resource_group_name       = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
   virtual_network_name      = "hvn-consul-ama-hashicorp-consul-cluster-vnet"
   remote_virtual_network_id = data.terraform_remote_state.vnet.outputs.frontend_vnet
 }
@@ -91,7 +92,7 @@ resource "azurerm_virtual_network_peering" "frontend-hcs" {
 resource "azurerm_virtual_network_peering" "hcs-backend" {
   depends_on                = [azurerm_managed_application.hcs]
   name                      = "HCSToBackend"
-  resource_group_name       = var.managed_resource_group
+  resource_group_name       = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
   virtual_network_name      = "hvn-consul-ama-hashicorp-consul-cluster-vnet"
   remote_virtual_network_id = data.terraform_remote_state.vnet.outputs.backend_vnet
 }

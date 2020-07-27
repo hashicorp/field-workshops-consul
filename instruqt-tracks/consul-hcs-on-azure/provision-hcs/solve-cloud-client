@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd /root/terraform/hcs
+terraform apply -auto-approve > /root/terraform/hcs/terraform.out
+
+exit 0

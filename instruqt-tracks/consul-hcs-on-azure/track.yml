@@ -179,8 +179,9 @@ challenges:
 
     ```
     echo $CONSUL_HTTP_ADDR
-    bootstrap_token=$(consul acl bootstrap -format json | jq -r .SecretID)
-    gossip_key=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/hashicorp-instruqt/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .encrypt)
+    echo $VAULT_ADDR
+    bootstrap_token=$(az hcs create-token --resource-group $(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name) --name hcs | jq  -r .masterToken.secretId)
+    gossip_key=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .encrypt)
     vault kv put secret/consul master_token=${bootstrap_token} gossip_key=${gossip_key}
     ```
 
@@ -223,6 +224,29 @@ challenges:
     consul acl token read -self
     ```
 
+    You can use this token to set up the anonymous policy.
+
+    ```
+    echo '
+    node_prefix "" {
+      policy = "read"
+    }
+    service_prefix "" {
+      policy = "read"
+    }
+    session_prefix "" {
+      policy = "read"
+    }
+    agent_prefix "" {
+      policy = "read"
+    }
+    query_prefix "" {
+      policy = "read"
+    }
+    operator = "read"' |  consul acl policy create -name anonymous -rules -
+    consul acl token update -id anonymous -policy-name anonymous
+    ```
+
     You will use this role in a later assignment to configure access for Consul service consumers.
   notes:
   - type: text
@@ -255,15 +279,36 @@ challenges:
   title: 'Network: Validate Virtual Gateway & Peering'
   teaser: A short description of the challenge.
   assignment: |-
-    The VGW and VNet peerings provisioned eariler should now be ready. <br>
+    The VGW and VNet peerings provisioned eariler should be close to provisioned. <br>
 
-    Inspect the the gateway and the peering connections.
+    Inspect the the gateway.
 
     ```
-    az network vnet-gateway list --resource-group hashicorp-instruqt
-    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name shared-svcs-vnet
-    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name frontend-vnet
-    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name backend-vnet
+    rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+    az network vnet-gateway list --resource-group ${rg}
+    ```
+
+    Inspect the peerings.
+
+    ```
+    rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+    az network vnet peering list --resource-group ${rg} --vnet-name shared-svcs-vnet
+    az network vnet peering list --resource-group ${rg} --vnet-name frontend-vnet
+    az network vnet peering list --resource-group ${rg} --vnet-name backend-vnet
+    ```
+
+    Before you can continue you need the VGW to finish provisioning.
+    Monitor the terraform code for an updated status.
+
+    ```
+    tail -f /root/terraform/vgw/terraform.out
+    ```
+
+    You can check the state of the gateway with the below command.
+
+    ```
+    rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+    az network vnet-gateway list --resource-group ${rg} | jq '.[0].provisioningState'
     ```
 
     In a later assignment you will use the VNet peers to enable remote gateways for the spoke VNets.
@@ -304,13 +349,6 @@ challenges:
   assignment: |-
     You can now enable spoke VNets to use the shared service gateway.
 
-    Check that the first Terraform run finished.
-    You may need to wait an additional 10 to 15 minutes. <br>
-
-    ```
-    tail -f terraform.out
-    ```
-
     Inspect the variable configuration and apply this now.
 
     ```
@@ -319,22 +357,31 @@ challenges:
     terraform apply -auto-approve
     ```
 
-    Inspect the peering again and notice that remote gateways are enabled.
+    Gateway transit is enabled in the shared services VNet.
 
     ```
-    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name shared-svcs-vnet
-    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name frontend-vnet
-    az network vnet peering list --resource-group hashicorp-instruqt --vnet-name backend-vnet
+    rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+    az network vnet peering list --resource-group ${rg} --vnet-name shared-svcs-vnet | jq '.[0].allowGatewayTransit'
+    ```
+
+    Spoke VNets are enabled to use the central transit hub.
+
+    ```
+    rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+    az network vnet peering list --resource-group ${rg} --vnet-name frontend-vnet | jq '.[0].useRemoteGateways'
+    az network vnet peering list --resource-group ${rg} --vnet-name backend-vnet | jq '.[0].useRemoteGateways'
     ```
 
     You will also notice that each AKS VNet has a user defined route to use the remote gateway for cross VNet traffic.
+    You can see this in the `nextHopType` value.
 
     ```
-    az network route-table show -g hashicorp-instruqt -n frontend-shared-aks
-    az network route-table show -g hashicorp-instruqt -n backend-shared-aks
+    rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+    az network route-table show -g ${rg} -n frontend-shared-aks | jq '.routes'
+    az network route-table show -g ${rg} -n backend-shared-aks  | jq '.routes'
     ```
 
-    Now that you have routes in place you can configure the AKS clusters for the Consul deployment.
+    Now that you have transitive routes in place you can configure the AKS clusters for the Consul deployment.
   notes:
   - type: text
     contents: Replace this text with your own text
@@ -369,7 +416,8 @@ challenges:
     Your AKS clusters should now be provisioned and ready.
 
     ```
-    az aks list
+    rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+    az aks list -g ${rg} | jq
     ```
 
     First, create a merged Kube Config file from the Terraform outputs.
@@ -394,6 +442,8 @@ challenges:
     kubectl config use-context backend-aks
     kubectl get nodes -o wide
     ```
+
+    You will configure these AKS clusters for Consul in the following assignments.
   notes:
   - type: text
     contents: Replace this text with your own text
@@ -573,16 +623,18 @@ challenges:
     Start with the frontend cluster.
 
     ```
+    rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
     kubectl config use-context frontend-aks
-    setup-k8s-consul-secrets hashicorp-instruqt hcs hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/frontend-agent) $(vault read -field token consul/creds/k8s-injector)
+    setup-k8s-consul-secrets ${rg} hcs hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/frontend-agent) $(vault read -field token consul/creds/k8s-injector)
     kubectl  get secrets -n consul
     ```
 
     Repeat, for the backend cluster.
 
     ```
+    rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
     kubectl config use-context backend-aks
-    setup-k8s-consul-secrets hashicorp-instruqt hcs hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/backend-agent) $(vault read -field token consul/creds/k8s-injector)
+    setup-k8s-consul-secrets ${rg} hcs hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/backend-agent) $(vault read -field token consul/creds/k8s-injector)
     kubectl get secrets -n consul
     ```
 
@@ -717,6 +769,9 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
   - title: Cloud  CLI
     type: terminal
     hostname: cloud-client
@@ -733,9 +788,6 @@ challenges:
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/12-configure-k8s-consul-authentication.html
-  - title: Target lab architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
   difficulty: basic
   timelimit: 300
 - slug: deploy-applications
@@ -888,4 +940,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
   difficulty: basic
   timelimit: 300
-checksum: "9325295190497005254"
+checksum: "5911979088796970059"
