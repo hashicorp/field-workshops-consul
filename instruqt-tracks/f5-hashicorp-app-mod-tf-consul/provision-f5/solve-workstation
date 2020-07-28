@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd /root/terraform/bigip
-terraform apply -auto-approve > /root/terraform/bigip/terraform.out
+terraform apply -refresh=false -auto-approve > /root/terraform/bigip/terraform.out
 
 #block HCS
 while [ -f /root/terraform/hcs/.terraform.tfstate.lock.info ]; do echo 'hcs still provisioning'; sleep 5;  done
