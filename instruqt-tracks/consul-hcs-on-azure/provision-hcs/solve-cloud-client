@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cd /root/terraform/hcs
-terraform apply -auto-approve > /root/terraform/hcs/terraform.out
+terraform apply -refresh=false -auto-approve > /root/terraform/hcs/terraform.out
+sleep 15
 
 exit 0

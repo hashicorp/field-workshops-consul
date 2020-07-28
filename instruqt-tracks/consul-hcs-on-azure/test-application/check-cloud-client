@@ -5,7 +5,7 @@ if [ -f /tmp/skip-check ]; then
     exit 0
 fi
 
-kubectl config use-context eks_frontend
+kubectl config use-context frontend-aks
 endpoint=$(kubectl get services web -o json | jq -r .status.loadBalancer.ingress[0].ip)
 
 n=0
