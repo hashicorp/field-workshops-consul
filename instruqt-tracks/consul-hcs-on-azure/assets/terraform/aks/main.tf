@@ -3,11 +3,15 @@ provider "azurerm" {
   features {}
 }
 
+variable "remote_state" {
+  default = "/root/terraform"
+}
+
 data "terraform_remote_state" "vnet" {
   backend = "local"
 
   config = {
-    path = "/root/terraform/vnet/terraform.tfstate"
+    path = "${var.remote_state}/vnet/terraform.tfstate"
   }
 }
 

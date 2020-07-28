@@ -2,18 +2,22 @@ provider "azurerm" {
   features {}
 }
 
+data "azurerm_client_config" "current" {
+}
+
 data "terraform_remote_state" "vnet" {
   backend = "local"
 
   config = {
-    path = "/root/terraform/vnet/terraform.tfstate"
+    path = "${var.remote_state}/vnet/terraform.tfstate"
   }
 }
 
 resource "azurerm_marketplace_agreement" "hcs" {
+  count     = var.accept_marketplace_aggrement ? 1 : 0
   publisher = "hashicorp-4665790"
   offer     = "hcs-production"
-  plan      = "public-beta"
+  plan      = "on-demand"
 }
 
 resource "random_string" "storageaccountname" {
@@ -47,6 +51,7 @@ resource "azurerm_managed_application" "hcs" {
   }
 
   parameters = {
+    initialConsulVersion  = var.consul_version
     initialConsulVersion  = "v1.8.0"
     storageAccountName    = "${random_string.storageaccountname.result}"
     blobContainerName     = "${random_string.blobcontainername.result}"
@@ -74,7 +79,11 @@ data "azurerm_virtual_network" "hcs" {
 }
 
 resource "azurerm_virtual_network_peering" "hcs-frontend" {
+  lifecycle {
+    ignore_changes = [remote_virtual_network_id]
+  }
   depends_on                = [azurerm_managed_application.hcs]
+
   name                      = "HCSToFrontend"
   resource_group_name       = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
   virtual_network_name      = "hvn-consul-ama-hashicorp-consul-cluster-vnet"
@@ -82,7 +91,11 @@ resource "azurerm_virtual_network_peering" "hcs-frontend" {
 }
 
 resource "azurerm_virtual_network_peering" "frontend-hcs" {
+  lifecycle {
+    ignore_changes = [remote_virtual_network_id]
+  }
   depends_on                = [azurerm_managed_application.hcs]
+
   name                      = "FrontendToHCS"
   resource_group_name       = data.terraform_remote_state.vnet.outputs.resource_group_name
   virtual_network_name      = "frontend-vnet"
@@ -90,7 +103,11 @@ resource "azurerm_virtual_network_peering" "frontend-hcs" {
 }
 
 resource "azurerm_virtual_network_peering" "hcs-backend" {
+  lifecycle {
+    ignore_changes = [remote_virtual_network_id]
+  }
   depends_on                = [azurerm_managed_application.hcs]
+
   name                      = "HCSToBackend"
   resource_group_name       = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
   virtual_network_name      = "hvn-consul-ama-hashicorp-consul-cluster-vnet"
@@ -98,7 +115,11 @@ resource "azurerm_virtual_network_peering" "hcs-backend" {
 }
 
 resource "azurerm_virtual_network_peering" "backend-hcs" {
+  lifecycle {
+    ignore_changes = [remote_virtual_network_id]
+  }
   depends_on                = [azurerm_managed_application.hcs]
+
   name                      = "BackendToHCS"
   resource_group_name       = data.terraform_remote_state.vnet.outputs.resource_group_name
   virtual_network_name      = "backend-vnet"
