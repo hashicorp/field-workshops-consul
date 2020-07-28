@@ -3,6 +3,7 @@
 #Get Curl
 echo "Fixing our path..."
 export PATH=/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+apt-get update -y
 apt-get install -y curl
 
 #Get enovy for us

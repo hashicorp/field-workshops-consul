@@ -74,15 +74,13 @@ consul_server_ip=$(getent ahostsv4 dc1-consul-server |  awk '{print $1}' | head 
 cat <<-EOF > /root/consul-values.yaml
 global:
   datacenter: dc1
-  image: "consul:1.6.2"
-  imageK8S: "hashicorp/consul-k8s:0.11.0"
+  image: "consul:1.8.0"
 
 server:
   enabled: false
 
 client:
   enabled: true
-  grpc: true
   join: [${consul_server_ip}]
 
 ui:
@@ -93,7 +91,7 @@ dns:
 
 connectInject:
   enabled: true
-  imageEnvoy: envoyproxy/envoy:v1.9.1
+  imageEnvoy: nicholasjackson/consul-envoy:v1.8.0-v0.14.1
   default: false
   centralConfig:
     enabled: true
@@ -101,7 +99,7 @@ EOF
 
 #Apply Consul helm
 cd /root
-git clone --branch v0.16.0 https://github.com/hashicorp/consul-helm.git
+git clone https://github.com/hashicorp/consul-helm.git
 helm install -f consul-values.yaml lab ./consul-helm --wait
 
 exit 0

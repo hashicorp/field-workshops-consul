@@ -1,0 +1,12 @@
+#!/bin/bash
+
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+consul acl token read -self
+
+setup-k8s-consul-secrets $(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name) hcs hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault kv get -field master_token secret/consul) $(vault kv get -field master_token secret/consul)
+setup-k8s-consul-auth
+helm install hashicorp hashicorp/consul -f aks.yaml --namespace consul --wait --debug
+
+kubectl wait -n consul --for=condition=Ready $(kubectl get pod -n consul --selector=app=consul --selector=component=client -o name) --timeout=60s
+
+exit 0

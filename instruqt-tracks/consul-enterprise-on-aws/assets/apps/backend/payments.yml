@@ -21,7 +21,6 @@ spec:
       labels:
         app: payments
       annotations:
-        "consul.hashicorp.com/connect-inject": "true"
         "consul.hashicorp.com/connect-service-upstreams": "currency:9094"
     spec:
       serviceAccountName: payments

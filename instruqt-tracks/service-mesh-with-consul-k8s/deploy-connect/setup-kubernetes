@@ -252,21 +252,20 @@ spec:
 EOF
 
 #Get the consul binary
-wget https://releases.hashicorp.com/consul/1.7.0/consul_1.7.0_linux_amd64.zip
-unzip consul_1.7.0_linux_amd64.zip
+wget https://releases.hashicorp.com/consul/1.8.0/consul_1.8.0_linux_amd64.zip
+unzip consul_1.8.0_linux_amd64.zip
 mv consul /usr/local/bin/consul
 chmod +x /usr/local/bin/consul
-rm -f consul_1.7.0_linux_amd64.zip
+rm -f consul_1.8.0_linux_amd64.zip
 
 #Grab the helm chart
-git clone --branch v0.16.2 https://github.com/hashicorp/consul-helm.git
+git clone https://github.com/hashicorp/consul-helm.git
 
 #Set up the consul default values
 cat <<-EOF > /root/consul-values.yaml
 global:
   datacenter: dc1
-  image: "consul:1.7.0"
-  imageK8S: "hashicorp/consul-k8s:0.11.0"
+  image: "consul:1.8.0"
 
 server:
   replicas: 1
@@ -274,7 +273,6 @@ server:
 
 client:
   enabled: true
-  grpc: true
 
 ui:
   enabled: true
@@ -298,7 +296,7 @@ connectInject:
     defaultProtocol: "http"
     proxyDefaults: |
       {
-      "envoy_dogstatsd_url": "udp://127.0.0.1:9125"
+      "envoy_prometheus_bind_addr": "0.0.0.0:9901"
       }
 EOF
 

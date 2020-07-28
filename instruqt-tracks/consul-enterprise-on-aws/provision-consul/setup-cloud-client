@@ -11,5 +11,18 @@ EOF
 cd /root/terraform/consul
 terraform init
 
+#config checks
+cat << "EOF" > /usr/local/bin/check-consul-config
+#!/bin/bash -xe
+
+file=$1
+consul_asg=$(aws autoscaling describe-auto-scaling-groups --query "AutoScalingGroups[?contains(Tags[?Key=='Role'].Value, 'consul')].[AutoScalingGroupName]" --output text)
+consul_instance=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-name $consul_asg --output json | jq -r '[.. |."InstanceId"? | select(. != null)][0]')
+bastion_instance=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].InstanceId' --filters "Name=tag:Name,Values=bastion" --output text)
+consul_ip=$(aws ec2 describe-instances --instance-ids ${consul_instance} --query 'Reservations[].Instances[].PrivateIpAddress' --output text)
+bastion_ip=$(aws ec2 describe-instances --instance-ids ${bastion_instance} --query 'Reservations[].Instances[].PublicIpAddress' --output text)
+ssh -A -J ubuntu@${bastion_ip} ec2-user@${consul_ip} "sudo cat $file"
+EOF
+chmod +x /usr/local/bin/check-consul-config
 
 exit 0

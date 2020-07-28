@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ -f /tmp/skip-check ]; then
+    rm /tmp/skip-check
+    exit 0
+fi
+
+#we should get a 200
+app=$(terraform output -state /root/terraform/bigip/terraform.tfstate app_url)
+n=0
+until [ $n -ge 3 ]; do
+  curl --output /dev/null --silent --head --fail ${app} && break
+  n=$[$n+1]
+  echo "retrying api..."
+  sleep 5
+done
+if [ $n -ge 3 ]; then
+  echo "Logging a BIG-IP API response for debug: $(curl --output /dev/null --silent --head --fail -w "%{http_code}" ${app})"
+  echo "Logging a verbose API request for debug..."
+  response=$(curl -v --silent ${app})
+  echo ${response}
+  fail-message "Service did not return an expected 200. Check BIG-IP."
+  exit 1
+fi
+
+exit 0

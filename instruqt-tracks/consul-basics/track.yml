@@ -17,355 +17,356 @@ description: |-
   Once you've learned these fundamentals you can proceed to intermediate and advanced topics like Service Discovery and Consul Connect.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags:
-- introduction to consul
-- consul basics
-- serf
-- cluster
+  - introduction to consul
+  - consul basics
+  - serf
+  - cluster
 owner: hashicorp
 developers:
-- lance@hashicorp.com
+  - lance@hashicorp.com
 private: false
 published: true
 challenges:
-- slug: meet-consul
-  id: bgfx8nbzqnjv
-  type: challenge
-  title: Get to Know Consul
-  teaser: My First Consul cluster
-  assignment: |
-    Welcome to Consul Basics! In this lab you'll start up a three-node Consul cluster.
+  - slug: meet-consul
+    id: bgfx8nbzqnjv
+    type: challenge
+    title: Get to Know Consul
+    teaser: My First Consul cluster
+    assignment: |
+      Welcome to Consul Basics! In this lab you'll start up a three-node Consul cluster.
 
-    Once all three nodes have joined the server cluster you should see the Consul UI become healthy.
+      Once all three nodes have joined the server cluster you should see the Consul UI become healthy.
 
-    Start the Consul server process on each cluster node with the following command.
+      Start the Consul server process on each cluster node with the following command.
 
-    ```
-    /bin/start_consul.sh
-    ```
+      ```
+      /bin/start_consul.sh
+      ```
 
-    You can simply copy and paste it into the terminal for each server. You may also view the config for one of the Consul servers in the code editor. You don't need to understand all the options, just notice that we are starting Consul in `server` mode. (This is on line 8 in the config file.)
+      You can simply copy and paste it into the terminal for each server. You may also view the config for one of the Consul servers in the code editor. You don't need to understand all the options, just notice that we are starting Consul in `server` mode. (This is on line 8 in the config file.)
 
-    Try reloading the UI after starting each server.
+      Try reloading the UI after starting each server.
 
-    Our startup script is simple and runs Consul as a background process. In production this would be daemonized or managed by an orchestrator.
+      Our startup script is simple and runs Consul as a background process. In production this would be daemonized or managed by an orchestrator.
 
-    Once you have a healthy cluster, the Consul UI will become available. Click on the Nodes tab in the Consul UI to see your three servers. The leader is marked with a star. ⭐
-  notes:
-  - type: text
-    contents: "\U0001F578️You are about to enter the Consul Zone\U0001F47D"
-  tabs:
-  - title: Consul0
-    type: terminal
-    hostname: consul-server-0
-  - title: Consul1
-    type: terminal
-    hostname: consul-server-1
-  - title: Consul2
-    type: terminal
-    hostname: consul-server-2
-  - title: Server0 - Config
-    type: code
-    hostname: consul-server-0
-    path: /consul/config/server.json
-  - title: Consul UI
-    type: service
-    hostname: consul-server-0
-    port: 8500
-  difficulty: basic
-  timelimit: 600
-- slug: consul-cli
-  id: ur5wsyiizlac
-  type: challenge
-  title: Consul CLI
-  teaser: Take the Consul CLI for a spin
-  assignment: |-
-    The Consul binary can act as a server, client, or command line tool. We've preconfigured the command line settings for you with the `CONSUL_HTTP_ADDR` environment variable.
+      Once you have a healthy cluster, the Consul UI will become available. Click on the Nodes tab in the Consul UI to see your three servers. The leader is marked with a star. ⭐
+    notes:
+      - type: text
+        contents: "\U0001F578️You are about to enter the Consul Zone\U0001F47D"
+    tabs:
+      - title: Consul0
+        type: terminal
+        hostname: consul-server-0
+      - title: Consul1
+        type: terminal
+        hostname: consul-server-1
+      - title: Consul2
+        type: terminal
+        hostname: consul-server-2
+      - title: Server0 - Config
+        type: code
+        hostname: consul-server-0
+        path: /consul/config/server.json
+      - title: Consul UI
+        type: service
+        hostname: consul-server-0
+        port: 8500
+    difficulty: basic
+    timelimit: 600
+  - slug: consul-cli
+    id: ur5wsyiizlac
+    type: challenge
+    title: Consul CLI
+    teaser: Take the Consul CLI for a spin
+    assignment: |-
+      The Consul binary can act as a server, client, or command line tool. We've preconfigured the command line settings for you with the `CONSUL_HTTP_ADDR` environment variable.
 
-    You can run the following command to see this value: `echo $CONSUL_HTTP_ADDR`. This is the API server endpoint for Consul. The Consul command line tool is communicating to the API on 127.0.0.1 or localhost.
+      You can run the following command to see this value: `echo $CONSUL_HTTP_ADDR`. This is the API server endpoint for Consul. The Consul command line tool is communicating to the API on 127.0.0.1 or localhost.
 
-    All interactions with Consul, whether through the GUI, or command line always have an underlying API call.
+      All interactions with Consul, whether through the GUI, or command line always have an underlying API call.
 
-    Try these commands and view the results. You may run the commands on any server: <br>
+      Try these commands and view the results. You may run the commands on any server: <br>
 
-    * Get Help:
-      - `consul help` or `consul subcommand -help`
-    * View Logs:
-      - `consul monitor` (CTRL-C to escape)
-    * List Members:
-      - `consul members`
-    * List Peers:
-      - `consul operator raft list-peers`
-    * Agent Info:
-      - `consul info` <br>
+      * Get Help:
+        - `consul help` or `consul subcommand -help`
+      * View Logs:
+        - `consul monitor` (CTRL-C to escape)
+      * List Members:
+        - `consul members`
+      * List Peers:
+        - `consul operator raft list-peers`
+      * Agent Info:
+        - `consul info` <br>
 
-    You can check out the same info in the Consul UI.
-  notes:
-  - type: text
-    contents: |-
-      Consul is distributed as a single binary file, which means it can act as both a server or a command line client.
-      You can read more about the full list of commands [here](https://www.consul.io/docs/commands/index.html).
-  tabs:
-  - title: Consul0
-    type: terminal
-    hostname: consul-server-0
-  - title: Consul1
-    type: terminal
-    hostname: consul-server-1
-  - title: Consul2
-    type: terminal
-    hostname: consul-server-2
-  - title: Consul UI
-    type: service
-    hostname: consul-server-0
-    port: 8500
-  difficulty: basic
-  timelimit: 600
-- slug: consul-api
-  id: 6mh7z4axuiix
-  type: challenge
-  title: Consul API
-  teaser: Use the Consul API
-  assignment: |-
-    Let's try some of the same commands from our last assignment with the API. We'll use the Unix `curl` command to interact with the API. Copy and paste each command into the terminal and view the output.
+      You can check out the same info in the Consul UI.
+    notes:
+      - type: text
+        contents: |-
+          Consul is distributed as a single binary file, which means it can act as both a server or a command line client.
+          You can read more about the full list of commands [here](https://www.consul.io/docs/commands/index.html).
+    tabs:
+      - title: Consul0
+        type: terminal
+        hostname: consul-server-0
+      - title: Consul1
+        type: terminal
+        hostname: consul-server-1
+      - title: Consul2
+        type: terminal
+        hostname: consul-server-2
+      - title: Consul UI
+        type: service
+        hostname: consul-server-0
+        port: 8500
+    difficulty: basic
+    timelimit: 600
+  - slug: consul-api
+    id: 6mh7z4axuiix
+    type: challenge
+    title: Consul API
+    teaser: Use the Consul API
+    assignment: |-
+      Let's try some of the same commands from our last assignment with the API. We'll use the Unix `curl` command to interact with the API. Copy and paste each command into the terminal and view the output.
 
-    * Logs:
-      - `curl -s http://127.0.0.1:8500/v1/agent/monitor` (CTRL-C to escape)
-    * List Members:
-      - `curl -s http://127.0.0.1:8500/v1/agent/members | jq`
-    * Get Consul Leader:
-      - `curl -s http://127.0.0.1:8500/v1/status/leader | jq`
-    * Agent Info:
-      - `curl -s http://127.0.0.1:8500/v1/agent/self | jq` <br>
-  notes:
-  - type: text
-    contents: |-
-      Consul has a RESTful API which you can use to interact with Consul.
-      You can see the see Consul API documentation [here](https://www.consul.io/api/index.html).
-  tabs:
-  - title: Consul0
-    type: terminal
-    hostname: consul-server-0
-  - title: Consul1
-    type: terminal
-    hostname: consul-server-1
-  - title: Consul2
-    type: terminal
-    hostname: consul-server-2
-  - title: Consul UI
-    type: service
-    hostname: consul-server-0
-    port: 8500
-  difficulty: basic
-  timelimit: 600
-- slug: consul-agents
-  id: unxdsxuwburk
-  type: challenge
-  title: Add an Agent
-  teaser: Add a Consul client agent to your Consul cluster.
-  assignment: |-
-    We've added an `App Server` to your lab environment. The app server is configured to run in `client` mode.
+      * Logs:
+        - `curl -s http://127.0.0.1:8500/v1/agent/monitor` (CTRL-C to escape)
+      * List Members:
+        - `curl -s http://127.0.0.1:8500/v1/agent/members | jq`
+      * Get Consul Leader:
+        - `curl -s http://127.0.0.1:8500/v1/status/leader | jq`
+      * Agent Info:
+        - `curl -s http://127.0.0.1:8500/v1/agent/self | jq` <br>
+    notes:
+      - type: text
+        contents: |-
+          Consul has a RESTful API which you can use to interact with Consul.
+          You can see the see Consul API documentation [here](https://www.consul.io/api/index.html).
+    tabs:
+      - title: Consul0
+        type: terminal
+        hostname: consul-server-0
+      - title: Consul1
+        type: terminal
+        hostname: consul-server-1
+      - title: Consul2
+        type: terminal
+        hostname: consul-server-2
+      - title: Consul UI
+        type: service
+        hostname: consul-server-0
+        port: 8500
+    difficulty: basic
+    timelimit: 600
+  - slug: consul-agents
+    id: unxdsxuwburk
+    type: challenge
+    title: Add an Agent
+    teaser: Add a Consul client agent to your Consul cluster.
+    assignment: |-
+      We've added an `App Server` to your lab environment. The app server is configured to run in `client` mode.
 
-    Look in the `App Config` tab. Note that the *server* flag is set to false.
+      Look in the `App Config` tab. Note that the *server* flag is set to false.
 
-    Run the Consul startup script in the `App` tab and join this agent to the cluster.
+      Run the Consul startup script in the `App` tab and join this agent to the cluster.
 
-    ```
-    /bin/start_consul.sh
-    ```
+      ```
+      /bin/start_consul.sh
+      ```
 
-    Look at the node list in the Consul UI or run the `consul members` command to verify that the app server has joined the cluster.
-  notes:
-  - type: text
-    contents: |-
-      The Consul agent runs on every node where you want to keep track of services. A node can be a physical server, VM, or container.
+      Look at the node list in the Consul UI or run the `consul members` command to verify that the app server has joined the cluster.
+    notes:
+      - type: text
+        contents: |-
+          The Consul agent runs on every node where you want to keep track of services. A node can be a physical server, VM, or container.
 
-      The agent tracks information about the node and its associated services. Agents report this information to the Consul servers, where we have a central view of node and service status.
-  tabs:
-  - title: App
-    type: terminal
-    hostname: consul-agent-0
-  - title: App - Config
-    type: code
-    hostname: consul-agent-0
-    path: /consul/config/client.json
-  - title: Consul UI
-    type: service
-    hostname: consul-server-0
-    port: 8500
-  difficulty: basic
-  timelimit: 600
-- slug: consul-ha
-  id: twklmkkkdxlb
-  type: challenge
-  title: Consul High Availability
-  teaser: Test Consul's High Availability Capabilities
-  assignment: |-
-    We have 3 servers in our lab environment. This means we can lose one
-    server and still have a healthy cluster. You can read more about the Consensus
-    Protocol [here](https://www.consul.io/docs/internals/consensus.html). <br>
+          The agent tracks information about the node and its associated services. Agents report this information to the Consul servers, where we have a central view of node and service status.
+    tabs:
+      - title: App
+        type: terminal
+        hostname: consul-agent-0
+      - title: App - Config
+        type: code
+        hostname: consul-agent-0
+        path: /consul/config/client.json
+      - title: Consul UI
+        type: service
+        hostname: consul-server-0
+        port: 8500
+    difficulty: basic
+    timelimit: 600
+  - slug: consul-ha
+    id: twklmkkkdxlb
+    type: challenge
+    title: Consul High Availability
+    teaser: Test Consul's High Availability Capabilities
+    assignment: |-
+      We have 3 servers in our lab environment. This means we can lose one
+      server and still have a healthy cluster. You can read more about the Consensus
+      Protocol [here](https://www.consul.io/docs/internals/consensus.html). <br>
 
-    Let's disable the leader and observe what happens. <br>
+      Let's disable the leader and observe what happens. <br>
 
-    First, find your current leader.
-    You can  do this from the UI (look for the star), or on the command line: <br>
+      First, find your current leader.
+      You can  do this from the UI (look for the star), or on the command line: <br>
 
-    ```
-    consul operator raft list-peers
-    ```
+      ```
+      consul operator raft list-peers
+      ```
 
-    Go to the tab of your current leader and run the following command to stop the Consul agent: <br>
+      Go to the tab of your current leader and run the following command to stop the Consul agent: <br>
 
-    ```
-    pkill consul
-    ```
+      ```
+      pkill consul
+      ```
 
-    If your leader happens to be `Consul0` you will temporarily lose access to the UI. <br>
+      If your leader happens to be `Consul0` you will temporarily lose access to the UI. <br>
 
-    Repeat the above process on the leading server terminal tab, and kill the new leader. <br>
+      Repeat the above process on the leading server terminal tab, and kill the new leader. <br>
 
-    Run the following commands on the last server: <br>
+      Run the following commands on the last server: <br>
 
-    ```
-    consul members
-    consul operator raft list-peers
-    consul catalog nodes
-    ```
+      ```
+      consul members
+      consul operator raft list-peers
+      consul catalog nodes
+      ```
 
-    You'll see error messages like this: `Unexpected response code: 500 (No cluster leader)` <br>
+      You'll see error messages like this: `Unexpected response code: 500 (No cluster leader)` <br>
 
-    Now that two servers have failed your cluster is no longer functional,
-    all API commands will result in errors until at least one of your other servers comes back online.
-    Let's recover by starting Consul back up. Run the following command on one of the failed nodes: <br>
+      Now that two servers have failed your cluster is no longer functional,
+      all API commands will result in errors until at least one of your other servers comes back online.
+      Let's recover by starting Consul back up. Run the following command on one of the failed nodes: <br>
 
-    ```
-    /bin/start_consul.sh
-    ```
+      ```
+      /bin/start_consul.sh
+      ```
 
-    Now run `consul members` to verify that the Consul API is responding again. <br>
+      Now run `consul members` to verify that the Consul API is responding again. <br>
 
-    Bring back your third server with the startup script: <br>
+      Bring back your third server with the startup script: <br>
 
-    ```
-    /bin/start_consul.sh
-    ```
+      ```
+      /bin/start_consul.sh
+      ```
 
-    And run `consul members` one last time. You should see all three server nodes in alive status. <br>
+      And run `consul members` one last time. You should see all three server nodes in alive status. <br>
 
-    Congratulations, your Consul cluster is healthy again.
-  notes:
-  - type: text
-    contents: |-
-      Consul servers work together to elect a single leader, which becomes the primary source of truth for the cluster. All updates are forwarded to the cluster leader. If the leader goes down one of the other servers can immediately take its place.
+      Congratulations, your Consul cluster is healthy again.
+    notes:
+      - type: text
+        contents: |-
+          Consul servers work together to elect a single leader, which becomes the primary source of truth for the cluster. All updates are forwarded to the cluster leader. If the leader goes down one of the other servers can immediately take its place.
 
-      To ensure high availability within the system, we recommend deploying Consul with 3 or 5 server nodes.
-  - type: text
-    contents: |-
-      Quorum requires at least (n/2)+1 members. You need quorum for a healthy cluster. <br>
+          To ensure high availability within the system, we recommend deploying Consul with 3 or 5 server nodes.
+      - type: text
+        contents: |-
+          Quorum requires at least (n+1)/2 members. You need quorum for a healthy cluster. <br>
 
-      A three-node cluster can tolerate the loss of a single member.
-      A five-node cluster can tolerate the loss of two members and continue to operate.
-  tabs:
-  - title: Consul UI
-    type: service
-    hostname: consul-server-0
-    port: 8500
-  - title: Consul0
-    type: terminal
-    hostname: consul-server-0
-  - title: Consul1
-    type: terminal
-    hostname: consul-server-1
-  - title: Consul2
-    type: terminal
-    hostname: consul-server-2
-  - title: App
-    type: terminal
-    hostname: consul-agent-0
-  difficulty: basic
-  timelimit: 600
-- slug: consul-acls
-  id: qlfdatwayytc
-  type: challenge
-  title: Consul ACLs
-  teaser: Set up basic Consul ACLs
-  assignment: |-
-    Let's apply some access controls to our Consul cluster to prevent unauthorized access. In this challenge you'll use the master bootstrap token to access the UI and to enable a policy for your app server.
+          A three-node cluster can tolerate the loss of a single member.
+          A five-node cluster can tolerate the loss of two members and continue to operate.
+    tabs:
+      - title: Consul UI
+        type: service
+        hostname: consul-server-0
+        port: 8500
+      - title: Consul0
+        type: terminal
+        hostname: consul-server-0
+      - title: Consul1
+        type: terminal
+        hostname: consul-server-1
+      - title: Consul2
+        type: terminal
+        hostname: consul-server-2
+      - title: App
+        type: terminal
+        hostname: consul-agent-0
+    difficulty: basic
+    timelimit: 600
+  - slug: consul-acls
+    id: qlfdatwayytc
+    type: challenge
+    title: Consul ACLs
+    teaser: Set up basic Consul ACLs
+    assignment: |-
+      Let's apply some access controls to our Consul cluster to prevent unauthorized access. In this challenge you'll use the master bootstrap token to access the UI and to enable a policy for your app server.
 
-    You may notice that you're locked out of the UI. None of the nodes and services are showing up because of a default *deny* policy.
+      You may notice that you're locked out of the UI. None of the nodes and services are showing up because of a default *deny* policy.
 
-    Consul ACLs are enabled by running the `consul acl bootstrap` command.
+      Consul ACLs are enabled by running the `consul acl bootstrap` command.
 
-    We've already run this command for you and saved the output in the `ACL Bootstrap` code editor tab. The initial bootstrap token is the `SecretID` field of this output. This special token is used to configure your cluster and to generate other tokens. Copy the bootstrap token by highlighting it and pressing CTRL-C. <br>
+      We've already run this command for you and saved the output in the `ACL Bootstrap` code editor tab. The initial bootstrap token is the `SecretID` field of this output. This special token is used to configure your cluster and to generate other tokens. Copy the bootstrap token by highlighting it and pressing CTRL-C. <br>
 
-    To re-enable the UI, select the Consul UI tab, and click on the ACL tab and enter your token into the text field.
+      To re-enable the UI, select the Consul UI tab, and click on the ACL tab and enter your token into the text field.
 
-    On the command line you should set an environment variable with your token. Run the following command on the `App` tab:
+      On the command line you should set an environment variable with your token. Run the following command on the `App` tab:
 
-    ```
-    export CONSUL_HTTP_TOKEN=<your_token_here>
-    ```
+      ```
+      export CONSUL_HTTP_TOKEN=<your_token_here>
+      ```
 
-    This lab has a deny by default policy, so your `App` node will be logging ACL errors. Run the following command to view the ACL errors (CTRL-C to exit):
+      This lab has a deny by default policy, so your `App` node will be logging ACL errors. Run the following command to view the ACL errors (CTRL-C to exit):
 
-    ```
-    consul monitor
-    ```
+      ```
+      consul monitor
+      ```
 
-    ```
-    2019/09/18 20:42:06 [WARN] agent: Coordinate update blocked by ACLs
-    ```
+      ```
+      2019/09/18 20:42:06 [WARN] agent: Coordinate update blocked by ACLs
+      ```
 
-    The app server is currently blocked from making any consul updates or queries.
+      The app server is currently blocked from making any consul updates or queries.
 
-    Let's create a policy to enable limited access for our app node. Run these commands from the `App` tab.
+      Let's create a policy to enable limited access for our app node. Run these commands from the `App` tab.
 
-    ```
-    consul acl policy create \
-     -name app \
-     -rules @/consul/policies/app.hcl
-    ```
+      ```
+      consul acl policy create \
+       -name app \
+       -rules @/consul/policies/app.hcl
+      ```
 
-    Next, create a token for that policy.
+      Next, create a token for that policy.
 
-    ```
-    consul acl token create -description "app agent token" \
-      -policy-name app
-    ```
+      ```
+      consul acl token create -description "app agent token" \
+        -policy-name app
+      ```
 
-    Finally apply the token to make it active.
+      Finally apply the token to make it active.
 
-    ```
-    consul acl set-agent-token agent "<your_app_agent_token>"
-    ```
+      ```
+      consul acl set-agent-token agent "<your_app_agent_token>"
+      ```
 
-    You can now verify that the `App` agent logs are no longer logging errors.
-    Nice work!!! You just secured your first Consul agent!
-  notes:
-  - type: text
-    contents: |-
-      Consul uses Access Control Lists (ACLs) to secure the UI, API, CLI, service communications, and agent communications.
-      ACLs operate by grouping rules into policies, then associating one or more policies with a token.
-      ACLs are imperative for all Consul production environments. <br>
+      You can now verify that the `App` agent logs are no longer logging errors.
+      Nice work!!! You just secured your first Consul agent!
+    notes:
+      - type: text
+        contents: |-
+          Consul uses Access Control Lists (ACLs) to secure the UI, API, CLI, service communications, and agent communications.
+          ACLs operate by grouping rules into policies, then associating one or more policies with a token.
+          ACLs are imperative for all Consul production environments. <br>
 
-      For a detailed explanation of the ACL system, check out this [guide](https://learn.hashicorp.com/consul/security-networking/production-acls). <br>
+          For a detailed explanation of the ACL system, check out this [guide](https://learn.hashicorp.com/consul/security-networking/production-acls). <br>
 
-      This challenge will take 1-2 minutes to spin up. Please be patient.
-  tabs:
-  - title: Consul UI
-    type: service
-    hostname: consul-server-0
-    port: 8500
-  - title: App
-    type: terminal
-    hostname: consul-agent-0
-  - title: App Node Policy
-    type: code
-    hostname: consul-server-2
-    path: /consul/policies/app.hcl
-  - title: ACL Bootstrap
-    type: code
-    hostname: consul-server-2
-    path: /tmp/bootstrap.txt
-  difficulty: basic
-  timelimit: 600
-checksum: "1568873612091975301"
+          This challenge will take 1-2 minutes to spin up. Please be patient.
+    tabs:
+      - title: Consul UI
+        type: service
+        hostname: consul-server-0
+        port: 8500
+      - title: App
+        type: terminal
+        hostname: consul-agent-0
+      - title: App Node Policy
+        type: code
+        hostname: consul-server-2
+        path: /consul/policies/app.hcl
+      - title: ACL Bootstrap
+        type: code
+        hostname: consul-server-2
+        path: /tmp/bootstrap.txt
+    difficulty: basic
+    timelimit: 600
+checksum: "4253193431379042696"
+show_timer: true

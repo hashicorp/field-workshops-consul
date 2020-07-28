@@ -1,0 +1,868 @@
+slug: f5-hashicorp-app-mod-tf-consul
+id: mi8hobhrlh96
+version: 0.0.1
+type: track
+title: F5 & HashiCorp - App Modernization with Terraform & Consul
+teaser: Use Terraform and Consul to manage day one and day two operations of F5 in
+  Azure
+description: Use Terraform and Consul to manage day one and day two operations of
+  F5 in Azure
+icon: ""
+tags: []
+owner: hashicorp
+developers:
+- lance@hashicorp.com
+- kcorbin@hashicorp.com
+private: true
+published: true
+challenges:
+- slug: provision-azure-vnets
+  id: tmsnsut54k9f
+  type: challenge
+  title: Provision Azure VNETs
+  teaser: Deploy basic network infrastructure using Terraform
+  assignment: |-
+    In this assignment you will provision the VNets we will use in the following assignments. <br>
+
+    Inspect and deploy the Terraform code.
+
+    In the `Shell` tab run the following commands.
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    Their CIDR blocks are listed below:
+    ```
+    hcs-vnet: 10.0.0.0/16
+    shared-svcs-vnet: 10.2.0.0/16
+    legacy-vnet: 10.3.0.0/16
+    aks-vnet: 10.4.0.0/16
+    ```
+
+    You will leverage these VNet in the next few assignments.
+  notes:
+  - type: text
+    contents: |
+      Setting up your environment...
+      Keep an eye on the bottom right corner to know when you can get started.
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Text Editor
+    type: code
+    hostname: workstation
+    path: /root/terraform/vnet
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/provision-azure-vnets.html
+  difficulty: basic
+  timelimit: 3000
+- slug: provision-core-services
+  id: gipovssxptby
+  type: challenge
+  title: Provision Core Services
+  teaser: Provision Vault, HCS, and AKS using Terraform
+  assignment: |-
+    You will use Terraform to provision these services in the background while you set up Consul in the next few assignments. <br>
+
+    Start with Vault. Vault is a secrets management solution that we will use to securely store sensitive information such as usernames, passwords, certificates, and tokens.<br>
+
+    In the `Shell` tab run the following commands.
+    ```
+    cd /root/terraform/vault
+    terraform plan
+    nohup terraform apply -auto-approve > /root/terraform/vault/terraform.out &
+    ```
+    Next, provision AKS. This will be the target environment for the microservices based architecture that applications will be refactored to. <br>
+    ```
+    cd /root/terraform/aks
+    terraform plan
+    nohup terraform apply -auto-approve > /root/terraform/aks/terraform.out &
+    ```
+    Last, provision the HashiCorp Consul service. HCS provides Consul as a Managed service on Azure. <br>
+    ```
+    cd /root/terraform/hcs
+    terraform plan
+    nohup terraform apply -auto-approve > /root/terraform/hcs/terraform.out &
+    ```
+    These services will take some time to provision, you can continue at anytime and they will continue to run.  You will validate and configure them in later chapters, for now take a few moments to review the Terraform code used to provision each of these services.   There are tabs for each of the three components.
+  notes:
+  - type: text
+    contents: |
+      Terraform allows you to document, share, and deploy environments in one workflow by using Infrastructure as Code!
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Vault Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/vault
+  - title: AKS Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/aks
+  - title: HCS Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/hcs
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/provision-core-services.html
+  difficulty: basic
+  timelimit: 3000
+- slug: provision-f5
+  id: tddd2tm78rzu
+  type: challenge
+  title: Provision F5
+  teaser: Provision an F5 BIG-IP VE using Terraform
+  assignment: |-
+    Now we will provision the F5 BIG-IP Virtual Edition using Terraform. <br>
+
+    In the `Shell` tab run the following commands.
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    This can take several minutes to complete, while you are waiting
+    take the opportunity to review the `Terraform Code` tab to see the IaC definition.
+
+    Once the apply is complete, you can Navigate to the BIG-IP at the IP address in the Terraform output.
+
+    **NOTE:** you will need open the URL provided by the output in a separate tab.  If you are using chrome, you
+    may be presented with a certificate error, to bypass this you can type "thisisunsafe" into the Chrome window.
+
+    The AKS, HCS services may not be running quite yet, you can monitor their progress with the following commands.
+
+    Montior HCS provisioning
+    ```
+    cat /root/terraform/hcs/terraform.out
+    ```
+    Montior AKS provisioning
+    ```
+    cat /root/terraform/aks/terraform.out
+    ```
+  notes:
+  - type: text
+    contents: |
+      In this exercise we will be provisioning an F5 BIG-IP Virtual Edition using Terraform.
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/bigip
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/provision-f5.html
+  difficulty: basic
+  timelimit: 3000
+- slug: validate-hcs
+  id: zkxpyr3mokid
+  type: challenge
+  title: Validate HCS
+  teaser: Verify Vault, HCS, and Consul are operational
+  assignment: |2-
+
+    Consul HCS and Vault should now be provisioned and accessible from the corresponding tabs.
+
+    In this exercise we will gather the information required to connect to HCS and securely store this information in Vault.
+
+    In the `Shell` tab run the following commands.
+    ```
+    vault login -method=userpass username=operations password=Password1
+    ```
+
+    Retrieve the bootstrap token and gossip key from HCS and save it to your Vault instance.
+
+    ```
+    echo $CONSUL_HTTP_ADDR
+    echo $VAULT_ADDR
+    bootstrap_token=$(az hcs create-token --resource-group $(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name) --name hcs | jq  -r .masterToken.secretId)
+    gossip_key=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .encrypt)
+    vault kv put secret/consul master_token=${bootstrap_token} gossip_key=${gossip_key}
+    ```
+
+    Now inspect the credentials.
+
+    ```
+    echo $VAULT_ADDR
+    vault kv get secret/consul
+    ```
+    You can use this token to login and explore the Consul UI, use of the master token should be highly restricted, instead let's configure Vault to issue [dynamic secrets](https://www.vaultproject.io/docs/secrets/consul/) for Consul. <br>
+
+    Get a management token for Vault to manage Consul tokens with.
+    You can retrieve the privileged token for this operation from Vault.  <br>
+
+    ```
+    export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
+    vault_consul_mgmt_token=$(consul acl token create -policy-name=global-management -description "vault mgmt" | grep SecretID | cut -d ":" -f2 | xargs)
+
+    ```
+    Now configure the secrets engine.
+
+    ```
+    vault write consul/config/access address=${CONSUL_HTTP_ADDR} token=${vault_consul_mgmt_token}
+    vault read consul/config/access
+    ```
+
+    Last, create a policy for the operations team, and link it to the Vault role.
+
+    ```
+    consul acl policy create -name "ops" -description "admin policy for ops" -rules 'acl = "write" operator = "write" namespace_prefix "" {acl = "write"}'
+    vault write consul/roles/ops policies=ops ttl=1h
+    ```
+
+    Now you are ready to get a dynamic Consul token from Vault for an operator.
+    Validate the token after you fetch it. <br>
+
+    ```
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    You can use this token to set up the anonymous policy.
+
+    ```
+    echo '
+    node_prefix "" {
+      policy = "read"
+    }
+    service_prefix "" {
+      policy = "read"
+    }
+    session_prefix "" {
+      policy = "read"
+    }
+    agent_prefix "" {
+      policy = "read"
+    }
+    query_prefix "" {
+      policy = "read"
+    }
+    operator = "read"' |  consul acl policy create -name anonymous -rules -
+    consul acl token update -id anonymous -policy-name anonymous
+    ```
+
+    You will use this role in a later assignment to configure access for Consul service consumers.
+  tabs:
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
+  - title: Text Editor
+    type: code
+    hostname: workstation
+    path: /root
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/provision-core-services.html
+  difficulty: basic
+  timelimit: 3000
+- slug: deploy-legacy-environments
+  id: pp5dlxxhxsxu
+  type: challenge
+  title: Deploy Legacy environments
+  teaser: Migrate an existing VM based application to the cloud.
+  assignment: |2-
+
+    In this assignment we will be deploying the current application into Azure based VM's. <br>
+
+    As part of the cloud migration, the VM's will also be configured to run a Consul agent that registers these services with Consul.  This will make it easy to refactor the application, as the application is no longer dependent upon static IP addresses which are hardcoded into configuration and application code. <br>
+
+    This also means that IP addresses no longer have to be known before provisioning can occur, thus, decoupling steps in the provisioning workflow.
+
+
+    Review the code in the `Terraform Code` this defines the VMSS for the web and app tiers of the application.
+
+    Begin provisioning the application in the background.
+
+    ```
+    terraform plan
+    nohup terraform apply -auto-approve > deploy_app.log 2>&1 &
+    ```
+
+    By registering nodes and services in Consul other services can easily discover their status and location. <br>
+
+    For example, it is no longer required to manually manage pool members on the F5 appliances. Instead, VIPs can be configured to populate backend pool members by monitoring services in Consul. Whenever the application scales up, down, fails a check, or moves the BIG-IP will automatically update it's configuration. <br>
+
+    VIP deployment is also automated by way of an AS3 declaration which is deployed via Terraform. The AS3 declaration for the legacy application defines a VIP, a corresponding node pool which will be dynamically populated by Consul, and a WAF policy that helps protect the application from bad actors.
+
+    Inspect the AS3 declaration.
+    ```
+    cd /root/terraform/legacy/as3
+    cat templates/as3_declaration.json
+    ```
+
+    Provision the VIP using Terraform.
+    ```
+    cd /root/terraform/legacy/as3
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    The application is now being migrated to the cloud!!! You can monitor the status of your application via Consul. <br>
+
+    Once everything looks good you can visit the application in the `App` tab. You may need to hit the refresh button **within** that tab. <br>
+
+    You will explore the environment in more detail in the next challange. <br>
+  notes:
+  - type: text
+    contents: |
+      For a lot of organizations digital transformation may start with a simple "lift and shift" to the cloud for existing workloads!
+  tabs:
+  - title: Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/legacy
+  - title: App Access Info
+    type: code
+    hostname: workstation
+    path: /info.txt
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/final-architecture.html
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: App
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8080
+  difficulty: basic
+  timelimit: 3000
+- slug: review-legacy-environment
+  id: uduxezyej08m
+  type: challenge
+  title: Review legacy environment
+  teaser: Review the components of the legacy application
+  assignment: |-
+    The VM based application is now configured as part of a VM scale set on Azure.  One of the first challenges that comes up is that instances of the scale set will be provisioned with dynamic IP addresses. <br>
+
+    This makes it difficult to maintain any configuration files which require hard coded IP addresses, luckily Consul can help solve this.
+
+    Consul maintains a real-time catalog of all of the nodes and services in the environment.  This catalog can be queried using a UI, CLI, API, or simple DNS interface.
+
+    Let's review the components of the application and see how Consul is leveraged in different ways.
+
+    ** F5 LTM ** <br>
+
+    **Remember you will to need to view this UI in a different browser tab**, for convenenience we have put all the required information in the `info.txt` file in the `App Access Info` tab <br>
+
+    The VIP and pools are provisioned in the `Consul_SD` partition, make sure you select it from the drop down menu in the top right corner of the screen.
+
+    You can view the VIP in the BIG-IP UI by naviagating to the `Local Traffic -> Virtual Servers`
+
+    You can view the pool members navigating to `Local Traffic -> Pools`
+
+
+
+    ** Web Tier ** <br>
+
+    The VIP for the web tier of the application lives on the F5 BIG-IP virtual appliance. The pools servicing this VIP are dynamically populated by querying Consul for all instances of the service called `web` <br>
+
+    The mapping between Consul and the pools was declared in the AS3 declaration of the VIP.
+
+    Examine the AS3 declaration for the application.  You will see where the members are referencing a Consul API endpoint.
+
+    From the `Shell` tab
+    ```
+    cat as3/templates/as3_declaration.json
+    ```
+
+    The AS3 definition also includes a WAF policy. You can review the configured policy by navigating to the `Security -> Application Security -> Security Policies` tab in the `Consul_SD` partition <br>
+
+    The WAF policy contains a URL blocking strategy that prevents users from attempting to access sensitive portions of the application.
+
+    ** Test WAF Policy **
+
+    The sample WAF policy includes a rule that ensures that the `/admin` path of the application is not available externally.  You open a new tab using the URL of the application contained within the `App Access Info` tab.  The application should come up, add `/admin` to the URL in your browser. We can also test the WAF policy using curl in the local shell.
+
+    Test a URL allowed by the WAF policy
+    ```
+    vip=$(terraform output -state /root/terraform/bigip/terraform.tfstate  app_url)
+    curl $vip
+
+    ```
+
+    Test a URL blocked by the WAF policy
+    ```
+    vip=$(terraform output -state /root/terraform/bigip/terraform.tfstate  app_url)
+    curl $vip/admin
+
+    ```
+
+    Next you can explore some of the service discovery capabilities of Consul.
+
+    View the nodes and services via CLI
+
+    ```
+    consul members
+    consul catalog services
+    ```
+
+    You can also retrieve information programatically via the API.  In this example you will be determining the IP address of the first web servers returned by the API. <br>
+
+    ```
+    web_server=$(curl -s $CONSUL_HTTP_ADDR/v1/catalog/service/web | jq -r '.[0].Address')
+    echo $web_server
+    ```
+
+    ** NGiNX **
+
+    Nginx is running on each of the web servers and is used to proxy and load balance requests to the app tier.
+
+    Rather than managing the configuration files for the proxy manually, we'll instead rely on Consul and a library called [Consul Template](https://github.com/hashicorp/consul-template) <br>
+
+    Consul Template is responsible for monitoring Consul for changes to the `app` service, and when changes are detected, render a new configuration file and restart NGiNX automatically.
+
+    **Pro Tip:** Consul template can render any ASCII based configuration files you may need for other purposes, and fire a user defined handler after (re)rendering. <br>
+
+    The next few steps will show how this is configured, by accessing the `$web_server` you discovered and stored previously through a bastion host that has also been configured. <br><br>
+
+    1. Review the consul-template configuration
+    ```
+    ssh -q -A -J azure-user@$bastion_ip azure-user@$web_server \
+      sudo cat /etc/consul-template/consul-template-config.hcl
+    ```
+    <br>
+
+    2. Review the templated nginx configuration
+
+    ```
+    ssh -q -A -J azure-user@$bastion_ip azure-user@$web_server sudo cat /etc/nginx/conf.d/load-balancer.conf.ctmpl
+    ```
+    <br>
+    3. Review the rendered configuration, and compare it to the information you've discovered via the other Consul interfaces.
+
+    ```
+    ssh -q -A -J azure-user@$bastion_ip azure-user@$web_server sudo cat /etc/nginx/conf.d/default.conf
+    ```
+
+    We are now able to connect things together using **Service Names** instead of IP addresses. In the next exercise we will scale the application and watch Consul take care of the rest! <br>
+  notes:
+  - type: text
+    contents: |
+      Now let's review the application environment we've deployed!
+  tabs:
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: App Access Info
+    type: code
+    hostname: workstation
+    path: /info.txt
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: App
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8080
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
+  - title: Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/legacy
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/final-architecture.html
+  difficulty: basic
+  timelimit: 3000
+- slug: scale-the-application
+  id: xlknkvvmbhdz
+  type: challenge
+  title: Scale the application
+  teaser: Let Consul take care of routine adds/moves/changes of services instances.
+  assignment: |-
+    Now let's re-run the Terraform code for the legacy application, but pass in some new variables for the scale parameters.
+
+    ```
+    terraform apply -var app_count=3 -var web_count=3 -auto-approve
+    ```
+
+    After the Terraform run completes, you can monitor the status of your nodes and services using the Consul UI. Once all of the new instances are online and healthy, you can revisit some of the things we reviewed in the previous exercise.
+
+    View the nodes and services via CLI
+
+    ```
+    consul members
+    consul catalog services
+    ```
+
+    Review all of the web instances
+    ```
+    curl -s $CONSUL_HTTP_ADDR/v1/catalog/service/web | jq
+    ```
+
+    Review all of the app instances
+    ```
+    curl -s $CONSUL_HTTP_ADDR/v1/catalog/service/app | jq
+    ```
+
+    Review the updated nginx configuration on the web_server
+    ```
+    ssh -q -A -J azure-user@$bastion_ip azure-user@$web_server sudo cat /etc/nginx/conf.d/default.conf
+    ```
+
+    Review the VIP and pool configuration on LTM once again.
+
+    The resources for this lab will self-destruct in 8 hours, but to save a little money, **please scale the application back down.**
+
+    Re-run Terraform, and monitor the various integration points once again. We'll do so in the background so that you can move on whenever you're ready. <br>
+
+    ```
+    nohup terraform apply -var app_count=1 -var web_count=1 -auto-approve > /root/terraform/legacy/scaledown.out &
+    ```
+
+    **Some other things you can try:**
+
+    1. Refresh the application page several times, and notice the load balancing occur.
+    2. Explore the [Consul API](https://www.consul.io/api-docs/index) a bit more, Consul is a wonderful real-time source of truth for dynamic network environments.
+    ```
+    curl -s $CONSUL_HTTP_ADDR/v1/health/checks/web | jq
+    curl -s $CONSUL_HTTP_ADDR/v1/health/checks/app | jq
+    ```
+    3. Consul can even estimate [round trip](https://www.consul.io/docs/internals/coordinates) times between nodes/datacenter. This is useful for finding the closest service instance, or datacenter for failover operations.
+    ```
+    consul rtt web-vm-000001 app-vm-000000
+    ```
+    **NOTE:** you may need to update the node names to match your environment
+
+    Now that we are routing traffic based upon **service identity** we gain a lot of flexibility as more modern microservices architectures are adopted.
+  notes:
+  - type: text
+    contents: |
+      75% companies surveyed take Days or even Weeks to complete networking tasks.
+
+      Organizations seeking to improve application delivery cycle are often blocked at the networking layer
+
+      [source](https://zkresearch.com/research/2017-application-delivery-controller-study)
+  tabs:
+  - title: App
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8080
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
+  - title: Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/legacy
+  - title: App Access Info
+    type: code
+    hostname: workstation
+    path: /info.txt
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/final-architecture.html
+  difficulty: basic
+  timelimit: 3000
+- slug: deploy-consul-in-aks
+  id: kl3g4mrevbng
+  type: challenge
+  title: Deploy Consul in AKS
+  teaser: Installing Consul in Kubernetes based environments is easy!
+  assignment: |-
+    Now that part of application is containerized you can start move it into AKS.
+
+    The AKS cluster is already provisioned with the following services:
+      * [Ambassador Ingress w/Consul](https://www.getambassador.io/docs/latest/howtos/consul/)
+      * [F5-BIG Kubernetes Controller](https://clouddocs.f5.com/containers/v2/)
+
+
+    We can use the BIG-IP as an entry point and continue to use our WAF policy from earlier in the lab.
+    The BIG-IP controller can keep track of the Ambassador NodePorts so we can dynamically route traffic into the Connect mesh.
+    Ambassador is connect aware, so we can secure it's ingress sidecar with Consul intentions.
+
+    Verify these pods are running.
+
+    ```
+    kubectl get pods -n ambassador
+    kubectl get pods -n kube-system
+    ```
+
+    Get a Consul Ops token from Vault before starting your deployment.
+
+    ```
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    Helm is the recommended way to deploy Consul connect into AKS.
+    Inspect the deployment.
+
+    ```
+    cat /root/helm/aks.yaml
+    ```
+
+    You will run a few setup scripts typically performed by Kubernetes operators, inspect the chart, and then deploy it.
+    These scripts seed the AKS worker nodes with screts to talk with the HCS service,
+    as well as set up the auth method to establish trust between the Kubernetes API, and Consul.
+
+    ```
+    setup-k8s-consul-secrets $(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name) hcs hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault kv get -field master_token secret/consul) $(vault kv get -field master_token secret/consul)
+    setup-k8s-consul-auth
+    helm install hashicorp hashicorp/consul -f aks.yaml --namespace consul --wait --debug
+    ```
+
+    Check the components.
+
+    ```
+    kubectl get pods -n consul
+    ```
+
+    Move to the next assignment when they are ready.
+  notes:
+  - type: text
+    contents: |
+      HashiCorp maintains an official helm chart, which makes installing Consul in k8s easy!
+  tabs:
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/final-architecture.html
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: App
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8080
+  - title: Helm
+    type: code
+    hostname: workstation
+    path: /root/helm/aks.yaml
+  - title: App Access Info
+    type: code
+    hostname: workstation
+    path: /info.txt
+  difficulty: basic
+  timelimit: 3000
+- slug: deploy-app-in-k8s
+  id: 6jjypzuphebv
+  type: challenge
+  title: Deploy App in k8s
+  teaser: Deploy a microservices based application into the service mesh.
+  assignment: |-
+    The AS3 declaration from the prior exercise has been removed for you.
+    You will now transition the application to AKS. <br>
+
+    With AKS connected to HCS you can deploy your application pods.
+    Consul will auto inject sidecars for each pod.
+
+    Deploy the Pods and wait until they are ready.
+
+    ```
+    kubectl apply -f /root/apps
+    kubectl get pods
+    ```
+
+    Now you need to expose the Web application to the outside world.
+    You will first set up an Ambassador mapping, and then expose Ambassador to the outside world with annotations for BIG-IP
+
+    ```
+    cat <<EOF | kubectl apply -f -
+    ---
+    apiVersion: getambassador.io/v2
+    kind: Mapping
+    metadata:
+      name: consul-web-mapping-tls
+    spec:
+      prefix: /
+      service: web-sidecar-proxy
+      resolver: consul-east-us
+      tls: ambassador-consul
+      load_balancer:
+        policy: round_robin
+    EOF
+    ```
+
+    Annotate the Ambassador service.
+
+    ```
+    cat /root/ambassador/aes-service.yaml
+    kubectl apply -f /root/ambassador/aes-service.yaml
+    ```
+
+    Deploy the AS3 declaration.
+
+    ```
+    cat /root/ambassador/f5-ambassador.yaml
+    kubectl apply -f /root/ambassador/f5-ambassador.yaml
+    ```
+
+    Your application should now be available over BIG-IP. Test it below.
+
+    ```
+    app=$(terraform output app_url)
+    echo $app
+    curl -sv $app
+    ```
+
+    You should see the following error: `upstream connect error or disconnect/reset before headers. reset reason: connection termination` <br>
+    We need to configure mTLS between the applications to resolve this error. Consul intentions for mTLS are deny by default. <br>
+
+    You will perform this task in the next assignment.
+  notes:
+  - type: text
+    contents: |
+      Consul works equally well in public, private, virtual, physical, or microservices based environments.
+  tabs:
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Apps
+    type: code
+    hostname: workstation
+    path: /root/apps
+  - title: App
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8080
+  - title: App Access Info
+    type: code
+    hostname: workstation
+    path: /info.txt
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/final-architecture.html
+  difficulty: basic
+  timelimit: 3000
+- slug: test-app-in-k8s
+  id: z9j7j1geznsv
+  type: challenge
+  title: Test App in k8s
+  teaser: Access your Consul service mesh with BIG-IP
+  assignment: |-
+    Fetch credentials so you can authenticate to Consul and configure intentions.
+
+    ```
+    vault login -method=userpass username=operations password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
+    consul acl token read -self
+    ```
+
+    Now update the intentions.
+
+    ```
+    consul intention create --allow default/ambassador default/web
+    consul intention create --allow default/web default/api
+    consul intention create --allow default/api default/cache
+    consul intention create --allow default/api default/payments
+    ```
+
+    Now try the application again.
+
+    ```
+    app=$(terraform output app_url)
+    echo $app
+    curl -sv $app
+    ```
+
+    Also verify that our WAF policy is still working
+
+    ```
+    curl -sv $app/admin
+    ```
+
+    Congrats! You just migrated to Consul mesh with BIG-IP.
+  tabs:
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: App
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8080
+  - title: Apps
+    type: code
+    hostname: workstation
+    path: /root/apps
+  - title: App Access Info
+    type: code
+    hostname: workstation
+    path: /info.txt
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/final-architecture.html
+  difficulty: basic
+  timelimit: 3000
+checksum: "17745430322445524886"
+show_timer: true

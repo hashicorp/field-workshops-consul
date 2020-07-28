@@ -20,8 +20,6 @@ spec:
     metadata:
       labels:
         app: cache
-      annotations:
-        "consul.hashicorp.com/connect-inject": "true"
     spec:
       serviceAccountName: cache
       containers:

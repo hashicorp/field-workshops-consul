@@ -135,4 +135,18 @@ variable "additional_security_group_ids" {
   default     = []
 }
 
+variable "consul_tls_config" {
+  type = object({
+    ca_cert = string,
+    cert    = string,
+    key     = string
+  })
+  default = {
+    ca_cert = "",
+    cert    = "",
+    key     = ""
+  }
+  description = "Object containing the server TLS config to inject"
+}
+
 

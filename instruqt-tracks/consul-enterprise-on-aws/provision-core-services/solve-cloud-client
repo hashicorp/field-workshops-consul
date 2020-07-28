@@ -10,6 +10,6 @@ cd /root/terraform/eks
 #terraform init
 nohup terraform apply -auto-approve > /root/terraform/eks/terraform.out &
 
-sleep 30
+sleep 60
 
 exit 0

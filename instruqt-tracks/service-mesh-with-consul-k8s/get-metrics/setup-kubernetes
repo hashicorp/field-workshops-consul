@@ -4,15 +4,12 @@ cat <<-EOF > /root/prometheus-values.yaml
 server:
   global:
     scrape_interval: 10s
-extraScrapeConfigs: |
-  - job_name: 'sample-job'
-    scrape_interval: 1s
-    kubernetes_sd_configs:
-      - role: pod
-    relabel_configs:
-      - action: keep
-        source_labels: [__meta_kubernetes_pod_container_name]
-        regex: "prometheus-statsd"
+nodeExporter:
+  enabled: false
+pushgateway:
+  enabled: false
+alertmanager:
+  enabled: false
 EOF
 
 cat <<-EOF > /root/grafana-values.yaml

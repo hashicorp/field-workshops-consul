@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#Ambassador Route
+cat <<EOF | kubectl apply -f -
+---
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  name: consul-web-mapping-tls
+spec:
+  prefix: /
+  service: web-sidecar-proxy
+  resolver: consul-east-us
+  tls: ambassador-consul
+  load_balancer:
+    policy: round_robin
+EOF
+
+#Deploy App
+kubectl apply -f /root/apps
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=web -o name) --timeout=60s
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=api -o name) --timeout=60s
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=cache -o name) --timeout=60s
+kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=payments -o name) --timeout=60s
+
+#CIS SD
+kubectl apply -f /root/ambassador/aes-service.yaml
+sleep 30
+
+#CIS AS3
+kubectl apply -f /root/ambassador/f5-ambassador.yaml
+sleep 60
+
+exit 0

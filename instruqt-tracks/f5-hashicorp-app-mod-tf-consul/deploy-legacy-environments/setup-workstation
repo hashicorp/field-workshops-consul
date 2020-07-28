@@ -1,0 +1,59 @@
+#!/bin/bash
+# This is the setup script for the workstation container. Use it to set the stage for your terraform training, demo, or lab.
+set -e
+
+set-workdir /root/terraform/legacy
+
+cd /root/terraform/bigip
+terraform output > /info.txt
+
+cd /root/terraform/legacy/as3
+terraform init
+
+cd /root/terraform/legacy
+terraform init
+
+# Allow instruqt time to do its thing
+sleep 10
+
+app_lb=$(terraform output -state /root/terraform/bigip/terraform.tfstate app_url)
+cat << EOF > /etc/nginx/conf.d/app.conf
+server {
+  listen 8080;
+  location / {
+    proxy_pass ${app_lb};
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect off;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade \$http_upgrade;
+    proxy_set_header Connection "Upgrade";
+  }
+  access_log /var/log/nginx/app.log;
+}
+EOF
+/usr/sbin/service nginx restart
+
+consul_lb=$(terraform output -state /root/terraform/hcs/terraform.tfstate consul_url)
+echo "export CONSUL_HTTP_ADDR=${consul_lb}" >> ~/.bashrc
+
+
+endpoint=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output --state ../vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .retry_join[0])
+consulconfig=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d)
+ca_cert=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulCaFile | base64 -d)
+token=$(vault kv get -field=master_token secret/consul)
+
+cat << EOF > /root/terraform/legacy/terraform.tfvars
+ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
+endpoint = "${endpoint}"
+consulconfig = <<-EOT
+${consulconfig}
+EOT
+ca_cert = <<-EOT
+${ca_cert}
+EOT
+consul_token = "${token}"
+EOF
+
+
+
+exit 0

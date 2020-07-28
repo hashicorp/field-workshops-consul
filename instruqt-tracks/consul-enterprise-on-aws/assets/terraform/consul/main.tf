@@ -42,4 +42,13 @@ module "consul" {
 
   additional_security_group_ids = [aws_security_group.consul_ssh.id, aws_security_group.consul_lb.id, values(aws_security_group.consul_eks)[*].id]
 
+  consul_tls_config = module.consul_tls.consul_tls_config
+
+}
+
+module "consul_tls" {
+  source            = "./tls-self-signed"
+  consul_datacenter = "us-east-1"
+  environment_name  = module.consul.env
+  dns_names         = [aws_lb.consul.dns_name,"server.us-east-1.consul", "localhost"]
 }

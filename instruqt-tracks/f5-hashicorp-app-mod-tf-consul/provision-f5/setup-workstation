@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set-workdir /root/terraform/bigip
+
+cd /root/terraform/bigip
+terraform init
+
+exit 0

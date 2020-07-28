@@ -1,0 +1,25 @@
+#!/bin/bash
+
+sleep 10
+
+if [ -f /tmp/skip-check ]; then
+    rm /tmp/skip-check
+    exit 0
+fi
+
+if [ ! -f /root/terraform/vault/terraform.out ]; then
+    fail-message "Vault provisioning has not been started"
+    exit 1
+fi
+
+if [ ! -f /root/terraform/aks/terraform.out ]; then
+    fail-message "AKS provisioning has not been started"
+    exit 1
+fi
+
+if [ ! -f /root/terraform/vgw/terraform.out ]; then
+    fail-message "VGW provisioning has not been started"
+    exit 1
+fi
+
+exit 0

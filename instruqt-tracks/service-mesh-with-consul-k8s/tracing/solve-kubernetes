@@ -15,6 +15,6 @@ kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=cache -o nam
 kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=payments -o name)
 kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=currency -o name)
 
-sleep 15
+sleep 30
 
 exit 0

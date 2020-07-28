@@ -1,19 +1,19 @@
 version: "2"
 virtualmachines:
 - name: dc1-consul-gateway
-  image: instruqt-hashicorp/consul-1-6-2
+  image: instruqt-hashicorp/consul-1-8-0
   shell: /bin/bash
   machine_type: n1-standard-1
 - name: dc2-consul-server
-  image: instruqt-hashicorp/consul-1-6-2
+  image: instruqt-hashicorp/consul-1-8-0
   shell: /bin/bash
   machine_type: n1-standard-1
 - name: dc2-app-server
-  image: instruqt-hashicorp/consul-1-6-2
+  image: instruqt-hashicorp/consul-1-8-0
   shell: /bin/bash
   machine_type: n1-standard-1
 - name: dc1-kubernetes
-  image: instruqt-hashicorp/consul-1-6-2
+  image: instruqt-hashicorp/consul-1-8-0
   shell: /bin/bash
   machine_type: n1-standard-2
 - name: dc1-jaeger-server
@@ -21,10 +21,10 @@ virtualmachines:
   shell: /bin/bash
   machine_type: n1-standard-1
 - name: dc2-consul-gateway
-  image: instruqt-hashicorp/consul-1-6-2
+  image: instruqt-hashicorp/consul-1-8-0
   shell: /bin/bash
   machine_type: n1-standard-1
 - name: dc1-consul-server
-  image: instruqt-hashicorp/consul-1-6-2
+  image: instruqt-hashicorp/consul-1-8-0
   shell: /bin/bash
   machine_type: n1-standard-1

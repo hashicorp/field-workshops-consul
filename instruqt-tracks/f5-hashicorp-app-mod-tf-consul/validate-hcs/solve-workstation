@@ -1,0 +1,42 @@
+#!/bin/bash
+
+echo $CONSUL_HTTP_ADDR
+echo $VAULT_ADDR
+bootstrap_token=$(az hcs create-token --resource-group $(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name) --name hcs | jq  -r .masterToken.secretId)
+gossip_key=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .encrypt)
+vault kv put secret/consul master_token=${bootstrap_token} gossip_key=${gossip_key}
+
+export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
+vault_consul_mgmt_token=$(consul acl token create -policy-name=global-management -description "vault mgmt" | grep SecretID | cut -d ":" -f2 | xargs)
+
+vault write consul/config/access address=${CONSUL_HTTP_ADDR} token=${vault_consul_mgmt_token}
+vault read consul/config/access
+
+
+consul acl policy create -name "ops" -description "admin policy for ops" -rules 'acl = "write" operator = "write" namespace_prefix "" {acl = "write"}'
+vault write consul/roles/ops policies=ops ttl=1h
+
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+consul acl token read -self
+
+echo '
+node_prefix "" {
+  policy = "read"
+}
+service_prefix "" {
+  policy = "read"
+}
+session_prefix "" {
+  policy = "read"
+}
+agent_prefix "" {
+  policy = "read"
+}
+query_prefix "" {
+  policy = "read"
+}
+operator = "read"' |  consul acl policy create -name anonymous -rules -
+consul acl token update -id anonymous -policy-name anonymous
+
+
+exit 0

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+cd /root/terraform/vault
+nohup terraform apply -refresh=false -auto-approve > /root/terraform/vault/terraform.out &
+sleep 10
+
+cd /root/terraform/aks
+nohup terraform apply -refresh=false -auto-approve > /root/terraform/aks/terraform.out &
+sleep 10
+
+cd /root/terraform/hcs
+nohup terraform apply -refresh=false -auto-approve > /root/terraform/hcs/terraform.out &
+sleep 10
+
+exit 0

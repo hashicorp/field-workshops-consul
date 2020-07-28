@@ -50,7 +50,7 @@ resource "aws_autoscaling_group" "consul" {
   wait_for_capacity_timeout = "480s"
   health_check_grace_period = 15
   health_check_type         = "EC2"
-  target_group_arns         = ["${aws_lb_target_group.consul.arn}"]
+  target_group_arns         = ["${aws_lb_target_group.consul_http.arn}","${aws_lb_target_group.consul_https.arn}"]
   vpc_zone_identifier       = var.subnets
   initial_lifecycle_hook {
     name                 = "consul_health"
@@ -150,18 +150,46 @@ locals {
     snapshot_interval      = var.snapshot_interval
     snapshot_retention     = var.snapshot_retention
     consul_config          = var.consul_config
+    consul_ca_cert         = var.consul_tls_config.ca_cert
+    consul_cert            = var.consul_tls_config.cert
+    consul_key             = var.consul_tls_config.key
   }
 }
 
-resource "aws_lb_target_group" "consul" {
+resource "aws_lb_target_group" "consul_http" {
   port                 = 8500
-  protocol             = "HTTP"
+  protocol             = "TCP"
   vpc_id               = var.vpc_id
   deregistration_delay = "15"
-
+  
+  stickiness {
+      enabled = false
+      type = "lb_cookie"
+  }
+  
   health_check {
     path     = "/v1/status/leader"
     port     = "8500"
     protocol = "HTTP"
   }
+  
+}
+
+resource "aws_lb_target_group" "consul_https" {
+  port                 = 8501
+  protocol             = "TCP"
+  vpc_id               = var.vpc_id
+  deregistration_delay = "15"
+
+  stickiness {
+      enabled = false
+      type = "lb_cookie"
+  }
+  
+  health_check {
+    path     = "/v1/status/leader"
+    port     = "8501"
+    protocol = "HTTPS"
+  }
+  
 }

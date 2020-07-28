@@ -1,9 +1,12 @@
 version: "2"
-containers:
+virtualmachines:
 - name: cloud-client
-  image: gcr.io/instruqt/cloud-client
+  image: instruqt-hashicorp/terraform-workstation-prod
   shell: /bin/bash
-  ports:
-  - 80
-  - 8200
-  - 8500
+  environment:
+    ARM_SUBSCRIPTION_ID: 14692f20-9428-451b-8298-102ed4e39c2a
+    ARM_TENANT_ID: 0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec
+    TEST_PIPELINE: "true"
+    VAULT_ADDR: https://cam-vault.hashidemos.io:8200
+    VAULT_CREDS_ENDPOINT: azure/creds/se-training-workstation
+  machine_type: n1-standard-1

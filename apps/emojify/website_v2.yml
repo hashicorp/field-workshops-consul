@@ -38,6 +38,8 @@ spec:
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
         "consul.hashicorp.com/service-tags": "v2"
+        "prometheus.io/scrape": "true"
+        "prometheus.io/port": "9901"
     spec:
       volumes:
       - name: config
@@ -56,17 +58,3 @@ spec:
         - name: config
           mountPath: /usr/share/nginx/html/config
           readOnly: true
-
-      - name: prometheus-statsd
-        image: "prom/statsd-exporter:v0.13.0"
-        ports:
-          - name: metrics
-            containerPort: 9102
-          - name: statsd
-            containerPort: 9125
-        resources:
-          limits:
-            memory: 100Mi
-          requests:
-            cpu: 100m
-            memory: 100Mi

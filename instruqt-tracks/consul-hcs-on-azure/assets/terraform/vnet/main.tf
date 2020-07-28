@@ -3,8 +3,15 @@ provider "azurerm" {
   features {}
 }
 
+resource "random_string" "participant" {
+  length  = 4
+  special = false
+  upper   = false
+  number  = false
+}
+
 resource "azurerm_resource_group" "instruqt" {
-  name     = var.resource_group
+  name     = "instruqt-hcs-consul-azure-${random_string.participant.result}"
   location = "East US"
 }
 

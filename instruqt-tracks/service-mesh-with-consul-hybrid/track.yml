@@ -685,4 +685,5 @@ challenges:
     path: /root/tracing
   difficulty: basic
   timelimit: 300
-checksum: "3486540600071639706"
+checksum: "11291213370181500488"
+show_timer: true
