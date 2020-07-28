@@ -1,5 +1,5 @@
 #!/bin/bash
 
-sleep 30
+sleep 60
 
 exit 0
