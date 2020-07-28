@@ -2,6 +2,6 @@
 
 cd /root/terraform/hcs
 terraform apply -refresh=false -auto-approve > /root/terraform/hcs/terraform.out
-sleep 15
+sleep 600
 
 exit 0

@@ -5,7 +5,7 @@ if [ -f /tmp/skip-check ]; then
     exit 0
 fi
 
-kubectl config use-context eks_frontend
+kubectl config use-context frontend-aks
 
 kubectl get secret -n consul hashicorp-consul-acl-config
 if [ $? -ne 0 ]
@@ -28,7 +28,7 @@ then
   exit 1
 fi
 
-kubectl config use-context eks_backend
+kubectl config use-context backend-aks
 
 kubectl get secret -n consul hashicorp-consul-acl-config
 if [ $? -ne 0 ]
