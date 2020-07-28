@@ -299,7 +299,7 @@ spec:
       serviceAccountName: bigip-ctlr
       containers:
         - name: k8s-bigip-ctlr
-          image: "f5networks/k8s-bigip-ctlr"
+          image: "f5networks/k8s-bigip-ctlr:2.0"
           command: ["/app/bin/k8s-bigip-ctlr"]
           args: [
             "--bigip-username=f5admin",
