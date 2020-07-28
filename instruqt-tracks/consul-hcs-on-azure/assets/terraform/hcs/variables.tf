@@ -11,5 +11,10 @@ variable "remote_state" {
 }
 
 variable "consul_version" {
-  default = "v1.7.2"
+  default = "v1.8.0"
 }
+
+// required for AZ command line login
+variable "client_id" {}
+variable "tenant_id" {}
+variable "client_secret" {}

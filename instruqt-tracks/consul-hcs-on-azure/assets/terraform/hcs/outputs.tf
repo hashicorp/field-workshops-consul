@@ -3,9 +3,19 @@ output "consul_url" {
   description = "URL of the HCS for Azure Consul Cluster API and UI."
 }
 
+// Login to Azure using a service id to retrieve the HCS config and ACL token
+resource "null_resource" "login" {
+  depends_on = [azurerm_managed_application.hcs]
+  provisioner "local-exec" {
+    command = <<EOF
+    az login --service-principal -u ${var.client_id} -p ${var.client_secret} --tenant ${var.tenant_id} 
+  EOF
+  }
+}
+
 # Fetch the data from HCS
 resource "null_resource" "config" {
-  depends_on = [azurerm_managed_application.hcs]
+  depends_on = [azurerm_managed_application.hcs, null_resource.config]
   provisioner "local-exec" {
     command = <<EOF
   az resource show \
@@ -17,7 +27,7 @@ resource "null_resource" "config" {
 }
 
 resource "null_resource" "token" {
-  depends_on = [azurerm_managed_application.hcs]
+  depends_on = [azurerm_managed_application.hcs, null_resource.config]
   provisioner "local-exec" {
     command = <<EOF
   az hcs create-token \
