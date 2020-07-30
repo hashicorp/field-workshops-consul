@@ -1,19 +1,43 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 apt-get update -y
 apt-get upgrade -y
 apt-get install -y unzip jq
 
-# Install Consul 
+#get the jwt from azure msi
+jwt="$(curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fmanagement.azure.com%2F' -H Metadata:true | jq -r '.access_token')"
+
+#log into vault
+token=$(curl -s \
+    --request POST \
+    --data '{"role": "consul", "jwt": "'$jwt'"}' \
+    http://${vault_server}:8200/v1/auth/azure/login | jq -r '.auth.client_token')
+
+#get the consul secret
+consul_secret=$(curl -s \
+    --header "X-Vault-Token: $token" \
+    http://${vault_server}:8200/v1/secret/data/consul | jq '.data.data')
+
+#extract the bootstrap info
+gossip_key=$(echo $consul_secret | jq -r .gossip_key)
+retry_join=$(echo $consul_secret | jq -r .retry_join)
+ca=$(echo $consul_secret | jq -r .ca)
+
+#debug
+echo $gossip_key
+echo $retry_join
+echo "$ca"
+
+# Install Consul
 cd /tmp
 wget https://releases.hashicorp.com/consul/1.8.0/consul_1.8.0_linux_amd64.zip -O consul.zip
 unzip ./consul.zip
-mv ./consul /usr/bin/consul
+mv ./consul /usr//bin/consul
 
 mkdir -p /etc/consul/config
 
 cat <<EOF > /etc/consul/ca.pem
-${ca}
+"$ca"
 EOF
 
 cat <<EOF > /etc/consul/config/payments.hcl
@@ -22,7 +46,7 @@ service {
   id = "payments-1"
   port = 9090
 
-  connect { 
+  connect {
     sidecar_service {
       proxy {
       }
@@ -41,13 +65,13 @@ cat <<EOF > /etc/consul/consul_start.sh
 curl 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fmanagement.azure.com%2F' -H Metadata:true -s | jq -r .access_token > ./meta.token
 
 # Use the token to log into the Consul server, we need a valid ACL token to join the cluster and setup autoencrypt
-CONSUL_HTTP_ADDR=https://${consul_join_addr} consul login -method my-jwt -bearer-token-file ./meta.token -token-sink-file /etc/consul/consul.token
+CONSUL_HTTP_ADDR=https://$retry_join consul login -method my-jwt -bearer-token-file ./meta.token -token-sink-file /etc/consul/consul.token
 
 # Generate the Consul Config which includes the token so Consul can join the cluster
 cat <<EOC > /etc/consul/config/consul.json
 {
   "acl":{
-    "enabled":true,
+   "enabled":true,
     "down_policy":"async-cache",
     "default_policy":"deny",
     "tokens": {
@@ -57,12 +81,12 @@ cat <<EOC > /etc/consul/config/consul.json
   "ca_file":"/etc/consul/ca.pem",
   "verify_outgoing":true,
   "datacenter":"${consul_datacenter}",
-  "encrypt":"${consul_gossip_key}",
+  "encrypt":"$gossip_key",
   "server":false,
   "log_level":"INFO",
   "ui":true,
   "retry_join":[
-    "${consul_join_addr}"
+    "$retry_join"
   ],
   "ports": {
     "grpc": 8502
@@ -109,6 +133,8 @@ Wants=consul.service
 [Service]
 ExecStart=/usr/bin/consul connect envoy -sidecar-for payments-1 -envoy-binary /usr/bin/envoy -- -l debug
 Restart=always
+RestartSec=5
+StartLimitIntervalSec=0
 Environment="CONSUL_HTTP_TOKEN_FILE=/etc/consul/consul.token"
 
 [Install]
@@ -129,6 +155,8 @@ After=network-online.target
 [Service]
 ExecStart=/usr/bin/fake-service
 Restart=always
+RestartSec=5
+StartLimitIntervalSec=0
 Environment="LISTEN_ADDR=127.0.0.1:9090"
 Environment="NAME=Payments-VM"
 Environment="MESSAGE=Hello from API"

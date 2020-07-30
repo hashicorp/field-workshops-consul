@@ -169,20 +169,34 @@ challenges:
   assignment: |-
     The Consul bootstrap outputs from the last few assignments have been secured in Vault through the provisioning process. <br>
 
+    The Consul & Vault endpoints are now available <br>
+
+    ```
+    echo $CONSUL_HTTP_ADDR
+    echo $VAULT_ADDR
+    ```
+
     Login as an operator and inspect the credentials. <br>
 
     ```
     vault login -method=userpass username=operations password=Password1
     ```
 
-    You need to retrieve the bootstrap token from HCS and save it to your Vault instance.
+    You need to retrieve the HCS config from HCS with the az command line extensions.
 
     ```
-    echo $CONSUL_HTTP_ADDR
-    echo $VAULT_ADDR
-    bootstrap_token=$(az hcs create-token --resource-group $(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name) --name hcs | jq  -r .masterToken.secretId)
-    gossip_key=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .encrypt)
-    vault kv put secret/consul master_token=${bootstrap_token} gossip_key=${gossip_key}
+    rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+    az hcs get-config -g ${rg} --name hcs
+    ```
+
+    We will centralize the configuration into HashiCorp Vault so our applications and services can retrieve it.
+
+    ```
+    bootstrap_token=$(az hcs create-token --resource-group ${rg} --name hcs | jq  -r .masterToken.secretId)
+    gossip_key=$(cat consul.json | jq -r '.encrypt')
+    retry_join=$(cat consul.json | jq -r '.retry_join[0]')
+    ca=$(cat ca.pem)
+    vault kv put secret/consul master_token=${bootstrap_token} gossip_key=${gossip_key} retry_join=$retry_join ca="${ca}"
     ```
 
     Now inspect the credentials.
@@ -329,16 +343,16 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
-  - title: Terraform
-    type: code
-    hostname: cloud-client
-    path: /root/terraform
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/05-validate-virtual-gateway-and-peering.html
   - title: Target lab architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform
   difficulty: basic
   timelimit: 3600
 - slug: create-remote-gateways
@@ -790,10 +804,10 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/12-configure-k8s-consul-authentication.html
   difficulty: basic
   timelimit: 300
-- slug: deploy-applications
+- slug: deploy-applications-in-aks
   id: aayejvgkybat
   type: challenge
-  title: 'Developer: Deploy Application'
+  title: 'Developer: Deploy Applications in AKS'
   teaser: test
   assignment: |-
     You can view the K8s spec files for the applications in the code editor. <br>
@@ -843,6 +857,143 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
   difficulty: basic
   timelimit: 500
+- slug: configure-vm-consul-authentication
+  id: nuxxip25vfap
+  type: challenge
+  title: 'Security: Configure VM Authentication with Consul'
+  teaser: test
+  assignment: |-
+    In this assignment you will set up authentication for the VM that runs the non-container service for Consul & Vault. <br>
+
+    First let's create an identity for the Payments VM in Azure.
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    Login to Consul & Vault.
+
+    ```
+    vault login -method=userpass username=operations password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    Create the policy in Consul for the VM and associate it to the role.
+
+    ```
+    consul acl policy create \
+      -name "payments-policy" \
+      -description "Policy for API service to grant agent permissions and consul connect integration" \
+      -rules @/root/policies/payments.hcl
+    consul acl role create \
+      -name "payments-role" \
+      -description "Role for the API service" \
+      -policy-name "payments-policy"
+    ```
+
+    Next, configure Consul to accept JWTs from the Azure MSI service.
+
+    ```
+    cat <<EOF > ./jwt_auth_config.json
+    {
+      "BoundAudiences": [
+        "https://management.azure.com/"
+      ],
+      "BoundIssuer": "https://sts.windows.net/${ARM_TENANT_ID}/",
+      "JWKSURL":"https://login.microsoftonline.com/${ARM_TENANT_ID}/discovery/v2.0/keys",
+      "ClaimMappings": {
+          "id": "xms_mirid"
+      }
+    }
+    EOF
+    consul acl auth-method create -name my-jwt -type jwt -config @jwt_auth_config.json
+    consul acl binding-rule create -method=my-jwt -bind-type=role -bind-name=payments-role -selector='value.xms_mirid matches `.*/payments`'
+    ```
+
+    Now that we have a user identity we configure Vault to trust this VM so it can retrieve the gossip key required to bootstrap Consul.
+    This process will be fully automated with native Consul auth in the next release.
+
+    ```
+    vault write auth/azure/role/consul \
+        policies="ops" \
+        bound_service_principal_ids=$(terraform output payments_identity_principal_id) \
+        ttl=8h
+    vault read auth/azure/role/consul
+    ```
+  tabs:
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/iam
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
+  difficulty: basic
+  timelimit: 500
+- slug: deploy-applications-in-vms
+  id: wkplyhw7h0oo
+  type: challenge
+  title: 'Developer: Deploy Applications on VMs'
+  teaser: test
+  assignment: |-
+    Now that you have set up secure introduction you can deploy the VMs.
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    Wait a minute or two and you will see the payments VM added as a Consul node.
+
+    ```
+    consul members
+    ```
+
+    Now that you have the services running on AKS and on VMs you need to configure the transitive routing across VNets.
+  tabs:
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/vm
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
+  difficulty: basic
+  timelimit: 500
 - slug: update-intentions
   id: t11vsafayxq1
   type: challenge
@@ -872,6 +1023,12 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/14-update-intentions.html
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
   - title: Cloud  CLI
     type: terminal
     hostname: cloud-client
@@ -885,12 +1042,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
-  - title: Current lab setup
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/14-update-intentions.html
-  - title: Target lab architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
   difficulty: basic
   timelimit: 300
 - slug: test-application
@@ -940,4 +1091,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
   difficulty: basic
   timelimit: 300
-checksum: "13552580826147178647"
+checksum: "8698049809198542987"

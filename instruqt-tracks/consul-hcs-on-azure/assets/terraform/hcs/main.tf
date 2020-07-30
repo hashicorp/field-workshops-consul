@@ -2,14 +2,11 @@ provider "azurerm" {
   features {}
 }
 
-data "azurerm_client_config" "current" {
-}
-
 data "terraform_remote_state" "vnet" {
   backend = "local"
 
   config = {
-    path = "${var.remote_state}/vnet/terraform.tfstate"
+    path = "../vnet/terraform.tfstate"
   }
 }
 
@@ -35,7 +32,7 @@ resource "random_string" "blobcontainername" {
 }
 
 resource "azurerm_managed_application" "hcs" {
-  //depends_on = [azurerm_marketplace_agreement.hcs]
+  depends_on = [azurerm_marketplace_agreement.hcs]
 
   name                        = "hcs"
   location                    = data.terraform_remote_state.vnet.outputs.resource_group_location
@@ -52,7 +49,6 @@ resource "azurerm_managed_application" "hcs" {
 
   parameters = {
     initialConsulVersion  = var.consul_version
-    initialConsulVersion  = "v1.8.0"
     storageAccountName    = "${random_string.storageaccountname.result}"
     blobContainerName     = "${random_string.blobcontainername.result}"
     clusterMode           = "DEVELOPMENT"
@@ -82,7 +78,7 @@ resource "azurerm_virtual_network_peering" "hcs-frontend" {
   lifecycle {
     ignore_changes = [remote_virtual_network_id]
   }
-  depends_on                = [azurerm_managed_application.hcs]
+  depends_on = [azurerm_managed_application.hcs]
 
   name                      = "HCSToFrontend"
   resource_group_name       = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
@@ -94,7 +90,7 @@ resource "azurerm_virtual_network_peering" "frontend-hcs" {
   lifecycle {
     ignore_changes = [remote_virtual_network_id]
   }
-  depends_on                = [azurerm_managed_application.hcs]
+  depends_on = [azurerm_managed_application.hcs]
 
   name                      = "FrontendToHCS"
   resource_group_name       = data.terraform_remote_state.vnet.outputs.resource_group_name
@@ -106,7 +102,7 @@ resource "azurerm_virtual_network_peering" "hcs-backend" {
   lifecycle {
     ignore_changes = [remote_virtual_network_id]
   }
-  depends_on                = [azurerm_managed_application.hcs]
+  depends_on = [azurerm_managed_application.hcs]
 
   name                      = "HCSToBackend"
   resource_group_name       = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
@@ -118,7 +114,7 @@ resource "azurerm_virtual_network_peering" "backend-hcs" {
   lifecycle {
     ignore_changes = [remote_virtual_network_id]
   }
-  depends_on                = [azurerm_managed_application.hcs]
+  depends_on = [azurerm_managed_application.hcs]
 
   name                      = "BackendToHCS"
   resource_group_name       = data.terraform_remote_state.vnet.outputs.resource_group_name

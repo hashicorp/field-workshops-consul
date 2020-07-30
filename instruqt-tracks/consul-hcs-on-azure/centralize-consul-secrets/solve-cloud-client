@@ -4,9 +4,13 @@
 vault login -method=userpass username=operations password=Password1
 
 #set up initial bootstrap and gossip key
-bootstrap_token=$(az hcs create-token --resource-group $(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name) --name hcs | jq  -r .masterToken.secretId)
-gossip_key=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .encrypt)
-vault kv put secret/consul master_token=${bootstrap_token} gossip_key=${gossip_key}
+rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+az hcs get-config -g ${rg} --name hcs
+bootstrap_token=$(az hcs create-token --resource-group ${rg} --name hcs | jq  -r .masterToken.secretId)
+gossip_key=$(cat consul.json | jq -r '.encrypt')
+retry_join=$(cat consul.json | jq -r '.retry_join[0]')
+ca=$(cat ca.pem)
+vault kv put secret/consul master_token=${bootstrap_token} gossip_key=${gossip_key} retry_join=$retry_join ca="${ca}"
 
 #set up vault ops token
 export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)

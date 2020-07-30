@@ -103,4 +103,34 @@ namespace_prefix "" {
 }
 EOF
 
+cat << EOF > /root/policies/payments.hcl
+node "payments" {
+  policy = "write"
+}
+
+agent "payments" {
+  policy = "write"
+}
+
+key_prefix "_rexec" {
+  policy = "write"
+}
+
+node_prefix "" {
+	policy = "read"
+}
+
+service "payments" {
+	policy = "write"
+}
+
+service "payments-sidecar-proxy" {
+	policy = "write"
+}
+
+service_prefix "" {
+	policy = "read"
+}
+EOF
+
 exit 0

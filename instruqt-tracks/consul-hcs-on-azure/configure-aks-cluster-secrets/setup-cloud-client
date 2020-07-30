@@ -11,17 +11,18 @@ cluster=$3
 gossip_key=$4
 acl_token=$5
 injection_token=$6
-ca=$7
+ca_cert=$7
 
 acl_string=$( jq -n \
                   --arg token "$acl_token" \
-                  '{acl: { enabled: true, default_policy: deny, enable_token_persistence: true, tokens: { agent: $token } } }' )
+                  '{acl: { enabled: true, default_policy: "deny", enable_token_persistence: true, tokens: { agent: $token } } }' )
 
 #base64 the secrets
 gossip_key=$(echo -n $gossip_key | base64 -w 0)
 acl_token=$(echo -n  $acl_token | base64 -w 0)
 injection_token=$(echo -n  $injection_token | base64 -w 0)
 acl_config=$(echo -n $acl_string | base64 -w 0)
+ca=$(echo -n "${ca_cert}" | base64 -w 0)
 
 #create the consul namespace
 cat <<EOF | kubectl apply -f -
@@ -52,7 +53,7 @@ metadata:
   namespace: consul
 type: Opaque
 data:
-  tls.crt: $ca
+  tls.crt: ${ca}
 EOF
 
 #add the gosip key

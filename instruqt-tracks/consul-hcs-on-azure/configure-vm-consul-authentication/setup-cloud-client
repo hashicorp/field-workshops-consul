@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set-workdir /root/terraform/iam
+cd /root/terraform/iam
+terraform init
+
+exit 0

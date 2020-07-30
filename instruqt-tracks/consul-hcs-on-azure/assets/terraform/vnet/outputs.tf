@@ -2,6 +2,10 @@ output "resource_group_name" {
   value = azurerm_resource_group.instruqt.name
 }
 
+output "resource_group_id" {
+  value = azurerm_resource_group.instruqt.id
+}
+
 output "resource_group_location" {
   value = azurerm_resource_group.instruqt.location
 }
@@ -33,4 +37,3 @@ output "backend_subnets" {
 output "bastion_ip" {
   value = azurerm_public_ip.bastion.ip_address
 }
-

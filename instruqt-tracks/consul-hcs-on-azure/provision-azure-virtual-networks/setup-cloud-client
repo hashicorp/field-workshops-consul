@@ -133,7 +133,7 @@ cd /root
 #install consul
 cd /tmp
 echo "installing consul..."
-curl -O https://releases.hashicorp.com/consul/1.7.3+ent/consul_1.7.3+ent_linux_amd64.zip
+curl -O https://releases.hashicorp.com/consul/1.8.0+ent/consul_1.8.0+ent_linux_amd64.zip
 unzip *.zip
 mv consul /usr/local/bin/consul
 rm -f *.zip
