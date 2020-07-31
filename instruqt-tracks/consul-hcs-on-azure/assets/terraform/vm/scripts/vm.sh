@@ -45,8 +45,7 @@ service {
   name = "payments"
   namespace = "backend"
   id = "payments-1"
-  port = 9090
-
+  port = 9093
   connect {
     sidecar_service {
       proxy {
@@ -59,7 +58,6 @@ service {
       }
     }
   }
-
 }
 EOF
 
@@ -165,10 +163,10 @@ ExecStart=/usr/bin/fake-service
 Restart=always
 RestartSec=5
 StartLimitIntervalSec=0
-Environment="LISTEN_ADDR=127.0.0.1:9094"
+Environment="LISTEN_ADDR=127.0.0.1:9093"
 Environment="NAME=payments"
 Environment="MESSAGE=Hello from Payments"
-Environment="UPSTREAM_URIS=127.0.0.1:9094"
+Environment="UPSTREAM_URIS=http://127.0.0.1:9094"
 
 [Install]
 WantedBy=multi-user.target

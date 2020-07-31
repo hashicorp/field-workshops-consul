@@ -34,10 +34,3 @@ then
   fail-message "Currency pod not deployed."
   exit 1
 fi
-
-kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=payments -o name) --timeout=5s
-if [ $? -ne 0 ]
-then
-  fail-message "Payments pod not deployed."
-  exit 1
-fi

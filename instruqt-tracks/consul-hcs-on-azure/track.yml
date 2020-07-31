@@ -641,6 +641,9 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/12-configure-k8s-consul-authentication.html
   - title: Target lab architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
@@ -657,9 +660,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
-  - title: Current lab setup
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/12-configure-k8s-consul-authentication.html
   difficulty: basic
   timelimit: 300
 - slug: deploy-applications-in-aks
@@ -686,7 +686,6 @@ challenges:
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=api -o name) --timeout=30s
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=cache -o name) --timeout=30s
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=currency -o name) --timeout=30s
-    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=payments -o name) --timeout=30s
     ```
 
     In the next assignment we will update intentions so the new applications will receive traffic over mTLS.
@@ -1083,4 +1082,4 @@ challenges:
     port: 8200
   difficulty: basic
   timelimit: 300
-checksum: "13875420193639043550"
+checksum: "8126887298858110638"

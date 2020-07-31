@@ -33,8 +33,6 @@ spec:
         env:
           - name: LISTEN_ADDR
             value: "0.0.0.0:9094"
-          - name: UPSTREAM_URIS
-            value:
           - name: MESSAGE
             value: "Currency response"
           - name: NAME
