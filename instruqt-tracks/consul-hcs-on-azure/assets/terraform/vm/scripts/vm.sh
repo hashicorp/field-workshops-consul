@@ -62,7 +62,7 @@ EOF
 cat <<EOF > /etc/consul/config/payments.hcl
 service {
   name = "payments"
-  namespace = "backend"
+  namespace = "frontend"
   id = "payments-1"
   port = 9093
   connect {
@@ -71,6 +71,7 @@ service {
         upstreams = [
           {
             destination_name = "currency"
+            destination_namespace = "backend"
             local_bind_port  = 9094
           }
         ]
@@ -156,7 +157,7 @@ After=network-online.target
 Wants=consul.service
 
 [Service]
-ExecStart=/usr/bin/consul connect envoy -namespace backend -sidecar-for payments-1 -envoy-binary /usr/bin/envoy -- -l debug
+ExecStart=/usr/bin/consul connect envoy -namespace frontend -sidecar-for payments-1 -envoy-binary /usr/bin/envoy -- -l debug
 Restart=always
 RestartSec=5
 StartLimitIntervalSec=0

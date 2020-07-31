@@ -120,7 +120,7 @@ node_prefix "" {
 	policy = "read"
 }
 
-namespace "backend" {
+namespace "frontend" {
   service "payments" {
     policy = "write"
   }
