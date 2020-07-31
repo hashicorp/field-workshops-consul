@@ -120,16 +120,18 @@ node_prefix "" {
 	policy = "read"
 }
 
-service "payments" {
-	policy = "write"
-}
+namespace "backend" {
+  service "payments" {
+    policy = "write"
+  }
 
-service "payments-sidecar-proxy" {
-	policy = "write"
-}
+  service "payments-sidecar-proxy" {
+    policy = "write"
+  }
 
-service_prefix "" {
-	policy = "read"
+  service_prefix "" {
+    policy = "read"
+  }
 }
 EOF
 

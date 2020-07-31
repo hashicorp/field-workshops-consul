@@ -30,7 +30,7 @@ echo "$ca"
 
 # Install Consul
 cd /tmp
-wget https://releases.hashicorp.com/consul/1.8.0/consul_1.8.0_linux_amd64.zip -O consul.zip
+wget https://releases.hashicorp.com/consul/1.8.0+ent/consul_1.8.0+ent_linux_amd64.zip -O consul.zip
 unzip ./consul.zip
 mv ./consul /usr//bin/consul
 
@@ -43,15 +43,23 @@ EOF
 cat <<EOF > /etc/consul/config/payments.hcl
 service {
   name = "payments"
+  namespace = "backend"
   id = "payments-1"
   port = 9090
 
   connect {
     sidecar_service {
       proxy {
+        upstreams = [
+          {
+            destination_name = "currency"
+            local_bind_port  = 9094
+          }
+        ]
       }
     }
   }
+
 }
 EOF
 
@@ -131,7 +139,7 @@ After=network-online.target
 Wants=consul.service
 
 [Service]
-ExecStart=/usr/bin/consul connect envoy -sidecar-for payments-1 -envoy-binary /usr/bin/envoy -- -l debug
+ExecStart=/usr/bin/consul connect envoy -namespace backend -sidecar-for payments-1 -envoy-binary /usr/bin/envoy -- -l debug
 Restart=always
 RestartSec=5
 StartLimitIntervalSec=0
@@ -157,9 +165,10 @@ ExecStart=/usr/bin/fake-service
 Restart=always
 RestartSec=5
 StartLimitIntervalSec=0
-Environment="LISTEN_ADDR=127.0.0.1:9090"
-Environment="NAME=Payments-VM"
-Environment="MESSAGE=Hello from API"
+Environment="LISTEN_ADDR=127.0.0.1:9094"
+Environment="NAME=payments"
+Environment="MESSAGE=Hello from Payments"
+Environment="UPSTREAM_URIS=127.0.0.1:9094"
 
 [Install]
 WantedBy=multi-user.target
