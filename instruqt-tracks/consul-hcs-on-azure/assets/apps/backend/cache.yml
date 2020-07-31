@@ -34,7 +34,7 @@ spec:
           - name: LISTEN_ADDR
             value: "0.0.0.0:9092"
           - name: MESSAGE
-            value: "Cache response"
+            value: "Hello from Cache POD"
           - name: NAME
             value: "cache"
           - name: SERVER_TYPE

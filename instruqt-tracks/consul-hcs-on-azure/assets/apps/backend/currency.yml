@@ -34,7 +34,7 @@ spec:
           - name: LISTEN_ADDR
             value: "0.0.0.0:9094"
           - name: MESSAGE
-            value: "Currency response"
+            value: "Hello from Currency POD"
           - name: NAME
             value: "currency"
           - name: SERVER_TYPE

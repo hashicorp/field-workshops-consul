@@ -38,7 +38,7 @@ spec:
           - name: UPSTREAM_URIS
             value: "http://127.0.0.1:9092, http://127.0.0.1:9093"
           - name: MESSAGE
-            value: "API response"
+            value: "Hello from API POD"
           - name: NAME
             value: "api"
           - name: SERVER_TYPE

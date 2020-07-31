@@ -4,6 +4,25 @@ apt-get update -y
 apt-get upgrade -y
 apt-get install -y unzip jq
 
+# JWT Looks like
+# {
+#  "aud": "https://management.azure.com/",
+#  "iss": "https://sts.windows.net/0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec/",
+#  "iat": 1595598285,
+#  "nbf": 1595598285,
+#  "exp": 1595684985,
+#  "aio": "E2BgYDDgbUu/cuX6X9+lv44s3e4gDwA=",
+#  "appid": "16f36118-217b-4e7c-9250-69321b4c0742",
+#  "appidacr": "2",
+#  "idp": "https://sts.windows.net/0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec/",
+#  "oid": "644d9b8a-b07e-46e8-b81e-bd3a4c997ce9",
+#  "sub": "644d9b8a-b07e-46e8-b81e-bd3a4c997ce9",
+#  "tid": "0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec",
+#  "uti": "yO3F62CSGkedkoxqPrkWAA",
+#  "ver": "1.0",
+#  "xms_mirid": "/subscriptions/28af6932-cb76-431f-ba61-5ec6d1e8b422/resourcegroups/nics-instruqt/providers/Microsoft.ManagedIdentity/userAssignedIdentities/payments"
+# }
+
 #get the jwt from azure msi
 jwt="$(curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fmanagement.azure.com%2F' -H Metadata:true | jq -r '.access_token')"
 
@@ -165,7 +184,7 @@ RestartSec=5
 StartLimitIntervalSec=0
 Environment="LISTEN_ADDR=127.0.0.1:9093"
 Environment="NAME=payments"
-Environment="MESSAGE=Hello from Payments"
+Environment="MESSAGE=Hello from Payments VM"
 Environment="UPSTREAM_URIS=http://127.0.0.1:9094"
 
 [Install]

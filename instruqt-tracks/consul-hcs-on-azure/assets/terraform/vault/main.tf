@@ -89,11 +89,6 @@ resource "azurerm_virtual_machine" "vault" {
   delete_os_disk_on_termination    = true
   delete_data_disks_on_termination = true
 
-  identity {
-    type = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.vault.id]
-  }
-
   storage_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
@@ -123,19 +118,6 @@ resource "azurerm_virtual_machine" "vault" {
   tags = {
     environment = "staging"
   }
-}
-
-resource "azurerm_user_assigned_identity" "vault" {
-location              = data.terraform_remote_state.vnet.outputs.resource_group_location
-resource_group_name   = data.terraform_remote_state.vnet.outputs.resource_group_name
-name = "vault"
-}
-
-resource "azurerm_role_assignment" "vault" {
-  name               = uuid()
-  scope              = data.terraform_remote_state.vnet.outputs.resource_group_id
-  role_definition_name = "HashiCorp Vault Azure Auth"
-  principal_id       = azurerm_user_assigned_identity.vault.principal_id
 }
 
 resource "azurerm_network_security_group" "vault" {

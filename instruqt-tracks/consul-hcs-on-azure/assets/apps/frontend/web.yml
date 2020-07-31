@@ -52,7 +52,7 @@ spec:
           - name: UPSTREAM_URIS
             value: "grpc://127.0.0.1:9091"
           - name: MESSAGE
-            value: "Hello World"
+            value: "Hello from Web POD"
           - name: NAME
             value: "web"
           - name: SERVER_TYPE

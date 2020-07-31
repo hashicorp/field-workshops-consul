@@ -24,19 +24,19 @@ challenges:
     At any time you can use the Azure console to view your environment.
     Azure CLI commands will be provided for you to interact with Azure throughout this lab. <br>
 
-    Your first task is setting up VPCs for each team.
+    Your first task is setting up VNets for each team.
 
-    Inspect the Terraform code, and then provision the VPCs.
+    Inspect the Terraform code, and then provision the VNets.
 
     ```
     terraform plan
     terraform apply -auto-approve
     ```
 
-    You'll notice you have three separate VPCs.
+    You'll notice you have three separate VNets.
 
     ```
-    az network vnet list
+    az network vnet list -g $(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name) | jq '.[] | {"cidr": .addressSpace.addressPrefixes[0], "name": .name}'
     ```
 
     Their CIDR blocks are listed below:
@@ -238,9 +238,6 @@ challenges:
     node_prefix "" {
       policy = "read"
     }
-    service_prefix "" {
-      policy = "read"
-    }
     session_prefix "" {
       policy = "read"
     }
@@ -250,7 +247,18 @@ challenges:
     query_prefix "" {
       policy = "read"
     }
-    operator = "read"' |  consul acl policy create -name anonymous -rules -
+    operator = "read"
+
+    namespace_prefix "" {
+      acl = "read"
+      intention = "read"
+      service_prefix "" {
+        policy = "read"
+      }
+      node_prefix "" {
+        policy = "read"
+      }
+    }' |  consul acl policy create -name anonymous -rules -
     consul acl token update -id anonymous -policy-name anonymous
     ```
 
@@ -290,7 +298,7 @@ challenges:
 
     ```
     rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
-    az aks list -g ${rg} | jq
+    az aks list -g ${rg} | jq '.[] | {"name": .name, "status": .provisioningState}'
     ```
 
     First, create a merged Kube Config file from the Terraform outputs.
@@ -369,7 +377,7 @@ challenges:
     consul namespace write backend-namespace.hcl
     ```
 
-    You also need to create policies for low level client agent permissions for each development VPC.
+    You also need to create policies for low level client agent permissions for each development Vnet.
     We will create a blast radius for these tokens by CIDR block. <br>
 
     ```
@@ -390,6 +398,9 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -410,9 +421,6 @@ challenges:
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/08-create-namespaces-and-policies.html
-  - title: Target lab architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
   difficulty: basic
   timelimit: 300
 - slug: create-consul-roles
@@ -519,6 +527,10 @@ challenges:
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
+  - title: Setup Script
+    type: code
+    hostname: cloud-client
+    path: /usr/local/bin/setup-k8s-consul-secrets
   - title: Consul
     type: service
     hostname: cloud-client
@@ -642,15 +654,19 @@ challenges:
   - type: text
     contents: Replace this text with your own text
   tabs:
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
+  - title: Setup Script
+    type: code
+    hostname: cloud-client
+    path: /usr/local/bin/setup-k8s-consul-auth
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/12-configure-k8s-consul-authentication.html
   - title: Target lab architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
-  - title: Cloud  CLI
-    type: terminal
-    hostname: cloud-client
   - title: Consul
     type: service
     hostname: cloud-client
@@ -691,6 +707,10 @@ challenges:
 
     In the next assignment we will update intentions so the new applications will receive traffic over mTLS.
   tabs:
+  - title: Apps
+    type: code
+    hostname: cloud-client
+    path: /root/apps
   - title: Cloud  CLI
     type: terminal
     hostname: cloud-client
@@ -858,22 +878,15 @@ challenges:
   title: 'Network: Validate Virtual Gateway & Peering'
   teaser: A short description of the challenge.
   assignment: |-
-    The VGW and VNet peerings provisioned eariler should be close to provisioned. <br>
+    The VGW and VNet peerings provisioned earlier should be close to provisioned. <br>
 
-    Inspect the the gateway.
-
-    ```
-    rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
-    az network vnet-gateway list --resource-group ${rg}
-    ```
-
-    Inspect the peerings.
+    Inspect the peerings, and then we will check the status of the gateway.
 
     ```
     rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
-    az network vnet peering list --resource-group ${rg} --vnet-name shared-svcs-vnet
-    az network vnet peering list --resource-group ${rg} --vnet-name frontend-vnet
-    az network vnet peering list --resource-group ${rg} --vnet-name backend-vnet
+    az network vnet peering list --resource-group ${rg} --vnet-name shared-svcs-vnet | jq '.[] | {"name": .name, "state": .peeringState}'
+    az network vnet peering list --resource-group ${rg} --vnet-name frontend-vnet | jq '.[] | {"name": .name, "state": .peeringState}'
+    az network vnet peering list --resource-group ${rg} --vnet-name backend-vnet | jq '.[] | {"name": .name, "state": .peeringState}'
     ```
 
     Before you can continue you need the VGW to finish provisioning.
@@ -992,6 +1005,18 @@ challenges:
   title: 'Developer: Update Intentions'
   teaser: A short description of the challenge.
   assignment: |-
+    The API is now available for you to test. Send some traffic to the Web frontend.
+
+    ```
+    kubectl config use-context frontend-aks
+    endpoint=$(kubectl get services web -o json | jq -r .status.loadBalancer.ingress[0].ip)
+    echo $endpoint
+    curl -v -s $endpoint
+    ```
+
+    You should have received a `5xx` error. mTLS is enabled by default in the cluster,
+    and you have not configured any intention rules to allow routing between services. <br>
+
     Retrieve a Consul token as backend developer team. <br>
 
     ```
@@ -1083,4 +1108,5 @@ challenges:
     port: 8200
   difficulty: basic
   timelimit: 300
-checksum: "8524426369336628324"
+checksum: "16173832998626113874"
+show_timer: true
