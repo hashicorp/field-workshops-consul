@@ -364,6 +364,7 @@ challenges:
     Now you can create the namespaces for each development team, that share the namespace discovery policy. <br>
 
     ```
+    consul namespace update -name default -default-policy-name=cross-namespace-policy
     consul namespace write frontend-namespace.hcl
     consul namespace write backend-namespace.hcl
     ```
@@ -1082,4 +1083,4 @@ challenges:
     port: 8200
   difficulty: basic
   timelimit: 300
-checksum: "8126887298858110638"
+checksum: "8524426369336628324"
