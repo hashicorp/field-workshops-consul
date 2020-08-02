@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#check vault
+vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate vault_lb)
+echo "Vault Load balancer is: $vault_lb"
+if [ -z "${vault_lb}" ]; then
+  fail-message "Vault is not provisioned yet"
+  exit 1
+fi
+
+#check consul
+consul_lb=$(terraform output -state /root/terraform/hcs/terraform.tfstate consul_url)
+echo "Consul Load balancer is: $consul_lb"
+if [ -z "${consul_lb}" ]; then
+  fail-message "Consul HCS is not provisioned yet"
+  exit 1
+fi
+
+exit 0

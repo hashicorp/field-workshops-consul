@@ -1,0 +1,51 @@
+#!/bin/bash
+
+#login to vault
+vault login -method=userpass username=operations password=Password1
+
+#set up initial bootstrap and gossip key
+rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+az hcs get-config -g ${rg} --name hcs
+bootstrap_token=$(az hcs create-token --resource-group ${rg} --name hcs | jq  -r .masterToken.secretId)
+gossip_key=$(cat consul.json | jq -r '.encrypt')
+retry_join=$(cat consul.json | jq -r '.retry_join[0]')
+ca=$(cat ca.pem)
+vault kv put secret/consul master_token=${bootstrap_token} gossip_key=${gossip_key} retry_join=$retry_join ca="${ca}"
+
+#set up vault ops token
+export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
+vault_consul_mgmt_token=$(consul acl token create -policy-name=global-management -description "vault mgmt" | grep SecretID | cut -d ":" -f2 | xargs)
+consul acl policy create -name "ops" -description "admin policy for ops" -rules 'acl = "write" operator = "write" namespace_prefix "" {acl = "write"}'
+vault write consul/roles/ops policies=ops ttl=1h
+vault write consul/config/access address=${CONSUL_HTTP_ADDR} token=${vault_consul_mgmt_token}
+
+#anonymous policy
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+consul acl token read -self
+echo '
+node_prefix "" {
+  policy = "read"
+}
+session_prefix "" {
+  policy = "read"
+}
+agent_prefix "" {
+  policy = "read"
+}
+query_prefix "" {
+  policy = "read"
+}
+operator = "read"
+namespace_prefix "" {
+  acl = "read"
+  intention = "read"
+  service_prefix "" {
+    policy = "read"
+  }
+  node_prefix "" {
+    policy = "read"
+  }
+}' |  consul acl policy create -name anonymous -rules -
+consul acl token update -id anonymous -policy-name anonymous
+
+exit 0

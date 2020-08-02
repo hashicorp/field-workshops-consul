@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#k8s
+curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+mv ./kubectl /usr/local/bin/kubectl
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+#dirs
+mkdir /root/.kube/
+set-workdir /root/terraform/aks
+cd /root/terraform/aks
+terraform init
+
+exit 0

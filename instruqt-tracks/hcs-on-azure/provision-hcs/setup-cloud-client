@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set-workdir /root/terraform/hcs
+
+cd /root/terraform/hcs
+terraform init
+
+#temp fix - import the marketplace plan if it exists
+#terraform import azurerm_marketplace_agreement.hcs /subscriptions/$(az account show | jq -r .id)/providers/Microsoft.MarketplaceOrdering/offerTypes/virtualmachine/publishers/hashicorp-4665790/offers/hcs-production/plans/public-beta/agreements/current
+terraform import azurerm_marketplace_agreement.hcs /subscriptions/$(az account show | jq -r .id)/providers/Microsoft.MarketplaceOrdering/offerTypes/virtualmachine/publishers/hashicorp-4665790/offers/hcs-production/plans/public-beta/agreements/hashicorp-4665790
+
+exit 0

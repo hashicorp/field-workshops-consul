@@ -1,0 +1,44 @@
+#!/bin/bash
+
+if [ -f /tmp/skip-check ]; then
+    rm /tmp/skip-check
+    exit 0
+fi
+
+vault login -method=userpass username=operations password=Password1
+
+#check consul secret
+vault kv get -field ca secret/consul
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get CA from Consul secret"
+  exit 1
+fi
+vault kv get -field gossip_key secret/consul
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get gossip key from Consul secret"
+  exit 1
+fi
+vault kv get -field master_token secret/consul
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get master token from Consul secret"
+  exit 1
+fi
+vault kv get -field retry_join secret/consul
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get retry join from Consul secret"
+  exit 1
+fi
+
+#check dynamic role
+vault read consul/creds/ops
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get ops cred."
+  exit 1
+fi
+
+exit 0

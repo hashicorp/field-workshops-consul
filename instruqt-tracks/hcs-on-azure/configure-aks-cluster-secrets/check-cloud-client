@@ -1,0 +1,68 @@
+#!/bin/bash
+
+if [ -f /tmp/skip-check ]; then
+    rm /tmp/skip-check
+    exit 0
+fi
+
+kubectl config use-context frontend-aks
+
+kubectl get secret -n consul hashicorp-consul-acl-config
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get acl config secret for frontend cluster."
+  exit 1
+fi
+
+kubectl get secret -n consul hashicorp-consul-connect-inject-acl-token
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get inject-acl-token secret for frontend cluster."
+  exit 1
+fi
+
+kubectl get secret -n consul hashicorp-consul-gossip-key
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get gossip-key secret for frontend cluster."
+  exit 1
+fi
+
+kubectl get secret -n consul hashicorp-consul-ca-cert
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get ca secret for frontend cluster."
+  exit 1
+fi
+
+kubectl config use-context backend-aks
+
+kubectl get secret -n consul hashicorp-consul-acl-config
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get acl config secret for backend cluster."
+  exit 1
+fi
+
+kubectl get secret -n consul hashicorp-consul-connect-inject-acl-token
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get inject-acl-token secret for backend cluster."
+  exit 1
+fi
+
+kubectl get secret -n consul hashicorp-consul-gossip-key
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get gossip-key secret for backend cluster."
+  exit 1
+fi
+
+kubectl get secret -n consul hashicorp-consul-ca-cert
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get ca secret for backend cluster."
+  exit 1
+fi
+
+exit 0

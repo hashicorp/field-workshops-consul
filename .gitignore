@@ -1,3 +1,13 @@
+.terraform
+terraform.tfstate
+terraform.tfstate.backup
+.envrc
+
+# HCS resources
+config.json
+token.json
+ca.pem
+
 # Local .terraform directories
 **/.terraform/*
 
