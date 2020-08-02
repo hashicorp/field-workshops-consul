@@ -36,6 +36,7 @@ vault login root
 
 vault auth enable userpass
 vault write auth/userpass/users/operations password=Password1 policies=ops token_ttl=8h
+vault write auth/userpass/users/frontend password=Password1 policies=frontend token_ttl=30m
 vault write auth/userpass/users/backend password=Password1 policies=backend token_ttl=30m
 
 vault auth enable azure
@@ -66,6 +67,11 @@ echo 'path "consul/creds/backend-developer"
 {
   capabilities = ["read"]
 }' | vault policy write backend -
+
+echo 'path "consul/creds/frontend-developer"
+{
+  capabilities = ["read"]
+}' | vault policy write frontend -
 
 unset VAULT_TOKEN
 exit 0

@@ -26,9 +26,6 @@ echo '
 node_prefix "" {
   policy = "read"
 }
-service_prefix "" {
-  policy = "read"
-}
 session_prefix "" {
   policy = "read"
 }
@@ -38,7 +35,17 @@ agent_prefix "" {
 query_prefix "" {
   policy = "read"
 }
-operator = "read"' |  consul acl policy create -name anonymous -rules -
+operator = "read"
+namespace_prefix "" {
+  acl = "read"
+  intention = "read"
+  service_prefix "" {
+    policy = "read"
+  }
+  node_prefix "" {
+    policy = "read"
+  }
+}' |  consul acl policy create -name anonymous -rules -
 consul acl token update -id anonymous -policy-name anonymous
 
 exit 0

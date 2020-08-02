@@ -786,8 +786,8 @@ challenges:
       }
     }
     EOF
-    consul acl auth-method create -name my-jwt -type jwt -config @jwt_auth_config.json
-    consul acl binding-rule create -method=my-jwt -bind-type=role -bind-name=payments-role -selector='value.xms_mirid matches `.*/payments`'
+    consul acl auth-method create -name azure -type jwt -config @jwt_auth_config.json
+    consul acl binding-rule create -method=azure -bind-type=role -bind-name=payments-role -selector='value.xms_mirid matches `.*/payments`'
     ```
 
     Now that we have a user identity we configure Vault to trust this VM so it can retrieve the gossip key required to bootstrap Consul.
@@ -801,6 +801,9 @@ challenges:
     vault read auth/azure/role/consul
     ```
   tabs:
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -821,9 +824,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
-  - title: Target lab architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-instruqt-hcs-azure-track/instruqt-tracks/consul-hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
   difficulty: basic
   timelimit: 500
 - slug: deploy-applications-in-vms
@@ -1017,25 +1017,27 @@ challenges:
     You should have received a `5xx` error. mTLS is enabled by default in the cluster,
     and you have not configured any intention rules to allow routing between services. <br>
 
-    Retrieve a Consul token as backend developer team. <br>
+    As a backend developer retrieve a Consul token and allow traffic into your namespace. <br>
 
     ```
     vault login -method=userpass username=backend password=Password1
     export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/backend-developer)
     consul acl token read -self
-    ```
-
-    Create the intentions for services within your namespace.
-    Also allow access from the Frontend Web application to the Backend API application. <br>
-
-    ```
     consul intention create --allow frontend/web backend/api
     consul intention create --allow backend/api backend/cache
-    consul intention create --allow backend/api frontend/payments
     consul intention create --allow frontend/payments backend/currency
     ```
 
-    In the next assignment you will send traffic to the Web application in the Frontend namespace.
+    As a frontend developer retrieve a Consul token and allow traffic into your namespace. <br>
+
+    ```
+    vault login -method=userpass username=frontend password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/frontend-developer)
+    consul acl token read -self
+    consul intention create --allow backend/api frontend/payments
+    ```
+
+    In the next assignment you will test the application with the mTLS rules you created.
   notes:
   - type: text
     contents: Replace this text with your own text
@@ -1059,6 +1061,11 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
+  - title: App
+    type: service
+    hostname: cloud-client
+    path: /ui
+    port: 9090
   difficulty: basic
   timelimit: 300
 - slug: test-application
@@ -1106,7 +1113,12 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
+  - title: App
+    type: service
+    hostname: cloud-client
+    path: /ui
+    port: 9090
   difficulty: basic
   timelimit: 300
-checksum: "9813183330009758848"
+checksum: "5602649557311623832"
 show_timer: true

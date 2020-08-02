@@ -28,6 +28,13 @@ then
   exit 1
 fi
 
+kubectl get secret -n consul hashicorp-consul-ca-cert
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get ca secret for frontend cluster."
+  exit 1
+fi
+
 kubectl config use-context backend-aks
 
 kubectl get secret -n consul hashicorp-consul-acl-config
@@ -48,6 +55,13 @@ kubectl get secret -n consul hashicorp-consul-gossip-key
 if [ $? -ne 0 ]
 then
   fail-message "Could not get gossip-key secret for backend cluster."
+  exit 1
+fi
+
+kubectl get secret -n consul hashicorp-consul-ca-cert
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get ca secret for backend cluster."
   exit 1
 fi
 

@@ -1,0 +1,39 @@
+#!/bin/bash
+
+#create the principal
+terraform apply -auto-approve > /root/terraform/iam.out
+
+vault login -method=userpass username=operations password=Password1
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+
+#consul jwt auth
+consul acl policy create \
+  -name "payments-policy" \
+  -description "Policy for API service to grant agent permissions and consul connect integration" \
+  -rules @/root/policies/payments.hcl
+consul acl role create \
+  -name "payments-role" \
+  -description "Role for the API service" \
+  -policy-name "payments-policy"
+cat <<EOF > ./jwt_auth_config.json
+{
+  "BoundAudiences": [
+    "https://management.azure.com/"
+  ],
+  "BoundIssuer": "https://sts.windows.net/${ARM_TENANT_ID}/",
+  "JWKSURL":"https://login.microsoftonline.com/${ARM_TENANT_ID}/discovery/v2.0/keys",
+  "ClaimMappings": {
+      "id": "xms_mirid"
+  }
+}
+EOF
+consul acl auth-method create -name azure -type jwt -config @jwt_auth_config.json
+consul acl binding-rule create -method=azure -bind-type=role -bind-name=payments-role -selector='value.xms_mirid matches `.*/payments`'
+
+#vault azure auth
+vault write auth/azure/role/consul \
+  policies="ops" \
+  bound_service_principal_ids=$(terraform output payments_identity_principal_id) \
+  ttl=8h
+
+exit 0

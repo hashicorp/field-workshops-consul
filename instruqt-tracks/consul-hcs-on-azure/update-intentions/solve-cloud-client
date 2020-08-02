@@ -1,11 +1,15 @@
 #!/bin/bash
 
+#backend
 vault login -method=userpass username=backend password=Password1
 export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/backend-developer)
-
 consul intention create --allow frontend/web backend/api
 consul intention create --allow backend/api backend/cache
-consul intention create --allow backend/api backend/payments
-consul intention create --allow backend/payments backend/currency
+consul intention create --allow frontend/payments backend/currency
+
+#frontend
+vault login -method=userpass username=frontend password=Password1
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/frontend-developer)
+consul intention create --allow backend/api frontend/payments
 
 exit 0
