@@ -3,7 +3,8 @@ id: ztymj0qpq0vy
 version: 0.0.1
 type: track
 title: HCS on Azure
-description: placeholder
+description: Connect containerized and non-containerized workloads with the HashiCorp
+  Consul Service on Azure
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags:
 - hcs
@@ -1131,5 +1132,5 @@ challenges:
     port: 9090
   difficulty: basic
   timelimit: 300
-checksum: "11678558696340922599"
+checksum: "5573580991423999898"
 show_timer: true
