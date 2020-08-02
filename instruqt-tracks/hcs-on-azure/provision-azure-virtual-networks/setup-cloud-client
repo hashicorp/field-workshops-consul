@@ -151,8 +151,8 @@ cd /root
 #get assets
 echo "cloning assets..."
 git clone -b add-consul-instruqt-hcs-azure-track https://github.com/hashicorp/field-workshops-consul.git
-cp -r field-workshops-consul/instruqt-tracks/consul-hcs-on-azure/assets/terraform .
-cp -r field-workshops-consul/instruqt-tracks/consul-hcs-on-azure/assets/apps .
+cp -r field-workshops-consul/instruqt-tracks/hcs-on-azure/assets/terraform .
+cp -r field-workshops-consul/instruqt-tracks/hcs-on-azure/assets/apps .
 rm -rf field-workshops-consul
 
 #provision
