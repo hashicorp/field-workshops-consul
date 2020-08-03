@@ -8,7 +8,7 @@ sleep 10
 # install dependencies
 apt install -y nginx
 #hcs extension
-az extension add --source https://releases.hashicorp.com/hcs/0.0.1/hcs-0.0.1-py2.py3-none-any.whl --yes
+az extension add --source https://releases.hashicorp.com/hcs/0.1.0/hcs-0.1.0-py2.py3-none-any.whl --yes
 
 # Source important environment variables
 source /etc/profile.d/instruqt-env.sh
