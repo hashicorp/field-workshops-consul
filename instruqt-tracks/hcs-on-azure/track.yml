@@ -53,9 +53,24 @@ challenges:
 
     The shared service VNet will run the core Consul infrastructure.
     You will provision the Consul servers into this VNet in the next few assignments.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
+
+    <br>
+
+    ***OPTIONAL*** <br>
+
+    If you are revisiting this content in a self-service capacity, or are a power user, you can bring your own Azure account and provision resources direclty into your subscription.
+    Your credentials will be reaped from the sandbox when the track is completed or stopped. <br>
+
+    You will be responsible for the lifecycle of these resources in your Azure account as they will be not cleaned up automatically. <br>
+
+    ___HashiCorp instructors will not be able to debug issues in your Azure account.___ <br>
+
+    ___If you still wish to continue with your own credentials do the following:___ <br>
+
+    ```
+    az account clear
+    az login
+    ```
   tabs:
   - title: Terraform
     type: code
@@ -106,9 +121,6 @@ challenges:
 
     You can continue immediately to the next assignment while these services are provisioning.
     Click the check button now to proceed.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Cloud CLI
     type: terminal
@@ -139,9 +151,6 @@ challenges:
     ```
 
     This can take 10 minutes to 15 minutes to provision.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Cloud CLI
     type: terminal
@@ -267,9 +276,6 @@ challenges:
     ```
 
     You will use this role in a later assignment to configure access for Consul service consumers.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Cloud CLI
     type: terminal
@@ -329,9 +335,6 @@ challenges:
     ```
 
     You will configure these AKS clusters for Consul in the following assignments.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Cloud CLI
     type: terminal
@@ -398,9 +401,6 @@ challenges:
     ```
 
     In the next assignment we will link these policies to dynamic Vault roles so developers and operators can get access centrally.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Vault
     type: service
@@ -453,9 +453,6 @@ challenges:
 
     You will use these roles in later assignments to seed K8s clusters with scoped access to the central service,
     as well as allow developers the ability to configure routing within their tenant.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Cloud CLI
     type: terminal
@@ -524,9 +521,6 @@ challenges:
     ```
 
     In the next assignment you will use these secrets to deploy the Consul client agents with Helm.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Cloud CLI
     type: terminal
@@ -586,9 +580,6 @@ challenges:
     ```
 
     In the next assignment we will create trust between the K8s API server and the Consul shared service.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Helm
     type: code
@@ -654,9 +645,6 @@ challenges:
     ```
 
     In the next assignment you'll use the trust relationship you just created to deploy applications into the mesh.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Cloud  CLI
     type: terminal
@@ -916,9 +904,6 @@ challenges:
     ```
 
     In a later assignment you will use the VNet peers to enable remote gateways for the spoke VNets.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Cloud CLI
     type: terminal
@@ -986,9 +971,6 @@ challenges:
     ```
 
     Now that you have transitive routes in place you can configure the AKS clusters for the Consul deployment.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Cloud CLI
     type: terminal
@@ -1050,9 +1032,6 @@ challenges:
     ```
 
     In the next assignment you will test the application with the mTLS rules you created.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Current lab setup
     type: website
@@ -1102,9 +1081,6 @@ challenges:
     ```
 
     Well done! You just securely connected application workloads across multiple K8s clusters!!!
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Current lab setup
     type: website
@@ -1132,5 +1108,5 @@ challenges:
     port: 9090
   difficulty: basic
   timelimit: 300
-checksum: "5738209292493990301"
+checksum: "15452190209635592072"
 show_timer: true
