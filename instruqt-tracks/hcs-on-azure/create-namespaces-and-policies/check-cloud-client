@@ -8,7 +8,7 @@ fi
 vault login -method=userpass username=operations password=Password1
 export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
 
-#namespace_sd
+#namespace sd
 consul acl policy read -name cross-namespace-policy
 if [ $? -ne 0 ]
 then
@@ -16,7 +16,7 @@ then
   exit 1
 fi
 
-#namespaces
+#namespace frontend
 consul namespace read frontend
 if [ $? -ne 0 ]
 then
@@ -24,6 +24,7 @@ then
   exit 1
 fi
 
+#namespace backend
 consul namespace read backend
 if [ $? -ne 0 ]
 then
@@ -31,7 +32,7 @@ then
   exit 1
 fi
 
-#frontend
+#frontend agents
 consul acl policy read -name frontend-agent-policy
 if [ $? -ne 0 ]
 then
@@ -39,11 +40,35 @@ then
   exit 1
 fi
 
-#backend
+#backend agents
 consul acl policy read -name backend-agent-policy
 if [ $? -ne 0 ]
 then
   fail-message "Error checking backend agent policy"
+  exit 1
+fi
+
+#frontend dev
+consul acl policy read -name frontend-developer-policy
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking frontend developer policy"
+  exit 1
+fi
+
+#backend dev
+consul acl policy read -name backend-developer-policy
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking backend developer policy"
+  exit 1
+fi
+
+#k8s injector
+consul acl policy read -name k8s-injector-policy
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking k8s injector policy"
   exit 1
 fi
 

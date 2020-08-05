@@ -32,6 +32,10 @@ challenges:
 
     Inspect the Terraform code, and then provision the VNets.
 
+    ___Note:___ <br>
+    Credentials injected into this environment are eventually consistent in Azure Active Directory.
+    If you receive a permissions error from Azure please wait a a minute or two and try again. <br>
+
     ```
     terraform plan
     terraform apply -auto-approve
@@ -94,6 +98,10 @@ challenges:
   teaser: Provision core application shared services
   assignment: |-
     You will use Terraform to provision these services in the background while you set up Consul in the next few assignments. <br>
+
+    ___Note:___ <br>
+    Credentials injected into this environment are eventually consistent in Azure Active Directory.
+    If you receive a permissions error from Azure please wait a a minute or two and try again. <br>
 
     Start with Vault. <br>
 
@@ -588,9 +596,6 @@ challenges:
   - title: Cloud  CLI
     type: terminal
     hostname: cloud-client
-  - title: Cloud  CLI
-    type: terminal
-    hostname: cloud-client
   - title: Consul
     type: service
     hostname: cloud-client
@@ -607,6 +612,9 @@ challenges:
   - title: Target lab architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
+  - title: Cloud  CLI
+    type: terminal
+    hostname: cloud-client
   difficulty: basic
   timelimit: 300
 - slug: configure-k8s-consul-authentication
@@ -1108,5 +1116,5 @@ challenges:
     port: 9090
   difficulty: basic
   timelimit: 300
-checksum: "15452190209635592072"
+checksum: "253705256658341822"
 show_timer: true

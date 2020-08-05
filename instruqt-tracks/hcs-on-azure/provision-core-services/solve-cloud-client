@@ -15,4 +15,6 @@ cd /root/terraform/vgw
 nohup terraform apply -refresh=false -auto-approve > /root/terraform/vgw/terraform.out &
 sleep 10
 
+sleep 60
+
 exit 0
