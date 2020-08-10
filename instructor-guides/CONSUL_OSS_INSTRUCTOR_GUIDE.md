@@ -3,7 +3,7 @@
 ### Overview
 This guide will prepare you to deliver a half-day [Introduction to Consul workshop](https://hashicorp.github.io/field-workshops-consul/oss). This workshop content is suitable for HashiCorp community members, prospects and customers. The workshop is a combination of lecture slides and hands-on labs that introduce new users to Consul features. This workshop focuses on open-source features and is targeted toward new users. The workshop may be presented in-person, over the web, or as a self-guided tutorial.
 
-The workshop alternates between lectures with accompanying slides and hands-on lab exercises. New concepts that are introduced in the slides are reinforced in the labs. Participants will learn both the theory and practice of Consul. As an instructor you should be well familiar with the slide deck and training labs. Go through the course and make sure you understand all of the major concepts and lab exercises. 
+The workshop alternates between lectures with accompanying slides and hands-on lab exercises. New concepts that are introduced in the slides are reinforced in the labs. Participants will learn both the theory and practice of Consul. As an instructor you should be well familiar with the slide deck and training labs. Go through the course and make sure you understand all of the major concepts and lab exercises.
 
 When possible you should attend a live training session to observe and learn from another instructor. We will also have video recordings of this workshop available soon.
 
@@ -19,7 +19,7 @@ This workshop is a crash course in the Consul OSS adoption journey. Participants
 
 
 ### Prerequisites
-Prerequisites are minimal. All that is required to participate in the workshop is a web browser and Internet access. No software needs to be downloaded or installed. Self-contained lab environments run on the Instruqt platform, and markdown-based slide decks are published as Github Pages websites. 
+Prerequisites are minimal. All that is required to participate in the workshop is a web browser and Internet access. No software needs to be downloaded or installed. Self-contained lab environments run on the Instruqt platform, and markdown-based slide decks are published as Github Pages websites.
 
 ### Email invitation
 Here is some boilerplate text you can use or customize when inviting or announcing your workshop:
@@ -67,6 +67,20 @@ https://play.instruqt.com/hashicorp/topics/consul-workshops
 Go through each of these tracks from start to finish and make sure you understand them. Students may have questions during the labs. When presenting a workshop be sure to give enough time for all your participants to go through the labs. Remember that this is probably their first time working a tool like Consul.
 
 You will need to provide the links to your workshop attendees. You can either provide the public link, or send a private invite per track. Instruqt will support private invites for topics in the near future.
+
+#### Creating Instruqt Invites
+Once you've gotten an invite to the HashiCorp organization you can create temporary invite links for your students:
+
+1. Click on the **Invites** link at the top of the page.
+2. Click on the **New+** button to create a new invite.
+3. Create a descriptive title for internal use. Example: "Atlanta Intro to Terraform on Azure Workshop"
+4. Select the track you want to make available.
+5. Set the invite to expire in a month or two.
+6. Make the track available to your user for at least a week.
+7. Turn on the **Allow Anonymous** switch so you can hand the URL out on the day of training.
+
+### Configuring the Instruqt Pools
+We recommend that you configure Instruqt pools for each Instruqt track used in this workshop 1-2 hours before your workshop begins. Please see this Confluence [doc](https://hashicorp.atlassian.net/wiki/spaces/SE/pages/511574174/Instruqt+and+Remark+Contributor+Guide#InstruqtandRemarkContributorGuide-ConfiguringInstruqtPools) for instructions.
 
 ### The Live Demo
 Between Chapters 1 and 2 there is a slide that says *Live Demo*. You can use an instruqt track to do a brief Consul demo for your participants. Follow these steps to do the demo:
