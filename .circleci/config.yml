@@ -310,7 +310,7 @@ jobs:
       - checkout
       - run:
           name: HCS on Azure
-          no_output_timeout: 30m
+          no_output_timeout: 60m
           command: |
             VERSION=$INSTRUQT_VERSION
             apt -y update
