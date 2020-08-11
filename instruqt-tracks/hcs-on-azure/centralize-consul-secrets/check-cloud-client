@@ -8,25 +8,25 @@ fi
 vault login -method=userpass username=operations password=Password1
 
 #check consul secret
-vault kv get -field ca secret/consul
+vault kv get -field ca secret/consul/shared
 if [ $? -ne 0 ]
 then
   fail-message "Could not get CA from Consul secret"
   exit 1
 fi
-vault kv get -field gossip_key secret/consul
+vault kv get -field gossip_key secret/consul/shared
 if [ $? -ne 0 ]
 then
   fail-message "Could not get gossip key from Consul secret"
   exit 1
 fi
-vault kv get -field master_token secret/consul
+vault kv get -field master_token secret/consul/server
 if [ $? -ne 0 ]
 then
   fail-message "Could not get master token from Consul secret"
   exit 1
 fi
-vault kv get -field retry_join secret/consul
+vault kv get -field retry_join secret/consul/shared
 if [ $? -ne 0 ]
 then
   fail-message "Could not get retry join from Consul secret"

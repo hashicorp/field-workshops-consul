@@ -1,8 +1,9 @@
 #!/bin/bash
 
-api=$(curl -s -o /dev/null -w  "%{http_code}" "${CONSUL_HTTP_ADDR}/v1/health/service/payments?passing=true&ns=frontend")
-if [ "$api" != "200" ]; then
+app=$(curl -s "${CONSUL_HTTP_ADDR}/v1/health/service/payments?passing=true&ns=frontend" | jq length)
+if [ "$app" != "1" ]; then
   fail-message "Payments service is not healthy in Consul"
   exit 1
 fi
+
 exit 0

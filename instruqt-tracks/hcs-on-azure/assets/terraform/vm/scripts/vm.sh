@@ -35,7 +35,7 @@ token=$(curl -s \
 #get the consul secret
 consul_secret=$(curl -s \
     --header "X-Vault-Token: $token" \
-    http://${vault_server}:8200/v1/secret/data/consul | jq '.data.data')
+    http://${vault_server}:8200/v1/secret/data/consul/shared | jq '.data.data')
 
 #extract the bootstrap info
 gossip_key=$(echo $consul_secret | jq -r .gossip_key)

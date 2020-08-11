@@ -51,7 +51,7 @@ vault secrets enable consul
 echo 'path "secret/*" {
   capabilities = ["list"]
 }
-path "secret/data/consul" {
+path "secret/data/consul/*" {
   capabilities = ["create", "read", "update", "delete"]
 }
 path "consul/*"
@@ -66,10 +66,26 @@ path "auth/azure/*"
 echo 'path "consul/creds/backend-developer"
 {
   capabilities = ["read"]
+}
+
+path "secret/data/consul/backend" {
+  capabilities = ["read"]
+}
+
+path "secret/data/consul/shared" {
+  capabilities = ["read"]
 }' | vault policy write backend -
 
 echo 'path "consul/creds/frontend-developer"
 {
+  capabilities = ["read"]
+}
+
+path "secret/data/consul/frontend" {
+  capabilities = ["read"]
+}
+
+path "secret/data/consul/shared" {
   capabilities = ["read"]
 }' | vault policy write frontend -
 

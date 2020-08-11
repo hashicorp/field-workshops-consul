@@ -7,17 +7,24 @@ fi
 
 vault login -method=userpass username=operations password=Password1
 
-vault read consul/creds/k8s-injector
+vault kv get -field k8s_injector secret/consul/shared
 if [ $? -ne 0 ]
 then
-  fail-message "Could not get injector cred."
+  fail-message "Could not get shared k8s_injector secret."
   exit 1
 fi
 
-vault read consul/creds/frontend-agent
+vault kv get -field agent_token secret/consul/frontend
 if [ $? -ne 0 ]
 then
-  fail-message "Could not get frontend agent cred."
+  fail-message "Could not get frontend agent token secret"
+  exit 1
+fi
+
+vault kv get -field agent_token secret/consul/backend
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get backend agent token secret"
   exit 1
 fi
 
@@ -25,13 +32,6 @@ vault read consul/creds/frontend-developer
 if [ $? -ne 0 ]
 then
   fail-message "Could not get frontend dev cred."
-  exit 1
-fi
-
-vault read consul/creds/backend-agent
-if [ $? -ne 0 ]
-then
-  fail-message "Could not get backend agent cred."
   exit 1
 fi
 

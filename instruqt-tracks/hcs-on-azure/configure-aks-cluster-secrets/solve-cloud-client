@@ -4,8 +4,8 @@ vault login -method=userpass username=operations password=Password1
 
 rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
 kubectl config use-context frontend-aks
-setup-k8s-consul-secrets ${rg} hcs hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/frontend-agent) $(vault read -field token consul/creds/k8s-injector) "$(vault kv get -field ca secret/consul)"
+setup-k8s-consul-secrets ${rg} hcs hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul/shared) $(vault kv get -field agent_token secret/consul/frontend) $(vault kv get -field k8s_injector secret/consul/shared) "$(vault kv get -field ca secret/consul/shared)"
 kubectl config use-context backend-aks
-setup-k8s-consul-secrets ${rg} hcs hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/backend-agent) $(vault read -field token consul/creds/k8s-injector) "$(vault kv get -field ca secret/consul)"
+setup-k8s-consul-secrets ${rg} hcs hashicorp-consul-cluster $(vault kv get -field gossip_key secret/consul/shared) $(vault kv get -field agent_token secret/consul/backend) $(vault kv get -field k8s_injector secret/consul/shared) "$(vault kv get -field ca secret/consul/shared)"
 
 exit 0

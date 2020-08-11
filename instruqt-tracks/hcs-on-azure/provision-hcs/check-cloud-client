@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#check vault
+#check tf vault
 vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate vault_lb)
 echo "Vault Load balancer is: $vault_lb"
 if [ -z "${vault_lb}" ]; then
@@ -8,11 +8,25 @@ if [ -z "${vault_lb}" ]; then
   exit 1
 fi
 
-#check consul
+#check tf consul
 consul_lb=$(terraform output -state /root/terraform/hcs/terraform.tfstate consul_url)
 echo "Consul Load balancer is: $consul_lb"
 if [ -z "${consul_lb}" ]; then
   fail-message "Consul HCS is not provisioned yet"
+  exit 1
+fi
+
+#check vault health
+api=$(curl -s -o /dev/null -w "%{http_code}" http://{$vault_lb}/v1/sys/health)
+if [ "${api}" != "200" ]; then
+  fail-message "Vault service did not return a 200. Please wait a few moments and try again."
+  exit 1
+fi
+
+#check consul health
+api=$(curl -s -o /dev/null -w "%{http_code}" {$consul_lb}/v1/status/leader)
+if [ "${api}" != "200" ]; then
+  fail-message "Consul service did not return a 200. Please wait a few moments and try again."
   exit 1
 fi
 

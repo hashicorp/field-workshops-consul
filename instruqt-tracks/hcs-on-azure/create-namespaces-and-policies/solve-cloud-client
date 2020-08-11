@@ -1,7 +1,7 @@
 #!/bin/bash
 
 vault login -method=userpass username=operations password=Password1
-export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
 
 consul acl policy create -name "cross-namespace-policy" -description "cross-namespace service discovery" -rules @cross-namespace.hcl
 consul namespace update -name default -default-policy-name=cross-namespace-policy

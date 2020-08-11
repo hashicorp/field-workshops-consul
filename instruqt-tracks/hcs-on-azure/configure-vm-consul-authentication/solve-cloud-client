@@ -32,7 +32,7 @@ consul acl binding-rule create -method=azure -bind-type=role -bind-name=payments
 
 #vault azure auth
 vault write auth/azure/role/consul \
-  policies="ops" \
+  policies="frontend" \
   bound_service_principal_ids=$(terraform output payments_identity_principal_id) \
   ttl=8h
 
