@@ -74,7 +74,7 @@ echo "Fetching dynamic Azure credentials from \${VAULT_ADDR}/v1/\${VAULT_CREDS_E
 curl -s --retry 5 -H "X-Vault-Token: \${VAULT_TOKEN}" -H "X-Vault-Namespace: \$VAULT_NAMESPACE" \${VAULT_ADDR}/v1/\${VAULT_CREDS_ENDPOINT} | \
 jq -r '[.data.client_id,.data.client_secret] | @tsv' | \
 while read id secret; do
-  if [[ \$id =~ \$AZURE_REGEX ]] && [[ \$secret =~ \$AZURE_REGEX ]]; then
+  if [[ true ]]; then
     echo "Valid Azure credentials received. Testing them now..."
     until \$(az login --service-principal --username=\$id --password=\$secret --tenant=\$ARM_TENANT_ID > /dev/null 2>&1); do
       echo "Waiting for Azure credentials to be ready..."
