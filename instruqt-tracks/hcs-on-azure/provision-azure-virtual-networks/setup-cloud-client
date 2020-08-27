@@ -68,13 +68,13 @@ end=$'\e[0m'
 # Requires \$VAULT_ADDR, \$VAULT_NAMESPACE, \$VAULT_CREDS_ENDPOINT and \$VAULT_TOKEN to be set as environment variables
 
 # Regex matching the shape of Azure credentials
-AZURE_REGEX="[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}"
+AZURE_ID_REGEX="[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}"
 
 echo "Fetching dynamic Azure credentials from \${VAULT_ADDR}/v1/\${VAULT_CREDS_ENDPOINT}"
 curl -s --retry 5 -H "X-Vault-Token: \${VAULT_TOKEN}" -H "X-Vault-Namespace: \$VAULT_NAMESPACE" \${VAULT_ADDR}/v1/\${VAULT_CREDS_ENDPOINT} | \
 jq -r '[.data.client_id,.data.client_secret] | @tsv' | \
 while read id secret; do
-  if [[ true ]]; then
+  if [[ \$id =~ \$AZURE_ID_REGEX ]]; then
     echo "Valid Azure credentials received. Testing them now..."
     until \$(az login --service-principal --username=\$id --password=\$secret --tenant=\$ARM_TENANT_ID > /dev/null 2>&1); do
       echo "Waiting for Azure credentials to be ready..."
