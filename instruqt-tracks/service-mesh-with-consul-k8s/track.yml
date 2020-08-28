@@ -16,6 +16,7 @@ developers:
 - lance@hashicorp.com
 private: false
 published: true
+show_timer: true
 challenges:
 - slug: deploy-connect
   id: iyea2sohruxq
@@ -883,12 +884,11 @@ challenges:
     EOF
     ```
 
-    Finally, Ambassador is deployed with a self-signed certificate for end-to-end mTLS in the lab environment, so we'll ignore trust validation in the API call.
-    Get the load balancer IP <br>
+    Get the load balancer IP for Ambassador. <br>
 
     ```
     ambassador=$(kubectl get svc ambassador -n ambassador -o json | jq -r '.status.loadBalancer.ingress[0].ip')
-    openssl s_client -connect ${ambassador}:443 </dev/null 2>/dev/null | openssl x509 -text
+    echo $ambassador
     ```
 
     Now, send some traffic the application.
@@ -901,8 +901,8 @@ challenges:
     Experiment with authorization, and without it. <br>
 
     ```
-    curl -k https://${ambassador}/web/
-    curl -k -H 'Authorization: Bearer eyJhbGciOiJub25lIiwidHlwIjoiSldUIiwiZXh0cmEiOiJzbyBtdWNoIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkxhbmNlIExhcnNlbiIsImlhdCI6MTU3Nzg4MDAwMCwgImF1ZCI6ICJ3ZWIifQ.' https://${ambassador}/web/
+    curl http://${ambassador}/web/
+    curl -H 'Authorization: Bearer eyJhbGciOiJub25lIiwidHlwIjoiSldUIiwiZXh0cmEiOiJzbyBtdWNoIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkxhbmNlIExhcnNlbiIsImlhdCI6MTU3Nzg4MDAwMCwgImF1ZCI6ICJ3ZWIifQ.' http://${ambassador}/web/
     ```
 
     Log into the Jaeger UI and look at the new traces.
@@ -948,6 +948,11 @@ challenges:
     hostname: kubernetes
     path: /ambassador/v0/diag/
     port: 31877
+  - title: Ambassador Portal
+    type: service
+    hostname: kubernetes
+    path: /docs/
+    port: 31800
   - title: App - Config
     type: code
     hostname: kubernetes
@@ -988,7 +993,11 @@ challenges:
     hostname: kubernetes
     path: /ambassador/v0/diag/
     port: 31877
+  - title: Ambassador Portal
+    type: service
+    hostname: kubernetes
+    path: /docs/
+    port: 31800
   difficulty: basic
   timelimit: 5400
-checksum: "7171210469372088469"
-show_timer: true
+checksum: "10236519882971398810"

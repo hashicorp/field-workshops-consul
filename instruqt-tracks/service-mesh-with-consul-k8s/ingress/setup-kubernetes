@@ -56,6 +56,31 @@ spec:
     service: ambassador
 EOF
 
+cat <<EOF | kubectl apply -n ambassador -f -
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ambassador-portal
+  namespace: ambassador
+  labels:
+    product: aes
+    app.kubernetes.io/component: ambassador-service
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    nodePort: 31800
+  - name: https
+    port: 443
+    targetPort: https
+    nodePort: 31840
+  selector:
+    service: ambassador
+EOF
+
 #kubectl apply -f https://www.getambassador.io/yaml/aes.yaml
 cat <<EOF | kubectl apply -n ambassador -f -
 ######################################################################
@@ -473,6 +498,24 @@ spec:
                   fieldPath: status.hostIP
 EOF
 
+#host
+cat <<EOF | kubectl apply -n ambassador -f -
+apiVersion: getambassador.io/v2
+kind: Host
+metadata:
+  name: ambassador-host
+spec:
+  hostname: ""
+  acmeProvider:
+    authority: none
+  requestPolicy:
+    insecure:
+      action: Route
+      additionalPort: 80
+EOF
+sleep 60
+
+#trace
 cat <<EOF | kubectl apply -n ambassador -f -
 ---
 apiVersion: getambassador.io/v2
