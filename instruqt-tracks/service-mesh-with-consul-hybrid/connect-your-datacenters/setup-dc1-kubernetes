@@ -75,6 +75,7 @@ cat <<-EOF > /root/consul-values.yaml
 global:
   datacenter: dc1
   image: "consul:1.8.0"
+  imageEnvoy: nicholasjackson/consul-envoy:v1.8.0-v0.14.1
 
 server:
   enabled: false
@@ -91,7 +92,6 @@ dns:
 
 connectInject:
   enabled: true
-  imageEnvoy: nicholasjackson/consul-envoy:v1.8.0-v0.14.1
   default: false
   centralConfig:
     enabled: true

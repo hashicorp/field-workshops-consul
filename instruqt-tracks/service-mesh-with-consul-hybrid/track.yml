@@ -12,6 +12,7 @@ developers:
 - lance@hashicorp.com
 private: false
 published: true
+show_timer: true
 challenges:
 - slug: connect-your-datacenters
   id: i8yrscsmhmjx
@@ -685,5 +686,4 @@ challenges:
     path: /root/tracing
   difficulty: basic
   timelimit: 300
-checksum: "11291213370181500488"
-show_timer: true
+checksum: "5469749966935001895"
