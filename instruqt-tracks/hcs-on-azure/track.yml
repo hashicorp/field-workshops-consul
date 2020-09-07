@@ -11,11 +11,13 @@ tags:
 - consul
 owner: hashicorp
 developers:
+- lance@hashicorp.com
 - cpu@hashicorp.com
 - jackson.nic@gmail.com
-- lance@hashicorp.com
 private: true
 published: true
+maintenance: true
+show_timer: true
 challenges:
 - slug: provision-azure-virtual-networks
   id: bsyydcckaasv
@@ -1124,5 +1126,4 @@ challenges:
     port: 9090
   difficulty: basic
   timelimit: 300
-checksum: "17050021111181236121"
-show_timer: true
+checksum: "2088933821719090113"

@@ -15,6 +15,8 @@ developers:
 - kcorbin@hashicorp.com
 private: true
 published: true
+maintenance: true
+show_timer: true
 challenges:
 - slug: provision-azure-vnets
   id: tmsnsut54k9f
@@ -864,5 +866,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
-checksum: "3892817087561266594"
-show_timer: true
+checksum: "6033210755645580545"
