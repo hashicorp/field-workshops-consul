@@ -69,19 +69,9 @@ resource "azurerm_managed_application" "hcs" {
   }
 }
 
-module "az-cli" {
-  source = "matti/resource/shell"
-  depends_on = [azurerm_managed_application.hcs]
-
-  environment = {
-    RESOURCE_GROUP = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
-  }
-  command = "az network vnet list --resource-group $RESOURCE_GROUP | jq -r .[].name"
-}
-
 data "azurerm_virtual_network" "hcs" {
   depends_on          = [azurerm_managed_application.hcs]
-  name                = module.az-cli.stdout
+  name                = "hvn-consul-ama-hashicorp-consul-cluster-vnet"
   resource_group_name = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
 }
 
@@ -89,7 +79,7 @@ resource "azurerm_virtual_network_peering" "hcs-legacy" {
   depends_on                = [azurerm_managed_application.hcs]
   name                      = "HCSToLegacy"
   resource_group_name       = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
-  virtual_network_name      = module.az-cli.stdout
+  virtual_network_name      = "hvn-consul-ama-hashicorp-consul-cluster-vnet"
   remote_virtual_network_id = data.terraform_remote_state.vnet.outputs.legacy_vnet
 }
 
@@ -105,7 +95,7 @@ resource "azurerm_virtual_network_peering" "hcs-aks" {
   depends_on                = [azurerm_managed_application.hcs]
   name                      = "HCSToAKS"
   resource_group_name       = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
-  virtual_network_name      = module.az-cli.stdout
+  virtual_network_name      = "hvn-consul-ama-hashicorp-consul-cluster-vnet"
   remote_virtual_network_id = data.terraform_remote_state.vnet.outputs.aks_vnet
 }
 
