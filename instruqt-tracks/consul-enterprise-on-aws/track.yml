@@ -9,10 +9,11 @@ icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/c
 tags: []
 owner: hashicorp
 developers:
-- cpu@hashicorp.com
 - lance@hashicorp.com
+- cpu@hashicorp.com
 private: true
 published: true
+show_timer: true
 challenges:
 - slug: provision-vpcs
   id: ujbryneafql8
@@ -1232,6 +1233,19 @@ challenges:
   title: 'Developer: Update Intentions'
   teaser: Routing as a service
   assignment: |-
+    The API is now available for you to test. Send some traffic to the Web frontend.
+
+    ```
+    kubectl config use-context frontend-aks
+    endpoint=$(kubectl get services web -o json | jq -r .status.loadBalancer.ingress[0].hostname)
+    echo $endpoint
+    curl -v -s $endpoint
+    ```
+
+    You should have received a `5xx` error. mTLS is enabled by default in the cluster,
+    and you have not configured any intention rules to allow routing between services. <br>
+
+    As a backend developer retrieve a Consul token and allow traffic into your namespace. <br>
     Retrieve a Consul token as backend developer team. <br>
 
     ```
@@ -1255,7 +1269,9 @@ challenges:
   - type: text
     contents: |-
       Intentions allow service mesh routing based on service identity. <br>
-      The Consul shared service allows developers to control routing within their namespaces, and selectively allow traffic from other teams to their namespace.
+      The Consul shared service allows developers to control routing within their namespaces, and selectively allow traffic from other teams to their namespace. <br>
+
+      It can take a few minutes for an ELB to resolve DNS. Please be patient while the track waits for resolution.
   tabs:
   - title: Cloud Consoles
     type: service
@@ -1275,6 +1291,11 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
+  - title: App
+    type: service
+    hostname: cloud-client
+    path: /ui
+    port: 8080
   - title: Apps
     type: code
     hostname: cloud-client
@@ -1310,9 +1331,8 @@ challenges:
     Well done! You just securely connected application workloads across multiple K8s clusters!!!
   notes:
   - type: text
-    contents: |-
-      The Web application in the Frontend namespace is exposed via an AWS ELB.
-      It can take a few minutes for an ELB to resolve DNS. Please be patient.
+    contents: The Web application in the Frontend namespace is exposed via an AWS
+      ELB.
   tabs:
   - title: Cloud Consoles
     type: service
@@ -1332,6 +1352,11 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
+  - title: App
+    type: service
+    hostname: cloud-client
+    path: /ui
+    port: 8080
   - title: Apps
     type: code
     hostname: cloud-client
@@ -1364,5 +1389,4 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "9926305810074043851"
-show_timer: true
+checksum: "10246105065527886397"
