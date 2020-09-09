@@ -9,8 +9,8 @@ icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/c
 tags: []
 owner: hashicorp
 developers:
-- lance@hashicorp.com
 - cpu@hashicorp.com
+- lance@hashicorp.com
 private: true
 published: true
 show_timer: true
@@ -1231,6 +1231,11 @@ challenges:
   - type: text
     contents: The K8s clusters are now ready to run application workloads.
   tabs:
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-enterprise-on-aws/assets/diagrams/14-deploy-applications.html
@@ -1238,11 +1243,6 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/apps
-  - title: Vault
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8200
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -1430,4 +1430,4 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "8410201096607968078"
+checksum: "15636642468292636771"
