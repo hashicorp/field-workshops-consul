@@ -153,5 +153,7 @@ EOF
 set-workdir /root/terraform/vnet
 cd /root/terraform/vnet
 
+#extra sleep for cred propagation
+sleep 60
 
 exit 0
