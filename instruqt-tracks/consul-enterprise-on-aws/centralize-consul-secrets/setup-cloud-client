@@ -21,13 +21,14 @@ vault kv put secret/consul master_token=${master_token} agent_server_token=${age
 vault auth enable userpass
 vault write auth/userpass/users/operations password=Password1 policies=ops token_ttl=8h
 vault write auth/userpass/users/backend password=Password1 policies=backend token_ttl=30m
+vault write auth/userpass/users/frontend password=Password1 policies=frontend token_ttl=30m
 vault secrets enable consul
 
 echo 'path "secret/*" {
   capabilities = ["list"]
 }
 path "secret/data/consul" {
-  capabilities = ["read"]
+  capabilities = ["create", "read", "update", "delete", "list"]
 }
 path "consul/*"
 {
@@ -38,6 +39,11 @@ echo 'path "consul/creds/backend-developer"
 {
   capabilities = ["read"]
 }' | vault policy write backend -
+
+echo 'path "consul/creds/frontend-developer"
+{
+  capabilities = ["read"]
+}' | vault policy write frontend -
 
 unset VAULT_TOKEN
 exit 0

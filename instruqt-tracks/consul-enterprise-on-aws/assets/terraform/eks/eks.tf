@@ -33,7 +33,7 @@ module "frontend" {
     {
       instance_type        = "t3.large"
       asg_max_size         = 3
-      asg_desired_capacity = 1
+      asg_desired_capacity = 3
     }
   ]
 }
@@ -74,7 +74,7 @@ module "backend" {
     {
       instance_type        = "t3.large"
       asg_max_size         = 3
-      asg_desired_capacity = 1
+      asg_desired_capacity = 3
     }
   ]
 }

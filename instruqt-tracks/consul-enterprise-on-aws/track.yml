@@ -416,6 +416,35 @@ challenges:
     consul acl token read -self
     ```
 
+    You can use this token to set up the anonymous policy.
+    ```
+    echo '
+    node_prefix "" {
+      policy = "read"
+    }
+    session_prefix "" {
+      policy = "read"
+    }
+    agent_prefix "" {
+      policy = "read"
+    }
+    query_prefix "" {
+      policy = "read"
+    }
+    operator = "read"
+    namespace_prefix "" {
+      acl = "read"
+      intention = "read"
+      service_prefix "" {
+        policy = "read"
+      }
+      node_prefix "" {
+        policy = "read"
+      }
+    }' |  consul acl policy create -name anonymous -rules -
+    consul acl token update -id anonymous -policy-name anonymous
+    ```
+
     You will use this role in a later assignment to configure access for Consul service consumers.
   notes:
   - type: text
@@ -581,7 +610,6 @@ challenges:
   solution:
   - 0
   - 1
-  - 2
   difficulty: basic
   timelimit: 300
 - slug: create-vpc-peering
@@ -903,11 +931,17 @@ challenges:
     Next, link the policies. The TTLs are scoped for each task.
 
     ```
-    vault write consul/roles/k8s-injector           policies=k8s-injector-policy          ttl=720h
-    vault write consul/roles/frontend-agent         policies=frontend-agent-policy        ttl=720h
     vault write consul/roles/frontend-developer     policies=frontend-developer-policy    ttl=1h
-    vault write consul/roles/backend-agent          policies=backend-agent-policy         ttl=720h
     vault write consul/roles/backend-developer      policies=backend-developer-policy     ttl=1h
+    ```
+
+    Vault can just as easily store Consul tokens that are not managed dynamically.
+    Create those now. <br>
+
+    ```
+    vault kv patch secret/consul k8s_injector=$(consul acl token create -description 'k8s injector' -policy-name 'k8s-injector-policy' -format=json | jq -r .SecretID)
+    vault kv patch secret/consul frontend_agent_token=$(consul acl token create -description 'frontend agent' -policy-name 'frontend-agent-policy' -format=json | jq -r .SecretID)
+    vault kv patch secret/consul backend_agent_token=$(consul acl token create -description 'backend agent' -policy-name 'backend-agent-policy' -format=json | jq -r .SecretID)
     ```
 
     You will use these roles in later assignments to seed K8s clusters with scoped access to the central service,
@@ -975,7 +1009,7 @@ challenges:
 
     ```
     kubectl config use-context eks_frontend
-    setup-k8s-consul-secrets $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/frontend-agent) $(vault read -field token consul/creds/k8s-injector)
+    setup-k8s-consul-secrets $(vault kv get -field gossip_key secret/consul) $(vault kv get -field frontend_agent_token secret/consul) $(vault kv get -field k8s_injector secret/consul)
     kubectl  get secrets -n consul
     ```
 
@@ -983,7 +1017,7 @@ challenges:
 
     ```
     kubectl config use-context eks_backend
-    setup-k8s-consul-secrets $(vault kv get -field gossip_key secret/consul) $(vault read -field token consul/creds/backend-agent) $(vault read -field token consul/creds/k8s-injector)
+    setup-k8s-consul-secrets $(vault kv get -field gossip_key secret/consul) $(vault kv get -field backend_agent_token secret/consul) $(vault kv get -field k8s_injector secret/consul)
     kubectl get secrets -n consul
     ```
 
@@ -1245,19 +1279,26 @@ challenges:
     You should have received a `5xx` error. mTLS is enabled by default in the cluster,
     and you have not configured any intention rules to allow routing between services. <br>
 
-    As a backend developer retrieve a Consul token and allow traffic into your namespace. <br>
-    Retrieve a Consul token as backend developer team. <br>
+
+    Try to create the Consul Intentions as different development teams and compare the results.
+
+    First, try to create the intention as a Frontend developer.
+
+    ```
+    vault login -method=userpass username=frontend password=Password1
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/frontend-developer)
+    consul acl token read -self
+    consul intention create --allow frontend/web backend/api
+    ```
+
+    The Backend namespace is the destination service, so a developer from this team will be able to make the update. <br>
+
+    Try this step again as Backend developer. <br>
 
     ```
     vault login -method=userpass username=backend password=Password1
     export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/backend-developer)
     consul acl token read -self
-    ```
-
-    Create the intentions for services within your namespace.
-    Also allow access from the Frontend Web application to the Backend API application. <br>
-
-    ```
     consul intention create --allow frontend/web backend/api
     consul intention create --allow backend/api backend/cache
     consul intention create --allow backend/api backend/payments
@@ -1389,4 +1430,4 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "10246105065527886397"
+checksum: "8410201096607968078"
