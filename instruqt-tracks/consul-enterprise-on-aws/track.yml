@@ -1270,7 +1270,7 @@ challenges:
     The API is now available for you to test. Send some traffic to the Web frontend.
 
     ```
-    kubectl config use-context frontend-aks
+    kubectl config use-context eks_frontend
     endpoint=$(kubectl get services web -o json | jq -r .status.loadBalancer.ingress[0].hostname)
     echo $endpoint
     curl -v -s $endpoint
