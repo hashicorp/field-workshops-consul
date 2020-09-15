@@ -128,6 +128,15 @@ mv vault /usr/local/bin/vault
 rm -f *.zip
 cd /root
 
+#install terraform
+cd /tmp
+echo "installing terraform..."
+curl -O https://releases.hashicorp.com/terraform/0.13.2/terraform_0.13.2_linux_amd64.zip
+unzip *.zip
+mv terraform /usr/local/bin/terraform
+rm -f *.zip
+cd /root
+
 #get assets
 git clone https://github.com/hashicorp/field-workshops-consul.git
 cp -r field-workshops-consul/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/terraform .
