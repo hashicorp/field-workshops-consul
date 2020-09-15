@@ -922,6 +922,16 @@ challenges:
 
     In a later assignment you will use the VNet peers to enable remote gateways for the spoke VNets.
   tabs:
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/hcs-on-azure/assets/diagrams/05-validate-virtual-gateway-and-peering.html
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -935,16 +945,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
-  - title: Current lab setup
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/hcs-on-azure/assets/diagrams/05-validate-virtual-gateway-and-peering.html
-  - title: Target lab architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
-  - title: Terraform
-    type: code
-    hostname: cloud-client
-    path: /root/terraform
   difficulty: basic
   timelimit: 3600
 - slug: create-remote-gateways
@@ -1125,4 +1125,4 @@ challenges:
     port: 9090
   difficulty: basic
   timelimit: 300
-checksum: "9264295351275505492"
+checksum: "3412155379516741924"
