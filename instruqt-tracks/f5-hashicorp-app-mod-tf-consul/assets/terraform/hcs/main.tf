@@ -42,10 +42,10 @@ resource "azurerm_managed_application" "hcs" {
   managed_resource_group_name = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
 
   plan {
-    name      = "on-demand"
+    name      = "on-demand-v2"
     product   = "hcs-production"
     publisher = "hashicorp-4665790"
-    version   = "0.0.39"
+    version   = "0.0.43"
   }
 
   parameters = {
