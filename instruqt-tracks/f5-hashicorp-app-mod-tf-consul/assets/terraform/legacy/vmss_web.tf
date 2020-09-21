@@ -15,6 +15,12 @@ resource "azurerm_virtual_machine_scale_set" "web_vmss" {
 
   upgrade_policy_mode = "Manual"
 
+  identity {
+    type = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.app.id]
+  }
+
+
   sku {
     name     = "Standard_DS1_v2"
     tier     = "Standard"
