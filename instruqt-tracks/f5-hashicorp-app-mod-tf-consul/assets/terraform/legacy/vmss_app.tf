@@ -55,7 +55,7 @@ resource "azurerm_virtual_machine_scale_set" "app_vmss" {
         consul_datacenter = "east-us"
         vault_server = data.terraform_remote_state.vault.outputs.vault_ip
       }
-    )
+    ))
   }
 
   os_profile_linux_config {
