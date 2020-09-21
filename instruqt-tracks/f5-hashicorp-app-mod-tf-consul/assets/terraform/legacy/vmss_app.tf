@@ -52,8 +52,8 @@ resource "azurerm_virtual_machine_scale_set" "app_vmss" {
     custom_data          = base64encode(templatefile(
       "./templates/app_server.sh", 
       { 
+        consul_datacenter = "east-us"
         vault_server = data.terraform_remote_state.vault.outputs.vault_ip
-        
       }
     )
   }

@@ -150,7 +150,7 @@ chmod +x /usr/bin/fake-service
 # Setup Fake Service in SystemD
 cat <<EOF > /etc/systemd/system/fake-service.service
 [Unit]
-Description=Payment Service
+Description=App Service
 After=network-online.target
 
 [Service]
