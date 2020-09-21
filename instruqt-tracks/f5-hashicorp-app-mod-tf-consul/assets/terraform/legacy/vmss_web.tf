@@ -9,7 +9,7 @@ resource "azurerm_virtual_machine_scale_set" "web_vmss" {
 
   identity {
     type = "UserAssigned"
-    identity_ids = [data.terraform_remote_state.iam.outputs.azurerm_user_assigned_identity.web.id]
+    identity_ids = [data.terraform_remote_state.iam.outputs.web_identity_principal_id]
   }
 
 

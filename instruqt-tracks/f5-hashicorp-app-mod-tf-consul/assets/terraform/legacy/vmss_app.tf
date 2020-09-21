@@ -8,7 +8,7 @@ resource "azurerm_virtual_machine_scale_set" "app_vmss" {
   
   identity {
     type = "UserAssigned"
-    identity_ids = [data.terraform_remote_state.iam.outputs.azurerm_user_assigned_identity.app.id]
+    identity_ids = [data.terraform_remote_state.iam.outputs.app_identity_principal_id]
   }
 
   sku {
