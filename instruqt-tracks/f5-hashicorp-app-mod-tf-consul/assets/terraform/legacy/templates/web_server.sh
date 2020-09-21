@@ -14,7 +14,7 @@ jwt="$(curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-versio
 #log into vault
 token=$(curl -s \
     --request POST \
-    --data '{"role": "consul", "jwt": "'$jwt'"}' \
+    --data '{"role": "web", "jwt": "'$jwt'"}' \
     http://${vault_server}:8200/v1/auth/azure/login | jq -r '.auth.client_token')
 
 #get the consul secret

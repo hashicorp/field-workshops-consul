@@ -1,11 +1,3 @@
-
-resource "azurerm_user_assigned_identity" "web" {
-  location            = data.terraform_remote_state.vnet.outputs.resource_group_location
-  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
-
-  name = "web"
-}
-
 resource "azurerm_virtual_machine_scale_set" "web_vmss" {
   name = "web-vmss"
 
@@ -17,7 +9,7 @@ resource "azurerm_virtual_machine_scale_set" "web_vmss" {
 
   identity {
     type = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.web.id]
+    identity_ids = [data.terraform_remote_state.iam.outputs.azurerm_user_assigned_identity.web.id]
   }
 
 
