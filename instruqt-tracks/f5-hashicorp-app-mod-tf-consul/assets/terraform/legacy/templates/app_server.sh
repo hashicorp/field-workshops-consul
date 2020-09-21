@@ -1,118 +1,179 @@
 #!/bin/bash
 
-#Get IP
-#local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
-
 #Utils
-sudo apt-get install unzip
+apt-get update -y
+apt-get upgrade -y
+sudo apt-get install -y unzip jq
 
-#Download Consul
-CONSUL_VERSION="1.8.0+ent"
-curl --silent --remote-name https://releases.hashicorp.com/consul/$${CONSUL_VERSION}/consul_$${CONSUL_VERSION}_linux_amd64.zip
+service_id=$(hostname)
+hostname=$(hostname)
 
-#Install Consul
-unzip consul_$${CONSUL_VERSION}_linux_amd64.zip
-sudo chown root:root consul
-sudo mv consul /usr/local/bin/
-consul -autocomplete-install
-complete -C /usr/local/bin/consul consul
+#get the jwt from azure msi
+jwt="$(curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fmanagement.azure.com%2F' -H Metadata:true | jq -r '.access_token')"
 
-#Create Consul User
-sudo useradd --system --home /etc/consul.d --shell /bin/false consul
-sudo mkdir --parents /opt/consul
-sudo chown --recursive consul:consul /opt/consul
+#log into vault
+token=$(curl -s \
+    --request POST \
+    --data '{"role": "consul", "jwt": "'$jwt'"}' \
+    http://${vault_server}:8200/v1/auth/azure/login | jq -r '.auth.client_token')
 
-#Create Systemd Config
-sudo cat << EOF > /etc/systemd/system/consul.service
+#get the consul secret
+consul_secret=$(curl -s \
+    --header "X-Vault-Token: $token" \
+    http://${vault_server}:8200/v1/secret/data/consul/shared | jq '.data.data')
+
+#extract the bootstrap info
+gossip_key=$(echo $consul_secret | jq -r .gossip_key)
+retry_join=$(echo $consul_secret | jq -r .retry_join)
+ca=$(echo $consul_secret | jq -r .ca)
+
+#debug
+echo $gossip_key
+echo $retry_join
+echo "$ca"
+
+# Install Consul
+cd /tmp
+wget https://releases.hashicorp.com/consul/1.8.0+ent/consul_1.8.0+ent_linux_amd64.zip -O consul.zip
+unzip ./consul.zip
+mv ./consul /usr/bin/consul
+
+mkdir -p /etc/consul/config
+
+cat <<EOF > /etc/consul/ca.pem
+"$ca"
+EOF
+
+cat <<EOF > /etc/consul/config/app.hcl
+service {
+  name = "app"
+  namespace = "frontend"
+  id = "app-$(hostname)"
+  port = 9091
+  connect {
+    sidecar_service {}
+  }
+}
+EOF
+
+# Generate the consul startup script
+#!/bin/sh -e
+cat <<EOF > /etc/consul/consul_start.sh
+#!/bin/bash -e
+
+# Get JWT token from the metadata service and write it to a file
+curl 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fmanagement.azure.com%2F' -H Metadata:true -s | jq -r .access_token > ./meta.token
+
+# Use the token to log into the Consul server, we need a valid ACL token to join the cluster and setup autoencrypt
+CONSUL_HTTP_ADDR=https://$retry_join consul login -method azure -bearer-token-file ./meta.token -token-sink-file /etc/consul/consul.token
+
+# Generate the Consul Config which includes the token so Consul can join the cluster
+cat <<EOC > /etc/consul/config/consul.json
+{
+  "acl":{
+   "enabled":true,
+    "down_policy":"async-cache",
+    "default_policy":"deny",
+    "tokens": {
+      "default":"\$(cat /etc/consul/consul.token)"
+    }
+  },
+  "ca_file":"/etc/consul/ca.pem",
+  "verify_outgoing":true,
+  "datacenter":"${consul_datacenter}",
+  "encrypt":"$gossip_key",
+  "server":false,
+  "log_level":"INFO",
+  "ui":true,
+  "retry_join":[
+    "$retry_join"
+  ],
+  "ports": {
+    "grpc": 8502
+  },
+  "auto_encrypt":{
+    "tls":true
+  }
+}
+EOC
+
+# Run Consul
+cat << EOF > foo.txt
+/usr/bin/consul agent -node=$(hostname) -config-dir=/etc/consul/config/ -data-dir=/etc/consul/data
+EOF
+
+chmod +x /etc/consul/consul_start.sh
+
+# Setup Consul agent in SystemD
+cat <<EOF > /etc/systemd/system/consul.service
 [Unit]
-Description="HashiCorp Consul - A service mesh solution"
-Documentation=https://www.consul.io/
-Requires=network-online.target
+Description=Consul Agent
 After=network-online.target
 
 [Service]
-User=consul
-Group=consul
-ExecStart=/usr/local/bin/consul agent  -bind '{{ GetInterfaceIP "eth0" }}' -config-dir=/etc/consul.d/
-ExecReload=/usr/local/bin/consul reload
-KillMode=process
+WorkingDirectory=/etc/consul
+ExecStart=/etc/consul/consul_start.sh
 Restart=always
-LimitNOFILE=65536
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-#Create config dir
-sudo mkdir --parents /etc/consul.d
-sudo touch /etc/consul.d/consul.hcl
-sudo chown --recursive consul:consul /etc/consul.d
-sudo chmod 640 /etc/consul.d/consul.hcl
+# Install Envoy
+curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
+getenvoy fetch standard:1.12.6
+cp /root/.getenvoy/builds/standard/1.12.6/linux_glibc/bin/envoy /usr/bin/envoy
 
-cat << EOF > /etc/consul.d/ca.pem
-${ca_cert}
+# Setup Envoy Service in SystemD
+cat <<EOF > /etc/systemd/system/envoy.service
+[Unit]
+Description=Envoy
+After=network-online.target
+Wants=consul.service
+
+[Service]
+ExecStart=/usr/bin/consul connect envoy -namespace frontend -sidecar-for app-$(hostname) -envoy-binary /usr/bin/envoy -- -l debug
+Restart=always
+RestartSec=5
+StartLimitIntervalSec=0
+Environment="CONSUL_HTTP_TOKEN_FILE=/etc/consul/consul.token"
+
+[Install]
+WantedBy=multi-user.target
 EOF
 
-cat << EOF > /etc/consul.d/hcs.json
-${consulconfig}
+# Install Fake Service
+wget https://github.com/nicholasjackson/fake-service/releases/download/v0.14.1/fake-service-linux -O fake-service
+mv ./fake-service /usr/bin/fake-service
+chmod +x /usr/bin/fake-service
+
+# Setup Fake Service in SystemD
+cat <<EOF > /etc/systemd/system/fake-service.service
+[Unit]
+Description=Payment Service
+After=network-online.target
+
+[Service]
+ExecStart=/usr/bin/fake-service
+Restart=always
+RestartSec=5
+StartLimitIntervalSec=0
+Environment="LISTEN_ADDR=0.0.0.0:9091"
+Environment="NAME=app"
+Environment="MESSAGE=Hello, Monolith!"
+Environment="SERVER_TYPE=http"
+
+[Install]
+WantedBy=multi-user.target
 EOF
 
-cat << EOF > /etc/consul.d/zz_override.hcl
-data_dir = "/opt/consul"
-ui = true
-ca_file = "/etc/consul.d/ca.pem"
-acl = {
-  tokens = {
-    default = "${consul_token}"
-  }
-  enabled = true
-  default_policy = "deny"
-  enable_token_persistence = true
-}
-EOF
+# Restart SystemD
+systemctl daemon-reload
 
-cat << EOF > /etc/consul.d/app.json
-{
-  "service": {
-    "name": "app",
-    "port": 9091,
-    "checks": [
-      {
-        "id": "app",
-        "name": "App TCP Check",
-        "tcp": "localhost:9091",
-        "interval": "10s",
-        "timeout": "1s"
-      }
-    ]
-  }
-}
-EOF
+systemctl enable consul
+systemctl enable envoy
+systemctl enable fake-service
 
-#Enable the service
-sudo systemctl enable consul
-sudo service consul start
-sudo service consul status
-
-#Install Dockers
-sudo snap install docker
-sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-
-
-sleep 10
-cat << EOF > docker-compose.yml
-version: "3.7"
-services:
-  app:
-    image: nicholasjackson/fake-service:v0.7.8
-    ports: 
-      - 9091:9091
-    environment:
-      LISTEN_ADDR: 0.0.0.0:9091
-      NAME: app
-      MESSAGE: "Hello, Monolith!"
-      SERVER_TYPE: "http"
-
-EOF
-sudo docker-compose up -d
+systemctl restart consul
+systemctl restart envoy
+systemctl restart fake-service

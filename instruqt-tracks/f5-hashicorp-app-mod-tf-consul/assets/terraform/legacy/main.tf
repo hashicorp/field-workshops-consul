@@ -26,3 +26,11 @@ data "terraform_remote_state" "hcs" {
     path = "../hcs/terraform.tfstate"
   }
 }
+
+data "terraform_remote_state" "vault" {
+  backend = "local"
+
+  config = {
+    path = "../vault/terraform.tfstate"
+  }
+}

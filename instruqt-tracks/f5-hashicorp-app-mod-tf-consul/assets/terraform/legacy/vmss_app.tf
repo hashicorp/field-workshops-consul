@@ -1,4 +1,11 @@
 
+resource "azurerm_user_assigned_identity" "app" {
+  location            = data.terraform_remote_state.vnet.outputs.resource_group_location
+  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
+
+  name = "app"
+}
+
 resource "azurerm_virtual_machine_scale_set" "app_vmss" {
   name = "app-vmss"
 
@@ -6,6 +13,11 @@ resource "azurerm_virtual_machine_scale_set" "app_vmss" {
   resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
 
   upgrade_policy_mode = "Manual"
+  
+  identity {
+    type = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.app.id]
+  }
 
   sku {
     name     = "Standard_DS1_v2"
@@ -37,7 +49,13 @@ resource "azurerm_virtual_machine_scale_set" "app_vmss" {
   os_profile {
     computer_name_prefix = "app-vm-"
     admin_username       = "azure-user"
-    custom_data          = base64encode(templatefile("./templates/app_server.sh", { endpoint = var.endpoint, consulconfig = var.consulconfig, ca_cert = var.ca_cert, consul_token = var.consul_token }))
+    custom_data          = base64encode(templatefile(
+      "./templates/app_server.sh", 
+      { 
+        vault_server = data.terraform_remote_state.vault.outputs.vault_ip
+        
+      }
+    )
   }
 
   os_profile_linux_config {
