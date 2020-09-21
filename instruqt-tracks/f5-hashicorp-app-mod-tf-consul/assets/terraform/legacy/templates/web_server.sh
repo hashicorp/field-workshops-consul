@@ -47,7 +47,6 @@ EOF
 cat <<EOF > /etc/consul/config/web.hcl
 service {
   name = "web"
-  namespace = "frontend"
   id = "web-$(hostname)"
   port = 9090
   connect {
@@ -56,7 +55,6 @@ service {
         upstreams = [
           {
             destination_name = "app"
-            destination_namespace = "frontend"
             local_bind_port  = 9091
           }
         ]
@@ -141,7 +139,7 @@ After=network-online.target
 Wants=consul.service
 
 [Service]
-ExecStart=/usr/bin/consul connect envoy -namespace frontend -sidecar-for web-$(hostname) -envoy-binary /usr/bin/envoy -- -l debug
+ExecStart=/usr/bin/consul connect envoy -sidecar-for web-$(hostname) -envoy-binary /usr/bin/envoy -- -l debug
 Restart=always
 RestartSec=5
 StartLimitIntervalSec=0
