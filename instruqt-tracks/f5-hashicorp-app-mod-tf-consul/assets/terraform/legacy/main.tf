@@ -11,6 +11,15 @@ data "terraform_remote_state" "vnet" {
   }
 }
 
+data "terraform_remote_state" "iam" {
+  backend = "local"
+
+  config = {
+    path = "./iam/terraform.tfstate"
+  }
+}
+
+
 data "terraform_remote_state" "bigip" {
   backend = "local"
 
