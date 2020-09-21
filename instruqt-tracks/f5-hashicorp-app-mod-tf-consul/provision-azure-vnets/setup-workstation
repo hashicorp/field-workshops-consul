@@ -163,6 +163,6 @@ set-workdir /root/terraform/vnet
 cd /root/terraform/vnet
 
 #extra sleep for cred propagation
-sleep 60
+sleep 300
 
 exit 0
