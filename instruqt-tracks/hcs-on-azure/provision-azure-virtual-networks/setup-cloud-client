@@ -169,4 +169,7 @@ cat << EOF > /root/terraform/vnet/terraform.tfvars
 ssh_public_key="${pubkey}"
 EOF
 
+#sleep for creds
+sleep 300
+
 exit 0

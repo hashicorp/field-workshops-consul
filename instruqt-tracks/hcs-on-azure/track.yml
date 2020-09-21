@@ -76,6 +76,11 @@ challenges:
     az account clear
     az login
     ```
+  notes:
+  - type: text
+    contents: |
+      Setting up your environment... Your Azure account will be ready in ~5 minutes.
+      Keep an eye on the bottom right corner to know when you can get started.
   tabs:
   - title: Terraform
     type: code
@@ -1125,4 +1130,4 @@ challenges:
     port: 9090
   difficulty: basic
   timelimit: 300
-checksum: "3412155379516741924"
+checksum: "8372456051275618834"
