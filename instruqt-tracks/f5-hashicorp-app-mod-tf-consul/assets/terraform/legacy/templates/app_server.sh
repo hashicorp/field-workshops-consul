@@ -14,7 +14,7 @@ jwt="$(curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-versio
 #log into vault
 token=$(curl -s \
     --request POST \
-    --data '{"role": "consul", "jwt": "'$jwt'"}' \
+    --data '{"role": "app", "jwt": "'$jwt'"}' \
     http://${vault_server}:8200/v1/auth/azure/login | jq -r '.auth.client_token')
 
 #get the consul secret
@@ -97,7 +97,6 @@ cat <<EOC > /etc/consul/config/consul.json
 EOC
 
 # Run Consul
-cat << EOF > foo.txt
 /usr/bin/consul agent -node=$(hostname) -config-dir=/etc/consul/config/ -data-dir=/etc/consul/data
 EOF
 
