@@ -1,28 +1,28 @@
 #!/bin/bash
 
 sleep 10
+#get rg
+rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
 
-if [ -f /tmp/skip-check ]; then
-    rm /tmp/skip-check
-    exit 0
+#check resources
+echo "checking Vault..."
+status=$(az vm show -g "${rg}" --name vault-vm | jq -r '.provisioningState')
+if [ "${status}" != "Creating" ] && [ "${status}" != "Updating" ] && [ "${status}" != "Succeeded" ] ; then
+  fail-message "Vault is not provisioning/provisioned. Wait a few moments and try again. Current state is: ${status}"
+  exit 1
 fi
 
-if [ ! -f /root/terraform/vault/terraform.out ]; then
-    fail-message "Vault provisioning has not been started"
-    exit 1
+echo "checking AKS cluster..."
+status=$(az aks show -g "${rg}" --name aks | jq -r '.provisioningState')
+if [ "${status}" != "Creating" ] && [ "${status}" != "Updating" ] && [ "${status}" != "Succeeded" ] ; then
+  fail-message "AKS cluster is not provisioning/provisioned. Wait a few moments and try again. Current state is: ${status}"
+  exit 1
 fi
 
-if [ ! -f /root/terraform/aks/terraform.out ]; then
-    fail-message "AKS provisioning has not been started"
-    exit 1
-fi
-
+echo "Checking HCS..."
 if [ ! -f /root/terraform/hcs/terraform.out ]; then
     fail-message "HCS provisioning has not been started"
     exit 1
 fi
 
 exit 0
-
-
-
