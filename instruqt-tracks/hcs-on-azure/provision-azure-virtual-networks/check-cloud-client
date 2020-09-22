@@ -8,14 +8,18 @@ fi
 #Check we have 3 VNETs in RG
 echo "Verifying Azure VNETs"
 rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
-vnet_count=$(az network vnet list -g $rg | jq '. | length')
-echo $vnet_count
+vnet_count=$(az network vnet list -g "${rg}" | jq '. | length')
 
-if [ $vnet_count = "3" ]; then
+if [ -z "$vnet_count" ]; then
+      fail-message "Could not get Azure VNets. Check your Terraform."
+      exit 1
+fi
+
+if [ "$vnet_count" = "3" ]; then
   exit 0
 fi
 
-if [ $vnet_count != "3" ]; then
+if [ "$vnet_count" != "3" ]; then
   fail-message "VNETs did not provision successful."
   exit 1
 fi
