@@ -16,6 +16,7 @@ developers:
 - jackson.nic@gmail.com
 private: true
 published: true
+maintenance: true
 show_timer: true
 challenges:
 - slug: provision-azure-virtual-networks
@@ -1130,4 +1131,4 @@ challenges:
     port: 9090
   difficulty: basic
   timelimit: 300
-checksum: "963890179463461775"
+checksum: "4198401758209918399"
