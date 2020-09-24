@@ -16,7 +16,6 @@ developers:
 - jackson.nic@gmail.com
 private: true
 published: true
-maintenance: true
 show_timer: true
 challenges:
 - slug: provision-azure-virtual-networks
@@ -669,14 +668,6 @@ challenges:
 
     In the next assignment you'll use the trust relationship you just created to deploy applications into the mesh.
   tabs:
-  - title: Target lab architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
-  - title: Consul
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8500
   - title: Vault
     type: service
     hostname: cloud-client
@@ -692,6 +683,14 @@ challenges:
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/hcs-on-azure/assets/diagrams/12-configure-k8s-consul-authentication.html
+  - title: Target lab architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
   difficulty: basic
   timelimit: 300
 - slug: deploy-applications-in-aks
@@ -1131,4 +1130,4 @@ challenges:
     port: 9090
   difficulty: basic
   timelimit: 300
-checksum: "4198401758209918399"
+checksum: "6263922847373967731"
