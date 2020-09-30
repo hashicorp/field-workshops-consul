@@ -45,7 +45,7 @@ resource "azurerm_managed_application" "hcs" {
     name      = "on-demand-v2"
     product   = "hcs-production"
     publisher = "hashicorp-4665790"
-    version   = "0.0.43"
+    version   = "0.0.46"
   }
 
   parameters = {
@@ -64,24 +64,14 @@ resource "azurerm_managed_application" "hcs" {
     snapshotRetention     = "1m"
     consulVnetCidr        = "10.0.0.0/24"
     location              = data.terraform_remote_state.vnet.outputs.resource_group_location
-    providerBaseURL       = "https://ama-api.hashicorp.cloud/consulama/2020-07-09"
+    providerBaseURL       = "https://ama-api.hashicorp.cloud/consulama/2020-09-09"
     email                 = "lance@hashicorp.com"
   }
 }
 
-module "az-cli" {
-  source = "matti/resource/shell"
-  depends_on = [azurerm_managed_application.hcs]
-
-  environment = {
-    RESOURCE_GROUP = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
-  }
-  command = "az network vnet list --resource-group $RESOURCE_GROUP | jq -r .[].name"
-}
-
 data "azurerm_virtual_network" "hcs" {
   depends_on          = [azurerm_managed_application.hcs]
-  name                = module.az-cli.stdout
+  name                = "${lookup(azurerm_managed_application.hcs.outputs, "vnet_name")}-vnet"
   resource_group_name = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
 }
 
@@ -89,7 +79,7 @@ resource "azurerm_virtual_network_peering" "hcs-legacy" {
   depends_on                = [azurerm_managed_application.hcs]
   name                      = "HCSToLegacy"
   resource_group_name       = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
-  virtual_network_name      = module.az-cli.stdout
+  virtual_network_name      = "${lookup(azurerm_managed_application.hcs.outputs, "vnet_name")}-vnet"
   remote_virtual_network_id = data.terraform_remote_state.vnet.outputs.legacy_vnet
 }
 
@@ -105,7 +95,7 @@ resource "azurerm_virtual_network_peering" "hcs-aks" {
   depends_on                = [azurerm_managed_application.hcs]
   name                      = "HCSToAKS"
   resource_group_name       = "${data.terraform_remote_state.vnet.outputs.resource_group_name}-mrg-hcs"
-  virtual_network_name      = module.az-cli.stdout
+  virtual_network_name      = "${lookup(azurerm_managed_application.hcs.outputs, "vnet_name")}-vnet"
   remote_virtual_network_id = data.terraform_remote_state.vnet.outputs.aks_vnet
 }
 
