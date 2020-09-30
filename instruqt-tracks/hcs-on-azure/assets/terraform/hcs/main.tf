@@ -64,7 +64,7 @@ resource "azurerm_managed_application" "hcs" {
     consulVnetCidr        = "10.0.0.0/24"
     location              = data.terraform_remote_state.vnet.outputs.resource_group_location
     providerBaseURL       = "https://ama-api.hashicorp.cloud/consulama/2020-09-09"
-    email                 = "lance@hashicorp.com"
+    email                 = "instruqt@hashicorp.com"
   }
 }
 
