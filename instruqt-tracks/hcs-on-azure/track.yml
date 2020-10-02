@@ -17,6 +17,7 @@ developers:
 private: true
 published: true
 show_timer: true
+skipping_enabled: true
 challenges:
 - slug: provision-azure-virtual-networks
   id: bsyydcckaasv
@@ -927,6 +928,11 @@ challenges:
 
     In a later assignment you will use the VNet peers to enable remote gateways for the spoke VNets.
   tabs:
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/hcs-on-azure/assets/diagrams/05-validate-virtual-gateway-and-peering.html
@@ -945,11 +951,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8500
-  - title: Vault
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8200
   difficulty: basic
   timelimit: 3600
 - slug: create-remote-gateways
@@ -1130,4 +1131,4 @@ challenges:
     port: 9090
   difficulty: basic
   timelimit: 300
-checksum: "6263922847373967731"
+checksum: "761625157932374851"

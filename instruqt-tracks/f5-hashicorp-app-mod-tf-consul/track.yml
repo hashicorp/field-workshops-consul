@@ -16,6 +16,7 @@ developers:
 private: true
 published: true
 show_timer: true
+skipping_enabled: true
 challenges:
 - slug: provision-azure-vnets
   id: tmsnsut54k9f
@@ -865,4 +866,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
-checksum: "18282165449824657525"
+checksum: "21414232101145139"
