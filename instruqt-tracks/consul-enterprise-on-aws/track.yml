@@ -14,6 +14,7 @@ developers:
 private: true
 published: true
 show_timer: true
+skipping_enabled: true
 challenges:
 - slug: provision-vpcs
   id: ujbryneafql8
@@ -1430,4 +1431,4 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "15636642468292636771"
+checksum: "889006741780376469"

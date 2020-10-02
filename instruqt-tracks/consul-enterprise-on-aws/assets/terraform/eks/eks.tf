@@ -31,9 +31,9 @@ module "frontend" {
 
   worker_groups = [
     {
-      instance_type        = "t3.large"
-      asg_max_size         = 3
-      asg_desired_capacity = 3
+      instance_type        = "t3.medium"
+      asg_max_size         = 2
+      asg_desired_capacity = 2
     }
   ]
 }
@@ -72,9 +72,9 @@ module "backend" {
 
   worker_groups = [
     {
-      instance_type        = "t3.large"
-      asg_max_size         = 3
-      asg_desired_capacity = 3
+      instance_type        = "t3.medium"
+      asg_max_size         = 2
+      asg_desired_capacity = 2
     }
   ]
 }
