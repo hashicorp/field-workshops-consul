@@ -2,7 +2,7 @@ version: 2
 jobs:
   validate:
     docker:
-      - image: ubuntu:latest
+      - image: ubuntu:bionic
     steps:
       - checkout
       - run:
