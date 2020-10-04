@@ -50,10 +50,10 @@ EOF
 sudo systemctl enable consul.service
 sudo systemctl start consul.service
 
-sleep 60
+sleep 30
 
 curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
 getenvoy fetch standard:1.14.1
 cp /root/.getenvoy/builds/standard/1.14.1/linux_glibc/bin/envoy /usr/local/bin/envoy
-nohup consul connect envoy -gateway=mesh -register -service "mesh-gateway" -address "$${local_ipv4}:8443" -wan-address "$${public_ipv4}:443" > /envoy.out &
+nohup consul connect envoy -expose-servers -gateway=mesh -register -service "mesh-gateway" -address "$${local_ipv4}:443" -wan-address "$${public_ipv4}:443" -- -l debug > /envoy.out &
 exit 0

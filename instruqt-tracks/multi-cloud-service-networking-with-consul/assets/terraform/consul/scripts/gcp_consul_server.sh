@@ -25,7 +25,7 @@ cat <<EOF> /etc/consul.d/server.json
   "log_level": "INFO",
   "node_name": "consul-server-0",
   "ui": true,
-  "primary_gateways" : ["<primary-mesh-gateway-ip>:<primary-mesh-gateway-port>"],
+  "primary_gateways" : [${primary_wan_gateway}],
   "connect": {
     "enable_mesh_gateway_wan_federation": true,
     "enabled": true
