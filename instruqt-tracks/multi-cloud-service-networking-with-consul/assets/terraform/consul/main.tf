@@ -8,7 +8,7 @@ provider "google" {
   region      = "us-central1"
 }
 
-data "terraform_remote_state" "networking" {
+data "terraform_remote_state" "infra" {
   backend = "local"
 
   config = {

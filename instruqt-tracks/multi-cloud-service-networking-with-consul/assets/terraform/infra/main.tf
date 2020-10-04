@@ -8,3 +8,25 @@ provider "google" {
   project     = "my-project-id"
   region      = "us-central1"
 }
+
+resource "random_string" "env" {
+  length  = 4
+  special = false
+  upper   = false
+  number  = false
+}
+
+#ssh
+resource "tls_private_key" "main" {
+  algorithm = "RSA"
+}
+
+resource "null_resource" "main" {
+  provisioner "local-exec" {
+    command = "echo \"${tls_private_key.main.private_key_pem}\" > ../demo-key.pem"
+  }
+
+  provisioner "local-exec" {
+    command = "chmod 600 ../demo-key.pem"
+  }
+}

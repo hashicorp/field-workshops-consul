@@ -1,3 +1,7 @@
+output "env" {
+  value = random_string.env.result
+}
+
 output "aws_shared_svcs_vpc" {
   value = module.aws-vpc-shared-svcs.vpc_id
 }
