@@ -1,0 +1,53 @@
+#!/bin/bash
+
+#metadata
+local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
+
+#update packages
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+sudo apt update -y
+
+#install consul
+sudo apt install consul -y
+
+#config
+cat <<EOF> /etc/consul.d/server.json
+{
+  "datacenter": "gcp-central-1",
+  "primary_datacenter": "aws-us-east-1",
+  "server": true,
+  "bootstrap_expect": 1,
+  "leave_on_terminate": true,
+  "advertise_addr": "$${local_ipv4}",
+  "data_dir": "/opt/consul/data",
+  "client_addr": "0.0.0.0",
+  "log_level": "INFO",
+  "node_name": "consul-server-0",
+  "ui": true,
+  primary_gateways = [ "<primary-mesh-gateway-ip>:<primary-mesh-gateway-port>",]
+  "connect": {
+    enable_mesh_gateway_wan_federation = true
+    "enabled": true
+  }
+}
+EOF
+
+cat <<EOF> /etc/consul.d/tls.json
+{
+  "verify_incoming": true,
+  "verify_outgoing": true,
+  "verify_server_hostname": true,
+  "ca_file": "consul-agent-ca.pem",
+  "cert_file": "dc1-server-consul-0.pem",
+  "key_file": "dc1-server-consul-0-key.pem",
+  "auto_encrypt": {
+    "allow_tls": true
+  }
+}
+EOF
+
+sudo systemctl enable consul.service
+sudo systemctl start consul.service
+
+exit 0
