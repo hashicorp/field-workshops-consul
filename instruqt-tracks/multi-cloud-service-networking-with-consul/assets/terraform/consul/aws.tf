@@ -135,7 +135,7 @@ resource "aws_instance" "mesh_gateway" {
 data "template_file" "aws_mgw_init" {
   template = file("${path.module}/scripts/aws_mesh_gateway.sh")
   vars = {
-    env = data.terraform_remote_state.infra.outputs.env
+    env     = data.terraform_remote_state.infra.outputs.env
     ca_cert = tls_self_signed_cert.shared_ca.cert_pem
   }
 }

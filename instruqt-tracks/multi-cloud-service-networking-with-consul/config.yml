@@ -13,6 +13,7 @@ gcp_projects:
   services:
   - cloudresourcemanager.googleapis.com
   - compute.googleapis.com
+  - iam.googleapis.com
 aws_accounts:
 - name: consul
   managed_policies:

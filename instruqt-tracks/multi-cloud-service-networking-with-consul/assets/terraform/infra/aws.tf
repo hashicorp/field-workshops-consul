@@ -52,10 +52,10 @@ module "aws-vpc-app" {
 }
 
 resource "aws_vpc_peering_connection" "sharing-svcs" {
-  vpc_id        = module.aws-vpc-shared-svcs.vpc_id
-  peer_vpc_id   = module.aws-vpc-app.vpc_id
-  peer_region   = "us-east-1"
-  auto_accept   = false
+  vpc_id      = module.aws-vpc-shared-svcs.vpc_id
+  peer_vpc_id = module.aws-vpc-app.vpc_id
+  peer_region = "us-east-1"
+  auto_accept = false
 
   tags = {
     Side = "Requester"
