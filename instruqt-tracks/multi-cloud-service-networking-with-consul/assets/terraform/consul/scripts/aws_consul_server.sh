@@ -25,12 +25,13 @@ cat <<EOF> /etc/consul.d/server.json
   "node_name": "consul-server-0",
   "ui": true,
   "connect": {
-    enable_mesh_gateway_wan_federation = true
+    "enable_mesh_gateway_wan_federation": true,
     "enabled": true
   }
 }
 EOF
 
+mkdir -p /opt/consul/tls/
 echo "${ca_cert}" > /opt/consul/tls/ca-cert.pem
 echo "${cert}" > /opt/consul/tls/server-cert.pem
 echo "${key}" > /opt/consul/tls/server-key.pem

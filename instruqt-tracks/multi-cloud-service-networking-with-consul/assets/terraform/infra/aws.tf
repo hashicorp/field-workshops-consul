@@ -1,3 +1,8 @@
+resource "aws_key_pair" "demo" {
+  key_name   = "instruqt-${random_string.env.result}"
+  public_key = tls_private_key.main.public_key_openssh
+}
+
 module "aws-vpc-shared-svcs" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> v2.0"
