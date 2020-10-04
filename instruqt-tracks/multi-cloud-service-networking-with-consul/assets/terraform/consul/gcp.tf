@@ -1,10 +1,16 @@
+data "google_project" "project" {}
+
 resource "google_compute_address" "static" {
-  name = "ipv4-address"
+  name         = "consul-ipv4-address"
+  address_type = "EXTERNAL"
+}
+
+resource "google_compute_address" "mgw" {
+  name         = "mgw-ipv4-address"
   address_type = "EXTERNAL"
 }
 
 resource "google_compute_instance" "consul" {
-  project      = "p-rp72371sw14jeeggyk2hbpp1ynen"
   name         = "consul-server"
   machine_type = "n1-standard-1"
   zone         = "us-central1-a"
@@ -17,15 +23,16 @@ resource "google_compute_instance" "consul" {
   }
 
   network_interface {
-    network = "vpc-shared-svcs"
-    subnetwork  = "shared"
-    subnetwork_project = "p-rp72371sw14jeeggyk2hbpp1ynen"
+    network    = "vpc-shared-svcs"
+    subnetwork = "shared"
     access_config {
       nat_ip = google_compute_address.static.address
     }
   }
 
   metadata_startup_script = data.template_file.gcp-server-init.rendered
+
+  tags = ["consul-${data.terraform_remote_state.infra.outputs.env}"]
 
 }
 
@@ -69,4 +76,81 @@ resource "tls_locally_signed_cert" "gcp_consul_server" {
     "client_auth",
     "server_auth"
   ]
+}
+
+resource "google_compute_firewall" "consul" {
+  name    = "allow-consul-external"
+  network = "vpc-shared-svcs"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22", "8500"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+}
+
+resource "google_compute_firewall" "consul-gossip" {
+  name    = "allow-consul-rpc-gossip"
+  network = "vpc-shared-svcs"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["8300", "8301"]
+  }
+
+  allow {
+    protocol = "udp"
+    ports    = ["8301"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+}
+
+resource "google_compute_instance" "mgw" {
+  name         = "consul-mgw"
+  machine_type = "n1-standard-1"
+  zone         = "us-central1-a"
+
+
+  boot_disk {
+    initialize_params {
+      image = "ubuntu-os-cloud/ubuntu-1804-lts"
+    }
+  }
+
+  network_interface {
+    network    = "vpc-shared-svcs"
+    subnetwork = "shared"
+    access_config {
+      nat_ip = google_compute_address.mgw.address
+    }
+  }
+
+  service_account {
+    email  = google_service_account.consul_service_account.email
+    scopes = ["cloud-platform", "compute-rw"]
+  }
+
+  metadata_startup_script = data.template_file.gcp-mgw-init.rendered
+
+}
+
+data "template_file" "gcp-mgw-init" {
+  template = file("${path.module}/scripts/gcp_mesh_gateway.sh")
+  vars = {
+    env     = data.terraform_remote_state.infra.outputs.env
+    ca_cert = tls_self_signed_cert.shared_ca.cert_pem
+    project = data.google_project.project.id
+  }
+}
+
+resource "google_service_account" "consul_service_account" {
+  account_id   = "consul"
+  display_name = "Consul"
+}
+
+resource "google_project_iam_member" "consul" {
+  member = "serviceAccount:${google_service_account.consul_service_account.email}"
+  role   = "roles/compute.viewer"
 }
