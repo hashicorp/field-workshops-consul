@@ -39,9 +39,10 @@ resource "google_compute_instance" "consul" {
 data "template_file" "gcp-server-init" {
   template = file("${path.module}/scripts/gcp_consul_server.sh")
   vars = {
-    ca_cert = tls_self_signed_cert.shared_ca.cert_pem
-    cert    = tls_locally_signed_cert.gcp_consul_server.cert_pem,
-    key     = tls_private_key.gcp_consul_server.private_key_pem
+    ca_cert          = tls_self_signed_cert.shared_ca.cert_pem
+    cert             = tls_locally_signed_cert.gcp_consul_server.cert_pem,
+    key              = tls_private_key.gcp_consul_server.private_key_pem
+    primary_wan_gateway = "${aws_instance.mesh_gateway.public_ip}:443"
   }
 }
 
