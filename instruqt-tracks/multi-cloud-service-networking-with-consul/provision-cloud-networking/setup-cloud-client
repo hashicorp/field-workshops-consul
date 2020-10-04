@@ -1,0 +1,14 @@
+#!/bin/bash
+
+apt-get update -y
+apt-get install software-properties-common -y
+curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+
+apt-get update -y
+apt-get install terraform -y
+
+
+echo 'export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)' >> /root/.bashrc
+
+exit 0

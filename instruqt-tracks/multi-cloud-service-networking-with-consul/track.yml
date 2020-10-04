@@ -1,0 +1,45 @@
+slug: multi-cloud-service-networking-with-consul
+id: iklbsgjpisau
+type: track
+title: Multi Cloud Service Networking with Consul
+teaser: A short description of the track.
+description: |-
+  A long description of the track.
+
+  You can use any GitHub flavoured markdown.
+icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+tags: []
+owner: hashicorp
+developers:
+- lance@hashicorp.com
+private: false
+published: false
+challenges:
+- slug: provision-cloud-networking
+  id: eej5x5cxdiig
+  type: challenge
+  title: Provision Cloud Networking
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root
+  difficulty: basic
+  timelimit: 7200
+checksum: "1337682261626462824"
