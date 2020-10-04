@@ -59,7 +59,7 @@ resource "tls_cert_request" "gcp_consul_server" {
     common_name = "consul-server-0.server.gcp-us-central-1.consul"
   }
 
-  dns_names    = ["server.gcp-us-central-1.consul", "localhost"]
+  dns_names    = ["consul-server-0.server.gcp-us-central-1.consul", "server.gcp-us-central-1.consul", "localhost"]
   ip_addresses = ["127.0.0.1"]
 }
 
@@ -85,14 +85,14 @@ resource "google_compute_firewall" "consul" {
 
   allow {
     protocol = "tcp"
-    ports    = ["22", "8500"]
+    ports    = ["22", "8500", "443"]
   }
 
   source_ranges = ["0.0.0.0/0"]
 }
 
 resource "google_compute_firewall" "consul-gossip" {
-  name    = "allow-consul-rpc-gossip"
+  name    = "allow-consul-internal"
   network = "vpc-shared-svcs"
 
   allow {

@@ -54,6 +54,13 @@ resource "aws_security_group" "consul" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -98,7 +105,7 @@ resource "tls_cert_request" "aws_consul_server" {
     common_name = "consul-server-0.server.aws-us-east-1.consul"
   }
 
-  dns_names    = ["server.aws-us-east-1.consul", "localhost"]
+  dns_names    = ["consul-server-0.server.aws-us-east-1.consul", "server.aws-us-east-1.consul", "localhost"]
   ip_addresses = ["127.0.0.1"]
 }
 
