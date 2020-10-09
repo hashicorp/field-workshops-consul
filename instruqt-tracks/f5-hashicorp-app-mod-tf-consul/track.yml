@@ -15,6 +15,7 @@ developers:
 - kcorbin@hashicorp.com
 private: true
 published: true
+maintenance: true
 show_timer: true
 skipping_enabled: true
 challenges:
@@ -49,6 +50,11 @@ challenges:
       Setting up your environment... Your Azure account will be ready in ~5 minutes.
       Keep an eye on the bottom right corner to know when you can get started.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
   - title: Shell
     type: terminal
     hostname: workstation
@@ -95,6 +101,11 @@ challenges:
     contents: |
       Terraform allows you to document, share, and deploy environments in one workflow by using Infrastructure as Code!
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
   - title: Shell
     type: terminal
     hostname: workstation
@@ -152,6 +163,11 @@ challenges:
     contents: |
       In this exercise we will be provisioning an F5 BIG-IP Virtual Edition using Terraform.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
   - title: Shell
     type: terminal
     hostname: workstation
@@ -253,6 +269,11 @@ challenges:
 
     You will use this role in a later assignment to configure access for Consul service consumers.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
   - title: Consul
     type: service
     hostname: workstation
@@ -327,6 +348,11 @@ challenges:
     contents: |
       For a lot of organizations digital transformation may start with a simple "lift and shift" to the cloud for existing workloads!
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
   - title: Terraform Code
     type: code
     hostname: workstation
@@ -472,6 +498,11 @@ challenges:
     contents: |
       Now let's review the application environment we've deployed!
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
   - title: Consul
     type: service
     hostname: workstation
@@ -573,6 +604,11 @@ challenges:
 
       [source](https://zkresearch.com/research/2017-application-delivery-controller-study)
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
   - title: App
     type: service
     hostname: workstation
@@ -664,6 +700,11 @@ challenges:
     contents: |
       HashiCorp maintains an official helm chart, which makes installing Consul in k8s easy!
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/final-architecture.html
@@ -765,6 +806,11 @@ challenges:
     contents: |
       Consul works equally well in public, private, virtual, physical, or microservices based environments.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
   - title: Consul
     type: service
     hostname: workstation
@@ -835,6 +881,11 @@ challenges:
 
     Congrats! You just migrated to Consul mesh with BIG-IP.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
   - title: Consul
     type: service
     hostname: workstation
@@ -866,4 +917,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
-checksum: "21414232101145139"
+checksum: "12386328494719153018"

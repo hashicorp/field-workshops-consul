@@ -1,114 +1,5 @@
 #!/bin/bash
-# This is the setup script for the workstation container. Use it to set the stage for your terraform training, demo, or lab.
 set -e
-
-# Allow instruqt time to do its thing
-sleep 10
-
-# install dependencies
-apt install -y nginx
-#hcs extension
-az extension add --source https://releases.hashicorp.com/hcs/0.1.0/hcs-0.1.0-py2.py3-none-any.whl --yes
-
-# Source important environment variables
-source /etc/profile.d/instruqt-env.sh
-source /root/.bashrc
-
-# Create code server config directory
-mkdir -p /root/.local/share/code-server/User
-
-# Set bash as the default shell
-cat <<-EOF > /root/.local/share/code-server/User/settings.json
-{
-    "terminal.integrated.shell.linux": "/bin/bash",
-    "terminal.integrated.fontFamily": "Inconsolata, Consolas, 'Courier New', monospace",
-    "terminal.integrated.copyOnSelection": true
-}
-EOF
-
-# Create VSC startup script
-cat <<-EOF > /etc/systemd/system/code-server.service
-[Unit]
-Description=Code Server
-After=network.target
-StartLimitIntervalSec=0
-
-[Service]
-Type=simple
-Restart=always
-RestartSec=1
-User=root
-ExecStart=/usr/local/bin/code-server --port 8443 --cert --auth none \$(pwd)
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-# Start VSC
-systemctl start code-server
-
-# Import VAULT_TOKEN into shell
-#echo "export VAULT_TOKEN=\$(cat /var/vault_token)" >> /root/.bashrc
-export VAULT_TOKEN=$(cat /var/vault_token)
-export VAULT_NAMESPACE=Sales/SE
-
-# Generate the Azure creds setup script
-cat <<-EOF > /bin/setup_azure.sh
-#!/bin/bash
-# Define some colors
-red=$'\e[1;31m'
-grn=$'\e[1;32m'
-yel=$'\e[1;33m'
-blu=$'\e[1;34m'
-mag=$'\e[1;35m'
-cyn=$'\e[1;36m'
-end=$'\e[0m'
-
-# Fetch temporary Azure credentials from a Vault server
-# Requires \$VAULT_ADDR, \$VAULT_NAMESPACE, \$VAULT_CREDS_ENDPOINT and \$VAULT_TOKEN to be set as environment variables
-
-# Regex matching the shape of Azure credentials
-AZURE_ID_REGEX="[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}"
-
-echo "Fetching dynamic Azure credentials from \${VAULT_ADDR}/v1/\${VAULT_CREDS_ENDPOINT}"
-curl -s --retry 5 -H "X-Vault-Token: \${VAULT_TOKEN}" -H "X-Vault-Namespace: \$VAULT_NAMESPACE" \${VAULT_ADDR}/v1/\${VAULT_CREDS_ENDPOINT} | \
-jq -r '[.data.client_id,.data.client_secret] | @tsv' | \
-while read id secret; do
-  if [[ \$id =~ \$AZURE_ID_REGEX ]]; then
-    echo "Valid Azure credentials received. Testing them now..."
-    until \$(az login --service-principal --username=\$id --password=\$secret --tenant=\$ARM_TENANT_ID > /dev/null 2>&1); do
-      echo "Waiting for Azure credentials to be ready..."
-      sleep 10
-    done
-    echo "Azure credentials are ready. Storing them as environment variables."
-    echo "export ARM_TENANT_ID=\$ARM_TENANT_ID" >> ~/.bashrc
-    echo "export ARM_SUBSCRIPTION_ID=\$ARM_SUBSCRIPTION_ID" >> ~/.bashrc
-    echo "export ARM_CLIENT_ID=\$id" >> ~/.bashrc
-    echo "export ARM_CLIENT_SECRET=\$secret" >> ~/.bashrc
-  else
-    echo "Error fetching Azure credentials. Please run the script again."
-    exit 1
-  fi
-done || exit 1
-unset VAULT_TOKEN
-
-echo "\${grn}Ready to run Terraform on...\${end}"
-echo "${blu}"
-echo '     /\'
-echo '    /  \    _____   _ _  ___ _'
-echo "   / /\\\ \\\  |_  / | | | \\\'__/ _\\\"
-echo '  / ____ \  / /| |_| | | |  __/'
-echo ' /_/    \_\/___|\__,_|_|  \___|'
-echo "${end}"
-echo "\${mag}Setup script complete. Your Azure credentials are valid for 8 hours.\${end}"
-EOF
-
-chmod +x /bin/setup_azure.sh
-
-# Ensure we load /etc/profile.d/instruqt-env.sh
-echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
-/bin/setup_azure.sh
-source /root/.bashrc
 
 #install consul
 cd /tmp
@@ -145,9 +36,25 @@ cp -r field-workshops-consul/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/asse
 rm -rf field-workshops-consul
 
 #ssh agent
-ssh-keygen -f ~/.ssh/id_rsa -y > ~/.ssh/id_rsa.pub
+cat << EOF > ~/.ssh/config
+Host *
+    StrictHostKeyChecking no
+EOF
 eval $(ssh-agent)
 ssh-add ~/.ssh/id_rsa
+
+#fix path
+echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
+
+# Ensure we load /etc/profile.d/instruqt-env.sh
+echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
+source /root/.bashrc
+
+#enable marketplace
+az provider register --namespace 'Microsoft.Solutions' --subscription "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SUBSCRIPTION_ID}"
+
+#enable hcs ext
+az extension add --source https://releases.hashicorp.com/hcs/0.3.1/hcs-0.3.1-py2.py3-none-any.whl --yes
 
 #provision
 cd /root/terraform/vnet
@@ -161,8 +68,5 @@ EOF
 #assignment
 set-workdir /root/terraform/vnet
 cd /root/terraform/vnet
-
-#extra sleep for cred propagation
-sleep 300
 
 exit 0
