@@ -10,14 +10,6 @@ data "terraform_remote_state" "vnet" {
   }
 }
 
-/*
-resource "azurerm_marketplace_agreement" "hcs" {
-  publisher = "hashicorp-4665790"
-  offer     = "hcs-production-preview"
-  plan      = "public-beta"
-}
-*/
-
 resource "random_string" "storageaccountname" {
   length  = 13
   upper   = false
@@ -32,8 +24,14 @@ resource "random_string" "blobcontainername" {
   special = false
 }
 
+resource "azurerm_marketplace_agreement" "hcs" {
+  publisher = "hashicorp-4665790"
+  offer     = "hcs-production"
+  plan      = "on-demand-v2"
+}
+
 resource "azurerm_managed_application" "hcs" {
-  //depends_on = [azurerm_marketplace_agreement.hcs]
+  depends_on = [azurerm_marketplace_agreement.hcs]
 
   name                        = "hcs"
   location                    = data.terraform_remote_state.vnet.outputs.resource_group_location

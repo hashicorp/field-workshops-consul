@@ -83,6 +83,11 @@ challenges:
       Setting up your environment... Your Azure account will be ready in ~5 minutes.
       Keep an eye on the bottom right corner to know when you can get started.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -137,6 +142,11 @@ challenges:
     You can continue immediately to the next assignment while these services are provisioning.
     Click the check button now to proceed.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/hcs-on-azure/assets/diagrams/02-provision-core-services.html
@@ -167,6 +177,11 @@ challenges:
 
     This can take 10 minutes to 15 minutes to provision.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -294,6 +309,11 @@ challenges:
 
     You will use this role in a later assignment to configure access for Consul service consumers.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -353,6 +373,11 @@ challenges:
 
     You will configure these AKS clusters for Consul in the following assignments.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -419,6 +444,11 @@ challenges:
 
     In the next assignment we will link these policies to dynamic Vault roles so developers and operators can get access centrally.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Vault
     type: service
     hostname: cloud-client
@@ -477,6 +507,11 @@ challenges:
     You will use these roles in later assignments to seed K8s clusters with scoped access to the central service,
     as well as allow developers the ability to configure routing within their tenant.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -545,6 +580,11 @@ challenges:
 
     In the next assignment you will use these secrets to deploy the Consul client agents with Helm.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -604,6 +644,11 @@ challenges:
 
     In the next assignment we will create trust between the K8s API server and the Consul shared service.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Helm
     type: code
     hostname: cloud-client
@@ -669,6 +714,11 @@ challenges:
 
     In the next assignment you'll use the trust relationship you just created to deploy applications into the mesh.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Vault
     type: service
     hostname: cloud-client
@@ -722,6 +772,11 @@ challenges:
 
     In the next assignment we will update intentions so the new applications will receive traffic over mTLS.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Apps
     type: code
     hostname: cloud-client
@@ -816,6 +871,11 @@ challenges:
     vault read auth/azure/role/consul
     ```
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Target lab architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/hcs-on-azure/assets/diagrams/16-final-architecture-hcs.html
@@ -866,6 +926,11 @@ challenges:
 
     Now that you have the services running on AKS and on VMs you need to configure the transitive routing across VNets.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -928,6 +993,11 @@ challenges:
 
     In a later assignment you will use the VNet peers to enable remote gateways for the spoke VNets.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Vault
     type: service
     hostname: cloud-client
@@ -995,6 +1065,11 @@ challenges:
 
     Now that you have transitive routes in place you can configure the AKS clusters for the Consul deployment.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Cloud CLI
     type: terminal
     hostname: cloud-client
@@ -1056,6 +1131,11 @@ challenges:
 
     In the next assignment you will test the application with the mTLS rules you created.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/hcs-on-azure/assets/diagrams/14-update-intentions.html
@@ -1105,6 +1185,11 @@ challenges:
 
     Well done! You just securely connected application workloads across multiple K8s clusters!!!
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/hcs-on-azure/assets/diagrams/15-test-application.html
@@ -1131,4 +1216,4 @@ challenges:
     port: 9090
   difficulty: basic
   timelimit: 300
-checksum: "761625157932374851"
+checksum: "13748186400801023894"

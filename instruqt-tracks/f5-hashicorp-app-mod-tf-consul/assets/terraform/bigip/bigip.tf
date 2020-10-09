@@ -29,9 +29,16 @@ data "template_file" "vm_onboard" {
   }
 }
 
+resource "azurerm_marketplace_agreement" "f5" {
+  publisher = "f5-networks"
+  offer     = "f5-big-ip-best"
+  plan      = "f5-bigip-virtual-edition-25m-best-hourly"
+}
+
 # Create F5 BIGIP VMs
 resource "azurerm_linux_virtual_machine" "f5bigip" {
   name = "bigip"
+  depends_on = [azurerm_marketplace_agreement.f5]
 
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location
   resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
@@ -114,4 +121,3 @@ resource "azurerm_network_interface_security_group_association" "ext-nic-securit
   network_interface_id      = azurerm_network_interface.ext-nic.id
   network_security_group_id = azurerm_network_security_group.f5_public.id
 }
-

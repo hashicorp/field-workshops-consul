@@ -5,4 +5,7 @@ set-workdir /root/terraform/bigip
 cd /root/terraform/bigip
 terraform init
 
+#import the marketplace agreement if it exists for some reason
+terraform import azurerm_marketplace_agreement.f5 "/subscriptions/${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SUBSCRIPTION_ID}/providers/Microsoft.MarketplaceOrdering/agreements/f5-networks/offers/f5-big-ip-best/plans/f5-bigip-virtual-edition-25m-best-hourly"
+
 exit 0

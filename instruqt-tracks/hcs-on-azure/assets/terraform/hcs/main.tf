@@ -10,13 +10,6 @@ data "terraform_remote_state" "vnet" {
   }
 }
 
-resource "azurerm_marketplace_agreement" "hcs" {
-  count     = var.accept_marketplace_aggrement ? 1 : 0
-  publisher = "hashicorp-4665790"
-  offer     = "hcs-production"
-  plan      = "on-demand-v2"
-}
-
 resource "random_string" "storageaccountname" {
   length  = 13
   upper   = false
@@ -29,6 +22,12 @@ resource "random_string" "blobcontainername" {
   upper   = false
   lower   = true
   special = false
+}
+
+resource "azurerm_marketplace_agreement" "hcs" {
+  publisher = "hashicorp-4665790"
+  offer     = "hcs-production"
+  plan      = "on-demand-v2"
 }
 
 resource "azurerm_managed_application" "hcs" {
