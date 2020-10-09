@@ -1,0 +1,93 @@
+slug: cts-beta-feedback
+id: e4o0ppgrcfjs
+version: 0.0.1
+type: track
+title: HashiCorp Consul Terraform Sync Beta Feedback
+teaser: Input on your organizations workflows will be used to make consul terraform
+  sync great
+description: We are seeing feedback for CTS in the following areas
+icon: ""
+tags: []
+owner: hashicorp
+developers:
+- kcorbin@hashicorp.com
+- lance@hashicorp.com
+private: true
+published: true
+challenges:
+- slug: 1-basic-environment
+  id: qre25ruvwopf
+  type: challenge
+  title: Provision Basic Environment
+  teaser: provisions a 3 tier application
+  assignment: |-
+    In this assignment you will provision the basic infrastructure we will use in the following assignments. <br>
+
+    Inspect and deploy the Terraform code.
+
+    In the `Shell` tab run the following commands.
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+  notes:
+  - type: text
+    contents: |
+      Setting up your environment... Your Azure account will be ready in ~5 minutes.
+      Keep an eye on the bottom right corner to know when you can get started.
+  tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Text Editor
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/vnet
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/provision-azure-vnets.html
+  difficulty: basic
+  timelimit: 500
+- slug: 2-review-environment
+  id: dq1exeu7y9qc
+  type: challenge
+  title: Review
+  teaser: review a 3 tier application
+  assignment: |-
+    In this assignment you will provision the basic infrastructure we will use in the following assignments. <br>
+
+    Inspect and deploy the Terraform code.
+
+    In the `Shell` tab run the following commands.
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+  notes:
+  - type: text
+    contents: |
+      this should probably be a video?
+  tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Text Editor
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/vnet
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/provision-azure-vnets.html
+  difficulty: basic
+  timelimit: 500
+checksum: "6376076532284134185"

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd /root/terraform/base
+terraform apply -auto-approve > /root/terraform/vnet/terraform.out
+
+exit 0

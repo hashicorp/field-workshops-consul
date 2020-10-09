@@ -1,0 +1,13 @@
+version: "2"
+containers:
+- name: cloud-client
+  image: gcr.io/instruqt/cloud-client
+  ports:
+  - 80
+  - 8080
+  - 8500
+  memory: 2048
+azure_subscriptions:
+- name: consul
+  roles:
+  - Owner
