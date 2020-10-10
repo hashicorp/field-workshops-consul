@@ -31,9 +31,8 @@ cd /root
 #get assets
 echo "cloning assets..."
 git clone https://github.com/hashicorp/field-workshops-consul.git
-git checkout cts-beta-feedback
-cp -r field-workshops-consul/instruqt-tracks/hcs-on-azure/assets/terraform .
-cp -r field-workshops-consul/instruqt-tracks/hcs-on-azure/assets/apps .
+cd field-workshops-consul && git checkout cts-feedback && cd ..
+cp -r field-workshops-consul/instruqt-tracks/cts-beta-feedback/assets/terraform .
 rm -rf field-workshops-consul
 
 #ssh
@@ -57,18 +56,17 @@ az provider register --namespace 'Microsoft.Solutions' --subscription "${INSTRUQ
 #enable hcs ext
 az extension add --source https://releases.hashicorp.com/hcs/0.3.1/hcs-0.3.1-py2.py3-none-any.whl --yes
 
-#provision
-cd /root/terraform/vnet
-echo "running terraform..."
-/usr/local/bin/terraform init
-
-#assignment
-set-workdir /root/terraform/vnet
-cd /root/terraform/vnet
-
+# setup private key as TF var to make ssh easy
 pubkey=$(cat ~/.ssh/id_rsa.pub)
-cat << EOF > /root/terraform/vnet/terraform.tfvars
+cat << EOF > /root/terraform/base/terraform.tfvars
 ssh_public_key="${pubkey}"
 EOF
+
+#provision
+cd /root/terraform/base
+echo "running terraform init..."
+/usr/local/bin/terraform init
+
+
 
 exit 0

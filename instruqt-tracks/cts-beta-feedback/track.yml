@@ -90,4 +90,75 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/provision-azure-vnets.html
   difficulty: basic
   timelimit: 500
-checksum: "6376076532284134185"
+- slug: 3-scale-tiers
+  id: a9pcfqlpuwew
+  type: challenge
+  title: Scale App
+  teaser: Scale application tiers and observe CTS operation.
+  assignment: |-
+    In this assignment you will provision the basic infrastructure we will use in the following assignments. <br>
+
+    Inspect and deploy the Terraform code.
+
+    In the `Shell` tab run the following commands.
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+  notes:
+  - type: text
+    contents: |
+      this should probably be a video?
+  tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Text Editor
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/vnet
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/provision-azure-vnets.html
+  difficulty: basic
+  timelimit: 500
+- slug: 4-alternate-config
+  id: wohgdvwtg3wy
+  type: challenge
+  title: Explore alternate configurations
+  teaser: Explore some alternate CTS configurations
+  assignment: |2-
+
+    In this example we well
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+  notes:
+  - type: text
+    contents: |
+      this should probably be a video?
+  tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Text Editor
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/vnet
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/provision-azure-vnets.html
+  difficulty: basic
+  timelimit: 500
+checksum: "17135343988742686652"
