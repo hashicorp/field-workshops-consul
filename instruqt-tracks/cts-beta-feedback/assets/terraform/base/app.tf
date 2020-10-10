@@ -1,14 +1,14 @@
 resource "azurerm_virtual_machine_scale_set" "app_vmss" {
   name = "app-vmss"
 
-  location            = data.terraform_remote_state.vnet.outputs.resource_group_location
-  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
+  location            = azurerm_resource_group.instruqt.location
+  resource_group_name = azurerm_resource_group.instruqt.name
 
   upgrade_policy_mode = "Manual"
-  
+
   identity {
     type = "UserAssigned"
-    identity_ids = [data.terraform_remote_state.iam.outputs.app_identity_id]
+    identity_ids = [azurerm_user_assigned_identity.app.id]
   }
 
   sku {
@@ -45,7 +45,6 @@ resource "azurerm_virtual_machine_scale_set" "app_vmss" {
       "./templates/app_server.sh", 
       { 
         consul_datacenter = "east-us"
-        vault_server = data.terraform_remote_state.vault.outputs.vault_ip
       }
     ))
   }
@@ -65,7 +64,7 @@ resource "azurerm_virtual_machine_scale_set" "app_vmss" {
     network_security_group_id = azurerm_network_security_group.webserver-sg.id
     ip_configuration {
       name      = "App-IPConfiguration"
-      subnet_id = data.terraform_remote_state.vnet.outputs.legacy_subnets[0]
+      subnet_id = module.network.vnet_subnets[1]
       primary   = true
     }
   }
@@ -73,8 +72,8 @@ resource "azurerm_virtual_machine_scale_set" "app_vmss" {
 
 resource "azurerm_network_security_group" "app-sg" {
   name                = "webserver-security-group"
-  location            = data.terraform_remote_state.vnet.outputs.resource_group_location
-  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
+  location            = azurerm_resource_group.instruqt.location
+  resource_group_name = azurerm_resource_group.instruqt.name
 
   security_rule {
     name                       = "HTTPS"

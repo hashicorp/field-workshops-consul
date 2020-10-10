@@ -1,22 +1,20 @@
-resource "azurerm_virtual_machine_scale_set" "web_vmss" {
-  name = "web-vmss"
+resource "azurerm_virtual_machine_scale_set" "db_vmss" {
+  name = "db-vmss"
 
   location            = azurerm_resource_group.instruqt.location
   resource_group_name = azurerm_resource_group.instruqt.name
-
 
   upgrade_policy_mode = "Manual"
 
   identity {
     type = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.web.id]
+    identity_ids = [azurerm_user_assigned_identity.db.id]
   }
-
 
   sku {
     name     = "Standard_DS1_v2"
     tier     = "Standard"
-    capacity = var.web_count
+    capacity = var.db_count
   }
 
   storage_profile_image_reference {
@@ -41,10 +39,10 @@ resource "azurerm_virtual_machine_scale_set" "web_vmss" {
   }
 
   os_profile {
-    computer_name_prefix = "web-vm-"
+    computer_name_prefix = "db-vm-"
     admin_username       = "azure-user"
     custom_data          = base64encode(templatefile(
-      "./templates/web_server.sh", 
+      "./templates/db_server.sh", 
       { 
         consul_datacenter = "east-us"
       }
@@ -57,21 +55,22 @@ resource "azurerm_virtual_machine_scale_set" "web_vmss" {
       path     = "/home/azure-user/.ssh/authorized_keys"
       key_data = var.ssh_public_key
     }
+
   }
 
   network_profile {
-    name                      = "web-vms-netprofile"
+    name                      = "db-vms-netprofile"
     primary                   = true
     network_security_group_id = azurerm_network_security_group.webserver-sg.id
     ip_configuration {
-      name      = "Web-IPConfiguration"
-      subnet_id = module.network.vnet_subnets[0]
+      name      = "db-IPConfiguration"
+      subnet_id = module.network.vnet_subnets[1]
       primary   = true
     }
   }
 }
 
-resource "azurerm_network_security_group" "webserver-sg" {
+resource "azurerm_network_security_group" "db-sg" {
   name                = "webserver-security-group"
   location            = azurerm_resource_group.instruqt.location
   resource_group_name = azurerm_resource_group.instruqt.name
@@ -124,13 +123,13 @@ resource "azurerm_network_security_group" "webserver-sg" {
   }
 
   security_rule {
-    name                       = "HTTP"
+    name                       = "db"
     priority                   = 1005
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "80"
+    destination_port_range     = "9091"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
