@@ -1,9 +1,9 @@
 resource "azurerm_resource_group" "instruqt" {
   name     = "instruqt-${random_string.env.result}"
-  location = "West US"
+  location = "West US 2"
 }
 
-module "shared-svcs-network" {
+module "azure-shared-svcs-network" {
   source              = "Azure/network/azurerm"
   vnet_name           = "shared-svcs-vnet"
   resource_group_name = azurerm_resource_group.instruqt.name
@@ -16,7 +16,7 @@ module "shared-svcs-network" {
   }
 }
 
-module "frontend-app" {
+module "azure-app-network" {
   source              = "Azure/network/azurerm"
   resource_group_name = azurerm_resource_group.instruqt.name
   vnet_name           = "app-vnet"

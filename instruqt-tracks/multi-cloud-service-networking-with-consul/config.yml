@@ -18,3 +18,7 @@ aws_accounts:
 - name: consul
   managed_policies:
   - arn:aws:iam::aws:policy/AdministratorAccess
+azure_subscriptions:
+- name: consul
+  roles:
+  - Owner

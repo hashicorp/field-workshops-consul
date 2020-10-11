@@ -9,6 +9,11 @@ provider "google" {
   project = "my-project-id"
 }
 
+provider "azurerm" {
+  version = "=2.20.0"
+  features {}
+}
+
 data "terraform_remote_state" "infra" {
   backend = "local"
 
@@ -16,3 +21,5 @@ data "terraform_remote_state" "infra" {
     path = "../infra/terraform.tfstate"
   }
 }
+
+data "azurerm_subscription" "primary" {}

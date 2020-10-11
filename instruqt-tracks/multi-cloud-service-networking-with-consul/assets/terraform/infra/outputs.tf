@@ -13,3 +13,15 @@ output "aws_shared_svcs_vpc" {
 output "aws_shared_svcs_public_subnets" {
   value = module.aws-vpc-shared-svcs.public_subnets
 }
+
+output "azure_rg_name" {
+  value = azurerm_resource_group.instruqt.name
+}
+
+output "azure_rg_location" {
+  value = azurerm_resource_group.instruqt.location
+}
+
+output "azure_shared_svcs_public_subnets" {
+  value = module.azure-shared-svcs-network.vnet_subnets
+}
