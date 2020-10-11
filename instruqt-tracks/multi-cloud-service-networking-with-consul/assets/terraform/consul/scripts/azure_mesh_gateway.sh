@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #metadata
-local_ipv4="$(curl -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/privateIpAddress?api-version=2017-08-01&format=text")"
-public_ipv4="$(curl -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/publicIpAddress?api-version=2017-08-01&format=text")"
+local_ipv4="$(curl -s -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/privateIpAddress?api-version=2017-08-01&format=text")"
+public_ipv4="$(curl -s -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/publicIpAddress?api-version=2017-08-01&format=text")"
 
 #update packages
 curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
@@ -21,7 +21,7 @@ cat <<EOF> /etc/consul.d/client.json
   "data_dir": "/opt/consul/data",
   "client_addr": "0.0.0.0",
   "log_level": "INFO",
-  "retry_join": ["provider=azure tag_name=Env tag_value=${} subscription_id=${}],
+  "retry_join": ["provider=azure tag_name=Env tag_value=consul-${env} subscription_id=${subscription_id}"],
   "ui": true,
   "connect": {
     "enabled": true
@@ -51,7 +51,7 @@ EOF
 sudo systemctl enable consul.service
 sudo systemctl start consul.service
 
-sleep 30
+sleep 180
 
 curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
 getenvoy fetch standard:1.14.1

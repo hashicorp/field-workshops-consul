@@ -50,7 +50,7 @@ EOF
 sudo systemctl enable consul.service
 sudo systemctl start consul.service
 
-sleep 30
+sleep 60
 
 curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
 getenvoy fetch standard:1.14.1

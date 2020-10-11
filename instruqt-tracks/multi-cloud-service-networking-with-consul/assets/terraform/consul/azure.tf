@@ -38,6 +38,9 @@ resource "azurerm_virtual_machine" "consul" {
   network_interface_ids = [azurerm_network_interface.consul.id]
   vm_size               = "Standard_DS1_v2"
 
+  delete_os_disk_on_termination    = true
+  delete_data_disks_on_termination = true
+
   storage_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
@@ -52,13 +55,13 @@ resource "azurerm_virtual_machine" "consul" {
   }
   os_profile {
     computer_name  = "consul-server-0"
-    admin_username = "azure-user"
+    admin_username = "ubuntu"
     custom_data    = data.template_file.azure-server-init.rendered
   }
   os_profile_linux_config {
     disable_password_authentication = true
     ssh_keys {
-      path     = "/home/azure-user/.ssh/authorized_keys"
+      path     = "/home/ubuntu/.ssh/authorized_keys"
       key_data = var.ssh_public_key
     }
   }
@@ -118,10 +121,6 @@ resource "azurerm_network_interface" "consul-mgw" {
   location            = data.terraform_remote_state.infra.outputs.azure_rg_location
   resource_group_name = data.terraform_remote_state.infra.outputs.azure_rg_name
 
-  identity {
-    type = "SystemAssigned"
-  }
-
   ip_configuration {
     name                          = "config"
     subnet_id                     = data.terraform_remote_state.infra.outputs.azure_shared_svcs_public_subnets[0]
@@ -139,13 +138,60 @@ resource "azurerm_network_interface" "consul-mgw" {
 data "template_file" "azure-mgw-init" {
   template = file("${path.module}/scripts/azure_mesh_gateway.sh")
   vars = {
-    env     = data.terraform_remote_state.infra.outputs.env
-    ca_cert = tls_self_signed_cert.shared_ca.cert_pem
+    env             = data.terraform_remote_state.infra.outputs.env
+    ca_cert         = tls_self_signed_cert.shared_ca.cert_pem
+    subscription_id = data.azurerm_subscription.primary.subscription_id
   }
 }
 
 resource "azurerm_role_assignment" "mgw" {
   scope                = data.azurerm_subscription.primary.id
   role_definition_name = "Reader"
-  principal_id         = azurerm_virtual_machine.mgw.identity.0.principal_id
+  principal_id         = azurerm_virtual_machine.consul-mgw.identity.0.principal_id
+}
+
+resource "azurerm_virtual_machine" "consul-mgw" {
+  name                  = "consul-mgw-vm"
+  location              = data.terraform_remote_state.infra.outputs.azure_rg_location
+  resource_group_name   = data.terraform_remote_state.infra.outputs.azure_rg_name
+  network_interface_ids = [azurerm_network_interface.consul-mgw.id]
+  vm_size               = "Standard_DS1_v2"
+
+  delete_os_disk_on_termination    = true
+  delete_data_disks_on_termination = true
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  storage_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "16.04-LTS"
+    version   = "latest"
+  }
+  storage_os_disk {
+    name              = "consul-mgw-disk"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Standard_LRS"
+  }
+  os_profile {
+    computer_name  = "consul-mgw"
+    admin_username = "ubuntu"
+    custom_data    = data.template_file.azure-mgw-init.rendered
+  }
+  os_profile_linux_config {
+    disable_password_authentication = true
+    ssh_keys {
+      path     = "/home/ubuntu/.ssh/authorized_keys"
+      key_data = var.ssh_public_key
+    }
+  }
+
+  tags = {
+    Name = "consul-mgw"
+    Env  = "consul-${data.terraform_remote_state.infra.outputs.env}"
+  }
+
 }

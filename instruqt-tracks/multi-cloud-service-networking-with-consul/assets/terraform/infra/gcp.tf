@@ -1,6 +1,6 @@
 module "gcp-vpc-shared-svcs" {
   source       = "terraform-google-modules/network/google"
-  project_id   = "my-project-id"
+  project_id   = var.gcp_project_id
   network_name = "vpc-shared-svcs"
 
   subnets = [
@@ -17,7 +17,7 @@ module "gcp-vpc-shared-svcs" {
 
 module "gcp-vpc-app" {
   source       = "terraform-google-modules/network/google"
-  project_id   = "my-project-id"
+  project_id   = var.gcp_project_id
   network_name = "vpc-app"
 
   subnets = [

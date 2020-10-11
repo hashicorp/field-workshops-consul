@@ -6,7 +6,7 @@ provider "aws" {
 provider "google" {
   version = "~> 3.3.0"
   region  = "us-central1"
-  project = "my-project-id"
+  project = var.gcp_project_id
 }
 
 provider "azurerm" {

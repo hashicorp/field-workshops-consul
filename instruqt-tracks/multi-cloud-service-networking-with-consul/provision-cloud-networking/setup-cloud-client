@@ -17,14 +17,18 @@ git clone -b add-consul-multi-cloud https://github.com/hashicorp/field-workshops
 cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/terraform .
 rm -rf field-workshops-consul
 
-#tf vars
-pubkey=$(cat ~/.ssh/id_rsa.pub)
+#tf
+cd /root/terraform/infra
+terraform init
 cat << EOF > /root/terraform/infra/terraform.tfvars
-ssh_public_key="${pubkey}"
+gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
 EOF
 
+cd /root/terraform/consul
+terraform init
 pubkey=$(cat ~/.ssh/id_rsa.pub)
 cat << EOF > /root/terraform/consul/terraform.tfvars
+gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
 ssh_public_key="${pubkey}"
 EOF
 
