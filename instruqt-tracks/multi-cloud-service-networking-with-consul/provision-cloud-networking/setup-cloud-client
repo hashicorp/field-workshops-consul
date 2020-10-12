@@ -17,6 +17,13 @@ git clone -b add-consul-multi-cloud https://github.com/hashicorp/field-workshops
 cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/terraform .
 rm -rf field-workshops-consul
 
+#fix path
+echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
+
+# Ensure we load /etc/profile.d/instruqt-env.sh
+echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
+source /root/.bashrc
+
 #tf
 cd /root/terraform/infra
 terraform init
