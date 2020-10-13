@@ -1,0 +1,126 @@
+#!/bin/sh
+
+#init the Vault clusters
+
+AWS_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
+AZURE_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate azure_vault_ip)
+GCP_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate gcp_vault_ip)
+
+#aws
+export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
+vault operator init -recovery-shares=1 -recovery-threshold=1 -format=json | jq . > /root/aws_vault_keys.json
+
+#azure
+export VAULT_ADDR=http://${AZURE_VAULT_IP}:8200
+vault operator init -recovery-shares=1 -recovery-threshold=1 -format=json | jq . > /root/azure_vault_keys.json
+
+#gcp
+export VAULT_ADDR=http://${GCP_VAULT_IP}:8200
+vault operator init -recovery-shares=1 -recovery-threshold=1 -format=json | jq . > /root/gcp_vault_keys.json
+
+#start performance replication on the AWS primary
+export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
+export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
+vault write sys/replication/performance/primary/enable primary_cluster_addr="http://${AWS_VAULT_IP}:8201"
+sleep 15
+
+#generate the secondary tokens
+GCP_REPLICATION_TOKEN=$(vault write /sys/replication/performance/primary/secondary-token id="gcp-us-central-1" -format=json | jq -r .wrap_info.token)
+AZURE_REPLICATION_TOKEN=$(vault write /sys/replication/performance/primary/secondary-token id="azure-west-us-2" -format=json | jq -r .wrap_info.token)
+
+#enable the performance secondaries
+
+#azure
+export VAULT_ADDR=http://${AZURE_VAULT_IP}:8200
+export VAULT_TOKEN=$(cat /root/azure_vault_keys.json | jq -r .root_token)
+vault write sys/replication/performance/secondary/enable token="${AZURE_REPLICATION_TOKEN}" primary_api_addr="http://${AWS_VAULT_IP}:8200"
+sleep 15
+
+#gcp
+export VAULT_ADDR=http://${GCP_VAULT_IP}:8200
+export VAULT_TOKEN=$(cat /root/gcp_vault_keys.json | jq -r .root_token)
+vault write sys/replication/performance/secondary/enable token="${GCP_REPLICATION_TOKEN}" primary_api_addr="http://${AWS_VAULT_IP}:8200"
+sleep 15
+
+#create an admin user
+export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
+export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
+
+# Manage auth methods broadly across Vault
+echo 'path "auth/*"
+{
+  capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}
+
+# Create, update, and delete auth methods
+path "sys/auth/*"
+{
+  capabilities = ["create", "update", "delete", "sudo"]
+}
+
+# List auth methods
+path "sys/auth"
+{
+  capabilities = ["read"]
+}
+
+# Create and manage ACL policies via CLI
+path "sys/policy/*"
+{
+  capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}
+
+# Create and manage ACL policies via API
+path "sys/policies/acl/*"
+{
+  capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}
+
+# To list policies - Step 3
+path "sys/policy"
+{
+  capabilities = ["read"]
+}
+
+# To perform Step 4
+path "sys/capabilities"
+{
+  capabilities = ["create", "update"]
+}
+
+# To perform Step 4
+path "sys/capabilities-self"
+{
+  capabilities = ["create", "update"]
+}
+
+# List, create, update, and delete key/value secrets
+path "secret/*"
+{
+  capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}
+
+# Manage secret engines broadly across Vault
+path "sys/mounts/*"
+{
+  capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}
+
+# List existing secret engines
+path "sys/mounts"
+{
+  capabilities = ["read"]
+}
+
+# Read health checks
+path "sys/health"
+{
+  capabilities = ["read", "sudo"]
+}' | vault policy write admin -
+
+vault auth enable userpass
+vault write auth/userpass/users/admin \
+    password=admin \
+    policies=admin
+
+exit 0

@@ -2,6 +2,9 @@
 
 cd /root/terraform/consul
 terraform init
+
+set-workdir /root/terraform/consul
+
 pubkey=$(cat ~/.ssh/id_rsa.pub)
 cat << EOF > /root/terraform/consul/terraform.tfvars
 gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
