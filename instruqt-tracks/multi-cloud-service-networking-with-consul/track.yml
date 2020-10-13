@@ -42,4 +42,58 @@ challenges:
     path: /root
   difficulty: basic
   timelimit: 7200
-checksum: "1599869458872906481"
+- slug: provision-vault
+  id: 1i5vvulo0zlr
+  type: challenge
+  title: Provision Vault
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root
+  difficulty: basic
+  timelimit: 300
+- slug: provision-consul
+  id: yvfuoi5cz8ll
+  type: challenge
+  title: Provision Consul
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root
+  difficulty: basic
+  timelimit: 300
+checksum: "6285398898829765266"

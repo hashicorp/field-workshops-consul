@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd /root/terraform/vault
+terraform init
+
+exit 0

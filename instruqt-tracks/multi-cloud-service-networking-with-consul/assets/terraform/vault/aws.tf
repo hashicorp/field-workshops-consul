@@ -54,3 +54,8 @@ resource "aws_instance" "vault" {
     Name = "vault"
   }
 }
+
+resource "aws_kms_key" "vault" {
+  description             = "Vault ${data.terraform_remote_state.infra.outputs.env}"
+  deletion_window_in_days = 5
+}
