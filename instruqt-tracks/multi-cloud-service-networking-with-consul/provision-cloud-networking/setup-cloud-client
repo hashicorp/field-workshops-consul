@@ -10,9 +10,6 @@ apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_re
 apt-get update -y
 apt-get install terraform vault-enterprise libcap-dev jq -y
 
-#make vault run in instruqt container
-setcap cap_ipc_lock= /usr/bin/vault
-
 #tf creds
 echo 'export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)' >> /root/.bashrc
 
@@ -28,6 +25,9 @@ echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
 # Ensure we load /etc/profile.d/instruqt-env.sh
 echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
 source /root/.bashrc
+
+#make vault run in instruqt container
+setcap cap_ipc_lock= /usr/bin/vault
 
 #tf
 cd /root/terraform/infra
