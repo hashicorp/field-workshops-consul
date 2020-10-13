@@ -31,4 +31,6 @@ cat << EOF > /root/terraform/infra/terraform.tfvars
 gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
 EOF
 
+set-workdir /root/terraform/infra
+
 exit 0

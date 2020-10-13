@@ -1,12 +1,16 @@
 #!/bin/bash
 
+local_ipv4=$(curl -s -H "Metadata-Flavor: Google" http://metadata/computeMetadata/v1/instance/network-interfaces/0/ip)
+
 #update packages
 curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
 sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 sudo apt update -y
 
-#install vault
-sudo apt install vault-enterprise -y
+#install vault & consul
+sudo apt install jq vault-enterprise consul-enterprise -y
+mkdir -p /opt/vault/raft
+chown vault:vault /opt/vault/raft
 
 #add the vault config
 cat <<EOF> /etc/vault.d/vault.hcl
@@ -14,21 +18,24 @@ cat <<EOF> /etc/vault.d/vault.hcl
 ui = true
 
 #Storage
-storage "file" {
-  path = "/opt/vault/data"
+storage "raft" {
+  path = "/opt/vault/raft"
+  node_id = "vault-server-0"
 }
 
-# HTTPS listener
+# HTTP listener
 listener "tcp" {
   address       = "0.0.0.0:8200"
-  tls_cert_file = "/opt/vault/tls/tls.crt"
-  tls_key_file  = "/opt/vault/tls/tls.key"
+  tls_disable   = "true"
 }
 
 seal "awskms" {
   region = "us-east-1"
-  kms_key_id = "d7c1ffd9-8cce-45e7-be4a-bb38dd205966"
+  kms_key_id = "${kms_key}"
 }
+
+api_addr     = "http://$${local_ipv4}:8200"
+cluster_addr = "http://$${local_ipv4}:8201"
 EOF
 
 sudo systemctl enable vault.service

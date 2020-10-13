@@ -3,4 +3,11 @@
 cd /root/terraform/vault
 terraform init
 
+set-workdir /root/terraform/vault
+
+pubkey=$(cat ~/.ssh/id_rsa.pub)
+cat << EOF > /root/terraform/vault/terraform.tfvars
+ssh_public_key="${pubkey}"
+EOF
+
 exit 0
