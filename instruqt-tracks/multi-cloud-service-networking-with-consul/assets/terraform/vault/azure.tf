@@ -8,25 +8,46 @@ resource "azurerm_key_vault" "vault" {
 
   sku_name = "standard"
 
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.object_id
-
-    key_permissions = [
-      "get",
-      "list",
-      "create",
-      "delete",
-      "update",
-      "wrapKey",
-      "unwrapKey",
-    ]
-  }
-
   network_acls {
     default_action = "Allow"
     bypass         = "AzureServices"
   }
+}
+
+resource "azurerm_key_vault_access_policy" "instruqt" {
+  key_vault_id = azurerm_key_vault.vault.id
+
+  tenant_id = data.azurerm_client_config.current.tenant_id
+  object_id = data.azurerm_client_config.current.object_id
+
+  key_permissions = [
+    "get",
+    "list",
+    "create",
+    "delete",
+    "update",
+    "wrapKey",
+    "unwrapKey",
+  ]
+
+}
+
+resource "azurerm_key_vault_access_policy" "vault" {
+  key_vault_id = azurerm_key_vault.vault.id
+
+  tenant_id = data.azurerm_client_config.current.tenant_id
+  object_id = azurerm_virtual_machine.vault.identity.0.principal_id
+
+  key_permissions = [
+    "get",
+    "list",
+    "create",
+    "delete",
+    "update",
+    "wrapKey",
+    "unwrapKey",
+  ]
+
 }
 
 resource "azurerm_key_vault_key" "vault" {
@@ -121,7 +142,7 @@ resource "azurerm_virtual_machine" "vault" {
 
 resource "azurerm_role_assignment" "vault" {
   scope                = data.azurerm_subscription.current.id
-  role_definition_name = "Key Vault Crypto User (preview)"
+  role_definition_name = "Key Vault Administrator (preview)"
   principal_id         = azurerm_virtual_machine.vault.identity.0.principal_id
 }
 

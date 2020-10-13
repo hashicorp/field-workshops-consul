@@ -29,9 +29,11 @@ listener "tcp" {
   tls_disable   = "true"
 }
 
-seal "awskms" {
-  region = "us-east-1"
-  kms_key_id = "${kms_key}"
+seal "gcpckms" {
+  project     = "${project}"
+  region      = "global"
+  key_ring    = "vault-keyring"
+  crypto_key  = "vault-key"
 }
 
 api_addr     = "http://$${local_ipv4}:8200"
