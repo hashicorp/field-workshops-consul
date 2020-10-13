@@ -96,4 +96,40 @@ challenges:
     path: /root
   difficulty: basic
   timelimit: 300
-checksum: "11255579565232622841"
+- slug: validate-vault-load-balancers
+  id: 4im2unknqstd
+  type: challenge
+  title: Validate Vault Load Balancers
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
+- slug: centralize-secrets-in-vault
+  id: noyutzmuimix
+  type: challenge
+  title: Centralize Secrets in Vault
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 300
+checksum: "12822970214966053525"
