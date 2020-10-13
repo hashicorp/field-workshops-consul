@@ -8,10 +8,9 @@ apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_re
 
 #packages
 apt-get update -y
-apt-get install terraform vault-enterprise jq -y
+apt-get install terraform vault-enterprise libcap-dev jq -y
 
 #make vault run in instruqt container
-apt-get install -y libcap-dev
 setcap cap_ipc_lock= /usr/bin/vault
 
 #tf creds
