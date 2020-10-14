@@ -114,6 +114,11 @@ resource "aws_iam_policy" "vault" {
     },
     {
       "Effect": "Allow",
+      "Action": "iam:GetInstanceProfile",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
       "Action": [
         "kms:Encrypt",
         "kms:Decrypt",
