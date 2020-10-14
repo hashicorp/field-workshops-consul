@@ -5,9 +5,36 @@ AWS_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate a
 export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
 export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
 
-#create secrets
+#create secrets eng
 vault auth enable aws
 vault secrets enable -version=2 kv
 vault secrets enable pki
+
+#set up CA
+vault write pki/root/generate/internal \
+    common_name="HashiCorp CA" \
+    ttl=8760h
+vault write pki/roles/consul \
+    allowed_domains=consul \
+    allow_subdomains=true \
+    max_ttl=72h
+
+#set up policy for consul
+echo 'path "kv/*"
+{
+  capabilities = ["read"]
+}
+path "pki/*"
+{
+  capabilities = ["read","update"]
+}' | vault policy write consul -
+
+#set up trust with Vault for Consul servers
+AWS_CONSUL_IAM_ROLE_ARN=$(terraform output -state /root/terraform/iam/terraform.tfstate aws_consul_iam_role_arn)
+vault write auth/aws/role/consul auth_type=iam \
+  bound_iam_principal_arn="${AWS_CONSUL_IAM_ROLE_ARN}" policies=consul ttl=30m
+
+#seed vault with consul bootsrap secrets
+vault kv put kv/consul master_token=$(cat /proc/sys/kernel/random/uuid) replication_token=$(cat /proc/sys/kernel/random/uuid) gossip_key=$(consul keygen)
 
 exit 0

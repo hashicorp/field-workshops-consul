@@ -2,6 +2,9 @@
 
 #init the Vault clusters
 
+cd /root/terraform/vault
+set-workdir /root/terraform/vault
+
 AWS_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
 AZURE_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate azure_vault_ip)
 GCP_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate gcp_vault_ip)
@@ -111,14 +114,6 @@ path "sys/health"
   capabilities = ["read", "sudo"]
 }' | vault policy write admin -
 
-echo 'path "kv/*"
-{
-  capabilities = ["read"]
-}
-path "pki/*"
-{
-  capabilities = ["read","update"]
-}' | vault policy write consul -
 
 vault auth enable userpass
 vault write auth/userpass/users/admin \

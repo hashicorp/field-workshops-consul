@@ -1,0 +1,33 @@
+#!/bin/bash
+
+#anonymous
+export CONSUL_HTTP_ADDR="http://$(terraform output -state /root/terraform/consul-primary/terraform.tfstate aws_consul_public_ip):8500"
+export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+consul acl token read -self
+echo '
+node_prefix "" {
+  policy = "read"
+}
+session_prefix "" {
+  policy = "read"
+}
+agent_prefix "" {
+  policy = "read"
+}
+query_prefix "" {
+  policy = "read"
+}
+operator = "read"
+namespace_prefix "" {
+  acl = "read"
+  intention = "read"
+  service_prefix "" {
+    policy = "read"
+  }
+  node_prefix "" {
+    policy = "read"
+  }
+}' |  consul acl policy create -name anonymous -rules -
+consul acl token update -id anonymous -policy-name anonymous
+
+exit 0

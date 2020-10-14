@@ -6,7 +6,7 @@ terraform init
 set-workdir /root/terraform/consul-primary
 
 pubkey=$(cat ~/.ssh/id_rsa.pub)
-cat << EOF > /root/terraform/consul/terraform.tfvars
+cat << EOF > /root/terraform/consul-primary/terraform.tfvars
 ssh_public_key="${pubkey}"
 EOF
 

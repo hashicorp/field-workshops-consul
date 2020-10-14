@@ -77,7 +77,7 @@ resource "aws_instance" "consul" {
   subnet_id                   = data.terraform_remote_state.infra.outputs.aws_shared_svcs_public_subnets[0]
   associate_public_ip_address = true
   user_data                   = data.template_file.init.rendered
-  iam_instance_profile        = aws_iam_instance_profile.consul.name
+  iam_instance_profile        = data.terraform_remote_state.iam.outputs.aws_consul_iam_instance_profile_name
   tags = {
     Name = "consul"
     Env  = "consul-${data.terraform_remote_state.infra.outputs.env}"
@@ -134,7 +134,7 @@ resource "aws_instance" "mesh_gateway" {
   subnet_id                   = data.terraform_remote_state.infra.outputs.aws_shared_svcs_public_subnets[0]
   associate_public_ip_address = true
   user_data                   = data.template_file.aws_mgw_init.rendered
-  iam_instance_profile        = aws_iam_instance_profile.consul.name
+  iam_instance_profile        = data.terraform_remote_state.iam.outputs.aws_consul_iam_instance_profile_name
   tags = {
     Name = "consul-mgw"
   }
