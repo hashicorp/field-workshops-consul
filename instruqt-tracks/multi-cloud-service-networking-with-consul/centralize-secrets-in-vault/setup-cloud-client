@@ -114,6 +114,10 @@ path "sys/health"
 echo 'path "kv/*"
 {
   capabilities = ["read"]
+}
+path "pki/*"
+{
+  capabilities = ["read","update"]
 }' | vault policy write consul -
 
 vault auth enable userpass

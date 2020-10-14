@@ -19,7 +19,13 @@ vault login -method=aws role=consul
 
 #get the ACL tokens from Vault
 MASTER_TOKEN=$(vault kv get -field=master_token kv/consul)
-AGENT_TOKEN=$(vault kv get -field=agent_token kv/consul)
+GOSSIP_KEY=$(vault kv get -field=gossip_key kv/consul)
+CERT_BUNDLE=$(vault write pki/issue/consul \
+    common_name=consul-server-0.server.aws-us-east-1.consul \
+    alt_names="consul-server-0.server.aws-us-east-1.consul,server.aws-us-east-1.consul,localhost" \
+    ip_sans="127.0.0.1" \
+    key_usage="DigitalSignature,KeyEncipherment" \
+    ext_key_usage="ServerAuth,ClientAuth" -format=json)
 
 #config
 cat <<EOF> /etc/consul.d/server.json
@@ -41,21 +47,25 @@ cat <<EOF> /etc/consul.d/server.json
 }
 EOF
 
-cat <<EOF> /etc/consul.d/acl.hcl
+cat <<EOF> /etc/consul.d/secrets.hcl
 acl {
   enabled        = true
   default_policy = "deny"
   enable_token_persistence = true
   tokens {
-    master = "${MASTER_TOKEN}"
+    master = "$${MASTER_TOKEN}"
+    agent  = "$${MASTER_TOKEN}"
   }
 }
+
+encrypt = "$${GOSSIP_KEY}"
+
 EOF
 
 mkdir -p /opt/consul/tls/
-echo "${ca_cert}" > /opt/consul/tls/ca-cert.pem
-echo "${cert}" > /opt/consul/tls/server-cert.pem
-echo "${key}" > /opt/consul/tls/server-key.pem
+echo "$${CERT_BUNDLE}" | jq -r .data.certificate > /opt/consul/tls/server-cert.pem
+echo "$${CERT_BUNDLE}" | jq -r .data.private_key > /opt/consul/tls/server-key.pem
+echo "$${CERT_BUNDLE}" | jq -r .data.issuing_ca > /opt/consul/tls/ca-cert.pem
 
 cat <<EOF> /etc/consul.d/tls.json
 {
