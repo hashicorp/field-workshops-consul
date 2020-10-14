@@ -41,7 +41,7 @@ challenges:
     hostname: cloud-client
     path: /root
   difficulty: basic
-  timelimit: 7200
+  timelimit: 300
 - slug: provision-vault
   id: 1i5vvulo0zlr
   type: challenge
@@ -122,5 +122,5 @@ challenges:
     hostname: cloud-client
     path: /root
   difficulty: basic
-  timelimit: 300
-checksum: "6106799568355958096"
+  timelimit: 14400
+checksum: "18060593011321693694"

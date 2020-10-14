@@ -17,6 +17,10 @@ export VAULT_ADDR=http://$(aws ec2 describe-instances --filters "Name=tag:Name,V
  --output text):8200
 vault login -method=aws role=consul
 
+#get the ACL tokens from Vault
+MASTER_TOKEN=$(vault kv get -field=master_token kv/consul)
+AGENT_TOKEN=$(vault kv get -field=agent_token kv/consul)
+
 #config
 cat <<EOF> /etc/consul.d/server.json
 {
@@ -37,17 +41,16 @@ cat <<EOF> /etc/consul.d/server.json
 }
 EOF
 
-#cat <<EOF> /etc/consul.d/acl.hcl
-#acl {
-#  enabled        = true
-#  default_policy = "deny"
-#  enable_token_persistence = true
-#  tokens {
-#    master = ""
-#    agent  = ""
-#  }
-#
-#EOF
+cat <<EOF> /etc/consul.d/acl.hcl
+acl {
+  enabled        = true
+  default_policy = "deny"
+  enable_token_persistence = true
+  tokens {
+    master = "${MASTER_TOKEN}"
+  }
+}
+EOF
 
 mkdir -p /opt/consul/tls/
 echo "${ca_cert}" > /opt/consul/tls/ca-cert.pem

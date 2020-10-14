@@ -119,7 +119,7 @@ resource "aws_iam_policy" "vault" {
     },
     {
       "Effect": "Allow",
-      "Action": "iam:GetInstanceProfile",
+      "Action": "iam:GetRole",
       "Resource": "*"
     },
     {
