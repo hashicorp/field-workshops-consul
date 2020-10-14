@@ -77,6 +77,7 @@ resource "aws_instance" "consul" {
   subnet_id                   = data.terraform_remote_state.infra.outputs.aws_shared_svcs_public_subnets[0]
   associate_public_ip_address = true
   user_data                   = data.template_file.init.rendered
+  iam_instance_profile        = aws_iam_instance_profile.consul.name
   tags = {
     Name = "consul"
     Env  = "consul-${data.terraform_remote_state.infra.outputs.env}"

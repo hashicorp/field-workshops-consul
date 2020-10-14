@@ -9,7 +9,13 @@ sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(l
 sudo apt update -y
 
 #install consul
-sudo apt install consul-enterprise vault-enterprise -y
+sudo apt install consul-enterprise vault-enterprise awscli jq -y
+
+#get secrets
+export VAULT_ADDR=http://$(aws ec2 describe-instances --filters "Name=tag:Name,Values=vault" \
+ --region us-east-1 --query 'Reservations[*].Instances[*].PrivateIpAddress' \
+ --output text):8200
+vault login -method=aws role=consul
 
 #config
 cat <<EOF> /etc/consul.d/server.json
@@ -30,6 +36,18 @@ cat <<EOF> /etc/consul.d/server.json
   }
 }
 EOF
+
+#cat <<EOF> /etc/consul.d/acl.hcl
+#acl {
+#  enabled        = true
+#  default_policy = "deny"
+#  enable_token_persistence = true
+#  tokens {
+#    master = ""
+#    agent  = ""
+#  }
+#
+#EOF
 
 mkdir -p /opt/consul/tls/
 echo "${ca_cert}" > /opt/consul/tls/ca-cert.pem
