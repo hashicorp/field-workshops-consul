@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cd /root/terraform/consul-primary
+terraform init
+
+set-workdir /root/terraform/consul-primary
+
+pubkey=$(cat ~/.ssh/id_rsa.pub)
+cat << EOF > /root/terraform/consul/terraform.tfvars
+ssh_public_key="${pubkey}"
+EOF
+
+exit 0

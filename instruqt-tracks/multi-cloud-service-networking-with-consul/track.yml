@@ -69,6 +69,33 @@ challenges:
     path: /root
   difficulty: basic
   timelimit: 300
+- slug: provision-identities
+  id: lbmzbwxbo9gc
+  type: challenge
+  title: Provision Identities
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root
+  difficulty: basic
+  timelimit: 300
 - slug: centralize-secrets-in-vault
   id: noyutzmuimix
   type: challenge
@@ -96,10 +123,10 @@ challenges:
     path: /root
   difficulty: basic
   timelimit: 300
-- slug: provision-consul
+- slug: provision-consul-primary
   id: yvfuoi5cz8ll
   type: challenge
-  title: Provision Consul
+  title: Provision Consul Primary
   teaser: A short description of the challenge.
   assignment: |-
     The assignment the participant needs to complete in order to proceed.
@@ -123,4 +150,31 @@ challenges:
     path: /root
   difficulty: basic
   timelimit: 14400
-checksum: "2563597252690526556"
+- slug: provision-consul-secondaries
+  id: kb7w8tr6htma
+  type: challenge
+  title: Provision Consul Secondaries
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root
+  difficulty: basic
+  timelimit: 300
+checksum: "6687421543676582860"

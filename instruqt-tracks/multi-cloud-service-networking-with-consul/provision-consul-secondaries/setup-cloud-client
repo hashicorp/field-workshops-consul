@@ -1,9 +1,9 @@
 #!/bin/bash
 
-cd /root/terraform/consul
+cd /root/terraform/consul-secondaries
 terraform init
 
-set-workdir /root/terraform/consul
+set-workdir /root/terraform/consul-secondaries
 
 pubkey=$(cat ~/.ssh/id_rsa.pub)
 cat << EOF > /root/terraform/consul/terraform.tfvars
