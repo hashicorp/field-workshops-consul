@@ -9,7 +9,21 @@ sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(l
 sudo apt update -y
 
 #install consul
-sudo apt install consul-enterprise vault-enterprise -y
+sudo apt install consul-enterprise vault-enterprise jq -y
+
+#azure cli
+curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
+AZ_REPO=$(lsb_release -cs)
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
+sudo apt-get update
+sudo apt-get install azure-cli
+
+#get secrets
+az login --identity
+export VAULT_ADDR="http://$(az vm show -g instruqt-ajbd -n vault-server-vm -d | jq -r .privateIps):8200"
+vault write auth/azure/login role="consul" \
+     jwt="$(curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fvault.hashicorp.com%2F' -H Metadata:true | jq -r '.access_token')"
+
 
 #config
 cat <<EOF> /etc/consul.d/server.json

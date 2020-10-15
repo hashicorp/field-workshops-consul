@@ -5,3 +5,11 @@ output "aws_consul_iam_role_arn" {
 output "aws_consul_iam_instance_profile_name" {
   value = aws_iam_instance_profile.consul.name
 }
+
+output "azure_consul_user_assigned_identity_name" {
+  value = azurerm_user_assigned_identity.consul.name
+}
+
+output "azure_consul_user_assigned_identity_id" {
+  value = azurerm_user_assigned_identity.consul.id
+}

@@ -17,4 +17,12 @@ data "terraform_remote_state" "infra" {
   }
 }
 
+data "terraform_remote_state" "iam" {
+  backend = "local"
+
+  config = {
+    path = "../iam/terraform.tfstate"
+  }
+}
+
 data "azurerm_subscription" "primary" {}

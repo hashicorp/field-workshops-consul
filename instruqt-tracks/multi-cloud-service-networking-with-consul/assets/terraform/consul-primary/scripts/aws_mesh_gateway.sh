@@ -12,6 +12,7 @@ sudo apt update -y
 #install consul
 sudo apt install consul-enterprise vault-enterprise awscli jq -y
 
+#get the secrets tokens from Vault
 export VAULT_ADDR=http://$(aws ec2 describe-instances --filters "Name=tag:Name,Values=vault" \
  --region us-east-1 --query 'Reservations[*].Instances[*].PrivateIpAddress' \
  --output text):8200

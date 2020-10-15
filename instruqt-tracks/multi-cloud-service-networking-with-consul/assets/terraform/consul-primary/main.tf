@@ -10,3 +10,11 @@ data "terraform_remote_state" "infra" {
     path = "../infra/terraform.tfstate"
   }
 }
+
+data "terraform_remote_state" "iam" {
+  backend = "local"
+
+  config = {
+    path = "../iam/terraform.tfstate"
+  }
+}

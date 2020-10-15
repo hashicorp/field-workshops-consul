@@ -38,6 +38,11 @@ resource "azurerm_virtual_machine" "consul" {
   network_interface_ids = [azurerm_network_interface.consul.id]
   vm_size               = "Standard_DS1_v2"
 
+  identity {
+    type = "UserAssigned"
+    identity_ids =  [data.terraform_remote_state.iam.outputs.azure_consul_user_assigned_identity_id]
+  }
+
   delete_os_disk_on_termination    = true
   delete_data_disks_on_termination = true
 
@@ -73,46 +78,13 @@ resource "azurerm_virtual_machine" "consul" {
 
 }
 
-resource "tls_private_key" "azure_consul_server" {
-  algorithm   = "ECDSA"
-  ecdsa_curve = "P256"
-}
-
-resource "tls_cert_request" "azure_consul_server" {
-  key_algorithm   = "ECDSA"
-  private_key_pem = tls_private_key.azure_consul_server.private_key_pem
-
-  subject {
-    common_name = "consul-server-0.server.azure-west-us-2.consul"
-  }
-
-  dns_names    = ["consul-server-0.server.azure-west-us-2.consul", "server.azure-west-us-2.consul", "localhost"]
-  ip_addresses = ["127.0.0.1"]
-}
-
-resource "tls_locally_signed_cert" "azure_consul_server" {
-  cert_request_pem   = tls_cert_request.azure_consul_server.cert_request_pem
-  ca_key_algorithm   = tls_private_key.shared_ca.algorithm
-  ca_private_key_pem = tls_private_key.shared_ca.private_key_pem
-  ca_cert_pem        = tls_self_signed_cert.shared_ca.cert_pem
-
-  validity_period_hours = 8600
-
-  allowed_uses = [
-    "digital_signature",
-    "key_encipherment",
-    "client_auth",
-    "server_auth"
-  ]
-}
-
 data "template_file" "azure-server-init" {
   template = file("${path.module}/scripts/azure_consul_server.sh")
   vars = {
-    ca_cert             = tls_self_signed_cert.shared_ca.cert_pem
-    cert                = tls_locally_signed_cert.azure_consul_server.cert_pem,
-    key                 = tls_private_key.azure_consul_server.private_key_pem,
-    primary_wan_gateway = "${aws_instance.mesh_gateway.public_ip}:443"
+    ca_cert             = "test"
+    cert                = "test",
+    key                 = "test",
+    primary_wan_gateway = "${data.terraform_remote_state.consul-primary.outputs.aws_mgw_public_ip}:443"
   }
 }
 
@@ -139,15 +111,9 @@ data "template_file" "azure-mgw-init" {
   template = file("${path.module}/scripts/azure_mesh_gateway.sh")
   vars = {
     env             = data.terraform_remote_state.infra.outputs.env
-    ca_cert         = tls_self_signed_cert.shared_ca.cert_pem
+    ca_cert         = "test"
     subscription_id = data.azurerm_subscription.primary.subscription_id
   }
-}
-
-resource "azurerm_role_assignment" "mgw" {
-  scope                = data.azurerm_subscription.primary.id
-  role_definition_name = "Reader"
-  principal_id         = azurerm_virtual_machine.consul-mgw.identity.0.principal_id
 }
 
 resource "azurerm_virtual_machine" "consul-mgw" {
@@ -161,7 +127,8 @@ resource "azurerm_virtual_machine" "consul-mgw" {
   delete_data_disks_on_termination = true
 
   identity {
-    type = "SystemAssigned"
+    type = "UserAssigned"
+    identity_ids =  [data.terraform_remote_state.iam.outputs.azure_consul_user_assigned_identity_id]
   }
 
   storage_image_reference {

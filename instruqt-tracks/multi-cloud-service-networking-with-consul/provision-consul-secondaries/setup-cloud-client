@@ -6,7 +6,7 @@ terraform init
 set-workdir /root/terraform/consul-secondaries
 
 pubkey=$(cat ~/.ssh/id_rsa.pub)
-cat << EOF > /root/terraform/consul/terraform.tfvars
+cat << EOF > /root/terraform/consul-secondaries/terraform.tfvars
 gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
 ssh_public_key="${pubkey}"
 EOF

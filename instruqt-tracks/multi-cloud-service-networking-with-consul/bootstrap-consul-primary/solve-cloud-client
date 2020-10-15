@@ -1,11 +1,15 @@
 #!/bin/bash
 
+#aws
+AWS_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
+export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
+export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
+
 #anonymous
 export CONSUL_HTTP_ADDR="http://$(terraform output -state /root/terraform/consul-primary/terraform.tfstate aws_consul_public_ip):8500"
 export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
-consul acl token read -self
-echo '
-node_prefix "" {
+
+echo 'node_prefix "" {
   policy = "read"
 }
 session_prefix "" {
@@ -29,5 +33,18 @@ namespace_prefix "" {
   }
 }' |  consul acl policy create -name anonymous -rules -
 consul acl token update -id anonymous -policy-name anonymous
+
+#create the replication token
+echo 'acl = "write"
+
+operator = "write"
+
+service_prefix "" {
+  policy = "read"
+  intentions = "read"
+}' |  consul acl policy create -name replication -rules -
+
+#create the consul token with the seeded secret
+consul acl token create -policy-name replication -secret=$(vault kv get -field replication_token kv/consul)
 
 exit 0
