@@ -20,10 +20,18 @@ sudo apt-get install azure-cli
 
 #get secrets
 az login --identity
-export VAULT_ADDR="http://$(az vm show -g instruqt-ajbd -n vault-server-vm -d | jq -r .privateIps):8200"
-vault write auth/azure/login role="consul" \
-     jwt="$(curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fvault.hashicorp.com%2F' -H Metadata:true | jq -r '.access_token')"
-
+export VAULT_ADDR="http://$(az vm show -g $(curl -s -H Metadata:true "http://169.254.169.254/metadata/instance?api-version=2017-08-01" | jq -r '.compute | .resourceGroupName') -n vault-server-vm -d | jq -r .privateIps):8200"
+export VAULT_TOKEN=$(vault write -field=token auth/azure/login -field=token role="consul" \
+     jwt="$(curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fmanagement.azure.com%2F' -H Metadata:true | jq -r '.access_token')")
+ MASTER_TOKEN=$(vault kv get -field=master_token kv/consul)
+ REPLICATION_TOKEN=$(vault kv get -field=replication_token kv/consul)
+ GOSSIP_KEY=$(vault kv get -field=gossip_key kv/consul)
+ CERT_BUNDLE=$(vault write pki/issue/consul \
+     common_name=consul-server-0.server.azure-west-us-2.consul \
+     alt_names="consul-server-0.server.azure-west-us-2.consul,server.azure-west-us-2.consul,localhost" \
+     ip_sans="127.0.0.1" \
+     key_usage="DigitalSignature,KeyEncipherment" \
+     ext_key_usage="ServerAuth,ClientAuth" -format=json)
 
 #config
 cat <<EOF> /etc/consul.d/server.json
@@ -46,10 +54,26 @@ cat <<EOF> /etc/consul.d/server.json
 }
 EOF
 
+cat <<EOF> /etc/consul.d/secrets.hcl
+acl {
+  enabled        = true
+  default_policy = "deny"
+  enable_token_persistence = true
+  tokens {
+    master = "$${MASTER_TOKEN}"
+    agent  = "$${MASTER_TOKEN}"
+    replication = "$${MASTER_TOKEN}"
+  }
+}
+
+encrypt = "$${GOSSIP_KEY}"
+
+EOF
+
 mkdir -p /opt/consul/tls/
-echo "${ca_cert}" > /opt/consul/tls/ca-cert.pem
-echo "${cert}" > /opt/consul/tls/server-cert.pem
-echo "${key}" > /opt/consul/tls/server-key.pem
+echo "$${CERT_BUNDLE}" | jq -r .data.certificate > /opt/consul/tls/server-cert.pem
+echo "$${CERT_BUNDLE}" | jq -r .data.private_key > /opt/consul/tls/server-key.pem
+echo "$${CERT_BUNDLE}" | jq -r .data.issuing_ca > /opt/consul/tls/ca-cert.pem
 
 cat <<EOF> /etc/consul.d/tls.json
 {

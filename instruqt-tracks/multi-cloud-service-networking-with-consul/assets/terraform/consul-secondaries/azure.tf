@@ -39,8 +39,8 @@ resource "azurerm_virtual_machine" "consul" {
   vm_size               = "Standard_DS1_v2"
 
   identity {
-    type = "UserAssigned"
-    identity_ids =  [data.terraform_remote_state.iam.outputs.azure_consul_user_assigned_identity_id]
+    type         = "UserAssigned"
+    identity_ids = [data.terraform_remote_state.iam.outputs.azure_consul_user_assigned_identity_id]
   }
 
   delete_os_disk_on_termination    = true
@@ -127,8 +127,8 @@ resource "azurerm_virtual_machine" "consul-mgw" {
   delete_data_disks_on_termination = true
 
   identity {
-    type = "UserAssigned"
-    identity_ids =  [data.terraform_remote_state.iam.outputs.azure_consul_user_assigned_identity_id]
+    type         = "UserAssigned"
+    identity_ids = [data.terraform_remote_state.iam.outputs.azure_consul_user_assigned_identity_id]
   }
 
   storage_image_reference {

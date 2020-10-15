@@ -86,44 +86,6 @@ resource "aws_instance" "consul" {
 
 data "template_file" "init" {
   template = file("${path.module}/scripts/aws_consul_server.sh")
-  vars = {
-    ca_cert = tls_self_signed_cert.shared_ca.cert_pem
-    cert    = tls_locally_signed_cert.aws_consul_server.cert_pem,
-    key     = tls_private_key.aws_consul_server.private_key_pem
-  }
-}
-
-resource "tls_private_key" "aws_consul_server" {
-  algorithm   = "ECDSA"
-  ecdsa_curve = "P256"
-}
-
-resource "tls_cert_request" "aws_consul_server" {
-  key_algorithm   = "ECDSA"
-  private_key_pem = tls_private_key.aws_consul_server.private_key_pem
-
-  subject {
-    common_name = "consul-server-0.server.aws-us-east-1.consul"
-  }
-
-  dns_names    = ["consul-server-0.server.aws-us-east-1.consul", "server.aws-us-east-1.consul", "localhost"]
-  ip_addresses = ["127.0.0.1"]
-}
-
-resource "tls_locally_signed_cert" "aws_consul_server" {
-  cert_request_pem   = tls_cert_request.aws_consul_server.cert_request_pem
-  ca_key_algorithm   = tls_private_key.shared_ca.algorithm
-  ca_private_key_pem = tls_private_key.shared_ca.private_key_pem
-  ca_cert_pem        = tls_self_signed_cert.shared_ca.cert_pem
-
-  validity_period_hours = 8600
-
-  allowed_uses = [
-    "digital_signature",
-    "key_encipherment",
-    "client_auth",
-    "server_auth"
-  ]
 }
 
 resource "aws_instance" "mesh_gateway" {
@@ -143,7 +105,6 @@ resource "aws_instance" "mesh_gateway" {
 data "template_file" "aws_mgw_init" {
   template = file("${path.module}/scripts/aws_mesh_gateway.sh")
   vars = {
-    env     = data.terraform_remote_state.infra.outputs.env
-    ca_cert = tls_self_signed_cert.shared_ca.cert_pem
+    env = data.terraform_remote_state.infra.outputs.env
   }
 }

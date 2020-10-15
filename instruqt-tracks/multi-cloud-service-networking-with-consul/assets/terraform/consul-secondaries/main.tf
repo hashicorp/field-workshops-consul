@@ -9,6 +9,14 @@ provider "azurerm" {
   features {}
 }
 
+data "terraform_remote_state" "consul-primary" {
+  backend = "local"
+
+  config = {
+    path = "../consul-primary/terraform.tfstate"
+  }
+}
+
 data "terraform_remote_state" "infra" {
   backend = "local"
 

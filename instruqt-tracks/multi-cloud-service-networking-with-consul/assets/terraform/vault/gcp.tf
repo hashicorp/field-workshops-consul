@@ -62,9 +62,20 @@ resource "google_service_account" "vault_service_account" {
   display_name = "vault-${data.terraform_remote_state.infra.outputs.env}"
 }
 
-resource "google_project_iam_member" "vault" {
-  member = "serviceAccount:${google_service_account.vault_service_account.email}"
-  role   = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+resource "google_project_iam_binding" "crypto_binding" {
+  role = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+
+  members = [
+    "serviceAccount:${google_service_account.vault_service_account.email}",
+  ]
+}
+
+resource "google_project_iam_binding" "sa_binding" {
+  role = "roles/iam.serviceAccountKeyAdmin"
+
+  members = [
+    "serviceAccount:${google_service_account.vault_service_account.email}",
+  ]
 }
 
 resource "google_kms_key_ring" "key_ring" {

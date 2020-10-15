@@ -30,6 +30,11 @@ resource "google_compute_instance" "consul" {
     }
   }
 
+  service_account {
+    email  = data.terraform_remote_state.iam.outputs.gcp_consul_service_account_email
+    scopes = ["cloud-platform", "compute-rw"]
+  }
+
   metadata_startup_script = data.template_file.gcp-server-init.rendered
 
   tags = ["consul-${data.terraform_remote_state.infra.outputs.env}"]
@@ -96,7 +101,7 @@ resource "google_compute_instance" "mgw" {
   }
 
   service_account {
-    email  = google_service_account.consul_service_account.email
+    email  = data.terraform_remote_state.iam.outputs.gcp_consul_service_account_email
     scopes = ["cloud-platform", "compute-rw"]
   }
 
@@ -111,14 +116,4 @@ data "template_file" "gcp-mgw-init" {
     ca_cert = "test"
     project = data.google_project.project.id
   }
-}
-
-resource "google_service_account" "consul_service_account" {
-  account_id   = "consul"
-  display_name = "Consul"
-}
-
-resource "google_project_iam_member" "consul" {
-  member = "serviceAccount:${google_service_account.consul_service_account.email}"
-  role   = "roles/compute.viewer"
 }
