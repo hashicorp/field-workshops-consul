@@ -8,6 +8,7 @@ export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
 #create secrets eng
 vault auth enable aws
 vault auth enable azure
+vault auth enable gcp
 vault write auth/azure/config \
     tenant_id="$(az account show | jq -r .tenantId)" \
     resource="https://management.azure.com/"
@@ -43,11 +44,11 @@ AZURE_CONSUL_SERVICE_PRINCIPAL_ID=$(terraform output -state /root/terraform/iam/
 vault write auth/azure/role/consul \
   policies=consul \
   bound_service_principal_ids="${AZURE_CONSUL_SERVICE_PRINCIPAL_ID}"
-GCP_CONSUL_SERVICE_ACCOUNT="${}"
-vault write auth/gcp/role/my-iam-role \
+GCP_CONSUL_SERVICE_ACCOUNT=(terraform output -state /root/terraform/iam/terraform.tfstate gcp_consul_service_account_email)
+vault write auth/gcp/role/consul \
   type="iam" \
   policies="consul" \
-  bound_service_accounts="my-service@my-project.iam.gserviceaccount.com"
+  bound_service_accounts="${GCP_CONSUL_SERVICE_ACCOUNT}"
 
 #seed vault with consul bootsrap secrets
 vault kv put kv/consul master_token=$(cat /proc/sys/kernel/random/uuid) replication_token=$(cat /proc/sys/kernel/random/uuid) gossip_key=$(consul keygen)

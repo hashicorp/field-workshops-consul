@@ -9,7 +9,7 @@ sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(l
 sudo apt update -y
 
 #install consul
-sudo apt install consul-enterprise vault-enterprise google-cloud-sdk -y
+sudo apt install consul-enterprise vault-enterprise google-cloud-sdk jq -y
 
 #config
 cat <<EOF> /etc/consul.d/server.json
