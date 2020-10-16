@@ -44,7 +44,7 @@ AZURE_CONSUL_SERVICE_PRINCIPAL_ID=$(terraform output -state /root/terraform/iam/
 vault write auth/azure/role/consul \
   policies=consul \
   bound_service_principal_ids="${AZURE_CONSUL_SERVICE_PRINCIPAL_ID}"
-GCP_CONSUL_SERVICE_ACCOUNT=(terraform output -state /root/terraform/iam/terraform.tfstate gcp_consul_service_account_email)
+GCP_CONSUL_SERVICE_ACCOUNT=$(terraform output -state /root/terraform/iam/terraform.tfstate gcp_consul_service_account_email)
 vault write auth/gcp/role/consul \
   type="iam" \
   policies="consul" \

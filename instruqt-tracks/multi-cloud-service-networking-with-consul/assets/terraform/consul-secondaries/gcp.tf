@@ -37,6 +37,10 @@ resource "google_compute_instance" "consul" {
 
   metadata_startup_script = data.template_file.gcp-server-init.rendered
 
+  metadata = {
+    ssh-keys = "ubuntu:${var.ssh_public_key}"
+  }
+
   tags = ["consul-${data.terraform_remote_state.infra.outputs.env}"]
 
 }
@@ -44,9 +48,6 @@ resource "google_compute_instance" "consul" {
 data "template_file" "gcp-server-init" {
   template = file("${path.module}/scripts/gcp_consul_server.sh")
   vars = {
-    ca_cert             = "test"
-    cert                = "test",
-    key                 = "test",
     primary_wan_gateway = "${data.terraform_remote_state.consul-primary.outputs.aws_mgw_public_ip}:443"
   }
 }
@@ -105,6 +106,10 @@ resource "google_compute_instance" "mgw" {
     scopes = ["cloud-platform", "compute-rw"]
   }
 
+  metadata = {
+    ssh-keys = "ubuntu:${var.ssh_public_key}"
+  }
+
   metadata_startup_script = data.template_file.gcp-mgw-init.rendered
 
 }
@@ -113,7 +118,5 @@ data "template_file" "gcp-mgw-init" {
   template = file("${path.module}/scripts/gcp_mesh_gateway.sh")
   vars = {
     env     = data.terraform_remote_state.infra.outputs.env
-    ca_cert = "test"
-    project = data.google_project.project.id
   }
 }

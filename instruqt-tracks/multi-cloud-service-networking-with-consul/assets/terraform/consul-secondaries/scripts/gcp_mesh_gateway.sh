@@ -12,6 +12,18 @@ sudo apt update -y
 #install consul
 sudo apt install consul-enterprise vault-enterprise -y
 
+#get secrets
+GCP_ZONE=$(curl -s -H "Metadata-Flavor: Google" http://metadata/computeMetadata/v1/instance/zone | cut -d "/" -f4-)
+GCP_SA=$(gcloud config get-value account)
+export VAULT_ADDR="http://$(gcloud compute instances describe vault-server --zone $GCP_ZONE --format="value(networkInterfaces[0].networkIP)"):8200"
+export VAULT_TOKEN=$(vault login -field=token -method=gcp \
+  method="iam" \
+  role="consul" \
+  service_account="$${GCP_SA}")
+AGENT_TOKEN=$(vault kv get -field=master_token kv/consul)
+GOSSIP_KEY=$(vault kv get -field=gossip_key kv/consul)
+CA_CERT=$(vault read -field certificate pki/cert/ca)
+
 #config
 cat <<EOF> /etc/consul.d/client.json
 {
@@ -32,8 +44,22 @@ cat <<EOF> /etc/consul.d/client.json
 }
 EOF
 
+cat <<EOF> /etc/consul.d/secrets.hcl
+acl {
+  enabled        = true
+  default_policy = "deny"
+  enable_token_persistence = true
+  tokens {
+    agent  = "$${AGENT_TOKEN}"
+  }
+}
+
+encrypt = "$${GOSSIP_KEY}"
+
+EOF
+
 mkdir -p /opt/consul/tls/
-echo "${ca_cert}" > /opt/consul/tls/ca-cert.pem
+echo "$${CA_CERT}" > /opt/consul/tls/ca-cert.pem
 
 cat <<EOF> /etc/consul.d/tls.json
 {
@@ -55,5 +81,5 @@ sleep 120
 curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
 getenvoy fetch standard:1.14.1
 cp /root/.getenvoy/builds/standard/1.14.1/linux_glibc/bin/envoy /usr/local/bin/envoy
-nohup consul connect envoy -expose-servers -gateway=mesh -register -service "mesh-gateway" -address "$${local_ipv4}:443" -wan-address "$${public_ipv4}:443" -- -l debug > /envoy.out &
+nohup consul connect envoy -expose-servers -gateway=mesh -register -service "mesh-gateway" -address "$${local_ipv4}:443" -wan-address "$${public_ipv4}:443" -token="$${AGENT_TOKEN}" -- -l debug > /envoy.out &
 exit 0

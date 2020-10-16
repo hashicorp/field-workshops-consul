@@ -1,6 +1,6 @@
 resource "aws_key_pair" "demo" {
   key_name   = "instruqt-${random_string.env.result}"
-  public_key = tls_private_key.main.public_key_openssh
+  public_key = var.ssh_public_key
 }
 
 module "aws-vpc-shared-svcs" {

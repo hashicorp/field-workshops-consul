@@ -2,10 +2,6 @@ output "env" {
   value = random_string.env.result
 }
 
-output "ssh_key_public_key_openssh" {
-  value = tls_private_key.main.public_key_openssh
-}
-
 output "aws_ssh_key_name" {
   value = aws_key_pair.demo.key_name
 }
