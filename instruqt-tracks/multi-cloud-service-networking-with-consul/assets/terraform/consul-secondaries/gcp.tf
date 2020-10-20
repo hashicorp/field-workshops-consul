@@ -117,6 +117,6 @@ resource "google_compute_instance" "mgw" {
 data "template_file" "gcp-mgw-init" {
   template = file("${path.module}/scripts/gcp_mesh_gateway.sh")
   vars = {
-    env     = data.terraform_remote_state.infra.outputs.env
+    env = data.terraform_remote_state.infra.outputs.env
   }
 }

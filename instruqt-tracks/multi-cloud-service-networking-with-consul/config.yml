@@ -11,6 +11,7 @@ containers:
 gcp_projects:
 - name: consul
   services:
+  - container.googleapis.com
   - cloudresourcemanager.googleapis.com
   - compute.googleapis.com
   - iam.googleapis.com

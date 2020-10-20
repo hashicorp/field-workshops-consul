@@ -14,6 +14,7 @@ developers:
 - lance@hashicorp.com
 private: false
 published: false
+show_timer: true
 challenges:
 - slug: provision-cloud-infra
   id: eej5x5cxdiig
@@ -231,4 +232,4 @@ challenges:
     path: /root
   difficulty: basic
   timelimit: 300
-checksum: "16115139774333656880"
+checksum: "7543859268139609046"

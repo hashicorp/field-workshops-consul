@@ -1,3 +1,8 @@
+resource "aws_elasticache_subnet_group" "default" {
+  name       = "redis-cache-subnet-${data.terraform_remote_state.infra.outputs.env}"
+  subnet_ids = [data.terraform_remote_state.infra.outputs.aws_shared_svcs_private_subnets[0]]
+}
+
 resource "aws_elasticache_cluster" "redis" {
   cluster_id           = "redis-cluster-example"
   engine               = "redis"
@@ -6,4 +11,5 @@ resource "aws_elasticache_cluster" "redis" {
   parameter_group_name = "default.redis3.2"
   engine_version       = "3.2.10"
   port                 = 6379
+  subnet_group_name    = aws_elasticache_subnet_group.default.name
 }

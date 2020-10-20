@@ -23,6 +23,8 @@ resource "google_container_cluster" "k8s" {
     }
   }
 
+  enable_legacy_abac = true
+
   timeouts {
     create = "30m"
     update = "40m"
