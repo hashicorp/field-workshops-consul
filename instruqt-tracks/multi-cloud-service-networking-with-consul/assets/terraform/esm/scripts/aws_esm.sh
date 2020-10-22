@@ -73,4 +73,41 @@ EOF
 sudo systemctl enable consul.service
 sudo systemctl start consul.service
 
+#esm
+curl -s -O https://releases.hashicorp.com/consul-esm/0.4.0/consul-esm_0.4.0_linux_amd64.tgz
+tar -xvzf consul-esm*
+mv consul-esm /usr/local/bin/consul-esm
+rm -f *.tgz
+
+mkdir -p /etc/consul-esm.d/
+cat <<EOF> /etc/consul-esm.d/config.hcl
+token = "$${AGENT_TOKEN}"
+EOF
+
+cat <<EOF> /usr/lib/systemd/system/consul-esm.service
+[Unit]
+Description=Consul ESM
+Documentation=https://github.com/hashicorp/consul-esm
+
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+User=consul
+Group=consul
+ExecStart=/usr/local/bin/consul-esm -config-dir /etc/consul-esm.d/
+KillMode=process
+Restart=on-failure
+RestartSec=2
+
+PermissionsStartOnly=true
+ExecStartPre=/sbin/setcap 'cap_net_raw=+ep' /usr/local/bin/consul-esm
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl enable consul-esm.service
+sudo systemctl start consul-esm.service
+
 exit 0

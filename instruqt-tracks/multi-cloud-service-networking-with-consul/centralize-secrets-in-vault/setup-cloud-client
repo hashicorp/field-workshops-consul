@@ -1,7 +1,22 @@
 #!/bin/sh
 
-#init the Vault clusters
+#ui access
+vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
+echo "export VAULT_ADDR=http://${vault_lb}" >> ~/.bashrc
+cat << EOF > /etc/nginx/conf.d/vault.conf
+server {
+  listen 8200;
+  location / {
+    proxy_pass http://${vault_lb}:8200;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect off;
+  }
+  access_log /var/log/nginx/vault.log;
+}
+EOF
+service nginx restart
 
+#init the Vault clusters
 cd /root/terraform/vault
 set-workdir /root/terraform/vault
 
@@ -49,7 +64,12 @@ sleep 15
 export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
 export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
 
-echo 'path "auth/*"
+echo 'path "*"
+{
+  capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}
+
+path "auth/*"
 {
   capabilities = ["create", "read", "update", "delete", "list", "sudo"]
 }

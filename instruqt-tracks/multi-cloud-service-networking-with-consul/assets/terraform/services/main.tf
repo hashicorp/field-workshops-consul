@@ -14,6 +14,16 @@ provider "google" {
   project = var.gcp_project_id
 }
 
+provider "consul" {
+  alias      = "aws"
+  datacenter = "aws-us-east-1"
+}
+
+provider "consul" {
+  alias      = "azure"
+  datacenter = "azure-west-us-2"
+}
+
 data "terraform_remote_state" "infra" {
   backend = "local"
 

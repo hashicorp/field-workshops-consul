@@ -1,5 +1,5 @@
 resource "random_password" "pg" {
-  length = 10
+  length  = 10
   special = true
 }
 
