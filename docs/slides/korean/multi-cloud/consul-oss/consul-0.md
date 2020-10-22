@@ -15,27 +15,27 @@ The Slide Deck
 -------------------------
 <br><br><br>
 .center[
-Follow along on your own computer at this link:
+링크를 클릭하여 각 환경에서 슬라이드를 확인할 수 있습니다.:
 
-### [https://hashicorp.github.io/field-workshops-consul/slides/multi-cloud/consul-oss](https://hashicorp.github.io/field-workshops-consul/slides/multi-cloud/consul-oss)
+### [https://hashicorp.github.io/field-workshops-consul/slides/korean/multi-cloud/consul-oss](https://hashicorp.github.io/field-workshops-consul/slides/korean/multi-cloud/consul-oss)
 ]
 
 ???
-These slides are published using the RemarkJS framework and Github Pages. View the source code for both the slide deck and the Instruqt labs here: https://www.github.com/hashicorp/field-workshops-consul. You may need to be invited to get access to this private code repo.
+이 슬라이드는 RemarkJS 프레임 워크 및 Github 페이지를 사용하여 게시됩니다. 슬라이드 데크 및 Instruqt 랩의 소스 코드는 https://www.github.com/hashicorp/field-workshops-consul에서 확인하세요. 이 개인 코드 저장소에 액세스하려면 초대를 받아야 할 수 있습니다.
 
 ---
 name: Introductions
-강사 소개
+참여자 소개 시간
 -------------------------
 
 .contents[
-* GS, 이규석
-* Sr. Solutions Engineer
-* gs@hashicorp.com
+* 이름 : 
+* 직책 : 
+* 경험 공유 :
 ]
 
 ???
-Use this slide to introduce yourself, give a little bit of your background story, then go around the room and have all your participants introduce themselves.
+이 슬라이드를 사용하여 자신을 소개하고 배경 이야기를 약간 제공 한 다음 방을 돌아 다니며 모든 참가자가 자신을 소개하도록합니다.
 
 ---
 name: Table-of-Contents
@@ -57,5 +57,5 @@ name: Table-of-Contents
 Lab : https://play.instruqt.com/hashicorp/topics/consul-workshops
 
 ???
-For today's session we are going to be covering the following topics.  
-We are going to do an overview of why you even need consul.  Then we will go over how consul works from an architecture perspective.  We will then dive into some of the use cases that you would use consul for.  After that we will get our hands dirty with some labs starting with getting comfortable interacting with consul, then moving to service discovery and finally looking at consul connect and service segmentation.  Any questions?  Ok lets go!!
+오늘 세션에서는 다음 주제를 다룰 것입니다.
+Consul이 왜 필요한지에 대한 개요를 할 것입니다. 그런 다음 아키텍처 관점에서 영사가 어떻게 작동하는지 살펴 보겠습니다. 그런 다음 consul을 사용하는 몇 가지 사용 사례를 살펴 보겠습니다. 그 후 우리는 consul과 편안하게 상호 작용하기 시작하여 서비스 검색으로 이동하고 마지막으로 consul 연결 및 서비스 세분화를 살펴 보는 것으로 시작하여 일부 실습을 진행합니다.
