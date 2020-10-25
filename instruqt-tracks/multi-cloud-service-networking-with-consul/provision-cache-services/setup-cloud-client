@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cd /root/terraform/cache-services
+terraform init
+
+AWS_CONSUL_IP=$(terraform output -state /root/terraform/consul-primary/terraform.tfstate aws_consul_public_ip)
+cat << EOF > /root/terraform/cache-services/terraform.tfvars
+consul_http_addr="http://${AWS_CONSUL_IP}:8500"
+EOF
+
+set-workdir /root/terraform/cache-services
+
+exit 0

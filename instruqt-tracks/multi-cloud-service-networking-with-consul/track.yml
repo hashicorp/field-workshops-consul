@@ -191,6 +191,11 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
+  - title: AWS - Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
   difficulty: basic
   timelimit: 300
 - slug: provision-consul-secondaries
@@ -223,6 +228,11 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
+  - title: AWS - Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
   difficulty: basic
   timelimit: 300
 - slug: provision-consul-esms
@@ -255,6 +265,11 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
+  - title: AWS - Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
   difficulty: basic
   timelimit: 300
 - slug: provision-cache-services
@@ -287,6 +302,11 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
+  - title: AWS - Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
   difficulty: basic
   timelimit: 300
 - slug: provision-database-services
@@ -319,9 +339,14 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
+  - title: AWS - Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
   difficulty: basic
   timelimit: 300
-- slug: provision-schduler-services
+- slug: provision-scheduler-services
   id: 2bhfenznbq26
   type: challenge
   title: Provision Scheduler Services
@@ -351,6 +376,11 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
+  - title: AWS - Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
   difficulty: basic
   timelimit: 300
 - slug: provision-consul-terminating-gateways
@@ -383,6 +413,122 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
+  - title: AWS - Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
   difficulty: basic
   timelimit: 300
-checksum: "15883259228005128667"
+- slug: deploy-payments-applications
+  id: m1xx8rucidse
+  type: challenge
+  title: Deploy Payments Applications
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root
+  - title: AWS - Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: AWS - Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  difficulty: basic
+  timelimit: 300
+- slug: deploy-product-applications
+  id: jmzuys1pidmc
+  type: challenge
+  title: Deploy Product Applications
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root
+  - title: AWS - Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: AWS - Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  difficulty: basic
+  timelimit: 300
+- slug: deploy-frontend-applications
+  id: ssdpxmpbtvjw
+  type: challenge
+  title: Deploy Frontend Applications
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root
+  - title: AWS - Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: AWS - Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  difficulty: basic
+  timelimit: 300
+checksum: "8587776995307892117"

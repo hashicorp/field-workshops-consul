@@ -1,6 +1,4 @@
 resource "consul_node" "aws-elastic-cache" {
-  provider = consul.aws
-
   name    = "aws-elastic-cache"
   address = aws_elasticache_cluster.redis.cache_nodes.0.address
 
@@ -11,8 +9,6 @@ resource "consul_node" "aws-elastic-cache" {
 }
 
 resource "consul_service" "aws-elastic-cache" {
-  provider = consul.aws
-
   name = "redis"
   node = consul_node.aws-elastic-cache.name
   port = 6379

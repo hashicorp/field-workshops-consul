@@ -9,8 +9,8 @@ resource "aws_security_group" "redis" {
   vpc_id      = data.terraform_remote_state.infra.outputs.aws_shared_svcs_vpc
 
   ingress {
-    from_port   = "6739"
-    to_port     = "6739"
+    from_port   = "6379"
+    to_port     = "6379"
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }

@@ -28,3 +28,17 @@ module "azure-app-network" {
     owner = "instruqt@hashicorp.com"
   }
 }
+
+resource "azurerm_virtual_network_peering" "shared-to-app" {
+  name                      = "SharedToApp"
+  resource_group_name       = azurerm_resource_group.instruqt.name
+  virtual_network_name      = "shared-svcs-vnet"
+  remote_virtual_network_id = module.azure-app-network.vnet_id
+}
+
+resource "azurerm_virtual_network_peering" "app-to-shared" {
+  name                      = "AppToShared"
+  resource_group_name       = azurerm_resource_group.instruqt.name
+  virtual_network_name      = "app-vnet"
+  remote_virtual_network_id = module.azure-shared-svcs-network.vnet_id
+}

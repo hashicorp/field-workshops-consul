@@ -8,6 +8,8 @@ provider "azurerm" {
   features {}
 }
 
+provider "consul" {}
+
 data "terraform_remote_state" "iam" {
   backend = "local"
 

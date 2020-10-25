@@ -1,5 +1,14 @@
-resource "consul_config_entry" "terminating_gateway" {
-  name = "terminating-gateway"
+resource "consul_config_entry" "aws-terminating_gateway" {
+  name = "aws-us-east-1-terminating-gateway"
+  kind = "terminating-gateway"
+
+  config_json = jsonencode({
+    Services = [{ Name = "redis" }]
+  })
+}
+
+resource "consul_config_entry" "azure-terminating_gateway" {
+  name = "azure-west-us-2-terminating-gateway"
   kind = "terminating-gateway"
 
   config_json = jsonencode({

@@ -1,6 +1,4 @@
 resource "consul_node" "azure-pg" {
-  provider = consul.azure
-
   name    = "azure-pg"
   address = azurerm_postgresql_server.postgres.fqdn
 
@@ -11,8 +9,6 @@ resource "consul_node" "azure-pg" {
 }
 
 resource "consul_service" "azure-pg" {
-  provider = consul.azure
-
   name = "postgres"
   node = consul_node.azure-pg.name
   port = 5432

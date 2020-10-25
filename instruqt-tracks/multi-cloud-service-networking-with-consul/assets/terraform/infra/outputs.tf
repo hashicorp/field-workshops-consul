@@ -29,3 +29,7 @@ output "azure_rg_location" {
 output "azure_shared_svcs_public_subnets" {
   value = module.azure-shared-svcs-network.vnet_subnets
 }
+
+output "azure_app_public_subnets" {
+  value = module.azure-app-network.vnet_subnets
+}

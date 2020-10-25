@@ -15,7 +15,15 @@ resource "azurerm_postgresql_server" "postgres" {
   version    = "9.6"
   storage_mb = 640000
 
-  public_network_access_enabled    = false
+  public_network_access_enabled    = true
   ssl_enforcement_enabled          = true
   ssl_minimal_tls_version_enforced = "TLS1_2"
+}
+
+resource "azurerm_postgresql_firewall_rule" "postgres" {
+  name                = "AllowAll"
+  resource_group_name = data.terraform_remote_state.infra.outputs.azure_rg_name
+  server_name         = azurerm_postgresql_server.postgres.name
+  start_ip_address    = "0.0.0.0"
+  end_ip_address      = "255.255.255.255"
 }

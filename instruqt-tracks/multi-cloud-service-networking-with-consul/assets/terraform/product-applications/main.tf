@@ -1,12 +1,9 @@
-provider "aws" {
-  version = "~> 3.0"
-  region  = "us-east-1"
+provider "azurerm" {
+  version = "=2.0.0"
+  features {}
 }
 
-provider "consul" {
-  address    = var.consul_http_addr
-  datacenter = "aws-us-east-1"
-}
+data "azurerm_subscription" "primary" {}
 
 data "terraform_remote_state" "infra" {
   backend = "local"
@@ -21,5 +18,13 @@ data "terraform_remote_state" "iam" {
 
   config = {
     path = "../iam/terraform.tfstate"
+  }
+}
+
+data "terraform_remote_state" "db" {
+  backend = "local"
+
+  config = {
+    path = "../database-services/terraform.tfstate"
   }
 }

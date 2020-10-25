@@ -4,7 +4,7 @@ provider "azurerm" {
 }
 
 provider "consul" {
-  alias      = "azure"
+  address    = var.consul_http_addr
   datacenter = "azure-west-us-2"
 }
 

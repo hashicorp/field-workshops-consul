@@ -9,7 +9,7 @@ sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(l
 sudo apt update -y
 
 #install packages
-sudo apt install consul-enterprise vault-enterprise nomad-enterprise awscli jq -y
+sudo apt install consul-enterprise vault-enterprise nomad-enterprise awscli jq docker.io -y
 
 #vault
 export VAULT_ADDR=http://$(aws ec2 describe-instances --filters "Name=tag:Name,Values=vault" \

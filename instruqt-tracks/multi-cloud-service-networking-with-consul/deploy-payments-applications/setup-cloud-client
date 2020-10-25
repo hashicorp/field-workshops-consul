@@ -1,0 +1,36 @@
+#!/bin/bash
+
+#export NOMAD_ADDR=http://3.82.171.64:4646
+
+cat << EOF > /root/nomad/payment.hcl
+job "payments" {
+  datacenters = ["aws-us-east-1"]
+  group "payments" {
+    count = 2
+    network {
+      mode = "bridge"
+    }
+    service {
+      name = "payments"
+      connect {
+        sidecar_service {
+          proxy {
+            upstreams {
+              destination_name = "redis"
+              local_bind_port  = 6379
+            }
+          }
+        }
+      }
+    }
+    task "payments" {
+      driver = "docker"
+      config {
+        image = "hashicorpdemoapp/frontend:latest"
+      }
+    }
+  }
+}
+EOF
+
+exit 0

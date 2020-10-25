@@ -8,7 +8,7 @@ apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_re
 
 #packages
 apt-get update -y
-apt-get install terraform consul-enterprise vault-enterprise libcap-dev jq -y
+apt-get install terraform consul-enterprise vault-enterprise nomad-enterprise libcap-dev jq -y
 
 #tf creds
 echo 'export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)' >> /root/.bashrc
