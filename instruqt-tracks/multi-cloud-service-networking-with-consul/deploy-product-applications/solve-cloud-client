@@ -1,0 +1,38 @@
+#!/bin/bash
+
+cat << EOF > /root/policies/payments.hcl
+node "payments" {
+  policy = "write"
+}
+agent "payments" {
+  policy = "write"
+}
+key_prefix "_rexec" {
+  policy = "write"
+}
+node_prefix "" {
+	policy = "read"
+}
+namespace "frontend" {
+  service "payments" {
+    policy = "write"
+  }
+  service "payments-sidecar-proxy" {
+    policy = "write"
+  }
+  service_prefix "" {
+    policy = "read"
+  }
+}
+EOF
+
+consul acl policy create \
+  -name "payments-policy" \
+  -description "Policy for API service to grant agent permissions and consul connect integration" \
+  -rules @/root/policies/payments.hcl
+consul acl role create \
+  -name "payments-role" \
+  -description "Role for the API service" \
+  -policy-name "payments-policy"
+consul acl token create --help
+exit 0
