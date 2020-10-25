@@ -62,7 +62,7 @@ acl {
   tokens {
     master = "$${MASTER_TOKEN}"
     agent  = "$${MASTER_TOKEN}"
-    replication = "$${MASTER_TOKEN}"
+    replication = "$${REPLICATION_TOKEN}"
   }
 }
 

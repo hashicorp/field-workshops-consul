@@ -2,17 +2,16 @@
 
 #metadata
 local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
-public_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)"
 
 #update packages
 curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
 sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 sudo apt update -y
 
-#install consul
-sudo apt install consul-enterprise vault-enterprise awscli jq -y
+#install packages
+sudo apt install consul-enterprise vault-enterprise nomad-enterprise awscli jq -y
 
-#get the secrets tokens from Vault
+#vault
 export VAULT_ADDR=http://$(aws ec2 describe-instances --filters "Name=tag:Name,Values=vault" \
  --region us-east-1 --query 'Reservations[*].Instances[*].PrivateIpAddress' \
  --output text):8200
@@ -21,7 +20,7 @@ AGENT_TOKEN=$(vault kv get -field=master_token kv/consul)
 GOSSIP_KEY=$(vault kv get -field=gossip_key kv/consul)
 CA_CERT=$(vault read -field certificate pki/cert/ca)
 
-#config
+#consul
 cat <<EOF> /etc/consul.d/client.json
 {
   "datacenter": "aws-us-east-1",
@@ -73,10 +72,37 @@ EOF
 sudo systemctl enable consul.service
 sudo systemctl start consul.service
 
-sleep 60
+#nomad
+curl -L -o cni-plugins.tgz https://github.com/containernetworking/plugins/releases/download/v0.8.6/cni-plugins-linux-amd64-v0.8.6.tgz
+sudo mkdir -p /opt/cni/bin
+sudo tar -C /opt/cni/bin -xzf cni-plugins.tgz
+modprobe br_netfilter
+sysctl -p /etc/sysctl.conf
+echo 1 > /proc/sys/net/bridge/bridge-nf-call-arptables
+echo 1 > /proc/sys/net/bridge/bridge-nf-call-ip6tables
+echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
 
-curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
-getenvoy fetch standard:1.14.1
-cp /root/.getenvoy/builds/standard/1.14.1/linux_glibc/bin/envoy /usr/local/bin/envoy
-nohup consul connect envoy -gateway=terminating -register -service "aws-us-east-1-terminating-gateway" -address "$${local_ipv4}:443" -token="$${AGENT_TOKEN}" -- -l debug  >  /terminating_gateway.log & > /envoy.out &
+mkdir -p /etc/nomad.d/
+mkdir -p /opt/nomad
+
+cat <<EOF> /etc/nomad.d/nomad.hcl
+datacenter = "aws-us-east-1"
+data_dir = "/opt/nomad"
+EOF
+
+cat <<EOF> /etc/nomad.d/client.hcl
+client {
+  enabled = true
+}
+EOF
+
+cat <<EOF> /etc/nomad.d/consul.hcl
+consul {
+  token = "$${AGENT_TOKEN}"
+}
+EOF
+
+sudo systemctl enable nomad.service
+sudo systemctl start nomad.service
+
 exit 0

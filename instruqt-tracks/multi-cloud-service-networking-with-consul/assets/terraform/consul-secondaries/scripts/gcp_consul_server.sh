@@ -28,7 +28,6 @@ CERT_BUNDLE=$(vault write pki/issue/consul \
     key_usage="DigitalSignature,KeyEncipherment" \
     ext_key_usage="ServerAuth,ClientAuth" -format=json)
 
-
 #config
 cat <<EOF> /etc/consul.d/server.json
 {
@@ -59,7 +58,7 @@ acl {
   tokens {
     master = "$${MASTER_TOKEN}"
     agent  = "$${MASTER_TOKEN}"
-    replication = "$${MASTER_TOKEN}"
+    replication = "$${REPLICATION_TOKEN}"
   }
 }
 
