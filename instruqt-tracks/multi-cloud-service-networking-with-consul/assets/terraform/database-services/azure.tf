@@ -15,9 +15,8 @@ resource "azurerm_postgresql_server" "postgres" {
   version    = "9.6"
   storage_mb = 640000
 
-  public_network_access_enabled    = true
-  ssl_enforcement_enabled          = true
-  ssl_minimal_tls_version_enforced = "TLS1_2"
+  public_network_access_enabled = true
+  ssl_enforcement_enabled       = false
 }
 
 resource "azurerm_postgresql_firewall_rule" "postgres" {

@@ -19,9 +19,11 @@ resource "azurerm_network_interface" "vm" {
 }
 
 resource "azurerm_virtual_machine" "vm" {
+  count = 2
+
   name                  = "product-api-vm"
-  resource_group_name = data.terraform_remote_state.infra.outputs.azure_rg_name
-  location            = data.terraform_remote_state.infra.outputs.azure_rg_location
+  resource_group_name   = data.terraform_remote_state.infra.outputs.azure_rg_name
+  location              = data.terraform_remote_state.infra.outputs.azure_rg_location
   network_interface_ids = [azurerm_network_interface.vm.id]
   vm_size               = "Standard_D1_v2"
 
@@ -67,8 +69,8 @@ resource "azurerm_virtual_machine" "vm" {
 data "template_file" "product-api-init" {
   template = file("${path.module}/scripts/api.sh")
   vars = {
-    env             = data.terraform_remote_state.infra.outputs.env
-    subscription_id = data.azurerm_subscription.primary.subscription_id
+    env               = data.terraform_remote_state.infra.outputs.env
+    subscription_id   = data.azurerm_subscription.primary.subscription_id
     postgres_password = data.terraform_remote_state.db.outputs.postgres_password
   }
 }

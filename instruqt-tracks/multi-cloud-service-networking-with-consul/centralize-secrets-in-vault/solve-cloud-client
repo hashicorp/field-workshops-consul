@@ -21,7 +21,7 @@ vault write pki/root/generate/internal \
     common_name="HashiCorp CA" \
     ttl=8760h
 vault write pki/roles/consul \
-    allowed_domains=consul \
+    allowed_domains=consul,internal \
     allow_subdomains=true \
     max_ttl=72h
 

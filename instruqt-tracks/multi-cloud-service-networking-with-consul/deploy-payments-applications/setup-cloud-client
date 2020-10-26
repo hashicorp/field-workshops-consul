@@ -2,7 +2,7 @@
 
 #export NOMAD_ADDR=http://3.82.171.64:4646
 
-cat << EOF > /root/nomad/payment.hcl
+cat << EOF > /root/nomad/payments.hcl
 job "payments" {
   datacenters = ["aws-us-east-1"]
   group "payments" {

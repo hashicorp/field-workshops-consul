@@ -73,7 +73,7 @@ challenges:
 - slug: provision-identities
   id: lbmzbwxbo9gc
   type: challenge
-  title: Provision Consul Identities
+  title: Provision Consul & Workload Identities
   teaser: A short description of the challenge.
   assignment: |-
     The assignment the participant needs to complete in order to proceed.
@@ -531,4 +531,4 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-checksum: "16135763427306620197"
+checksum: "4455676472406273608"

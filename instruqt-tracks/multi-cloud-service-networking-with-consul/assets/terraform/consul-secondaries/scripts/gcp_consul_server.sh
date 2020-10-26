@@ -23,7 +23,7 @@ REPLICATION_TOKEN=$(vault kv get -field=replication_token kv/consul)
 GOSSIP_KEY=$(vault kv get -field=gossip_key kv/consul)
 CERT_BUNDLE=$(vault write pki/issue/consul \
     common_name=consul-server-0.server.gcp-us-central-1.consul \
-    alt_names="consul-server-0.server.gcp-us-central-1.consul,server.gcp-us-central-1.consul,localhost" \
+    alt_names="${internal_lb},consul-server-0.server.gcp-us-central-1.consul,server.gcp-us-central-1.consul,localhost" \
     ip_sans="127.0.0.1" \
     key_usage="DigitalSignature,KeyEncipherment" \
     ext_key_usage="ServerAuth,ClientAuth" -format=json)

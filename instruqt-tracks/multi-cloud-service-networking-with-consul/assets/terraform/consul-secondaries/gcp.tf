@@ -48,7 +48,8 @@ resource "google_compute_instance" "consul" {
 data "template_file" "gcp-server-init" {
   template = file("${path.module}/scripts/gcp_consul_server.sh")
   vars = {
-    primary_wan_gateway = "${data.terraform_remote_state.consul-primary.outputs.aws_mgw_public_ip}:443"
+    primary_wan_gateway = "${data.terraform_remote_state.consul-primary.outputs.aws_mgw_public_ip}:443",
+    internal_lb = data.google_compute_forwarding_rule.consul.service_name
   }
 }
 
@@ -119,4 +120,43 @@ data "template_file" "gcp-mgw-init" {
   vars = {
     env = data.terraform_remote_state.infra.outputs.env
   }
+}
+
+resource "google_compute_instance_group" "consul" {
+  name        = "consul-servers"
+  description = "Consul servers"
+
+  instances = [
+    google_compute_instance.consul.self_link,
+  ]
+
+  named_port {
+    name = "http"
+    port = "8500"
+  }
+
+  zone    = "us-central1-a"
+  network = data.terraform_remote_state.infra.outputs.gcp_shared_svcs_network_self_link
+}
+
+module "gce-ilb" {
+  source           = "GoogleCloudPlatform/lb-internal/google"
+  version          = "~> 2.0"
+  region           = "us-central1"
+  name             = "consul-ilb"
+  network          = "vpc-shared-svcs"
+  subnetwork       = "shared"
+  ports            = [local.named_ports[0].port]
+  source_ip_ranges = ["0.0.0.0"]
+  source_tags      = []
+  target_tags      = []
+  health_check     = local.health_check
+  service_label    = "consul"
+  backends = [
+    { group = google_compute_instance_group.consul.id, description = "" },
+  ]
+}
+
+data "google_compute_forwarding_rule" "consul" {
+  name = "consul-ilb"
 }

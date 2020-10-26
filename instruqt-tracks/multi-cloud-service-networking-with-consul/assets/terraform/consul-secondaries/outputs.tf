@@ -13,3 +13,7 @@ output "azure_consul_public_ip" {
 output "azure_mgw_public_ip" {
   value = azurerm_public_ip.mgw.ip_address
 }
+
+output "gcp_internal_consul_dns" {
+  value = data.google_compute_forwarding_rule.consul.service_name
+}

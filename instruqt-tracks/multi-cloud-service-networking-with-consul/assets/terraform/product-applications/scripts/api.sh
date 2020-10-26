@@ -48,7 +48,7 @@ acl {
   default_policy = "deny"
   enable_token_persistence = true
   tokens {
-    agent  = "$${AGENT_TOKEN}"
+    default  = "$${AGENT_TOKEN}"
   }
 }
 encrypt = "$${GOSSIP_KEY}"
@@ -75,14 +75,21 @@ cat <<EOF > /etc/consul.d/product-api.hcl
 service {
   name = "product-api"
   id = "product-api"
-  port = 9093
+  port = 9090
+  check = {
+    http = "http://localhost:9090/health"
+    interval = "5s"
+    method = "GET"
+    name = "http health check"
+    timeout = "2s"
+  }
   connect {
     sidecar_service {
       proxy {
         upstreams = [
           {
             destination_name = "postgres"
-            local_bind_port  = 5342
+            local_bind_port  = 5432
           }
         ]
       }
@@ -124,7 +131,7 @@ chmod +x /product-api
 #application configuration
 cat <<EOF > /conf.json
 {
-  "db_connection": "host=localhost port=5432 user=postgres password=${postgres_password} dbname=${env} sslmode=enable",
+  "db_connection": "host=localhost port=5432 user=postgres@${env} password=${postgres_password} dbname=postgres sslmode=disable",
   "bind_address": ":9090"
 }
 EOF
