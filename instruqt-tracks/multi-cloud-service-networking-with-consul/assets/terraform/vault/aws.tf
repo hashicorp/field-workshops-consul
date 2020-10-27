@@ -40,6 +40,13 @@ resource "aws_security_group" "vault" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port   = 8301
+    to_port     = 8301
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -66,6 +73,7 @@ resource "aws_instance" "vault" {
 data "template_file" "vault" {
   template = file("${path.module}/scripts/aws_vault.sh")
   vars = {
+    env     = data.terraform_remote_state.infra.outputs.env
     kms_key = aws_kms_key.vault.key_id
   }
 }

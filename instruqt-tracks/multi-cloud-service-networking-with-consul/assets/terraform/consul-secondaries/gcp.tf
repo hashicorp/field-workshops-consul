@@ -49,7 +49,7 @@ data "template_file" "gcp-server-init" {
   template = file("${path.module}/scripts/gcp_consul_server.sh")
   vars = {
     primary_wan_gateway = "${data.terraform_remote_state.consul-primary.outputs.aws_mgw_public_ip}:443",
-    internal_lb = data.google_compute_forwarding_rule.consul.service_name
+    internal_lb = "consul.consul-ilb.il4.us-central1.lb.${var.gcp_project_id}.internal"
   }
 }
 
@@ -155,8 +155,4 @@ module "gce-ilb" {
   backends = [
     { group = google_compute_instance_group.consul.id, description = "" },
   ]
-}
-
-data "google_compute_forwarding_rule" "consul" {
-  name = "consul-ilb"
 }

@@ -15,5 +15,5 @@ output "azure_mgw_public_ip" {
 }
 
 output "gcp_internal_consul_dns" {
-  value = data.google_compute_forwarding_rule.consul.service_name
+  value = "consul.consul-ilb.il4.us-central1.lb.${var.gcp_project_id}.internal"
 }

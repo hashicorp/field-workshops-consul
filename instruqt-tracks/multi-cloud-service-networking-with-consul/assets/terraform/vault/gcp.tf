@@ -26,6 +26,10 @@ resource "google_compute_instance" "vault" {
     }
   }
 
+  metadata = {
+    ssh-keys = "ubuntu:${var.ssh_public_key}"
+  }
+
   metadata_startup_script = data.template_file.gcp-vault-init.rendered
 
   tags = ["vault-${data.terraform_remote_state.infra.outputs.env}"]
@@ -41,6 +45,8 @@ data "template_file" "gcp-vault-init" {
   template = file("${path.module}/scripts/gcp_vault.sh")
   vars = {
     project = var.gcp_project_id
+    sa      = google_service_account.vault_service_account.email
+    env     = data.terraform_remote_state.infra.outputs.env
   }
 }
 
@@ -72,6 +78,22 @@ resource "google_project_iam_binding" "crypto_binding" {
 
 resource "google_project_iam_binding" "sa_binding" {
   role = "roles/iam.serviceAccountKeyAdmin"
+
+  members = [
+    "serviceAccount:${google_service_account.vault_service_account.email}",
+  ]
+}
+
+resource "google_project_iam_binding" "reader_binding" {
+  role = "roles/compute.viewer"
+
+  members = [
+    "serviceAccount:${google_service_account.vault_service_account.email}",
+  ]
+}
+
+resource "google_project_iam_binding" "token_creater_binding" {
+  role = "roles/iam.serviceAccountTokenCreator"
 
   members = [
     "serviceAccount:${google_service_account.vault_service_account.email}",

@@ -19,8 +19,6 @@ resource "azurerm_network_interface" "vm" {
 }
 
 resource "azurerm_virtual_machine" "vm" {
-  count = 2
-
   name                  = "product-api-vm"
   resource_group_name   = data.terraform_remote_state.infra.outputs.azure_rg_name
   location              = data.terraform_remote_state.infra.outputs.azure_rg_location

@@ -91,6 +91,8 @@ data "template_file" "azure-vault-init" {
     tenant_id  = data.azurerm_client_config.current.tenant_id
     vault_name = azurerm_key_vault.vault.name
     key_name   = azurerm_key_vault_key.vault.name
+    env             = data.terraform_remote_state.infra.outputs.env
+    subscription_id = data.azurerm_subscription.current.subscription_id
   }
 }
 
