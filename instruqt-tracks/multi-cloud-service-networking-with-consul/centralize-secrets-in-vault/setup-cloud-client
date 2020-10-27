@@ -74,5 +74,7 @@ vault auth enable userpass
 vault write auth/userpass/users/admin \
     password=admin \
     policies=admin
+vault secrets enable transit
+vault write -f transit/keys/payments
 
 exit 0
