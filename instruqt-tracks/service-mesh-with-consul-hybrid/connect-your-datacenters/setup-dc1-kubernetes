@@ -99,7 +99,7 @@ EOF
 
 #Apply Consul helm
 cd /root
-git clone https://github.com/hashicorp/consul-helm.git
-helm install -f consul-values.yaml lab ./consul-helm --wait
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm install lab hashicorp/consul -f consul-values.yaml --wait --debug
 
 exit 0
