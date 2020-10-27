@@ -320,7 +320,7 @@ challenges:
 
     ```
     kubectl get pod --selector=app=prometheus
-    kubectl get pod --selector=app=grafana
+    kubectl get pod --selector=app.kubernetes.io/name=grafana
     ```
 
     They were installed via their respective helm charts.
@@ -1000,4 +1000,4 @@ challenges:
     port: 31800
   difficulty: basic
   timelimit: 5400
-checksum: "10236519882971398810"
+checksum: "5818011293351747119"
