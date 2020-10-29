@@ -21,6 +21,18 @@ This workshop is a crash course in the Consul OSS adoption journey. Participants
 ### Prerequisites
 Prerequisites are minimal. All that is required to participate in the workshop is a web browser and Internet access. No software needs to be downloaded or installed. Self-contained lab environments run on the Instruqt platform, and markdown-based slide decks are published as Github Pages websites.
 
+### Scheduling your workshop
+Please add all workshops, both public and private, to the shared instruqt-workshops Google calendar as follows:
+
+1. Create a new event on the instruqt-workshops calendar and set the name to the name of your workshop which could match a name being used by Field Marketing if it is public or the name of a specific customer and a product if it is private.
+2. Set the begin and end times of the event to the begin and end times of your workshop.
+3. Include the following information in the description:
+    1. The name of the host (probably yourself) after "Host:"
+    2. The names of presenters after "Presenters:"
+    3. A list of tracks that your workshop will use after "Tracks:", listing the URL of each track on its own line.
+
+Before saving the event, be sure to set the calendar as "instruqt-workshops" instead of your own personal calendar.
+
 ### Email invitation
 Here is some boilerplate text you can use or customize when inviting or announcing your workshop:
 
