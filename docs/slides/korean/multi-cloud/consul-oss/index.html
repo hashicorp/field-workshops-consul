@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Introduction to Consul OSS</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+  <link REL="stylesheet" TYPE="text/css" HREF="https://hashicorp.github.io/field-workshops-assets/assets/css/adirondack.css">
+  <link REL="stylesheet" TYPE="text/css" HREF="https://hashicorp.github.io/field-workshops-assets/assets/css/apron.css">
+  <link REL="stylesheet" TYPE="text/css" HREF="https://hashicorp.github.io/field-workshops-assets/assets/css/descartes.css">
+  <link REL="stylesheet" TYPE="text/css" HREF="https://hashicorp.github.io/field-workshops-assets/assets/css/hashicorp.css">
+  <link REL="stylesheet" TYPE="text/css" HREF="https://hashicorp.github.io/field-workshops-assets/assets/css/all.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://hashicorp.github.io/field-workshops-assets/assets/js/link.js"></script>
+  <script src="https://hashicorp.github.io/field-workshops-assets/assets/js/story.js"></script>
+
+  <style type="text/css">
+    .remark-container {
+      background-color: #CA2171;
+    }
+  </style>
+
+  <!--
+  HashiCorp Colors
+  Vagrant    #1563FF
+  Packer     #00ACFF
+  Terraform  #623CE4
+  Vault      #000000
+  Nomad      #00BC7F
+  Consul     #CA2171
+  -->
+
+</head>
+
+<body>
+    <script src="https://remarkjs.com/downloads/remark-0.14.0.min.js" type="text/javascript"></script>
+    <script>
+      remark.macros.scale = function (percentage) {
+        var url = this;
+        return '<img src="' + url + '" style="width: ' + percentage + '" />';
+      };
+      // Place all of your files here
+      sourceUrls = [
+        'consul-0.md',
+        'consul-1.md',
+        'consul-2.md',
+        'consul-3.md',
+        'consul-4.md',
+        'consul-5.md',
+        'consul-6.md',
+        'consul-7.md',
+        'consul-99.md'
+      ]
+      var xmlhttp = new XMLHttpRequest();
+      var source = ""
+      for (var i = 0; i < sourceUrls.length; i++) {
+        xmlhttp.open('GET', sourceUrls[i], false);
+        xmlhttp.send();
+        source += xmlhttp.responseText;
+        // Files shouldn't have --- at the head or foot
+        // It is added automatically here
+        if (i + 1 < sourceUrls.length) {
+          source += "\n---\n"
+        }
+      };
+      var slideshow = remark.create({
+        ratio: '16:9',
+        highlightLines: 'true',
+        source: source
+      });
+    </script>
+</body>
+
+</html>
