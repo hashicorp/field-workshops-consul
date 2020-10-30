@@ -2,7 +2,7 @@ version: 2
 jobs:
   validate:
     docker:
-      - image: ubuntu:bionic
+      - image: docker.mirror.hashicorp.services/ubuntu:bionic
     steps:
       - checkout
       - run:
@@ -30,7 +30,7 @@ jobs:
             done
   consul-basics:
     docker:
-      - image: ubuntu:latest
+      - image: docker.mirror.hashicorp.services/ubuntu:latest
     steps:
       - checkout
       - run:
@@ -69,7 +69,7 @@ jobs:
             fi
   service-discovery-with-consul:
     docker:
-      - image: ubuntu:latest
+      - image: docker.mirror.hashicorp.services/ubuntu:latest
     steps:
       - checkout
       - run:
@@ -108,7 +108,7 @@ jobs:
             fi
   service-mesh-with-consul:
     docker:
-      - image: ubuntu:latest
+      - image: docker.mirror.hashicorp.services/ubuntu:latest
     steps:
       - checkout
       - run:
@@ -147,7 +147,7 @@ jobs:
             fi
   service-mesh-with-consul-k8s:
     docker:
-      - image: ubuntu:latest
+      - image: docker.mirror.hashicorp.services/ubuntu:latest
     steps:
       - checkout
       - run:
@@ -186,7 +186,7 @@ jobs:
             fi
   service-mesh-with-consul-hybrid:
     docker:
-      - image: ubuntu:latest
+      - image: docker.mirror.hashicorp.services/ubuntu:latest
     steps:
       - checkout
       - run:
@@ -225,7 +225,7 @@ jobs:
             fi
   consul-on-aws:
     docker:
-      - image: ubuntu:latest
+      - image: docker.mirror.hashicorp.services/ubuntu:latest
     steps:
       - checkout
       - run:
@@ -265,7 +265,7 @@ jobs:
             fi
   f5-hashicorp:
     docker:
-      - image: ubuntu:latest
+      - image: docker.mirror.hashicorp.services/ubuntu:latest
     steps:
       - checkout
       - run:
@@ -305,7 +305,7 @@ jobs:
             fi
   hcs-on-azure:
     docker:
-      - image: ubuntu:latest
+      - image: docker.mirror.hashicorp.services/ubuntu:latest
     steps:
       - checkout
       - run:
