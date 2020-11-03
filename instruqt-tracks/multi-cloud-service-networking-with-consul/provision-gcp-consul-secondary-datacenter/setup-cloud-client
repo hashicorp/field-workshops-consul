@@ -1,0 +1,12 @@
+#!/bin/bash
+
+cd /root/terraform/gcp-consul-secondary
+terraform init
+
+set-workdir /root/terraform/gcp-consul-secondary
+
+cat << EOF > /root/terraform/gcp-consul-secondary/terraform.tfvars
+gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
+EOF
+
+exit 0

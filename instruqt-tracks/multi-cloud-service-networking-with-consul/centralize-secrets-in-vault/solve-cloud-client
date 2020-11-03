@@ -17,9 +17,12 @@ vault secrets enable -version=2 kv
 vault secrets enable pki
 
 #set up CA
-vault write pki/root/generate/internal \
+private_key=$(vault write -field private_key pki/root/generate/exported\
     common_name="HashiCorp CA" \
-    ttl=8760h
+    key_type="ec" \
+    key_bits="521" \
+    ttl=8760h)
+vault kv put kv/pki private_key="${private_key}"
 vault write pki/roles/consul \
     allowed_domains=consul,internal \
     allow_subdomains=true \

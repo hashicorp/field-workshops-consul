@@ -1,9 +1,3 @@
-provider "google" {
-  version = "~> 3.43.0"
-  region  = "us-central1"
-  project = var.gcp_project_id
-}
-
 provider "azurerm" {
   version = "=2.20.0"
   features {}
@@ -13,7 +7,7 @@ data "terraform_remote_state" "consul-primary" {
   backend = "local"
 
   config = {
-    path = "../consul-primary/terraform.tfstate"
+    path = "../aws-consul-primary/terraform.tfstate"
   }
 }
 

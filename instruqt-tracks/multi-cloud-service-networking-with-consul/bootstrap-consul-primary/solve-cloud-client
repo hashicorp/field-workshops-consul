@@ -35,13 +35,19 @@ namespace_prefix "" {
 consul acl token update -id anonymous -policy-name anonymous
 
 #create the replication token
-echo 'acl = "write"
-
-operator = "write"
-
-service_prefix "" {
+echo 'operator = "write"
+agent_prefix "" {
   policy = "read"
-  intentions = "read"
+}
+node_prefix "" {
+  policy = "write"
+}
+namespace_prefix "" {
+  acl = "write"
+  service_prefix "" {
+    policy = "read"
+    intentions = "read"
+  }
 }' |  consul acl policy create -name replication -rules -
 
 #create the consul token with the seeded secret
