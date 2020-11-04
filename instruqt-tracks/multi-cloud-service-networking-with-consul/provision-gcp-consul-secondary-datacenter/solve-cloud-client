@@ -1,0 +1,90 @@
+#!/bin/bash
+
+#static IP for SANs
+gcloud beta compute addresses create internal-10-1-0-10 \
+    --region=us-central1 \
+    --subnet=shared \
+    --addresses=10.1.0.10 \
+    --purpose=SHARED_LOADBALANCER_VIP
+
+#GKE creds
+gcloud container clusters get-credentials $(terraform output -state /root/terraform/gcp-consul-secondary/terraform.tfstate gcp_gke_cluster_shared_name)  --region us-central1-a
+
+#create federation secret
+aws_mgw=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_mgw_public_ip)
+server_json=$( jq -n \
+                  --arg mgw "$aws_mgw" \
+                  '{primary_datacenter: "aws-us-east-1",primary_gateways:["\($mgw):443"]}' )
+cat <<EOF>  /root/terraform/gcp-consul-secondary/consul-federation.json
+{
+"apiVersion": "v1",
+"kind": "Secret",
+  "data": {
+    "caCert": "$(vault read -field certificate pki/cert/ca | base64 -w 0)",
+    "caKey": "$(vault kv get -field private_key kv/pki | base64 -w 0)",
+    "gossipEncryptionKey": "$(vault kv get -field gossip_key kv/consul | base64 -w 0)",
+    "replicationToken": "$(vault kv get -field replication_token kv/consul | base64 -w 0)",
+    "serverConfigJSON": "$(echo $server_json | base64 -w 0)"
+    },
+    "metadata": {
+        "name": "consul-federation",
+        "namespace": "default"
+    }
+}
+EOF
+kubectl apply -f /root/terraform/gcp-consul-secondary/consul-federation.json
+
+#helm config
+cat <<EOF>  /root/terraform/gcp-consul-secondary/consul-values.yaml
+global:
+  name: consul
+  datacenter: gcp-us-central-1
+  tls:
+    enabled: true
+    caCert:
+      secretName: consul-federation
+      secretKey: caCert
+    caKey:
+      secretName: consul-federation
+      secretKey: caKey
+    serverAdditionalIPSANs:
+      - 10.1.0.10
+  gossipEncryption:
+    secretName: consul-federation
+    secretKey: gossipEncryptionKey
+  acls:
+    manageSystemACLs: true
+    replicationToken:
+      secretName: consul-federation
+      secretKey: replicationToken
+  federation:
+    enabled: true
+ui:
+  enabled: true
+  service:
+    enabled: true
+    type: LoadBalancer
+    annotations: |
+     "cloud.google.com/load-balancer-type": "Internal"
+    additionalSpec: |
+      loadBalancerIP: 10.1.0.10
+connectInject:
+  enabled: true
+server:
+  extraVolumes:
+    - type: secret
+      name: consul-federation
+      items:
+        - key: serverConfigJSON
+          path: config.json
+      load: true
+client:
+  enabled: true
+meshGateway:
+  enabled: true
+EOF
+
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm install hashicorp hashicorp/consul -f /root/terraform/gcp-consul-secondary/consul-values.yaml --debug --wait
+
+exit 0

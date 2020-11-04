@@ -9,4 +9,7 @@ cat << EOF > /root/terraform/gcp-consul-secondary/terraform.tfvars
 gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
 EOF
 
+#helm3
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
 exit 0

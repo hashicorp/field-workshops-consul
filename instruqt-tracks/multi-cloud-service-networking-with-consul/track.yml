@@ -129,7 +129,7 @@ challenges:
     port: 8200
   difficulty: basic
   timelimit: 300
-- slug: provision-consul-primary
+- slug: provision-aws-consul-primary
   id: yvfuoi5cz8ll
   type: challenge
   title: Provision AWS Consul Primary Datacenter
@@ -679,4 +679,4 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-checksum: "5987748094365826316"
+checksum: "3267701544470423548"

@@ -2,7 +2,7 @@
 
 #ui access
 vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
-echo "export VAULT_ADDR=http://${vault_lb}" >> ~/.bashrc
+echo "export VAULT_ADDR=http://${vault_lb}:8200" >> ~/.bashrc
 cat << EOF > /etc/nginx/conf.d/vault.conf
 server {
   listen 8200;

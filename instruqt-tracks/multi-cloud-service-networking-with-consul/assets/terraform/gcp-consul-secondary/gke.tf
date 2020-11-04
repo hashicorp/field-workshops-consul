@@ -1,7 +1,10 @@
 resource "google_container_cluster" "shared" {
   name               = "shared-${data.terraform_remote_state.infra.outputs.env}"
   location           = "us-central1-a"
-  initial_node_count = 2
+  initial_node_count = 3
+
+  network = "vpc-shared-svcs"
+  subnetwork = "shared"
 
   master_auth {
     username = ""

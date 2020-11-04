@@ -6,7 +6,7 @@ export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
 export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
 
 #anonymous
-export CONSUL_HTTP_ADDR="http://$(terraform output -state /root/terraform/consul-primary/terraform.tfstate aws_consul_public_ip):8500"
+export CONSUL_HTTP_ADDR="http://$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip):8500"
 export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
 
 echo 'node_prefix "" {
@@ -42,12 +42,10 @@ agent_prefix "" {
 node_prefix "" {
   policy = "write"
 }
-namespace_prefix "" {
-  acl = "write"
-  service_prefix "" {
-    policy = "read"
-    intentions = "read"
-  }
+acl = "write"
+service_prefix "" {
+  policy = "read"
+  intentions = "read"
 }' |  consul acl policy create -name replication -rules -
 
 #create the consul token with the seeded secret
