@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#login
+AWS_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
+export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
+export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
+
 #static IP for SANs
 gcloud beta compute addresses create internal-10-1-0-10 \
     --region=us-central1 \
@@ -7,15 +12,19 @@ gcloud beta compute addresses create internal-10-1-0-10 \
     --addresses=10.1.0.10 \
     --purpose=SHARED_LOADBALANCER_VIP
 
+gcloud beta compute addresses create internal-10-1-0-11 \
+    --region=us-central1 \
+    --subnet=shared \
+    --addresses=10.1.0.11 \
+    --purpose=SHARED_LOADBALANCER_VIP
+
 #GKE creds
 gcloud container clusters get-credentials $(terraform output -state /root/terraform/gcp-consul-secondary/terraform.tfstate gcp_gke_cluster_shared_name)  --region us-central1-a
 
 #create federation secret
 aws_mgw=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_mgw_public_ip)
-server_json=$( jq -n \
-                  --arg mgw "$aws_mgw" \
-                  '{primary_datacenter: "aws-us-east-1",primary_gateways:["\($mgw):443"]}' )
-cat <<EOF>  /root/terraform/gcp-consul-secondary/consul-federation.json
+server_json=$(jq -n --arg mgw "$aws_mgw" '{primary_datacenter: "aws-us-east-1",primary_gateways:["\($mgw):443"]}')
+cat <<EOF | kubectl apply -f -
 {
 "apiVersion": "v1",
 "kind": "Secret",
@@ -32,7 +41,6 @@ cat <<EOF>  /root/terraform/gcp-consul-secondary/consul-federation.json
     }
 }
 EOF
-kubectl apply -f /root/terraform/gcp-consul-secondary/consul-federation.json
 
 #helm config
 cat <<EOF>  /root/terraform/gcp-consul-secondary/consul-values.yaml
@@ -49,6 +57,7 @@ global:
       secretKey: caKey
     serverAdditionalIPSANs:
       - 10.1.0.10
+    enableAutoEncrypt: true
   gossipEncryption:
     secretName: consul-federation
     secretKey: gossipEncryptionKey
@@ -64,13 +73,9 @@ ui:
   service:
     enabled: true
     type: LoadBalancer
-    annotations: |
-     "cloud.google.com/load-balancer-type": "Internal"
-    additionalSpec: |
-      loadBalancerIP: 10.1.0.10
-connectInject:
-  enabled: true
 server:
+  replicas: 1
+  bootstrapExpect: 1
   extraVolumes:
     - type: secret
       name: consul-federation
@@ -82,9 +87,125 @@ client:
   enabled: true
 meshGateway:
   enabled: true
+  replicas: 1
+syncCatalog:
+  enabled: true
+  toConsul: true
+  toK8S: false
+connectInject:
+  enabled: true
 EOF
 
-helm repo add hashicorp https://helm.releases.hashicorp.com
+cat <<EOF>  /root/terraform/gcp-consul-secondary/consul-join.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul-join
+  annotations:
+    "cloud.google.com/load-balancer-type": "Internal"
+spec:
+  selector:
+    app: consul
+  ports:
+    - name: api
+      protocol: TCP
+      port: 8501
+      targetPort: 8501
+    - name: rpc
+      protocol: TCP
+      port: 8300
+      targetPort: 8300
+    - name: gossip
+      protocol: TCP
+      port: 8301
+      targetPort: 8301
+  type: LoadBalancer
+  loadBalancerIP: 10.1.0.10
+EOF
+
 helm install hashicorp hashicorp/consul -f /root/terraform/gcp-consul-secondary/consul-values.yaml --debug --wait
+kubectl apply -f /root/terraform/gcp-consul-secondary/consul-join.yaml
+
+helm install hashicorp hashicorp/consul -f react-values.yaml --debug --wait
+helm install hashicorp hashicorp/consul -f graphql-values.yaml --debug --wait
+
+kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
+kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
+acl_config=$(jq -n --arg token "$(vault kv get -field=master_token kv/consul)" '{acl: { enabled: true, default_policy: "deny", enable_token_persistence: true, tokens: { agent: $token } } }' | base64 -w 0 )
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hashicorp-consul-acl-config
+type: Opaque
+data:
+  acl.json: $acl_config
+EOF
+
+gcloud container clusters get-credentials $(terraform output -state /root/terraform/scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_name) --region us-central1-a
+gcloud container clusters get-credentials $(terraform output -state /root/terraform/scheduler-services/terraform.tfstate gcp_gke_cluster_react_name) --region us-central1-a
+
+#helm config
+cat <<EOF>  /root/terraform/scheduler-services/react-values.yaml
+global:
+  enabled: false
+  name: consul
+  datacenter: gcp-us-central-1
+  acls:
+    manageSystemACLs: false
+  tls:
+    enabled: true
+    enableAutoEncrypt: true
+    caCert:
+      secretName: hashicorp-consul-ca-cert
+      secretKey: tls.crt
+  gossipEncryption:
+    secretName: hashicorp-consul-gossip-key
+    secretKey: key
+client:
+  enabled: true
+  join:
+    - "10.1.0.10"
+  extraVolumes:
+  - type: 'secret'
+    name: 'hashicorp-consul-acl-config'
+    load: true
+externalServers:
+  enabled: true
+  hosts:
+    - '10.1.0.10'
+  k8sAuthMethodHost: 'https://kubernetes.example.com:443'
+EOF
+
+cat <<EOF>  /root/terraform/scheduler-services/graphql-values.yaml
+global:
+  enabled: false
+  name: consul
+  datacenter: gcp-us-central-1
+  acls:
+    manageSystemACLs: false
+  tls:
+    enabled: true
+    enableAutoEncrypt: true
+    caCert:
+      secretName: hashicorp-consul-ca-cert
+      secretKey: tls.crt
+  gossipEncryption:
+    secretName: hashicorp-consul-gossip-key
+    secretKey: key
+client:
+  enabled: true
+  join:
+    - "10.1.0.10"
+  extraVolumes:
+  - type: 'secret'
+    name: 'hashicorp-consul-acl-config'
+    load: true
+externalServers:
+  enabled: true
+  hosts:
+    - '10.1.0.10'
+  k8sAuthMethodHost: 'https://kubernetes.example.com:443'
+EOF
 
 exit 0

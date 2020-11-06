@@ -54,7 +54,6 @@ vault write auth/aws/role/vault \
   auth_type=iam \
   bound_iam_principal_arn="${AWS_VAULT_IAM_ROLE_ARN}" \
   policies=admin ttl=30m
-
 AZURE_VAULT_SERVICE_PRINCIPAL_ID=$(terraform output -state /root/terraform/vault/terraform.tfstate azure_vault_user_assigned_identity_principal_id)
 vault write auth/azure/role/vault \
   bound_service_principal_ids="${AZURE_VAULT_SERVICE_PRINCIPAL_ID}" \

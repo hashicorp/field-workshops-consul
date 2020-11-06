@@ -11,5 +11,6 @@ EOF
 
 #helm3
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+helm repo add hashicorp https://helm.releases.hashicorp.com
 
 exit 0

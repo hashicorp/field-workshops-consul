@@ -1,7 +1,7 @@
 resource "google_container_cluster" "shared" {
   name               = "shared-${data.terraform_remote_state.infra.outputs.env}"
   location           = "us-central1-a"
-  initial_node_count = 3
+  initial_node_count = 1
 
   network = "vpc-shared-svcs"
   subnetwork = "shared"
@@ -24,6 +24,8 @@ resource "google_container_cluster" "shared" {
     metadata = {
       disable-legacy-endpoints = "true"
     }
+
+    tags = ["consul-server"]
   }
 
   enable_legacy_abac = true
