@@ -60,7 +60,6 @@ acl {
   default_policy = "deny"
   enable_token_persistence = true
   tokens {
-    master = "$${MASTER_TOKEN}"
     agent  = "$${MASTER_TOKEN}"
     replication = "$${REPLICATION_TOKEN}"
   }

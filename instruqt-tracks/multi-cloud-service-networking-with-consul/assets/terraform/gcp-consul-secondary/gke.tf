@@ -21,6 +21,8 @@ resource "google_container_cluster" "shared" {
       "https://www.googleapis.com/auth/monitoring",
     ]
 
+    machine_type = "n1-standard-2"
+
     metadata = {
       disable-legacy-endpoints = "true"
     }

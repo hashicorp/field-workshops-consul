@@ -1,3 +1,5 @@
+data "google_client_config" "provider" {}
+
 provider "aws" {
   version = "~> 3.0"
   region  = "us-east-1"
@@ -23,4 +25,26 @@ data "terraform_remote_state" "iam" {
   config = {
     path = "../iam/terraform.tfstate"
   }
+}
+
+provider "kubernetes" {
+  load_config_file = false
+  alias = "graphql"
+
+  host  = "https://${google_container_cluster.graphql.endpoint}"
+  token = data.google_client_config.provider.access_token
+  cluster_ca_certificate = base64decode(
+    google_container_cluster.graphql.master_auth[0].cluster_ca_certificate,
+  )
+}
+
+provider "kubernetes" {
+  load_config_file = false
+  alias = "react"
+
+  host  = "https://${google_container_cluster.react.endpoint}"
+  token = data.google_client_config.provider.access_token
+  cluster_ca_certificate = base64decode(
+    google_container_cluster.react.master_auth[0].cluster_ca_certificate,
+  )
 }
