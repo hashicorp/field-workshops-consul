@@ -5,6 +5,10 @@ AWS_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate a
 export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
 export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
 
+#anonymous
+export CONSUL_HTTP_ADDR="http://$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip):8500"
+export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+
 #static IP for SANs
 gcloud beta compute addresses create internal-10-1-0-10 \
     --region=us-central1 \
@@ -16,6 +20,12 @@ gcloud beta compute addresses create internal-10-1-0-11 \
     --region=us-central1 \
     --subnet=shared \
     --addresses=10.1.0.11 \
+    --purpose=SHARED_LOADBALANCER_VIP
+
+gcloud beta compute addresses create internal-10-1-0-12 \
+    --region=us-central1 \
+    --subnet=shared \
+    --addresses=10.1.0.12 \
     --purpose=SHARED_LOADBALANCER_VIP
 
 #GKE creds
@@ -131,7 +141,8 @@ helm install hashicorp hashicorp/consul -f graphql-values.yaml --debug --wait
 
 kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
 kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
-acl_config=$(jq -n --arg token "$(vault kv get -field=master_token kv/consul)" '{acl: { enabled: true, default_policy: "deny", enable_token_persistence: true, tokens: { agent: $token } } }' | base64 -w 0 )
+kubectl create secret generic hashicorp-consul-connect-inject-acl-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
+acl_config=$(jq -n --arg token "$(vault kv get -field=master_token kv/consul)" '{acl: { enabled: true, default_policy: "deny", enable_token_persistence: true, tokens: { agent: $token, default: $token } } }' | base64 -w 0 )
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Secret
@@ -174,7 +185,21 @@ externalServers:
   enabled: true
   hosts:
     - '10.1.0.10'
-  k8sAuthMethodHost: 'https://kubernetes.example.com:443'
+connectInject:
+  enabled: true
+  default: true
+  k8sAllowNamespaces: ["default"]
+  aclInjectToken:
+    secretName: hashicorp-consul-connect-inject-acl-token
+    secretKey: token
+  overrideAuthMethodName: hashicorp-consul-k8s-auth-method-react
+ingressGateways:
+  enabled: true
+  gateways:
+    - name: react-ingress-gateway
+      replicas: 1
+      service:
+        type: LoadBalancer
 EOF
 
 cat <<EOF>  /root/terraform/scheduler-services/graphql-values.yaml
@@ -205,7 +230,66 @@ externalServers:
   enabled: true
   hosts:
     - '10.1.0.10'
-  k8sAuthMethodHost: 'https://kubernetes.example.com:443'
+connectInject:
+  enabled: true
+  default: true
+  k8sAllowNamespaces: ["default"]
+  aclInjectToken:
+    secretName: hashicorp-consul-connect-inject-acl-token
+    secretKey: token
+  overrideAuthMethodName: hashicorp-consul-k8s-auth-method-graphql
+ingressGateways:
+  enabled: true
+  gateways:
+    - name: graphql-ingress-gateway
+      replicas: 1
+      service:
+        type: LoadBalancer
 EOF
 
+
+export CONSUL_HTTP_SSL_VERIFY=false
+export CONSUL_HTTP_ADDR=https://35.223.180.93:443
+export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+
+consul acl auth-method create -type "kubernetes" \
+    -name "hashicorp-consul-k8s-auth-method-react" \
+    -description "react apps" \
+    -kubernetes-host "https://$(terraform output -state /root/terraform/scheduler-services/terraform.tfstate gcp_gke_cluster_react_endpoint)" \
+    -kubernetes-ca-cert "$(terraform output -state /root/terraform/scheduler-services/terraform.tfstate gcp_gke_cluster_react_cluster_ca_certificate | base64 -d)" \
+    -kubernetes-service-account-jwt "$(kubectl get secret $(kubectl get sa hashicorp-consul-connect-injector-authmethod-svc-account -o json | jq -r .secrets[0].name) -o json | jq -r .data.token | base64 -d)"
+consul acl binding-rule create -datacenter=gcp-us-central-1  -method 'hashicorp-consul-k8s-auth-method-react' \
+    -description 'react apps' \
+    -bind-type 'service' \
+    -bind-name '${serviceaccount.name}' \
+    -selector 'serviceaccount.namespace==default'
+
+consul acl auth-method create -type "kubernetes" \
+    -name "hashicorp-consul-k8s-auth-method-graphql" \
+    -description "graphql apps" \
+    -kubernetes-host "https://$(terraform output -state /root/terraform/scheduler-services/terraform.tfstate gcp_gke_cluster_react_endpoint)" \
+    -kubernetes-ca-cert "$(terraform output -state /root/terraform/scheduler-services/terraform.tfstate gcp_gke_cluster_react_cluster_ca_certificate | base64 -d)" \
+    -kubernetes-service-account-jwt "$(kubectl get secret $(kubectl get sa hashicorp-consul-connect-injector-authmethod-svc-account -o json | jq -r .secrets[0].name) -o json | jq -r .data.token | base64 -d)"
+
+consul acl binding-rule create -datacenter gcp-us-central-1 -method 'hashicorp-consul-k8s-auth-method-graphql' \
+    -description 'graphql apps' \
+    -bind-type 'service' \
+    -bind-name '${serviceaccount.name}' \
+    -selector 'serviceaccount.namespace==default'
+
+Kind = "ingress-gateway"
+Name = "react-ingress-gateway"
+
+Listeners = [
+ {
+   Port = 8080
+   Protocol = "tcp"
+   Services = [
+     {
+       Name = "frontend"
+     }
+   ]
+ }
+]
+        
 exit 0

@@ -3,7 +3,7 @@
 cd /root/terraform/database-services
 terraform init
 
-AZURE_CONSUL_IP=$(terraform output -state /root/terraform/consul-secondaries/terraform.tfstate azure_consul_public_ip)
+AZURE_CONSUL_IP=$(terraform output -state /root/terraform/azure-consul-secondary/terraform.tfstate azure_consul_public_ip)
 cat << EOF > /root/terraform/database-services/terraform.tfvars
 consul_http_addr="http://${AZURE_CONSUL_IP}:8500"
 EOF

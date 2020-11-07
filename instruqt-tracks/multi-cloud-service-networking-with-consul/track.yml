@@ -383,80 +383,6 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-- slug: provision-scheduler-services
-  id: 2bhfenznbq26
-  type: challenge
-  title: Provision Scheduler Services
-  teaser: A short description of the challenge.
-  assignment: |-
-    The assignment the participant needs to complete in order to proceed.
-
-    You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
-  tabs:
-  - title: Shell
-    type: terminal
-    hostname: cloud-client
-  - title: Cloud Consoles
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 80
-  - title: Terraform
-    type: code
-    hostname: cloud-client
-    path: /root
-  - title: AWS - Vault
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8200
-  - title: AWS - Consul
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8500
-  difficulty: basic
-  timelimit: 300
-- slug: configure-consul-in-k8s
-  id: xrixfhrftwxz
-  type: challenge
-  title: Configure Consul in K8s
-  teaser: A short description of the challenge.
-  assignment: |-
-    The assignment the participant needs to complete in order to proceed.
-
-    You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
-  tabs:
-  - title: Shell
-    type: terminal
-    hostname: cloud-client
-  - title: Cloud Consoles
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 80
-  - title: Terraform
-    type: code
-    hostname: cloud-client
-    path: /root
-  - title: AWS - Vault
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8200
-  - title: AWS - Consul
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8500
-  difficulty: basic
-  timelimit: 300
 - slug: provision-consul-terminating-gateways
   id: fzmzvxw4yrbv
   type: challenge
@@ -494,6 +420,74 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
+- slug: provision-nomad-scheduler-services
+  id: 2bhfenznbq26
+  type: challenge
+  title: Provision Nomad Scheduler Services
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root
+  - title: AWS - Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: AWS - Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  difficulty: basic
+  timelimit: 300
+- slug: provision-k8s-scheduler-services
+  id: czoxbhi28zz4
+  type: challenge
+  title: Provision K8s Scheduler Services
+  teaser: test
+  assignment: test
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root
+  - title: AWS - Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: AWS - Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  difficulty: basic
+  timelimit: 500
 - slug: configure-intentions
   id: xwvogflavyey
   type: challenge
@@ -679,4 +673,4 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-checksum: "7630935142454767951"
+checksum: "2029923682049310681"

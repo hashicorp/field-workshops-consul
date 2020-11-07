@@ -1,7 +1,8 @@
 #!/bin/bash
 
-#export NOMAD_ADDR=http://3.82.171.64:4646
+#export NOMAD_ADDR=http://3.90.57.60:4646
 
+mkdir /root/nomad
 cat << EOF > /root/nomad/payments.hcl
 job "payments" {
   datacenters = ["aws-us-east-1"]
