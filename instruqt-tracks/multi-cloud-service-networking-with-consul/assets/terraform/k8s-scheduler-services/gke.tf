@@ -1,10 +1,15 @@
 resource "google_container_cluster" "graphql" {
+  provider           = google-beta
+  project            = var.gcp_project_id
   name               = "graphql-${data.terraform_remote_state.infra.outputs.env}"
   location           = "us-central1-a"
   initial_node_count = 1
 
   network = "vpc-shared-svcs"
   subnetwork = "shared"
+
+  networking_mode = "VPC_NATIVE"
+  ip_allocation_policy {}
 
   master_auth {
     username = ""
@@ -95,12 +100,17 @@ resource "kubernetes_cluster_role_binding" "consul-graph-auth-delegator" {
 }
 
 resource "google_container_cluster" "react" {
+  provider           = google-beta
+  project            = var.gcp_project_id
   name               = "react-${data.terraform_remote_state.infra.outputs.env}"
   location           = "us-central1-a"
   initial_node_count = 1
 
   network = "vpc-shared-svcs"
   subnetwork = "shared"
+
+  networking_mode = "VPC_NATIVE"
+  ip_allocation_policy {}
 
   master_auth {
     username = ""

@@ -1,5 +1,3 @@
-data "google_client_config" "provider" {}
-
 provider "google" {
   version = "~> 3.3.0"
   region  = "us-central1"
@@ -8,7 +6,7 @@ provider "google" {
 
 provider "kubernetes" {
   load_config_file = false
-  alias = "graphql"
+  alias            = "graphql"
 
   host  = "https://${google_container_cluster.graphql.endpoint}"
   token = data.google_client_config.provider.access_token
@@ -19,11 +17,21 @@ provider "kubernetes" {
 
 provider "kubernetes" {
   load_config_file = false
-  alias = "react"
+  alias            = "react"
 
   host  = "https://${google_container_cluster.react.endpoint}"
   token = data.google_client_config.provider.access_token
   cluster_ca_certificate = base64decode(
     google_container_cluster.react.master_auth[0].cluster_ca_certificate,
   )
+}
+
+data "google_client_config" "provider" {}
+
+data "terraform_remote_state" "infra" {
+  backend = "local"
+
+  config = {
+    path = "../infra/terraform.tfstate"
+  }
 }

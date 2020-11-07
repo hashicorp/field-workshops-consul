@@ -153,11 +153,11 @@ data:
   acl.json: $acl_config
 EOF
 
-gcloud container clusters get-credentials $(terraform output -state /root/terraform/scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_name) --region us-central1-a
-gcloud container clusters get-credentials $(terraform output -state /root/terraform/scheduler-services/terraform.tfstate gcp_gke_cluster_react_name) --region us-central1-a
+gcloud container clusters get-credentials $(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_name) --region us-central1-a
+gcloud container clusters get-credentials $(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_name) --region us-central1-a
 
 #helm config
-cat <<EOF>  /root/terraform/scheduler-services/react-values.yaml
+cat <<EOF>  /root/terraform/k8s-scheduler-services/react-values.yaml
 global:
   enabled: false
   name: consul
@@ -202,7 +202,7 @@ ingressGateways:
         type: LoadBalancer
 EOF
 
-cat <<EOF>  /root/terraform/scheduler-services/graphql-values.yaml
+cat <<EOF>  /root/terraform/k8s-scheduler-services/graphql-values.yaml
 global:
   enabled: false
   name: consul
@@ -249,16 +249,16 @@ EOF
 
 
 export CONSUL_HTTP_SSL_VERIFY=false
-export CONSUL_HTTP_ADDR=https://35.223.180.93:443
+export CONSUL_HTTP_ADDR=https://35.226.20.208:443
 export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
 
 consul acl auth-method create -type "kubernetes" \
     -name "hashicorp-consul-k8s-auth-method-react" \
     -description "react apps" \
-    -kubernetes-host "https://$(terraform output -state /root/terraform/scheduler-services/terraform.tfstate gcp_gke_cluster_react_endpoint)" \
-    -kubernetes-ca-cert "$(terraform output -state /root/terraform/scheduler-services/terraform.tfstate gcp_gke_cluster_react_cluster_ca_certificate | base64 -d)" \
+    -kubernetes-host "https://$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_endpoint)" \
+    -kubernetes-ca-cert "$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_cluster_ca_certificate | base64 -d)" \
     -kubernetes-service-account-jwt "$(kubectl get secret $(kubectl get sa hashicorp-consul-connect-injector-authmethod-svc-account -o json | jq -r .secrets[0].name) -o json | jq -r .data.token | base64 -d)"
-consul acl binding-rule create -datacenter=gcp-us-central-1  -method 'hashicorp-consul-k8s-auth-method-react' \
+consul acl binding-rule create -method 'hashicorp-consul-k8s-auth-method-react' \
     -description 'react apps' \
     -bind-type 'service' \
     -bind-name '${serviceaccount.name}' \
@@ -267,11 +267,10 @@ consul acl binding-rule create -datacenter=gcp-us-central-1  -method 'hashicorp-
 consul acl auth-method create -type "kubernetes" \
     -name "hashicorp-consul-k8s-auth-method-graphql" \
     -description "graphql apps" \
-    -kubernetes-host "https://$(terraform output -state /root/terraform/scheduler-services/terraform.tfstate gcp_gke_cluster_react_endpoint)" \
-    -kubernetes-ca-cert "$(terraform output -state /root/terraform/scheduler-services/terraform.tfstate gcp_gke_cluster_react_cluster_ca_certificate | base64 -d)" \
+    -kubernetes-host "https://$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_endpoint)" \
+    -kubernetes-ca-cert "$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_cluster_ca_certificate | base64 -d)" \
     -kubernetes-service-account-jwt "$(kubectl get secret $(kubectl get sa hashicorp-consul-connect-injector-authmethod-svc-account -o json | jq -r .secrets[0].name) -o json | jq -r .data.token | base64 -d)"
-
-consul acl binding-rule create -datacenter gcp-us-central-1 -method 'hashicorp-consul-k8s-auth-method-graphql' \
+consul acl binding-rule create -method 'hashicorp-consul-k8s-auth-method-graphql' \
     -description 'graphql apps' \
     -bind-type 'service' \
     -bind-name '${serviceaccount.name}' \
@@ -291,5 +290,5 @@ Listeners = [
    ]
  }
 ]
-        
+
 exit 0

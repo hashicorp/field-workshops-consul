@@ -88,9 +88,9 @@ resource "azurerm_network_interface" "vault" {
 data "template_file" "azure-vault-init" {
   template = file("${path.module}/scripts/azure_vault.sh")
   vars = {
-    tenant_id  = data.azurerm_client_config.current.tenant_id
-    vault_name = azurerm_key_vault.vault.name
-    key_name   = azurerm_key_vault_key.vault.name
+    tenant_id       = data.azurerm_client_config.current.tenant_id
+    vault_name      = azurerm_key_vault.vault.name
+    key_name        = azurerm_key_vault_key.vault.name
     env             = data.terraform_remote_state.infra.outputs.env
     subscription_id = data.azurerm_subscription.current.subscription_id
   }

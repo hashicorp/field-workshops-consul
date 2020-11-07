@@ -1,9 +1,14 @@
 resource "google_container_cluster" "shared" {
+  provider           = google-beta
+  project            = var.gcp_project_id
   name               = "shared-${data.terraform_remote_state.infra.outputs.env}"
   location           = "us-central1-a"
   initial_node_count = 1
 
-  network = "vpc-shared-svcs"
+  networking_mode = "VPC_NATIVE"
+  ip_allocation_policy {}
+
+  network    = "vpc-shared-svcs"
   subnetwork = "shared"
 
   master_auth {

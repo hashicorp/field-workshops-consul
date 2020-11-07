@@ -69,22 +69,22 @@ resource "google_service_account" "vault_service_account" {
 }
 
 resource "google_project_iam_member" "crypto_binding" {
-  role = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+  role   = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member = "serviceAccount:${google_service_account.vault_service_account.email}"
 }
 
 resource "google_project_iam_member" "sa_binding" {
-  role = "roles/iam.serviceAccountKeyAdmin"
+  role   = "roles/iam.serviceAccountKeyAdmin"
   member = "serviceAccount:${google_service_account.vault_service_account.email}"
 }
 
 resource "google_project_iam_member" "reader_binding" {
-  role = "roles/compute.viewer"
+  role   = "roles/compute.viewer"
   member = "serviceAccount:${google_service_account.vault_service_account.email}"
 }
 
 resource "google_project_iam_member" "token_creater_binding" {
-  role = "roles/iam.serviceAccountTokenCreator"
+  role   = "roles/iam.serviceAccountTokenCreator"
   member = "serviceAccount:${google_service_account.vault_service_account.email}"
 }
 
