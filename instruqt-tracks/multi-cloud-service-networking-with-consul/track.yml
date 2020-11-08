@@ -198,6 +198,43 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
+- slug: create-namespaces-and-policies
+  id: o7l9tufsx0pf
+  type: challenge
+  title: Create Namespaces & Policies
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root
+  - title: AWS - Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: AWS - Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  difficulty: basic
+  timelimit: 300
 - slug: provision-azure-consul-secondary-datacenter
   id: wj17mzqxqwwf
   type: challenge
@@ -488,43 +525,6 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 500
-- slug: configure-intentions
-  id: xwvogflavyey
-  type: challenge
-  title: Configure Intentions
-  teaser: A short description of the challenge.
-  assignment: |-
-    The assignment the participant needs to complete in order to proceed.
-
-    You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
-  tabs:
-  - title: Shell
-    type: terminal
-    hostname: cloud-client
-  - title: Cloud Consoles
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 80
-  - title: Terraform
-    type: code
-    hostname: cloud-client
-    path: /root
-  - title: AWS - Vault
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8200
-  - title: AWS - Consul
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8500
-  difficulty: basic
-  timelimit: 300
 - slug: deploy-payments-applications
   id: m1xx8rucidse
   type: challenge
@@ -636,10 +636,10 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-- slug: test-application
-  id: hsvzlsztityh
+- slug: review-application-deployment
+  id: urzpkkqnpl1n
   type: challenge
-  title: Test Application
+  title: Review Application Deployment
   teaser: A short description of the challenge.
   assignment: |-
     The assignment the participant needs to complete in order to proceed.
@@ -673,4 +673,78 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-checksum: "14404679427683077046"
+- slug: configure-intentions
+  id: xwvogflavyey
+  type: challenge
+  title: Configure Intentions
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root
+  - title: AWS - Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: AWS - Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  difficulty: basic
+  timelimit: 300
+- slug: test-application-deployment
+  id: hsvzlsztityh
+  type: challenge
+  title: Test Application Deployment
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root
+  - title: AWS - Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: AWS - Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  difficulty: basic
+  timelimit: 300
+checksum: "16292408614282978988"

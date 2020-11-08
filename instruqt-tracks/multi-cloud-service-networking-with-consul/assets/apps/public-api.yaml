@@ -38,12 +38,12 @@ spec:
       annotations:
         prometheus.io/scrape: "true"
         consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/connect-service-upstreams: "products-api:9090"
+        consul.hashicorp.com/connect-service-upstreams: "product-api:9090:azure-west-us-2,payments:9091:aws-us-east-1"
     spec:
       serviceAccountName: public-api
       containers:
         - name: public-api
-          image: hashicorpdemoapp/public-api:v0.0.1
+          image: hashicorpdemoapp/public-api:v0.0.2
           ports:
             - containerPort: 8080
           env:
@@ -51,3 +51,5 @@ spec:
               value: ":8080"
             - name: PRODUCTS_API_URI
               value: "http://localhost:9090"
+            - name: PAYMENT_API_URI
+              value: "http://localhost:9091"

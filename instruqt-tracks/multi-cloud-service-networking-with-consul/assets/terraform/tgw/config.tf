@@ -3,7 +3,7 @@ resource "consul_config_entry" "aws-terminating_gateway" {
   kind = "terminating-gateway"
 
   config_json = jsonencode({
-    Services = [{ Name = "redis" }]
+    Services = [{ Name = "redis" }, { Name = "vault" }]
   })
 }
 
@@ -12,6 +12,6 @@ resource "consul_config_entry" "azure-terminating_gateway" {
   kind = "terminating-gateway"
 
   config_json = jsonencode({
-    Services = [{ Name = "postgres" }]
+    Services = [{ Name = "postgres" }, { Name = "vault" }]
   })
 }

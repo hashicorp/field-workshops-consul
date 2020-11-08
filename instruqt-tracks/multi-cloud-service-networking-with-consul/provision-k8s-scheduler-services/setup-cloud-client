@@ -9,4 +9,94 @@ EOF
 
 set-workdir /root/terraform/k8s-scheduler-services
 
+cat <<EOF>  /root/terraform/k8s-scheduler-services/react-values.yaml
+global:
+  enabled: false
+  name: consul
+  datacenter: gcp-us-central-1
+  acls:
+    manageSystemACLs: false
+  tls:
+    enabled: true
+    enableAutoEncrypt: true
+    caCert:
+      secretName: hashicorp-consul-ca-cert
+      secretKey: tls.crt
+  gossipEncryption:
+    secretName: hashicorp-consul-gossip-key
+    secretKey: key
+client:
+  enabled: true
+  join:
+    - "10.1.0.10"
+  extraVolumes:
+  - type: 'secret'
+    name: 'hashicorp-consul-acl-config'
+    load: true
+externalServers:
+  enabled: true
+  hosts:
+    - '10.1.0.10'
+connectInject:
+  enabled: true
+  default: true
+  k8sAllowNamespaces: ["default"]
+  aclInjectToken:
+    secretName: hashicorp-consul-connect-inject-acl-token
+    secretKey: token
+  overrideAuthMethodName: hashicorp-consul-k8s-auth-method-react
+ingressGateways:
+  enabled: true
+  gateways:
+    - name: react-ingress-gateway
+      replicas: 1
+      service:
+        type: LoadBalancer
+EOF
+
+cat <<EOF>  /root/terraform/k8s-scheduler-services/graphql-values.yaml
+global:
+  enabled: false
+  name: consul
+  datacenter: gcp-us-central-1
+  acls:
+    manageSystemACLs: false
+  tls:
+    enabled: true
+    enableAutoEncrypt: true
+    caCert:
+      secretName: hashicorp-consul-ca-cert
+      secretKey: tls.crt
+  gossipEncryption:
+    secretName: hashicorp-consul-gossip-key
+    secretKey: key
+client:
+  enabled: true
+  join:
+    - "10.1.0.10"
+  extraVolumes:
+  - type: 'secret'
+    name: 'hashicorp-consul-acl-config'
+    load: true
+externalServers:
+  enabled: true
+  hosts:
+    - '10.1.0.10'
+connectInject:
+  enabled: true
+  default: true
+  k8sAllowNamespaces: ["default"]
+  aclInjectToken:
+    secretName: hashicorp-consul-connect-inject-acl-token
+    secretKey: token
+  overrideAuthMethodName: hashicorp-consul-k8s-auth-method-graphql
+ingressGateways:
+  enabled: true
+  gateways:
+    - name: graphql-ingress-gateway
+      replicas: 1
+      service:
+        type: LoadBalancer
+EOF
+
 exit 0

@@ -1,0 +1,38 @@
+#!/bin/bash
+
+
+#react cluster
+gcloud container clusters get-credentials $(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_name) --region us-central1-a
+kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
+kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
+kubectl create secret generic hashicorp-consul-connect-inject-acl-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
+acl_config=$(jq -n --arg token "$(vault kv get -field=master_token kv/consul)" '{acl: { enabled: true, default_policy: "deny", enable_token_persistence: true, tokens: { agent: $token, default: $token } } }' | base64 -w 0 )
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hashicorp-consul-acl-config
+type: Opaque
+data:
+  acl.json: $acl_config
+EOF
+helm install hashicorp hashicorp/consul -f react-values.yaml --debug --wait
+
+#graphql
+gcloud container clusters get-credentials $(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_name) --region us-central1-a
+kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
+kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
+kubectl create secret generic hashicorp-consul-connect-inject-acl-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
+acl_config=$(jq -n --arg token "$(vault kv get -field=master_token kv/consul)" '{acl: { enabled: true, default_policy: "deny", enable_token_persistence: true, tokens: { agent: $token, default: $token } } }' | base64 -w 0 )
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hashicorp-consul-acl-config
+type: Opaque
+data:
+  acl.json: $acl_config
+EOF
+helm install hashicorp hashicorp/consul -f graphql-values.yaml --debug --wait
+
+exit 0

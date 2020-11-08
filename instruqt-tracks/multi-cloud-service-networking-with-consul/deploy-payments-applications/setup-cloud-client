@@ -1,18 +1,27 @@
 #!/bin/bash
 
-#export NOMAD_ADDR=http://3.90.57.60:4646
+#export NOMAD_ADDR=http://54.175.217.182:4646
 
-mkdir /root/nomad
-cat << EOF > /root/nomad/payments.hcl
+NOMAD_IP=$(terraform output -state /root/terraform/nomad-scheduler-services/terraform.tfstate aws_nomad_server_public_ip)
+echo "export NOMAD_ADDR=http://${NOMAD_IP}:4646" >> ~/.bashrc
+
+cat << EOF > /root/terraform/nomad-scheduler-services/payments.hcl
 job "payments" {
   datacenters = ["aws-us-east-1"]
   group "payments" {
-    count = 2
+    count = 1
     network {
       mode = "bridge"
     }
     service {
       name = "payments"
+      port = "8080"
+      check {
+        name     = "pyaments-tcp-check"
+        type     = "tcp"
+        interval = "10s"
+        timeout  = "2s"
+      }
       connect {
         sidecar_service {
           proxy {
@@ -27,7 +36,7 @@ job "payments" {
     task "payments" {
       driver = "docker"
       config {
-        image = "hashicorpdemoapp/frontend:latest"
+        image = "hashicorpdemoapp/payments:latest"
       }
     }
   }
