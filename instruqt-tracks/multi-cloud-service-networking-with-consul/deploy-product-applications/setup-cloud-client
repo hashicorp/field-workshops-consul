@@ -2,15 +2,16 @@
 
 cd /root/terraform/product-applications
 terraform init
-
 set-workdir /root/terraform/product-applications
+
+apt install -y postgresql
 
 pubkey=$(cat ~/.ssh/id_rsa.pub)
 cat << EOF > /root/terraform/product-applications/terraform.tfvars
 ssh_public_key="${pubkey}"
 EOF
 
-cat << EOF > /root/postgres/products.sql
+cat << EOF > /root/terraform/product-applications/products.sql
 set time zone 'UTC';
 create extension pgcrypto;
 
@@ -97,5 +98,11 @@ INSERT INTO coffee_ingredients (coffee_id, ingredient_id, quantity, unit, create
 INSERT INTO coffee_ingredients (coffee_id, ingredient_id, quantity, unit, created_at, updated_at) VALUES (6,5, 300, 'ml', CURRENT_DATE, CURRENT_DATE);
 EOF
 
+export PGPASSWORD=$(terraform output -state /root/terraform/database-services/terraform.tfstate postgres_password)
+psql -U postgres@$(terraform output -state /root/terraform/infra/terraform.tfstate env) \
+  -d postgres \
+  -h $(terraform output -state /root/terraform/database-services/terraform.tfstate postgres_fqdn) \
+  -f /root/terraform/product-applications/products.sql \
+  -a
 
 exit 0

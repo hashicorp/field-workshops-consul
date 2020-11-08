@@ -1,3 +1,10 @@
 #!/bin/bash
 
+
+kubectl config use-context graphql
+kubectl apply -f public-api.yaml
+
+kubectl config use-context react
+kubectl apply -f frontend.yaml
+
 exit 0

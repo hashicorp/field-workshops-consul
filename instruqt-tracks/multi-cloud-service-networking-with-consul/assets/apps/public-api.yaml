@@ -12,7 +12,7 @@ metadata:
   labels:
     app: public-api
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   ports:
     - port: 8080
       targetPort: 8080

@@ -5,29 +5,6 @@ AWS_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate a
 export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
 export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
 
-#create secrets eng
-vault auth enable aws
-vault auth enable azure
-vault auth enable gcp
-vault write auth/azure/config \
-    tenant_id="$(az account show | jq -r .tenantId)" \
-    resource="https://management.azure.com/"
-
-vault secrets enable -version=2 kv
-vault secrets enable pki
-
-#set up CA
-private_key=$(vault write -field private_key pki/root/generate/exported\
-    common_name="HashiCorp CA" \
-    key_type="ec" \
-    key_bits="521" \
-    ttl=8760h)
-vault kv put kv/pki private_key="${private_key}"
-vault write pki/roles/consul \
-    allowed_domains=consul,internal \
-    allow_subdomains=true \
-    max_ttl=72h
-
 #set up policy for consul
 echo 'path "kv/*"
 {
@@ -58,11 +35,6 @@ AZURE_VAULT_SERVICE_PRINCIPAL_ID=$(terraform output -state /root/terraform/vault
 vault write auth/azure/role/vault \
   bound_service_principal_ids="${AZURE_VAULT_SERVICE_PRINCIPAL_ID}" \
   policies=admin ttl=30m
-GCP_CONSUL_SERVICE_ACCOUNT=$(terraform output -state /root/terraform/vault/terraform.tfstate gcp_vault_service_account_email)
-vault write auth/gcp/role/vault \
-  type="iam" \
-  bound_service_accounts="${GCP_CONSUL_SERVICE_ACCOUNT}" \
-  policies=admin ttl=30m
 
 #consul trust
 AWS_CONSUL_IAM_ROLE_ARN=$(terraform output -state /root/terraform/iam/terraform.tfstate aws_consul_iam_role_arn)
@@ -73,11 +45,12 @@ AZURE_CONSUL_SERVICE_PRINCIPAL_ID=$(terraform output -state /root/terraform/iam/
 vault write auth/azure/role/consul \
   policies=consul \
   bound_service_principal_ids="${AZURE_CONSUL_SERVICE_PRINCIPAL_ID}"
-GCP_CONSUL_SERVICE_ACCOUNT=$(terraform output -state /root/terraform/iam/terraform.tfstate gcp_consul_service_account_email)
-vault write auth/gcp/role/consul \
-  type="iam" \
-  policies="consul" \
-  bound_service_accounts="${GCP_CONSUL_SERVICE_ACCOUNT}"
+
+#nomad trust
+AWS_NOMAD_IAM_ROLE_ARN=$(terraform output -state /root/terraform/iam/terraform.tfstate aws_nomad_iam_role_arn)
+vault write auth/aws/role/nomad auth_type=iam \
+  bound_iam_principal_arn="${AWS_NOMAD_IAM_ROLE_ARN}" \
+  policies=nomad-server ttl=30m
 
 #app trust
 AZURE_PRODUCT_API_SERVICE_PRINCIPAL_ID=$(terraform output -state /root/terraform/iam/terraform.tfstate azure_product_api_user_assigned_identity_principal_id)

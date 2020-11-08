@@ -8,12 +8,6 @@ provider "azurerm" {
   features {}
 }
 
-provider "google" {
-  version = "~> 3.3.0"
-  project = var.gcp_project_id
-  region  = "us-central1"
-}
-
 data "terraform_remote_state" "infra" {
   backend = "local"
 

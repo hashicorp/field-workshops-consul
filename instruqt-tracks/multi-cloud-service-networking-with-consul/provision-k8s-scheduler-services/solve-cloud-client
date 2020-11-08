@@ -1,8 +1,14 @@
 #!/bin/bash
 
+AWS_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
+export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
+export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
+export CONSUL_HTTP_ADDR="http://$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip):8500"
+export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
 
 #react cluster
 gcloud container clusters get-credentials $(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_name) --region us-central1-a
+kubectl config rename-context $(kubectl config current-context) react
 kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
 kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
 kubectl create secret generic hashicorp-consul-connect-inject-acl-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
@@ -20,6 +26,7 @@ helm install hashicorp hashicorp/consul -f react-values.yaml --debug --wait
 
 #graphql
 gcloud container clusters get-credentials $(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_name) --region us-central1-a
+kubectl config rename-context $(kubectl config current-context) graphql
 kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
 kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
 kubectl create secret generic hashicorp-consul-connect-inject-acl-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"

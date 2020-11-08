@@ -26,6 +26,7 @@ gcloud beta compute addresses create internal-10-1-0-12 \
 
 #GKE creds
 gcloud container clusters get-credentials $(terraform output -state /root/terraform/gcp-consul-secondary/terraform.tfstate gcp_gke_cluster_shared_name)  --region us-central1-a
+kubectl config rename-context $(kubectl config current-context) shared
 aws_mgw=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_mgw_public_ip)
 server_json=$(jq -n --arg mgw "$aws_mgw" '{primary_datacenter: "aws-us-east-1",primary_gateways:["\($mgw):443"]}')
 cat <<EOF | kubectl apply -f -
@@ -51,10 +52,12 @@ helm install hashicorp hashicorp/consul -f /root/terraform/gcp-consul-secondary/
 kubectl apply -f /root/terraform/gcp-consul-secondary/consul-join.yaml
 
 
+kubectl config use-context shared
 export CONSUL_HTTP_SSL_VERIFY=false
-export CONSUL_HTTP_ADDR=https://35.188.55.162:443
+export CONSUL_HTTP_ADDR=https://$(kubectl get svc consul-ui -o json | jq -r .status.loadBalancer.ingress[0].ip)
 export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
 
+kubectl config use-context react
 consul acl auth-method create -type "kubernetes" \
     -name "hashicorp-consul-k8s-auth-method-react" \
     -description "react apps" \
@@ -67,6 +70,7 @@ consul acl binding-rule create -method 'hashicorp-consul-k8s-auth-method-react' 
     -bind-name '${serviceaccount.name}' \
     -selector 'serviceaccount.namespace==default'
 
+kubectl config use-context graphql
 consul acl auth-method create -type "kubernetes" \
     -name "hashicorp-consul-k8s-auth-method-graphql" \
     -description "graphql apps" \

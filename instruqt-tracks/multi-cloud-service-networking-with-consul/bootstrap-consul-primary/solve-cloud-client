@@ -51,4 +51,16 @@ service_prefix "" {
 #create the consul token with the seeded secret
 consul acl token create -policy-name replication -secret=$(vault kv get -field replication_token kv/consul)
 
+#mesh defaults
+echo '
+Kind      = "proxy-defaults"
+Name      = "global"
+Namespace = "default"
+Config {
+  protocol = "http"
+}
+MeshGateway {
+   Mode = "local"
+}' | consul config write -
+
 exit 0

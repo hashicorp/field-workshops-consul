@@ -22,7 +22,6 @@ set-workdir /root/terraform/vault
 
 AWS_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
 AZURE_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate azure_vault_ip)
-GCP_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate gcp_vault_ip)
 
 #aws
 export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
@@ -32,10 +31,6 @@ vault operator init -recovery-shares=1 -recovery-threshold=1 -format=json | jq .
 export VAULT_ADDR=http://${AZURE_VAULT_IP}:8200
 vault operator init -recovery-shares=1 -recovery-threshold=1 -format=json | jq . > /root/azure_vault_keys.json
 
-#gcp
-export VAULT_ADDR=http://${GCP_VAULT_IP}:8200
-vault operator init -recovery-shares=1 -recovery-threshold=1 -format=json | jq . > /root/gcp_vault_keys.json
-
 #start performance replication on the AWS primary
 export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
 export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
@@ -43,7 +38,6 @@ vault write sys/replication/performance/primary/enable primary_cluster_addr="htt
 sleep 15
 
 #generate the secondary tokens
-GCP_REPLICATION_TOKEN=$(vault write /sys/replication/performance/primary/secondary-token id="gcp-us-central-1" -format=json | jq -r .wrap_info.token)
 AZURE_REPLICATION_TOKEN=$(vault write /sys/replication/performance/primary/secondary-token id="azure-west-us-2" -format=json | jq -r .wrap_info.token)
 
 #enable the performance secondaries
@@ -54,27 +48,63 @@ export VAULT_TOKEN=$(cat /root/azure_vault_keys.json | jq -r .root_token)
 vault write sys/replication/performance/secondary/enable token="${AZURE_REPLICATION_TOKEN}" primary_api_addr="http://${AWS_VAULT_IP}:8200"
 sleep 15
 
-#gcp
-export VAULT_ADDR=http://${GCP_VAULT_IP}:8200
-export VAULT_TOKEN=$(cat /root/gcp_vault_keys.json | jq -r .root_token)
-vault write sys/replication/performance/secondary/enable token="${GCP_REPLICATION_TOKEN}" primary_api_addr="http://${AWS_VAULT_IP}:8200"
-sleep 15
-
-#create an admin user
+#vault config
 export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
 export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
 
+#admin policy
 echo 'path "*"
 {
   capabilities = ["create", "read", "update", "delete", "list", "sudo"]
 }' | vault policy write admin -
 
+#nomad policy
+echo 'path "auth/token/create/nomad-cluster" {
+  capabilities = ["update"]
+}
+path "auth/token/roles/nomad-cluster" {
+  capabilities = ["read"]
+}
+path "auth/token/lookup-self" {
+  capabilities = ["read"]
+}
+path "auth/token/lookup" {
+  capabilities = ["update"]
+}
+path "auth/token/revoke-accessor" {
+  capabilities = ["update"]
+}
+path "sys/capabilities-self" {
+  capabilities = ["update"]
+}
+path "auth/token/renew-self" {
+  capabilities = ["update"]
+}' | vault policy write nomad-server -
+curl https://nomadproject.io/data/vault/nomad-cluster-role.json -O -s -L
+vault write /auth/token/roles/nomad-cluster @nomad-cluster-role.json
 
 vault auth enable userpass
 vault write auth/userpass/users/admin \
     password=admin \
     policies=admin
 vault secrets enable transit
+vault auth enable aws
+vault auth enable azure
+vault secrets enable -version=2 kv
+vault secrets enable pki
+vault write auth/azure/config \
+    tenant_id="$(az account show | jq -r .tenantId)" \
+    resource="https://management.azure.com/"
+private_key=$(vault write -field private_key pki/root/generate/exported\
+    common_name="HashiCorp CA" \
+    key_type="ec" \
+    key_bits="521" \
+    ttl=8760h)
+vault kv put kv/pki private_key="${private_key}"
+vault write pki/roles/consul \
+    allowed_domains=consul,internal \
+    allow_subdomains=true \
+    max_ttl=72h
 vault write -f transit/keys/payments
 
 exit 0

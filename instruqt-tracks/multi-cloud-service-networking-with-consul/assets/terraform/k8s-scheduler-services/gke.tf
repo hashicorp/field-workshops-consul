@@ -25,12 +25,11 @@ resource "google_container_cluster" "graphql" {
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
     ]
-
     metadata = {
       disable-legacy-endpoints = "true"
     }
-
     machine_type = "n1-standard-2"
+    tags = ["consul-connect"]
   }
 
   enable_legacy_abac = true
@@ -126,12 +125,11 @@ resource "google_container_cluster" "react" {
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
     ]
-
     metadata = {
       disable-legacy-endpoints = "true"
     }
-
     machine_type = "n1-standard-2"
+    tags = ["consul-connect"]
   }
 
   enable_legacy_abac = true

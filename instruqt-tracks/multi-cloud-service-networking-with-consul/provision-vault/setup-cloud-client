@@ -7,7 +7,6 @@ set-workdir /root/terraform/vault
 
 pubkey=$(cat ~/.ssh/id_rsa.pub)
 cat << EOF > /root/terraform/vault/terraform.tfvars
-gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
 ssh_public_key="${pubkey}"
 EOF
 
