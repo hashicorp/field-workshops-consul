@@ -47,6 +47,13 @@ resource "aws_security_group" "nomad" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port   = 20000
+    to_port     = 32000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -63,7 +70,7 @@ resource "aws_instance" "nomad" {
   subnet_id                   = data.terraform_remote_state.infra.outputs.aws_shared_svcs_public_subnets[0]
   associate_public_ip_address = true
   user_data                   = data.template_file.init.rendered
-  iam_instance_profile        = data.terraform_remote_state.iam.outputs.aws_consul_iam_instance_profile_name
+  iam_instance_profile        = data.terraform_remote_state.iam.outputs.aws_nomad_iam_instance_profile_name
   tags = {
     Name = "nomad"
     Env  = "nomad-${data.terraform_remote_state.infra.outputs.env}"

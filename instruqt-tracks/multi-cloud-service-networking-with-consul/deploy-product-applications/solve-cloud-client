@@ -34,5 +34,7 @@ consul acl role create \
   -name "payments-role" \
   -description "Role for the API service" \
   -policy-name "payments-policy"
-consul acl token create --help
+
+terraform apply -auto-approve
+
 exit 0

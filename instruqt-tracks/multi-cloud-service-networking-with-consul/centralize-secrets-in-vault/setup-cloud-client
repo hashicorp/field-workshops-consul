@@ -58,8 +58,22 @@ echo 'path "*"
   capabilities = ["create", "read", "update", "delete", "list", "sudo"]
 }' | vault policy write admin -
 
+#tmp payments
+echo 'path "*"
+{
+  capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}' | vault policy write payments -
+
 #nomad policy
-echo 'path "auth/token/create/nomad-cluster" {
+echo 'path "kv/*"
+{
+  capabilities = ["read"]
+}
+path "pki/*"
+{
+  capabilities = ["read","update"]
+}
+path "auth/token/create/nomad-cluster" {
   capabilities = ["update"]
 }
 path "auth/token/roles/nomad-cluster" {

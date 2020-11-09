@@ -9,10 +9,27 @@ cat << EOF > /root/terraform/gcp-consul-secondary/terraform.tfvars
 gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
 EOF
 
+#ip reservation
+#static IP for SANs
+gcloud beta compute addresses create internal-10-1-0-10 \
+    --region=us-central1 \
+    --subnet=shared \
+    --addresses=10.1.0.10 \
+    --purpose=SHARED_LOADBALANCER_VIP
+gcloud beta compute addresses create internal-10-1-0-11 \
+    --region=us-central1 \
+    --subnet=shared \
+    --addresses=10.1.0.11 \
+    --purpose=SHARED_LOADBALANCER_VIP
+gcloud beta compute addresses create internal-10-1-0-12 \
+    --region=us-central1 \
+    --subnet=shared \
+    --addresses=10.1.0.12 \
+    --purpose=SHARED_LOADBALANCER_VIP
+
 #helm3
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 helm repo add hashicorp https://helm.releases.hashicorp.com
-
 
 cat <<EOF>  /root/terraform/gcp-consul-secondary/consul-values.yaml
 global:
@@ -61,6 +78,7 @@ meshGateway:
   replicas: 1
 syncCatalog:
   enabled: true
+  default: false
   toConsul: true
   toK8S: false
 connectInject:

@@ -2,7 +2,6 @@ module "gcp-vpc-shared-svcs" {
   source       = "terraform-google-modules/network/google"
   project_id   = var.gcp_project_id
   network_name = "vpc-shared-svcs"
-
   subnets = [
     {
       subnet_name           = "shared"
@@ -12,14 +11,12 @@ module "gcp-vpc-shared-svcs" {
       subnet_flow_logs      = "true"
     },
   ]
-
 }
 
 module "gcp-vpc-app" {
   source       = "terraform-google-modules/network/google"
   project_id   = var.gcp_project_id
   network_name = "vpc-app"
-
   subnets = [
     {
       subnet_name           = "app"
@@ -29,10 +26,7 @@ module "gcp-vpc-app" {
       subnet_flow_logs      = "true"
     },
   ]
-
-
 }
-
 
 resource "google_compute_network_peering" "shared-to-app" {
   name         = "shared-to-app"

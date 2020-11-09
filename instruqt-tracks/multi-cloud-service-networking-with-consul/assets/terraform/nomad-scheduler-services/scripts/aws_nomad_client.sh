@@ -102,6 +102,14 @@ consul {
 }
 EOF
 
+cat <<EOF> /etc/nomad.d/vault.hcl
+vault {
+  enabled          = true
+  address          = "$${VAULT_ADDR}"
+  create_from_role = "nomad-cluster"
+}
+EOF
+
 sudo systemctl enable nomad.service
 sudo systemctl start nomad.service
 

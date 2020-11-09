@@ -5,8 +5,4 @@ terraform init
 
 set-workdir /root/terraform/iam
 
-cat << EOF > /root/terraform/iam/terraform.tfvars
-gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
-EOF
-
 exit 0

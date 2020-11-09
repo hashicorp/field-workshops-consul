@@ -7,23 +7,6 @@ export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
 export CONSUL_HTTP_ADDR="http://$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip):8500"
 export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
 
-#static IP for SANs
-gcloud beta compute addresses create internal-10-1-0-10 \
-    --region=us-central1 \
-    --subnet=shared \
-    --addresses=10.1.0.10 \
-    --purpose=SHARED_LOADBALANCER_VIP
-gcloud beta compute addresses create internal-10-1-0-11 \
-    --region=us-central1 \
-    --subnet=shared \
-    --addresses=10.1.0.11 \
-    --purpose=SHARED_LOADBALANCER_VIP
-gcloud beta compute addresses create internal-10-1-0-12 \
-    --region=us-central1 \
-    --subnet=shared \
-    --addresses=10.1.0.12 \
-    --purpose=SHARED_LOADBALANCER_VIP
-
 #GKE creds
 gcloud container clusters get-credentials $(terraform output -state /root/terraform/gcp-consul-secondary/terraform.tfstate gcp_gke_cluster_shared_name)  --region us-central1-a
 kubectl config rename-context $(kubectl config current-context) shared
@@ -51,36 +34,5 @@ EOF
 helm install hashicorp hashicorp/consul -f /root/terraform/gcp-consul-secondary/consul-values.yaml --debug --wait
 kubectl apply -f /root/terraform/gcp-consul-secondary/consul-join.yaml
 
-
-kubectl config use-context shared
-export CONSUL_HTTP_SSL_VERIFY=false
-export CONSUL_HTTP_ADDR=https://$(kubectl get svc consul-ui -o json | jq -r .status.loadBalancer.ingress[0].ip)
-export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
-
-kubectl config use-context react
-consul acl auth-method create -type "kubernetes" \
-    -name "hashicorp-consul-k8s-auth-method-react" \
-    -description "react apps" \
-    -kubernetes-host "https://$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_endpoint)" \
-    -kubernetes-ca-cert "$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_cluster_ca_certificate | base64 -d)" \
-    -kubernetes-service-account-jwt "$(kubectl get secret $(kubectl get sa hashicorp-consul-connect-injector-authmethod-svc-account -o json | jq -r .secrets[0].name) -o json | jq -r .data.token | base64 -d)"
-consul acl binding-rule create -method 'hashicorp-consul-k8s-auth-method-react' \
-    -description 'react apps' \
-    -bind-type 'service' \
-    -bind-name '${serviceaccount.name}' \
-    -selector 'serviceaccount.namespace==default'
-
-kubectl config use-context graphql
-consul acl auth-method create -type "kubernetes" \
-    -name "hashicorp-consul-k8s-auth-method-graphql" \
-    -description "graphql apps" \
-    -kubernetes-host "https://$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_endpoint)" \
-    -kubernetes-ca-cert "$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_cluster_ca_certificate | base64 -d)" \
-    -kubernetes-service-account-jwt "$(kubectl get secret $(kubectl get sa hashicorp-consul-connect-injector-authmethod-svc-account -o json | jq -r .secrets[0].name) -o json | jq -r .data.token | base64 -d)"
-consul acl binding-rule create -method 'hashicorp-consul-k8s-auth-method-graphql' \
-    -description 'graphql apps' \
-    -bind-type 'service' \
-    -bind-name '${serviceaccount.name}' \
-    -selector 'serviceaccount.namespace==default'
 
 exit 0

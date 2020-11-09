@@ -50,7 +50,7 @@ vault write auth/azure/role/consul \
 AWS_NOMAD_IAM_ROLE_ARN=$(terraform output -state /root/terraform/iam/terraform.tfstate aws_nomad_iam_role_arn)
 vault write auth/aws/role/nomad auth_type=iam \
   bound_iam_principal_arn="${AWS_NOMAD_IAM_ROLE_ARN}" \
-  policies=nomad-server ttl=30m
+  policies=nomad-server,admin ttl=30m
 
 #app trust
 AZURE_PRODUCT_API_SERVICE_PRINCIPAL_ID=$(terraform output -state /root/terraform/iam/terraform.tfstate azure_product_api_user_assigned_identity_principal_id)

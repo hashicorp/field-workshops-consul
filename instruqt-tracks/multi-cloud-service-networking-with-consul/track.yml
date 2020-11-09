@@ -25,9 +25,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -40,7 +37,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform/infra
   difficulty: basic
   timelimit: 300
 - slug: provision-vault
@@ -52,9 +49,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -67,21 +61,18 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform/vault
   difficulty: basic
   timelimit: 300
 - slug: provision-identities
   id: lbmzbwxbo9gc
   type: challenge
-  title: Provision Consul & Workload Identities
+  title: Provision Service & Workload Identities
   teaser: A short description of the challenge.
   assignment: |-
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -94,7 +85,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform/iam
   difficulty: basic
   timelimit: 300
 - slug: centralize-secrets-in-vault
@@ -106,9 +97,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -121,7 +109,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform/vault
   - title: AWS - Vault
     type: service
     hostname: cloud-client
@@ -138,9 +126,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -153,7 +138,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform/aws-consul-primary
   - title: AWS - Vault
     type: service
     hostname: cloud-client
@@ -170,9 +155,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -185,7 +167,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform/aws-consul-primary
   - title: AWS - Vault
     type: service
     hostname: cloud-client
@@ -207,9 +189,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -222,7 +201,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform/aws-consul-primary
   - title: AWS - Vault
     type: service
     hostname: cloud-client
@@ -244,9 +223,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -259,7 +235,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform/azure-consul-secondary
   - title: AWS - Vault
     type: service
     hostname: cloud-client
@@ -281,9 +257,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -296,7 +269,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform/gcp-consul-secondary
   - title: AWS - Vault
     type: service
     hostname: cloud-client
@@ -318,9 +291,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -333,7 +303,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform/esm
   - title: AWS - Vault
     type: service
     hostname: cloud-client
@@ -355,9 +325,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -370,7 +337,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform/cache-services
   - title: AWS - Vault
     type: service
     hostname: cloud-client
@@ -392,9 +359,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -407,7 +371,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform/database-services
   - title: AWS - Vault
     type: service
     hostname: cloud-client
@@ -429,9 +393,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -444,7 +405,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform/tgw
   - title: AWS - Vault
     type: service
     hostname: cloud-client
@@ -466,9 +427,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -481,7 +439,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform/nomad-scheduler-services
   - title: AWS - Vault
     type: service
     hostname: cloud-client
@@ -512,7 +470,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform/k8s-scheduler-services
   - title: AWS - Vault
     type: service
     hostname: cloud-client
@@ -534,9 +492,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -549,7 +504,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform/nomad-scheduler-services
   - title: AWS - Vault
     type: service
     hostname: cloud-client
@@ -571,9 +526,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -586,7 +538,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform/product-applications
   - title: AWS - Vault
     type: service
     hostname: cloud-client
@@ -608,9 +560,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -645,9 +594,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -682,9 +628,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -719,9 +662,6 @@ challenges:
     The assignment the participant needs to complete in order to proceed.
 
     You can use any GitHub flavoured markdown.
-  notes:
-  - type: text
-    contents: Replace this text with your own text
   tabs:
   - title: Shell
     type: terminal
@@ -747,4 +687,4 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-checksum: "11370678828677481965"
+checksum: "3047799428538616680"

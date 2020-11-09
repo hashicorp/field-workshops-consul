@@ -16,7 +16,7 @@ vault login -method=aws role=nomad
 AGENT_TOKEN=$(vault kv get -field=master_token kv/consul)
 GOSSIP_KEY=$(vault kv get -field=gossip_key kv/consul)
 CA_CERT=$(vault read -field certificate pki/cert/ca)
-NOMAD_TOKEN=$(vault token create -policy nomad-server -period 72h -orphan)
+NOMAD_TOKEN=$(vault token create -field token -policy nomad-server -period 72h -orphan)
 
 #consul
 cat <<EOF> /etc/consul.d/client.json
@@ -96,7 +96,7 @@ cat <<EOF> /etc/nomad.d/vault.hcl
 vault {
   token            = "$${NOMAD_TOKEN}"
   enabled          = true
-  address          = "https://vault.service.consul:8200"
+  address          = "$${VAULT_ADDR}"
   create_from_role = "nomad-cluster"
 }
 EOF

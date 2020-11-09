@@ -1,0 +1,8 @@
+#!/bin/bash
+
+export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
+export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+
+terraform apply -auto-approve
+
+exit 0

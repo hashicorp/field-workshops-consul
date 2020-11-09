@@ -48,6 +48,9 @@ job "payments" {
           }
         ]
       }
+      vault {
+        policies = ["payments"]
+      }
       template {
         data = <<EOH
 ---
@@ -57,7 +60,7 @@ spring:
       enabled: true
       fail-fast: true
       authentication: TOKEN
-      token: root
+      token: ${VAULT_TOKEN}
       host: localhost
       port: 8200
       scheme: http
