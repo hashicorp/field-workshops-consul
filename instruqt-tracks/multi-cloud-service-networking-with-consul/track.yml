@@ -16,7 +16,7 @@ private: true
 published: true
 show_timer: true
 challenges:
-- slug: provision-cloud-infra
+- slug: 01-provision-cloud-infra
   id: eej5x5cxdiig
   type: challenge
   title: Provision Cloud Infrastructure
@@ -40,7 +40,7 @@ challenges:
     path: /root/terraform/infra
   difficulty: basic
   timelimit: 300
-- slug: provision-vault
+- slug: 02-provision-vault
   id: 1i5vvulo0zlr
   type: challenge
   title: Provision Vault Infrastructure
@@ -64,7 +64,7 @@ challenges:
     path: /root/terraform/vault
   difficulty: basic
   timelimit: 300
-- slug: provision-identities
+- slug: 03-provision-identities
   id: lbmzbwxbo9gc
   type: challenge
   title: Provision Service & Workload Identities
@@ -88,7 +88,7 @@ challenges:
     path: /root/terraform/iam
   difficulty: basic
   timelimit: 300
-- slug: centralize-secrets-in-vault
+- slug: 04-centralize-secrets-in-vault
   id: noyutzmuimix
   type: challenge
   title: Centralize Secrets in Vault
@@ -117,7 +117,7 @@ challenges:
     port: 8200
   difficulty: basic
   timelimit: 300
-- slug: provision-aws-consul-primary
+- slug: 05-provision-aws-consul-primary
   id: yvfuoi5cz8ll
   type: challenge
   title: Provision AWS Consul Primary Datacenter
@@ -146,7 +146,7 @@ challenges:
     port: 8200
   difficulty: basic
   timelimit: 14400
-- slug: bootstrap-consul-primary
+- slug: 06-bootstrap-consul-primary
   id: ibjsiehore0f
   type: challenge
   title: Bootstrap Consul Primary Datacenter
@@ -180,7 +180,7 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-- slug: create-namespaces-and-policies
+- slug: 07-create-namespaces-and-policies
   id: o7l9tufsx0pf
   type: challenge
   title: Create Namespaces & Policies
@@ -214,7 +214,7 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-- slug: provision-azure-consul-secondary-datacenter
+- slug: 08-provision-azure-consul-secondary-datacenter
   id: wj17mzqxqwwf
   type: challenge
   title: Provision Azure Consul Secondary Datacenter
@@ -248,7 +248,7 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-- slug: provision-gcp-consul-secondary-datacenter
+- slug: 09-provision-gcp-consul-secondary-datacenter
   id: v3j5eilrkji2
   type: challenge
   title: Provision GCP  Consul Secondary Datacenter
@@ -282,7 +282,7 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-- slug: provision-consul-esms
+- slug: 10-provision-consul-esms
   id: vyrpfhgu6dtl
   type: challenge
   title: Provision Consul ESMs
@@ -316,7 +316,7 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-- slug: provision-cache-services
+- slug: 11-provision-cache-services
   id: ifdxb3b4xeox
   type: challenge
   title: Provision Cache Services
@@ -350,7 +350,7 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-- slug: provision-database-services
+- slug: 12-provision-database-services
   id: fcrcwre4rgvy
   type: challenge
   title: Provision Database Services
@@ -384,7 +384,7 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-- slug: provision-consul-terminating-gateways
+- slug: 13-provision-consul-terminating-gateways
   id: fzmzvxw4yrbv
   type: challenge
   title: Provision Consul Terminating Gateways
@@ -418,7 +418,7 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-- slug: provision-nomad-scheduler-services
+- slug: 14-provision-nomad-scheduler-services
   id: 2bhfenznbq26
   type: challenge
   title: Provision Nomad Scheduler Services
@@ -452,7 +452,7 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-- slug: provision-k8s-scheduler-services
+- slug: 15-provision-k8s-scheduler-services
   id: czoxbhi28zz4
   type: challenge
   title: Provision K8s Scheduler Services
@@ -483,7 +483,7 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 500
-- slug: configure-intentions
+- slug: 16-configure-intentions
   id: xwvogflavyey
   type: challenge
   title: Configure Intentions
@@ -517,7 +517,7 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-- slug: deploy-payments-applications
+- slug: 17-deploy-payments-applications
   id: m1xx8rucidse
   type: challenge
   title: Deploy Payments Tier
@@ -551,7 +551,7 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-- slug: deploy-product-applications
+- slug: 18-deploy-product-applications
   id: jmzuys1pidmc
   type: challenge
   title: Deploy Product Tier
@@ -585,7 +585,7 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-- slug: deploy-frontend-applications
+- slug: 19-deploy-frontend-applications
   id: ssdpxmpbtvjw
   type: challenge
   title: Deploy Frontend Tier
@@ -619,7 +619,7 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-- slug: review-application-deployment
+- slug: 20-review-application-deployment
   id: urzpkkqnpl1n
   type: challenge
   title: Review Application Deployment
@@ -653,7 +653,7 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-- slug: test-application-deployment
+- slug: 21-test-application-deployment
   id: hsvzlsztityh
   type: challenge
   title: Test Application Deployment
