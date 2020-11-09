@@ -145,7 +145,6 @@ After=network-online.target
 ExecStart=/product-api
 Restart=always
 RestartSec=5
-StartLimitIntervalSec=0
 [Install]
 WantedBy=multi-user.target
 EOF

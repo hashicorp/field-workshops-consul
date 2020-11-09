@@ -11,6 +11,8 @@ metadata:
   name: frontend-service
   labels:
     app: frontend
+  annotations:
+    'consul.hashicorp.com/service-sync': 'true'
 spec:
   type: LoadBalancer
   ports:

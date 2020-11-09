@@ -11,6 +11,8 @@ metadata:
   name: public-api-service
   labels:
     app: public-api
+  annotations:
+    'consul.hashicorp.com/service-sync': 'true'
 spec:
   type: LoadBalancer
   ports:

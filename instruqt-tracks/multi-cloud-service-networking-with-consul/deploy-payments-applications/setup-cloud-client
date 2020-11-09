@@ -5,7 +5,7 @@ set-workdir /root/terraform/nomad-scheduler-services
 NOMAD_IP=$(terraform output -state /root/terraform/nomad-scheduler-services/terraform.tfstate aws_nomad_server_public_ip)
 echo "export NOMAD_ADDR=http://${NOMAD_IP}:4646" >> ~/.bashrc
 
-cat << EOF > /root/terraform/nomad-scheduler-services/payments.hcl
+cat << 'EOF' > /root/terraform/nomad-scheduler-services/payments.hcl
 job "payments" {
   datacenters = ["aws-us-east-1"]
   group "payments" {

@@ -37,6 +37,15 @@ externalServers:
   enabled: true
   hosts:
     - '10.1.0.10'
+syncCatalog:
+  enabled: true
+  default: false
+  toConsul: true
+  toK8S: false
+  aclSyncToken:
+    secretName: hashicorp-consul-sync-catalog-acl-token
+    secretKey:  token
+  k8sTag: k8s-react
 connectInject:
   enabled: true
   default: true
@@ -82,6 +91,15 @@ externalServers:
   enabled: true
   hosts:
     - '10.1.0.10'
+syncCatalog:
+  enabled: true
+  default: false
+  toConsul: true
+  toK8S: false
+  aclSyncToken:
+    secretName: hashicorp-consul-sync-catalog-acl-token
+    secretKey:  token
+  k8sTag: k8s-graphql
 connectInject:
   enabled: true
   default: true

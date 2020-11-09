@@ -110,7 +110,7 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/vault
-  - title: AWS - Vault
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
@@ -139,7 +139,7 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/aws-consul-primary
-  - title: AWS - Vault
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
@@ -168,12 +168,12 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/aws-consul-primary
-  - title: AWS - Vault
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
     port: 8200
-  - title: AWS - Consul
+  - title: Consul
     type: service
     hostname: cloud-client
     path: /
@@ -202,12 +202,12 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/aws-consul-primary
-  - title: AWS - Vault
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
     port: 8200
-  - title: AWS - Consul
+  - title: Consul
     type: service
     hostname: cloud-client
     path: /
@@ -236,12 +236,12 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/azure-consul-secondary
-  - title: AWS - Vault
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
     port: 8200
-  - title: AWS - Consul
+  - title: Consul
     type: service
     hostname: cloud-client
     path: /
@@ -270,12 +270,12 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/gcp-consul-secondary
-  - title: AWS - Vault
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
     port: 8200
-  - title: AWS - Consul
+  - title: Consul
     type: service
     hostname: cloud-client
     path: /
@@ -304,12 +304,12 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/esm
-  - title: AWS - Vault
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
     port: 8200
-  - title: AWS - Consul
+  - title: Consul
     type: service
     hostname: cloud-client
     path: /
@@ -338,12 +338,12 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/cache-services
-  - title: AWS - Vault
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
     port: 8200
-  - title: AWS - Consul
+  - title: Consul
     type: service
     hostname: cloud-client
     path: /
@@ -372,12 +372,12 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/database-services
-  - title: AWS - Vault
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
     port: 8200
-  - title: AWS - Consul
+  - title: Consul
     type: service
     hostname: cloud-client
     path: /
@@ -406,12 +406,12 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/tgw
-  - title: AWS - Vault
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
     port: 8200
-  - title: AWS - Consul
+  - title: Consul
     type: service
     hostname: cloud-client
     path: /
@@ -440,12 +440,12 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/nomad-scheduler-services
-  - title: AWS - Vault
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
     port: 8200
-  - title: AWS - Consul
+  - title: Consul
     type: service
     hostname: cloud-client
     path: /
@@ -471,18 +471,52 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/k8s-scheduler-services
-  - title: AWS - Vault
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
     port: 8200
-  - title: AWS - Consul
+  - title: Consul
     type: service
     hostname: cloud-client
     path: /
     port: 8500
   difficulty: basic
   timelimit: 500
+- slug: configure-intentions
+  id: xwvogflavyey
+  type: challenge
+  title: Configure Intentions
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  difficulty: basic
+  timelimit: 300
 - slug: deploy-payments-applications
   id: m1xx8rucidse
   type: challenge
@@ -505,12 +539,12 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/nomad-scheduler-services
-  - title: AWS - Vault
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
     port: 8200
-  - title: AWS - Consul
+  - title: Consul
     type: service
     hostname: cloud-client
     path: /
@@ -539,12 +573,12 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/product-applications
-  - title: AWS - Vault
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
     port: 8200
-  - title: AWS - Consul
+  - title: Consul
     type: service
     hostname: cloud-client
     path: /
@@ -573,12 +607,12 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root
-  - title: AWS - Vault
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
     port: 8200
-  - title: AWS - Consul
+  - title: Consul
     type: service
     hostname: cloud-client
     path: /
@@ -607,46 +641,12 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root
-  - title: AWS - Vault
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
     port: 8200
-  - title: AWS - Consul
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8500
-  difficulty: basic
-  timelimit: 300
-- slug: configure-intentions
-  id: xwvogflavyey
-  type: challenge
-  title: Configure Intentions
-  teaser: A short description of the challenge.
-  assignment: |-
-    The assignment the participant needs to complete in order to proceed.
-
-    You can use any GitHub flavoured markdown.
-  tabs:
-  - title: Shell
-    type: terminal
-    hostname: cloud-client
-  - title: Cloud Consoles
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 80
-  - title: Terraform
-    type: code
-    hostname: cloud-client
-    path: /root
-  - title: AWS - Vault
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8200
-  - title: AWS - Consul
+  - title: Consul
     type: service
     hostname: cloud-client
     path: /
@@ -675,16 +675,16 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root
-  - title: AWS - Vault
+  - title: Vault
     type: service
     hostname: cloud-client
     path: /
     port: 8200
-  - title: AWS - Consul
+  - title: Consul
     type: service
     hostname: cloud-client
     path: /
     port: 8500
   difficulty: basic
   timelimit: 300
-checksum: "3047799428538616680"
+checksum: "4139559338910719451"
