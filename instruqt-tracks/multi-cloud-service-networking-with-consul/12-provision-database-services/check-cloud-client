@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#creds
+vault login -method=userpass username=admin password=admin
+
+#aws
+azure_pg=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/postgres?dc=azure-west-us-2&passing=true")
+if [ "$(echo "${azure_pg}" | jq '. | length')" != "1" ]; then
+  fail-message "Azure managed Postgres DB is not healthy"
+  exit 1
+fi
+
+exit 0

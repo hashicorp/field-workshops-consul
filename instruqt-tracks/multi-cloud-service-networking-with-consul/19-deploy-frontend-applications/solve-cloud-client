@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 kubectl config use-context graphql
 kubectl apply -f public-api.yaml
 

@@ -23,12 +23,21 @@ rm -rf field-workshops-consul
 #fix path
 echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
 
+#ssh
+cat << EOF > ~/.ssh/config
+Host *
+    StrictHostKeyChecking no
+EOF
+
 # Ensure we load /etc/profile.d/instruqt-env.sh
 echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
 source /root/.bashrc
 
 #make vault run in instruqt container
 setcap cap_ipc_lock= /usr/bin/vault
+
+#aws
+aws configure set default.region us-east-1
 
 #tf
 cd /root/terraform/infra

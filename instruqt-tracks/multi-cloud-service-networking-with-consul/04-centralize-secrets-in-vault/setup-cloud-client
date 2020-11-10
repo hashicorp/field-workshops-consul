@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #ui access
 vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
@@ -37,10 +37,8 @@ export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
 vault write sys/replication/performance/primary/enable primary_cluster_addr="http://${AWS_VAULT_IP}:8201"
 sleep 15
 
-#generate the secondary tokens
+#generate the secondary tokens & enable the performance secondaries
 AZURE_REPLICATION_TOKEN=$(vault write /sys/replication/performance/primary/secondary-token id="azure-west-us-2" -format=json | jq -r .wrap_info.token)
-
-#enable the performance secondaries
 
 #azure
 export VAULT_ADDR=http://${AZURE_VAULT_IP}:8200

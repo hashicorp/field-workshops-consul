@@ -1,0 +1,50 @@
+#!/bin/bash
+
+#creds
+vault login -method=userpass username=admin password=admin
+export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+
+#check
+consul intention check frontend public-api
+if [ $? -ne 0 ]
+then
+  fail-message "Could not check frontend <> public-api"
+  exit 1
+fi
+
+consul intention check public-api product-api
+if [ $? -ne 0 ]
+then
+  fail-message "Could not check public-api <> product-api"
+  exit 1
+fi
+
+consul intention check public-api payments
+if [ $? -ne 0 ]
+then
+  fail-message "Could not check public-api <> payments"
+  exit 1
+fi
+
+consul intention check product-api postgres
+if [ $? -ne 0 ]
+then
+  fail-message "Could not check product-api <> postgres"
+  exit 1
+fi
+
+consul intention check payments redis
+if [ $? -ne 0 ]
+then
+  fail-message "Could not check payments <> redis"
+  exit 1
+fi
+
+consul intention check payments vault
+if [ $? -ne 0 ]
+then
+  fail-message "Could not check payments <> vault"
+  exit 1
+fi
+
+exit 0

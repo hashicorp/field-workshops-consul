@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#creds
+vault login -method=userpass username=admin password=admin
+export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+
+#create intentions
+consul intention create frontend public-api
+consul intention create public-api product-api
+consul intention create public-api payments
+consul intention create product-api postgres
+consul intention create payments redis
+consul intention create payments vault
+
+exit 0

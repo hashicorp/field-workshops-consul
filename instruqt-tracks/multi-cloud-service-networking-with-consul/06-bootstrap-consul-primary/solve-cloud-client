@@ -1,13 +1,10 @@
 #!/bin/bash
 
 #aws
-AWS_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
-export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
-export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
-export CONSUL_HTTP_ADDR="http://$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip):8500"
+vault login -method=userpass username=admin password=admin
 export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
 
-#create the replication token
+#create the replication policy & token
 echo 'operator = "write"
 agent_prefix "" {
   policy = "read"
@@ -20,9 +17,18 @@ service_prefix "" {
   policy = "read"
   intentions = "read"
 }' |  consul acl policy create -name replication -rules -
-
-#create the consul token with the seeded secret
 consul acl token create -policy-name replication -secret=$(vault kv get -field replication_token kv/consul)
+
+#create the replication policy & token
+AWS_CONSUL_IP=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip)
+echo 'operator = "write"
+acl = "write"
+' |  consul acl policy create -name operator -rules  -
+vault secrets enable consul
+vault write consul/config/access \
+    address=http://${AWS_CONSUL_IP}:8500 \
+    token=$(consul acl token create -description 'vault mgmt' -policy-name=global-management -format=json | jq -r '.SecretID')
+vault write consul/roles/operator policies=operator ttl=30m
 
 #mesh defaults
 echo '

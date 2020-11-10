@@ -2,13 +2,16 @@ slug: multi-cloud-service-networking-with-consul
 id: iklbsgjpisau
 type: track
 title: Multi Cloud Service Networking with Consul
-teaser: A short description of the track.
-description: |-
-  A long description of the track.
-
-  You can use any GitHub flavoured markdown.
+teaser: Deploy a multi-cloud service mesh solution with Consul
+description: Run a shared Consul service across multiple clouds and enable self-service
+  for application teams.
 icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
-tags: []
+tags:
+- consul
+- vault
+- terraform
+- k8s
+- nomad
 owner: hashicorp
 developers:
 - lance@hashicorp.com
@@ -20,7 +23,7 @@ challenges:
   id: eej5x5cxdiig
   type: challenge
   title: Provision Cloud Infrastructure
-  teaser: A short description of the challenge.
+  teaser: Create cloud VPCs
   assignment: |-
     The assignment the participant needs to complete in order to proceed.
 
@@ -77,15 +80,15 @@ challenges:
   - title: Shell
     type: terminal
     hostname: cloud-client
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/iam
   - title: Cloud Consoles
     type: service
     hostname: cloud-client
     path: /
     port: 80
-  - title: Terraform
-    type: code
-    hostname: cloud-client
-    path: /root/terraform/iam
   difficulty: basic
   timelimit: 300
 - slug: 04-centralize-secrets-in-vault
@@ -603,10 +606,10 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
-  - title: Terraform
+  - title: Apps
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/apps
   - title: Vault
     type: service
     hostname: cloud-client
@@ -629,6 +632,11 @@ challenges:
 
     You can use any GitHub flavoured markdown.
   tabs:
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
   - title: Shell
     type: terminal
     hostname: cloud-client
@@ -640,17 +648,12 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root
+    path: /root/terraform
   - title: Vault
     type: service
     hostname: cloud-client
     path: /
     port: 8200
-  - title: Consul
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8500
   difficulty: basic
   timelimit: 300
 - slug: 21-test-application-deployment
@@ -687,4 +690,4 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-checksum: "18225220600480764438"
+checksum: "6140851235014568512"

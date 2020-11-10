@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#login
+vault login -method=userpass username=admin password=admin
+
+#check secret
+vault kv get kv/consul
+if [ $? -ne 0 ]
+then
+  fail-message "Error getting Consul bootstrap secret"
+  exit 1
+fi
+exit 0

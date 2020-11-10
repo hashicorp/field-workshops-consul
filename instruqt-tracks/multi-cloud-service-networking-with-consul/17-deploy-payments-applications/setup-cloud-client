@@ -12,10 +12,22 @@ job "payments" {
     count = 1
     network {
       mode = "bridge"
+      port "healthcheck" {
+        to = -1
+      }
     }
     service {
       name = "payments"
       port = "8080"
+      check {
+        name     = "payments-health"
+        type     = "http"
+        port     = "healthcheck"
+        path     = "/actuator/health"
+        interval = "10s"
+        timeout  = "3s"
+        expose   = true
+      }
       connect {
         sidecar_service {
           proxy {

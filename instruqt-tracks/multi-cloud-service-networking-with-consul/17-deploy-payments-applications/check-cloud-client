@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#creds
+vault login -method=userpass username=admin password=admin
+
+#aws
+aws_payments=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/payments?passing=true")
+if [ "$(echo "${aws_payments}" | jq '. | length')" != "1" ]; then
+  fail-message "AWS payments is not healthy"
+  exit 1
+fi
+
+exit 0

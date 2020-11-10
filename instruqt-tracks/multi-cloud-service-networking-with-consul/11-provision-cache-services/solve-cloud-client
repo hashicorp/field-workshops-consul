@@ -1,9 +1,8 @@
 #!/bin/bash
 
-AWS_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
-export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
-export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
+vault login -method=userpass username=admin password=admin
 export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
 
-terraform apply -auto-approve
+terraform apply -auto-approve | tee terraform.out
+sleep 60
 exit 0

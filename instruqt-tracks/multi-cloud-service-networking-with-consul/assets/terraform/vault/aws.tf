@@ -44,7 +44,7 @@ resource "aws_security_group" "vault" {
     from_port   = 8301
     to_port     = 8301
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["10.1.0.0/16","10.2.0.0/16"]
   }
 
   egress {

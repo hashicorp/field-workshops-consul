@@ -128,6 +128,7 @@ cat <<EOF> /etc/vault-agent.d/consul-secrets-template.ctmpl
 acl {
   enabled        = true
   default_policy = "deny"
+  down_policy   = "extend-cache"
   enable_token_persistence = true
   tokens {
     agent  = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}

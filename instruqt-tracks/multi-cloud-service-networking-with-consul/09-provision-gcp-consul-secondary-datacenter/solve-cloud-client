@@ -1,16 +1,15 @@
 #!/bin/bash
 
 #provision K8s clusters
-terraform apply -auto-approve
+terraform apply -auto-approve | tee terraform.out
 
 #creds
-export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
-export CONSUL_HTTP_ADDR="http://$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip):8500"
-export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+vault login -method=userpass username=admin password=admin
 
 #helm secrets
 gcloud container clusters get-credentials $(terraform output -state /root/terraform/gcp-consul-secondary/terraform.tfstate gcp_gke_cluster_shared_name)  --region us-central1-a
 kubectl config rename-context $(kubectl config current-context) shared
+kubectl config use-context shared
 aws_mgw=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_mgw_public_ip)
 server_json=$(jq -n --arg mgw "$aws_mgw" '{primary_datacenter: "aws-us-east-1",primary_gateways:["\($mgw):443"]}')
 cat <<EOF | kubectl apply -f -
@@ -34,6 +33,6 @@ EOF
 #helm config
 helm install hashicorp hashicorp/consul -f /root/terraform/gcp-consul-secondary/consul-values.yaml --debug --wait
 kubectl apply -f /root/terraform/gcp-consul-secondary/consul-join.yaml
-
+sleep 60
 
 exit 0

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#creds
+vault login -method=userpass username=admin password=admin
+
+#aws - server
+consul_lb=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip)
+echo "consul Load balancer is: $consul_lb"
+if [ -z "${consul_lb}" ]; then
+  fail-message "AWS consul server is not provisioned yet"
+  exit 1
+fi
+consul_api=$(curl -s -o /dev/null -w "%{http_code}" http://{$consul_lb}:8500/v1/status/leader)
+if [ "${consul_api}" != "200" ]; then
+  fail-message "AWS consul server service did not return a 200. Please wait a few moments and try again."
+  exit 1
+fi
+
+#aws - mgw
+mgw_api=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" http://{$consul_lb}:8500/v1/health/service/mesh-gateway?passing=true)
+if [ "$(echo "${mgw_api}" | jq '. | length')" != "1" ]; then
+  fail-message "AWS MGW not healthy"
+  exit 1
+fi
+exit 0

@@ -1,14 +1,11 @@
 #!/bin/bash
 
 #provision k8s
-terraform apply -auto-approve
+terraform apply -auto-approve | tee terraform.out
 
-#configure k8s
-AWS_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
-export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
-export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
-export CONSUL_HTTP_ADDR="http://$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip):8500"
+#creds
 export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+vault login -method=userpass username=admin password=admin
 
 #react cluster
 gcloud container clusters get-credentials $(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_name) --region us-central1-a
@@ -17,7 +14,7 @@ kubectl config use-context react
 kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
 kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
 kubectl create secret generic hashicorp-consul-connect-inject-acl-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
-kubectl create secret generic hashicorp-consul-acl-sync-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
+kubectl create secret generic hashicorp-consul-sync-catalog-acl-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
 acl_config=$(jq -n --arg token "$(vault kv get -field=master_token kv/consul)" '{acl: { enabled: true, default_policy: "deny", enable_token_persistence: true, tokens: { agent: $token, default: $token } } }' | base64 -w 0 )
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
@@ -37,7 +34,7 @@ kubectl config use-context graphql
 kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
 kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
 kubectl create secret generic hashicorp-consul-connect-inject-acl-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
-kubectl create secret generic hashicorp-consul-acl-sync-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
+kubectl create secret generic hashicorp-consul-sync-catalog-acl-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
 acl_config=$(jq -n --arg token "$(vault kv get -field=master_token kv/consul)" '{acl: { enabled: true, default_policy: "deny", enable_token_persistence: true, tokens: { agent: $token, default: $token } } }' | base64 -w 0 )
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
@@ -52,7 +49,6 @@ helm install hashicorp hashicorp/consul -f graphql-values.yaml --debug --wait
 
 #set up auth
 kubectl config use-context shared
-export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
 export CONSUL_HTTP_SSL_VERIFY=false
 export CONSUL_HTTP_ADDR=https://$(kubectl get svc consul-ui -o json | jq -r .status.loadBalancer.ingress[0].ip)
 export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
