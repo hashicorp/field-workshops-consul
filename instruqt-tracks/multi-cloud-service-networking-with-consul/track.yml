@@ -24,10 +24,16 @@ challenges:
   type: challenge
   title: Provision Cloud Infrastructure
   teaser: Create cloud VPCs
-  assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+  assignment: |
+    The terraform code will provision cloud infrastructure in AWS, GPC, and Azure. <br>
 
-    You can use any GitHub flavoured markdown.
+    Inspect the terraform code in the code editor and create the VPCs and VNets for shared services and application workloads. <br>
+
+    ```
+    terraform apply -auto-approve
+    ```
+
+    In the next few challenges we will centralize secrets across environments.
   tabs:
   - title: Shell
     type: terminal
@@ -47,11 +53,17 @@ challenges:
   id: 1i5vvulo0zlr
   type: challenge
   title: Provision Vault Infrastructure
-  teaser: A short description of the challenge.
+  teaser: Set up Vault Infrastructure and Enable Replication
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    Vault supports cross-site replication. In this assingment you provision Vault infrastructure in AWS & Azure. <br>
 
-    You can use any GitHub flavoured markdown.
+    Insepect the Terrafrom code and provision the Vault infrastructure.
+
+    ```
+    terraform apply -auto-approve
+    ```
+
+    Vault will support secure introduction of non-container Consul infrastructure in the next few assignments.
   tabs:
   - title: Shell
     type: terminal
@@ -71,11 +83,20 @@ challenges:
   id: lbmzbwxbo9gc
   type: challenge
   title: Provision Service & Workload Identities
-  teaser: A short description of the challenge.
+  teaser: Create workload identities for secure introduction
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assignment you will create trust with various runtime platforms. These identities are required for Vault to securely introduce workloads. <br>
 
-    You can use any GitHub flavoured markdown.
+    You can read more about the supported Vault authentication mechanisms on the [Vault website](https://www.vaultproject.io/docs/auth). <br>
+
+    Inspect the Terraform and create the workload identities. <br>
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    In the next assignment you will centralize secrets around these identities.
   tabs:
   - title: Shell
     type: terminal
@@ -97,9 +118,50 @@ challenges:
   title: Centralize Secrets in Vault
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assignment you will centralize secrets in Vault that will be consumed by applications and services across clouds and runtimes. <br>
 
-    You can use any GitHub flavoured markdown.
+    The Vault server is now available and the UI can be accessed in the tab. <br>
+
+    Vault replication is confiugred across AWS & Azure.
+    See the [documentation](https://www.vaultproject.io/docs/enterprise/replication) for more information about Vault replication. <br>
+
+    An admin account in Vault is now avaiable. Use the below command to log in. <br>
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    ```
+
+    Check the status of replication to validate that the AWS Vault is connected to the Azure Vault. <br>
+
+    ```
+    vault read -format=json sys/replication/status | jq
+    ```
+
+    You can also view the [auth methods](https://www.vaultproject.io/docs/auth) and [secrets engines](https://www.vaultproject.io/docs/secrets) that are configured for the environments.
+
+    ```
+    vault secrets list
+    vault auth list
+    ```
+
+    Inspect the role bindings that are configured for the Consul server infrastructure.
+
+    ```
+    vault read /auth/aws/role/consul
+    vault read /auth/azure/role/consul
+    ```
+
+    Now that the configuration is valid, seed the inital secret for Consul.
+
+    ```
+    vault kv put kv/consul \
+      master_token=$(cat /proc/sys/kernel/random/uuid) \
+      replication_token=$(cat /proc/sys/kernel/random/uuid) \
+      gossip_key=$(consul keygen) \
+      ttl=5m
+    ```
+
+    You will tie these tokens to Consul policies in a later assignment.
   tabs:
   - title: Shell
     type: terminal
@@ -126,9 +188,32 @@ challenges:
   title: Provision AWS Consul Primary Datacenter
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assingment you will boostrap the initial cluster and validate the health of the server.
+    The primary Consul sever cluster resides in AWS. <br>
 
-    You can use any GitHub flavoured markdown.
+    Inspect the initialization scripts in the CLI or UI.
+
+    ```
+    cat scripts/aws_consul_server.sh
+    cat scripts/aws_mesh_gateway.sh
+    ```
+
+    Inspect the Terraform and provision the servers.
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+
+    Wait for the server to elect a leader (it can take a few minutes for the EC2 intance to become avaiable).
+
+    ```
+    consul_api=$(terraform output aws_consul_public_ip)
+    curl -s -v http://{$consul_api}:8500/v1/status/leader
+    ```
+
+    In the next assignment you will finish configuring the Consul primary server.
   tabs:
   - title: Shell
     type: terminal
@@ -155,9 +240,77 @@ challenges:
   title: Bootstrap Consul Primary Datacenter
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assingment you will finish configuring the primary server
+    and configure tokens and policies for federated clusters to connect to the primary. <br>
 
-    You can use any GitHub flavoured markdown.
+    The Consul server is now available in the UI. <br>
+
+    The Consul server was initialized with a [master token](https://www.consul.io/docs/security/acl/acl-system#builtin-tokens)
+    to facilitate the bootstrap process. <br>
+
+    Log in to Vault and get an admin token to finish setting up the Consul server cluster. <br>
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+    ```
+
+    Vault can [create short lived tokens](https://www.vaultproject.io/docs/secrets/consul) for Consul access.
+    Configure that now so we can provide least privlege to operators. <br>
+
+    ```
+    AWS_CONSUL_IP=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip)
+    echo 'operator = "write"
+    acl = "write"
+    ' |  consul acl policy create -name operator -rules  -
+    vault secrets enable consul
+    vault write consul/config/access \
+        address=http://${AWS_CONSUL_IP}:8500 \
+        token=$(consul acl token create -description 'vault mgmt' -policy-name=global-management -format=json | jq -r '.SecretID')
+    vault write consul/roles/operator policies=operator ttl=30m
+    ```
+
+    You can now request a short lived token to make administrative changes to the cluster.
+
+    ```
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+    consul acl token read -self
+    ```
+
+    Next, tie the token in Vault to the replication policy so we can establish trust with federated clusters.
+
+    ```
+    echo 'operator = "write"
+    agent_prefix "" {
+      policy = "read"
+    }
+    node_prefix "" {
+      policy = "write"
+    }
+    acl = "write"
+    service_prefix "" {
+      policy = "read"
+      intentions = "read"
+    }' |  consul acl policy create -name replication -rules -
+    consul acl token create -policy-name replication -secret=$(vault kv get -field replication_token kv/consul)
+    ```
+
+    Last, apply defaults for the service mesh that you'll leverage in the last few assignments.
+
+    ```
+    echo '
+    Kind      = "proxy-defaults"
+    Name      = "global"
+    Namespace = "default"
+    Config {
+      protocol = "http"
+    }
+    MeshGateway {
+       Mode = "local"
+    }' | consul config write -
+    ```
+
+    In the next few assignments you will connect secondary Consul datacenters to this cluster.
   tabs:
   - title: Shell
     type: terminal
@@ -171,16 +324,16 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/aws-consul-primary
-  - title: Vault
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8200
   - title: Consul
     type: service
     hostname: cloud-client
     path: /
     port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   difficulty: basic
   timelimit: 300
 - slug: 07-create-namespaces-and-policies
@@ -223,9 +376,33 @@ challenges:
   title: Provision Azure Consul Secondary Datacenter
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assingment you will bootstrap the Azure secondary Cluster, validate the health of the server and its connection to the primary.
 
-    You can use any GitHub flavoured markdown.
+    Inspect the initialization scripts in the CLI or UI.
+
+    ```
+    cat scripts/azure_consul_server.sh
+    cat scripts/azure_mesh_gateway.sh
+    ```
+
+    Inspect the Terraform and provision the servers.
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+
+    Wait for the server to elect a leader (it can take a few minutes for the Azure compute instance to become available).
+    Replication with the primary will be enabled. <br>
+
+    ```
+    consul_api=$(terraform output azure_consul_public_ip)
+    curl -s -v http://{$consul_api}:8500/v1/status/leader
+    curl -s -v http://{$consul_api}:8500/v1/acl/replication | jq
+    ```
+
+    In the next assignment you will configure the remaining secondary cluster.
   tabs:
   - title: Shell
     type: terminal
@@ -257,9 +434,72 @@ challenges:
   title: Provision GCP  Consul Secondary Datacenter
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assingment you will boostrap the GCP secondary Cluster, validate the health of the server and its connection to the primary. <br>
 
-    You can use any GitHub flavoured markdown.
+    In this environment, Consul on GCP runs entirely in GKE K8s. The Consul helm chart easily supports running Consul in K8s for both Consul server agents, and Consul client agents. <br>
+
+    You can read the following resources for more information on running Consul in K8s:
+      * https://www.consul.io/docs/k8s
+      * https://www.consul.io/docs/k8s/installation/multi-cluster/kubernetes
+
+    Inspect the Terraform and provision K8s shared services cluster. <br>
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    Check the worker nodes are avaiable for the cluster. <br>
+
+    ```
+    gcloud container clusters get-credentials $(terraform output gcp_gke_cluster_shared_name) --region us-central1-a
+    kubectl config rename-context $(kubectl config current-context) shared
+    kubectl config use-context shared
+    kubectl get nodes
+    ```
+
+    Now that K8s is ready, you create the K8s federation secret.
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    aws_mgw=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_mgw_public_ip)
+    server_json=$(jq -n --arg mgw "$aws_mgw" '{primary_datacenter: "aws-us-east-1",primary_gateways:["\($mgw):443"]}')
+    cat <<EOF | kubectl apply -f -
+    {
+    "apiVersion": "v1",
+    "kind": "Secret",
+      "data": {
+        "caCert": "$(vault read -field certificate pki/cert/ca | base64 -w 0)",
+        "caKey": "$(vault kv get -field private_key kv/pki | base64 -w 0)",
+        "gossipEncryptionKey": "$(vault kv get -field gossip_key kv/consul | base64 -w 0)",
+        "replicationToken": "$(vault kv get -field replication_token kv/consul | base64 -w 0)",
+        "serverConfigJSON": "$(echo $server_json | base64 -w 0)"
+        },
+        "metadata": {
+            "name": "consul-federation",
+            "namespace": "default"
+        }
+    }
+    EOF
+    ```
+
+    Next, deploy the Consul servers. You can review the configuration in the code editor.
+
+    ```
+    helm install hashicorp hashicorp/consul -f /root/terraform/gcp-consul-secondary/consul-values.yaml --debug --wait
+    kubectl apply -f /root/terraform/gcp-consul-secondary/consul-join.yaml
+    ```
+
+    Connect to the Consul API and check the leader and replication status.
+
+    ```
+    kubectl get svc consul-ui -o json | jq -r .status.loadBalancer.ingress[0].ip
+    consul_api=$(kubectl get svc consul-ui -o json | jq -r .status.loadBalancer.ingress[0].ip)
+    curl -k -s https://{$consul_api}/v1/status/leader
+    curl -k -s https://{$consul_api}/v1/acl/replication | jq
+    ```
+
+    In the next assignment you will connect Consul secondary components to the server clusters in AWS & Azure.
   tabs:
   - title: Shell
     type: terminal
@@ -291,9 +531,31 @@ challenges:
   title: Provision Consul ESMs
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assignment you will provision Consul External Services Monitors (ESMs) to health check services that do not run Consul agents. <br>
 
-    You can use any GitHub flavoured markdown.
+    Cloud managed services are common targets for external services monitoring. <br>
+
+    You can read more about Consul ESM:
+      * https://learn.hashicorp.com/tutorials/consul/service-registration-external-services
+      * https://github.com/hashicorp/consul-esm
+      * https://www.hashicorp.com/resources/bloomberg-s-consul-story-to-20-000-nodes-and-beyond
+
+
+    Inspect the Terraform code and provision the extenral mointoring.
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    ESM services are now available in your Consul datacenters.
+
+    ```
+    consul catalog services -datacenter=aws-us-east-1
+    consul catalog services -datacenter=azure-west-us-2
+    ```
+
+    In the next assingments you will provision cloud managed services and configure them for Consul ESM monitoring.
   tabs:
   - title: Shell
     type: terminal
@@ -325,18 +587,23 @@ challenges:
   title: Provision Cache Services
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assignment you will provision AWS ElastiCache instances to be consumed by the application.
+    The ElastiCache instances are Redis datastores. <br>
 
-    You can use any GitHub flavoured markdown.
+    We can use Terraform to configure Consul with the [Consul Provider](https://registry.terraform.io/providers/hashicorp/consul/latest/docs).
+
+    Retrive and operator token.
+
+    ```
+    ```
+
+    Provision the ElastiCache instances
+
+    Inspect the Consul configuration and apply the
   tabs:
   - title: Shell
     type: terminal
     hostname: cloud-client
-  - title: Cloud Consoles
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 80
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -351,6 +618,11 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8500
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   difficulty: basic
   timelimit: 300
 - slug: 12-provision-database-services
@@ -662,10 +934,46 @@ challenges:
   title: Test Application Deployment
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assignment you will test the application. <br>
 
-    You can use any GitHub flavoured markdown.
+    Monitor the cache for incoming payments in one window. <br>
+
+    ```
+    ssh -i ~/.ssh/id_rsa ubuntu@$(terraform output -state /root/terraform/infra/terraform.tfstate aws_bastion_ip) \
+      "redis-cli -h \
+      $(terraform output -state /root/terraform/cache-services/terraform.tfstate -json aws_elasticache_cache_nodes | jq -r .[0].address) -p 6379 MONITOR"
+    ```
+
+    In the other window send traffic to the HashiCups public APIs.
+
+    ```
+    kubectl config use-context graphql
+    endpoint=$(kubectl get svc public-api-service -o json | jq -r .status.loadBalancer.ingress[0].ip)
+
+    #public api
+    curl -s -v http://${endpoint}:8080/api \
+      -H 'Accept-Encoding: gzip, deflate, br' \
+      -H 'Content-Type: application/json' \
+      -H 'Accept: application/json' \
+      -H 'Connection: keep-alive' \
+      -H 'DNT: 1' \
+      --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+      --compressed | jq
+
+    #payments
+    curl -s -v http://${endpoint}:8080/api \
+      -H 'Accept-Encoding: gzip, deflate, br' \
+      -H 'Content-Type: application/json' \
+      -H 'Accept: application/json' \
+      -H 'Connection: keep-alive' \
+      -H 'DNT: 1' \
+      --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+      --compressed | jq
+    ```
   tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
   - title: Shell
     type: terminal
     hostname: cloud-client
@@ -690,4 +998,4 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-checksum: "6140851235014568512"
+checksum: "17374171226091114334"

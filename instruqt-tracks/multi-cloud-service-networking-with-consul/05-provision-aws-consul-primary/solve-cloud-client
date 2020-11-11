@@ -1,5 +1,6 @@
 #!/bin/bash
 
 terraform apply -auto-approve | tee terraform.out
+sleep 180
 
 exit 0

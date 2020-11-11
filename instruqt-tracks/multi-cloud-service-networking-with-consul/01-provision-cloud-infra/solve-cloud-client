@@ -1,6 +1,7 @@
 #!/bin/bash
 
 sleep 120
+export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)
 terraform apply -auto-approve | tee terraform.out
 
 exit 0

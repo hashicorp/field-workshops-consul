@@ -5,6 +5,17 @@ vault login -method=userpass username=admin password=admin
 export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
 
 #create the replication policy & token
+AWS_CONSUL_IP=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip)
+echo 'operator = "write"
+acl = "write"
+' |  consul acl policy create -name operator -rules  -
+vault secrets enable consul
+vault write consul/config/access \
+    address=http://${AWS_CONSUL_IP}:8500 \
+    token=$(consul acl token create -description 'vault mgmt' -policy-name=global-management -format=json | jq -r '.SecretID')
+vault write consul/roles/operator policies=operator ttl=30m
+
+#create the replication policy & token
 echo 'operator = "write"
 agent_prefix "" {
   policy = "read"
@@ -19,17 +30,6 @@ service_prefix "" {
 }' |  consul acl policy create -name replication -rules -
 consul acl token create -policy-name replication -secret=$(vault kv get -field replication_token kv/consul)
 
-#create the replication policy & token
-AWS_CONSUL_IP=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip)
-echo 'operator = "write"
-acl = "write"
-' |  consul acl policy create -name operator -rules  -
-vault secrets enable consul
-vault write consul/config/access \
-    address=http://${AWS_CONSUL_IP}:8500 \
-    token=$(consul acl token create -description 'vault mgmt' -policy-name=global-management -format=json | jq -r '.SecretID')
-vault write consul/roles/operator policies=operator ttl=30m
-
 #mesh defaults
 echo '
 Kind      = "proxy-defaults"
@@ -41,5 +41,7 @@ Config {
 MeshGateway {
    Mode = "local"
 }' | consul config write -
+
+sleep 15
 
 exit 0

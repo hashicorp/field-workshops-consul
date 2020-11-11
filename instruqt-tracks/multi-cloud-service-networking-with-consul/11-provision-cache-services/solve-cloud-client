@@ -1,8 +1,11 @@
 #!/bin/bash
 
+#creds
 vault login -method=userpass username=admin password=admin
 export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
 
+#tf
 terraform apply -auto-approve | tee terraform.out
-sleep 60
+sleep 30
+
 exit 0

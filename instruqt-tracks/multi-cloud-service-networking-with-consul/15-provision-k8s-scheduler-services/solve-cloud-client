@@ -1,7 +1,10 @@
 #!/bin/bash
 
 #provision k8s
+export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)
 terraform apply -auto-approve | tee terraform.out
+
+sleep 30
 
 #creds
 export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
@@ -27,6 +30,8 @@ data:
 EOF
 helm install hashicorp hashicorp/consul -f react-values.yaml --debug --wait
 
+sleep 15
+
 #graphql
 gcloud container clusters get-credentials $(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_name) --region us-central1-a
 kubectl config rename-context $(kubectl config current-context) graphql
@@ -46,6 +51,8 @@ data:
   acl.json: $acl_config
 EOF
 helm install hashicorp hashicorp/consul -f graphql-values.yaml --debug --wait
+
+sleep 15
 
 #set up auth
 kubectl config use-context shared
