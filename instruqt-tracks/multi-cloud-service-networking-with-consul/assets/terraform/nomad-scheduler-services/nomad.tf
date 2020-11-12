@@ -85,7 +85,7 @@ data "template_file" "init" {
 }
 
 resource "aws_instance" "nomad-client" {
-  count = 1
+  count = 2
 
   instance_type               = "t3.small"
   ami                         = data.aws_ami.ubuntu.id

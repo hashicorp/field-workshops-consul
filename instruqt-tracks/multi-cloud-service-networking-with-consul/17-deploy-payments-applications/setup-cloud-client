@@ -9,7 +9,7 @@ cat << 'EOF' > /root/terraform/nomad-scheduler-services/payments.hcl
 job "payments" {
   datacenters = ["aws-us-east-1"]
   group "payments" {
-    count = 1
+    count = 2
     network {
       mode = "bridge"
       port "healthcheck" {

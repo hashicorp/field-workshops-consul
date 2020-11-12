@@ -205,6 +205,12 @@ challenges:
     terraform apply -auto-approve
     ```
 
+    You can monitor the init scripts with the below commands. <br>
+
+    ```
+    ssh ubuntu@$(terraform output aws_consul_public_ip) 'tail -f /var/log/cloud-init-output.log'
+    ssh ubuntu@$(terraform output aws_mgw_public_ip) 'tail -f /var/log/cloud-init-output.log'
+    ```
 
     Wait for the server to elect a leader (it can take a few minutes for the EC2 intance to become avaiable).
 
@@ -392,6 +398,12 @@ challenges:
     terraform apply -auto-approve
     ```
 
+    You can monitor the init scripts with the below commands. <br>
+
+    ```
+    ssh ubuntu@$(terraform output azure_consul_public_ip) 'tail -f /var/log/cloud-init-output.log'
+    ssh ubuntu@$(terraform output azure_mgw_public_ip) 'tail -f /var/log/cloud-init-output.log'
+    ```
 
     Wait for the server to elect a leader (it can take a few minutes for the Azure compute instance to become available).
     Replication with the primary will be enabled. <br>
@@ -548,7 +560,14 @@ challenges:
     terraform apply -auto-approve
     ```
 
-    ESM services are now available in your Consul datacenters.
+    You can monitor the init scripts with the below commands. <br>
+
+    ```
+    ssh ubuntu@$(terraform output aws_esm_public_ip) 'tail -f /var/log/cloud-init-output.log'
+    ssh ubuntu@$(terraform output azure_esm_public_ip) 'tail -f /var/log/cloud-init-output.log'
+    ```
+
+    ESM services are now available in your Consul datacenters. <br>
 
     ```
     consul catalog services -datacenter=aws-us-east-1
@@ -667,6 +686,13 @@ challenges:
   assignment: |-
     The assignment the participant needs to complete in order to proceed.
 
+    You can monitor provisioning with the below commands. <br>
+
+    ```
+    ssh ubuntu@$(terraform output aws_tgw_public_ip) 'tail -f /var/log/cloud-init-output.log'
+    ssh ubuntu@$(terraform output azure_tgw_public_ip) 'tail -f /var/log/cloud-init-output.log'
+    ```
+
     You can use any GitHub flavoured markdown.
   tabs:
   - title: Shell
@@ -701,16 +727,18 @@ challenges:
   assignment: |-
     The assignment the participant needs to complete in order to proceed.
 
+    You can monitor provisioning with the below command. <br>
+
+    ```
+    ssh ubuntu@$(terraform output aws_nomad_server_public_ip) 'tail -f /var/log/cloud-init-output.log'
+    ```
+
+    You can access the Nomad UI at the below URL <br>
+
+    echo http://$(terraform output aws_nomad_server_public_ip):4646
+
     You can use any GitHub flavoured markdown.
   tabs:
-  - title: Shell
-    type: terminal
-    hostname: cloud-client
-  - title: Cloud Consoles
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 80
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -720,6 +748,14 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Consul
     type: service
     hostname: cloud-client
@@ -951,13 +987,16 @@ challenges:
       $(terraform output -state /root/terraform/cache-services/terraform.tfstate -json aws_elasticache_cache_nodes | jq -r .[0].address) -p 6379 MONITOR"
     ```
 
-    In the other window send traffic to the HashiCups public APIs.
+    In the other window send traffic to the HashiCups public APIs. <br>
 
     ```
     kubectl config use-context graphql
     endpoint=$(kubectl get svc public-api-service -o json | jq -r .status.loadBalancer.ingress[0].ip)
+    ```
 
-    #public api
+    Try the Product API. <br>
+
+    ```
     curl -s -v http://${endpoint}:8080/api \
       -H 'Accept-Encoding: gzip, deflate, br' \
       -H 'Content-Type: application/json' \
@@ -966,8 +1005,13 @@ challenges:
       -H 'DNT: 1' \
       --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
       --compressed | jq
+    ```
+
+    Try the payment API. <br>
 
     #payments
+
+    ```
     curl -s -v http://${endpoint}:8080/api \
       -H 'Accept-Encoding: gzip, deflate, br' \
       -H 'Content-Type: application/json' \
@@ -977,6 +1021,8 @@ challenges:
       --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
       --compressed | jq
     ```
+
+    You just connected the HashiCups app across three clouds!
   tabs:
   - title: Shell
     type: terminal
@@ -1005,4 +1051,4 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-checksum: "4952554136941399409"
+checksum: "1077347208614208345"

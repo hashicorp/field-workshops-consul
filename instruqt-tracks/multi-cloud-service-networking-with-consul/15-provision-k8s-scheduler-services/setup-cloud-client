@@ -12,7 +12,7 @@ set-workdir /root/terraform/k8s-scheduler-services
 cat <<EOF>  /root/terraform/k8s-scheduler-services/react-values.yaml
 global:
   enabled: false
-  name: react
+  name: consul-react
   datacenter: gcp-us-central-1
   acls:
       manageSystemACLs: true
@@ -36,7 +36,7 @@ externalServers:
   enabled: true
   hosts:
     - '10.1.0.10'
-  k8sAuthMethodHost: 'https://$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_endpoint)'
+  k8sAuthMethodHost: "https://$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_endpoint)"
 syncCatalog:
   enabled: true
   default: false
@@ -47,7 +47,6 @@ connectInject:
   enabled: true
   default: true
   k8sAllowNamespaces: ["default"]
-  overrideAuthMethodName: hashicorp-consul-k8s-auth-method-react
 ingressGateways:
   enabled: true
   gateways:
@@ -60,7 +59,7 @@ EOF
 cat <<EOF>  /root/terraform/k8s-scheduler-services/graphql-values.yaml
 global:
   enabled: false
-  name: graphql
+  name: consul-graphql
   datacenter: gcp-us-central-1
   acls:
       manageSystemACLs: true
@@ -84,7 +83,7 @@ externalServers:
   enabled: true
   hosts:
     - '10.1.0.10'
-  k8sAuthMethodHost: 'https://$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_endpoint)'
+  k8sAuthMethodHost: "https://$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_endpoint)"
 syncCatalog:
   enabled: true
   default: false
