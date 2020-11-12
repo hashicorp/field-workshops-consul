@@ -844,10 +844,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
-  - title: Terraform
-    type: code
-    hostname: cloud-client
-    path: /root/terraform/product-applications
   - title: Vault
     type: service
     hostname: cloud-client
@@ -858,6 +854,10 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8500
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/product-applications
   difficulty: basic
   timelimit: 300
 - slug: 19-deploy-frontend-applications
@@ -1005,4 +1005,4 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-checksum: "17740203031089050074"
+checksum: "4952554136941399409"

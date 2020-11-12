@@ -195,7 +195,7 @@ sudo systemctl start vault-agent.service
 
 #keep vault restarting for temp licensing
 sudo crontab -l > vault
-sudo echo "*/25 * * * * sudo service vault restart" >> vault
+sudo echo "*/28 * * * * sudo service vault restart" >> vault
 sudo crontab vault
 sudo rm vault
 

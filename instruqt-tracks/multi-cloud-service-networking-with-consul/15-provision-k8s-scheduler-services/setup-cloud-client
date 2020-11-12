@@ -36,7 +36,7 @@ externalServers:
   enabled: true
   hosts:
     - '10.1.0.10'
-  k8sAuthMethodHost: 'https://${terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_endpoint}'
+  k8sAuthMethodHost: 'https://$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_endpoint)'
 syncCatalog:
   enabled: true
   default: false
@@ -84,7 +84,7 @@ externalServers:
   enabled: true
   hosts:
     - '10.1.0.10'
-  k8sAuthMethodHost: 'https://${terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_endpoint}'
+  k8sAuthMethodHost: 'https://$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_endpoint)'
 syncCatalog:
   enabled: true
   default: false
