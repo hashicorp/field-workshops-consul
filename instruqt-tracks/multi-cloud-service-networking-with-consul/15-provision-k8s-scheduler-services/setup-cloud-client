@@ -12,10 +12,13 @@ set-workdir /root/terraform/k8s-scheduler-services
 cat <<EOF>  /root/terraform/k8s-scheduler-services/react-values.yaml
 global:
   enabled: false
-  name: consul
+  name: react
   datacenter: gcp-us-central-1
   acls:
-    manageSystemACLs: false
+      manageSystemACLs: true
+      bootstrapToken:
+        secretName: bootstrap-token
+        secretKey: token
   tls:
     enabled: true
     enableAutoEncrypt: true
@@ -29,30 +32,21 @@ client:
   enabled: true
   join:
     - "10.1.0.10"
-  extraVolumes:
-  - type: 'secret'
-    name: 'hashicorp-consul-acl-config'
-    load: true
 externalServers:
   enabled: true
   hosts:
     - '10.1.0.10'
+  k8sAuthMethodHost: 'https://${terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_endpoint}'
 syncCatalog:
   enabled: true
   default: false
   toConsul: true
   toK8S: false
-  aclSyncToken:
-    secretName: hashicorp-consul-sync-catalog-acl-token
-    secretKey:  token
   k8sTag: k8s-react
 connectInject:
   enabled: true
   default: true
   k8sAllowNamespaces: ["default"]
-  aclInjectToken:
-    secretName: hashicorp-consul-connect-inject-acl-token
-    secretKey: token
   overrideAuthMethodName: hashicorp-consul-k8s-auth-method-react
 ingressGateways:
   enabled: true
@@ -66,10 +60,13 @@ EOF
 cat <<EOF>  /root/terraform/k8s-scheduler-services/graphql-values.yaml
 global:
   enabled: false
-  name: consul
+  name: graphql
   datacenter: gcp-us-central-1
   acls:
-    manageSystemACLs: false
+      manageSystemACLs: true
+      bootstrapToken:
+        secretName: bootstrap-token
+        secretKey: token
   tls:
     enabled: true
     enableAutoEncrypt: true
@@ -83,31 +80,21 @@ client:
   enabled: true
   join:
     - "10.1.0.10"
-  extraVolumes:
-  - type: 'secret'
-    name: 'hashicorp-consul-acl-config'
-    load: true
 externalServers:
   enabled: true
   hosts:
     - '10.1.0.10'
+  k8sAuthMethodHost: 'https://${terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_endpoint}'
 syncCatalog:
   enabled: true
   default: false
   toConsul: true
   toK8S: false
-  aclSyncToken:
-    secretName: hashicorp-consul-sync-catalog-acl-token
-    secretKey:  token
-  k8sTag: k8s-graphql
+  k8sTag: k8s-react
 connectInject:
   enabled: true
   default: true
   k8sAllowNamespaces: ["default"]
-  aclInjectToken:
-    secretName: hashicorp-consul-connect-inject-acl-token
-    secretKey: token
-  overrideAuthMethodName: hashicorp-consul-k8s-auth-method-graphql
 ingressGateways:
   enabled: true
   gateways:

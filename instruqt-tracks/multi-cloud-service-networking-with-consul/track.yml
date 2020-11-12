@@ -768,6 +768,10 @@ challenges:
 
     You can use any GitHub flavoured markdown.
   tabs:
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root
   - title: Shell
     type: terminal
     hostname: cloud-client
@@ -776,10 +780,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
-  - title: Terraform
-    type: code
-    hostname: cloud-client
-    path: /root
   - title: Vault
     type: service
     hostname: cloud-client
@@ -936,6 +936,13 @@ challenges:
   assignment: |-
     In this assignment you will test the application. <br>
 
+    The UI is available on the react cluster. <br>
+
+    ```
+    kubectl config use-context react
+    echo "http://$(kubectl get svc frontend-service -o json | jq -r .status.loadBalancer.ingress[0].ip)"
+    ```
+
     Monitor the cache for incoming payments in one window. <br>
 
     ```
@@ -998,4 +1005,4 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-checksum: "17374171226091114334"
+checksum: "17740203031089050074"

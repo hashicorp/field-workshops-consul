@@ -1,14 +1,14 @@
 #!/bin/bash
 
 kubectl config use-context graphql
-status=$(helm status hashicorp --output json | jq -r '.info.status')
+status=$(helm status consul --output json | jq -r '.info.status')
 if [ "${status}" != "deployed" ]; then
   fail-message "Helm chart is not deployed for graphql cluster. Redeploy with Helm install/upgrade."
   exit 1
 fi
 
 kubectl config use-context react
-status=$(helm status hashicorp --output json | jq -r '.info.status')
+status=$(helm status consul --output json | jq -r '.info.status')
 if [ "${status}" != "deployed" ]; then
   fail-message "Helm chart is not deployed for react cluster.  Redeploy with Helm install/upgrade."
   exit 1

@@ -115,9 +115,9 @@ resource "aws_instance" "bastion-shared-svcs" {
   subnet_id                   = module.aws-vpc-shared-svcs.public_subnets[0]
   associate_public_ip_address = true
   user_data = <<EOF
-    #!/bin/bash
-    sudo apt update -y
-    sudo apt install redis -y
+#!/bin/bash
+sudo apt update -y
+sudo apt install redis -y
     EOF
   tags = {
     Name = "bastion"
