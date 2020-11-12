@@ -4,7 +4,7 @@
 export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)
 terraform apply -auto-approve | tee terraform.out
 
-sleep 30
+sleep 15
 
 #creds
 vault login -method=userpass username=admin password=admin
@@ -17,21 +17,7 @@ kubectl config use-context react
 kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
 kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
 kubectl create secret generic bootstrap-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
-
-#kubectl create secret generic hashicorp-consul-connect-inject-acl-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
-#kubectl create secret generic hashicorp-consul-sync-catalog-acl-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
-#acl_config=$(jq -n --arg token "$(vault kv get -field=master_token kv/consul)" '{acl: { enabled: true, default_policy: "deny", enable_token_persistence: true, tokens: { agent: $token, default: $token } } }' | base64 -w 0 )
-#cat <<EOF | kubectl apply -f -
-#apiVersion: v1
-#kind: Secret
-#metadata:
-#  name: hashicorp-consul-acl-config
-#type: Opaque
-#data:
-#  acl.json: $acl_config
-#EOF
-
-helm install consul hashicorp/consul -f react-values.yaml --debug --wait
+helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f react-values.yaml --debug --wait
 
 sleep 15
 
@@ -42,54 +28,6 @@ kubectl config use-context graphql
 kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
 kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
 kubectl create secret generic bootstrap-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
-
-#kubectl create secret generic hashicorp-consul-connect-inject-acl-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
-#kubectl create secret generic hashicorp-consul-sync-catalog-acl-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
-#acl_config=$(jq -n --arg token "$(vault kv get -field=master_token kv/consul)" '{acl: { enabled: true, default_policy: "deny", enable_token_persistence: true, tokens: { agent: $token, default: $token } } }' | base64 -w 0 )
-#cat <<EOF | kubectl apply -f -
-#apiVersion: v1
-#kind: Secret
-#metadata:
-#  name: hashicorp-consul-acl-config
-#type: Opaque
-#data:
-#  acl.json: $acl_config
-#EOF
-
-helm install consul hashicorp/consul -f graphql-values.yaml --debug --wait
-
-#sleep 15
-
-#set up auth
-#kubectl config use-context shared
-#export CONSUL_HTTP_SSL_VERIFY=false
-#export CONSUL_HTTP_ADDR=https://$(kubectl get svc consul-ui -o json | jq -r .status.loadBalancer.ingress[0].ip)
-#export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
-
-#kubectl config use-context react
-#consul acl auth-method create -type "kubernetes" \
-#    -name "hashicorp-consul-k8s-auth-method-react" \
-#    -description "react apps" \
-#    -kubernetes-host "https://$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_endpoint)" \
-#    -kubernetes-ca-cert "$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_cluster_ca_certificate | base64 -d)" \
-#    -kubernetes-service-account-jwt "$(kubectl get secret $(kubectl get sa hashicorp-consul-connect-injector-authmethod-svc-account -o json | jq -r .secrets[0].name) -o json | jq -r .data.token | base64 -d)"
-#consul acl binding-rule create -method 'hashicorp-consul-k8s-auth-method-react' \
-#    -description 'react apps' \
-#    -bind-type 'service' \
-#    -bind-name '${serviceaccount.name}' \
-#    -selector 'serviceaccount.namespace==default'
-
-#kubectl config use-context graphql
-#consul acl auth-method create -type "kubernetes" \
-#    -name "hashicorp-consul-k8s-auth-method-graphql" \
-#    -description "graphql apps" \
-#    -kubernetes-host "https://$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_endpoint)" \
-#    -kubernetes-ca-cert "$(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_cluster_ca_certificate | base64 -d)" \
-#    -kubernetes-service-account-jwt "$(kubectl get secret $(kubectl get sa hashicorp-consul-connect-injector-authmethod-svc-account -o json | jq -r .secrets[0].name) -o json | jq -r .data.token | base64 -d)"
-#consul acl binding-rule create -method 'hashicorp-consul-k8s-auth-method-graphql' \
-#    -description 'graphql apps' \
-#    -bind-type 'service' \
-#    -bind-name '${serviceaccount.name}' \
-#    -selector 'serviceaccount.namespace==default'
+helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_graphql_endpoint)" -f graphql-values.yaml --debug --wait
 
 exit 0
