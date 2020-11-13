@@ -207,9 +207,8 @@ challenges:
 
     You can monitor the init scripts with the below commands. <br>
 
-    ```
-    ssh ubuntu@$(terraform output aws_consul_public_ip) 'tail -f /var/log/cloud-init-output.log'
-    ssh ubuntu@$(terraform output aws_mgw_public_ip) 'tail -f /var/log/cloud-init-output.log'
+    * Consul Server - `ssh ubuntu@$(terraform output aws_consul_public_ip) 'tail -f /var/log/cloud-init-output.log'`
+    * Consul MGW - `ssh ubuntu@$(terraform output aws_mgw_public_ip) 'tail -f /var/log/cloud-init-output.log'`
     ```
 
     Wait for the server to elect a leader (it can take a few minutes for the EC2 intance to become avaiable).
@@ -400,10 +399,8 @@ challenges:
 
     You can monitor the init scripts with the below commands. <br>
 
-    ```
-    ssh ubuntu@$(terraform output azure_consul_public_ip) 'tail -f /var/log/cloud-init-output.log'
-    ssh ubuntu@$(terraform output azure_mgw_public_ip) 'tail -f /var/log/cloud-init-output.log'
-    ```
+    * Consul Server - `ssh ubuntu@$(terraform output azure_consul_public_ip) 'tail -f /var/log/cloud-init-output.log'`
+    * Consul MGW    - `ssh ubuntu@$(terraform output azure_mgw_public_ip) 'tail -f /var/log/cloud-init-output.log'`
 
     Wait for the server to elect a leader (it can take a few minutes for the Azure compute instance to become available).
     Replication with the primary will be enabled. <br>
@@ -1051,4 +1048,4 @@ challenges:
     port: 8500
   difficulty: basic
   timelimit: 300
-checksum: "13340359784862343853"
+checksum: "17060325173870506270"

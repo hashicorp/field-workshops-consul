@@ -1,6 +1,6 @@
 resource "random_password" "pg" {
   length  = 10
-  special = true
+  special = false
 }
 
 resource "azurerm_postgresql_server" "postgres" {
