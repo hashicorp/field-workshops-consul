@@ -3,7 +3,7 @@ resource "google_container_cluster" "graphql" {
   project            = var.gcp_project_id
   name               = "graphql-${data.terraform_remote_state.infra.outputs.env}"
   location           = "us-central1-a"
-  initial_node_count = 1
+  initial_node_count = 2
 
   network = "vpc-shared-svcs"
   subnetwork = "shared"
@@ -28,7 +28,7 @@ resource "google_container_cluster" "graphql" {
     metadata = {
       disable-legacy-endpoints = "true"
     }
-    machine_type = "n1-standard-2"
+    machine_type = "n1-standard-1"
     tags = ["consul-connect"]
   }
 
@@ -45,7 +45,7 @@ resource "google_container_cluster" "react" {
   project            = var.gcp_project_id
   name               = "react-${data.terraform_remote_state.infra.outputs.env}"
   location           = "us-central1-a"
-  initial_node_count = 1
+  initial_node_count = 2
 
   network = "vpc-shared-svcs"
   subnetwork = "shared"
@@ -70,7 +70,7 @@ resource "google_container_cluster" "react" {
     metadata = {
       disable-legacy-endpoints = "true"
     }
-    machine_type = "n1-standard-2"
+    machine_type = "n1-standard-1"
     tags = ["consul-connect"]
   }
 

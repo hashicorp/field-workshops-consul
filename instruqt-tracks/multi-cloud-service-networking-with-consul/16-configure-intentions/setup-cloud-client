@@ -3,6 +3,6 @@
 vault login -method=userpass username=admin password=admin
 export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
 
-consul intention create -deny '*' '*'
+consul intention create -deny '*/*' '*/*'
 
 exit 0
