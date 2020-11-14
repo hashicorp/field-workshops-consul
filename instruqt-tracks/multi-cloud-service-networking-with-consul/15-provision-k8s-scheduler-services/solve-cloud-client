@@ -17,7 +17,7 @@ kubectl config use-context react
 kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
 kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
 kubectl create secret generic bootstrap-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
-helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f react-values.yaml --debug --wait
+helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f react-values.yaml --debug --wait --timeout 10m
 
 sleep 15
 
@@ -28,6 +28,6 @@ kubectl config use-context graphql
 kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
 kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
 kubectl create secret generic bootstrap-token --from-literal="token=$(vault kv get -field=master_token kv/consul)"
-helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_graphql_endpoint)" -f graphql-values.yaml --debug --wait
+helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_graphql_endpoint)" -f graphql-values.yaml --debug --wait --timeout 10m
 
 exit 0

@@ -15,9 +15,11 @@ tags:
 owner: hashicorp
 developers:
 - lance@hashicorp.com
+- cpu@hashicorp.com
 private: true
 published: true
 show_timer: true
+skipping_enabled: true
 challenges:
 - slug: 01-provision-cloud-infra
   id: eej5x5cxdiig
@@ -1111,4 +1113,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 300
-checksum: "17060325173870506270"
+checksum: "1056576363136953331"
