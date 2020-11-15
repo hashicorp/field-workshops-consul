@@ -28,7 +28,7 @@ resource "google_container_cluster" "graphql" {
     metadata = {
       disable-legacy-endpoints = "true"
     }
-    machine_type = "n1-standard-1"
+    machine_type = "n1-standard-2"
     tags = ["consul-connect"]
   }
 
@@ -70,7 +70,7 @@ resource "google_container_cluster" "react" {
     metadata = {
       disable-legacy-endpoints = "true"
     }
-    machine_type = "n1-standard-1"
+    machine_type = "n1-standard-2"
     tags = ["consul-connect"]
   }
 

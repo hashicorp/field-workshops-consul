@@ -8,7 +8,9 @@ export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
 AWS_CONSUL_IP=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip)
 echo 'operator = "write"
 acl = "write"
-' |  consul acl policy create -name operator -rules  -
+agent_prefix "" {
+  policy = "read"
+}' |  consul acl policy create -name operator -rules  -
 vault secrets enable consul
 vault write consul/config/access \
     address=http://${AWS_CONSUL_IP}:8500 \
