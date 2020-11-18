@@ -96,7 +96,7 @@ resource "aws_instance" "nomad-client" {
   user_data                   = data.template_file.nomad-client.rendered
   iam_instance_profile        = data.terraform_remote_state.iam.outputs.aws_consul_iam_instance_profile_name
   tags = {
-    Name = "nomad"
+    Name = "nomad-client"
     Env  = "nomad-${data.terraform_remote_state.infra.outputs.env}"
   }
 }

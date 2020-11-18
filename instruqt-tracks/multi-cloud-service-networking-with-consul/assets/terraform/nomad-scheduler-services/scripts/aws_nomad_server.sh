@@ -2,7 +2,7 @@
 
 #update packages
 curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) test"
 sudo apt update -y
 
 #install packages
@@ -81,6 +81,7 @@ EOF
 
 cat <<EOF> /etc/nomad.d/consul.hcl
 consul {
+  namespace = "payments"
   token = "$${AGENT_TOKEN}"
 }
 EOF

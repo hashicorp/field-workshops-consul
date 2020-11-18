@@ -1,15 +1,26 @@
 #!/bin/bash
 
-#creds
-vault login -method=userpass username=admin password=admin
-export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
 
-#create intentions
-consul intention create frontend public-api
-consul intention create public-api product-api
-consul intention create public-api payments
-consul intention create product-api postgres
-consul intention create payments redis
-consul intention create payments vault
+#default
+vault login -method=userpass username=admin password=admin
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+consul intention create -allow '*/*' 'default/vault'
+consul intention create -allow 'payments/*' 'default/redis'
+consul intention create -allow 'product/*' 'default/postgres'
+
+#payments
+vault login -method=userpass username=payments-developer password=payments
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/payments-developer)
+consul intention create -allow 'frontend/public-api' 'payments/payments-api'
+
+#product
+vault login -method=userpass username=product-developer password=product
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/product-developer)
+consul intention create -allow 'frontend/public-api' 'product/product-api'
+
+#frontend
+vault login -method=userpass username=frontend-developer password=frontend
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/frontend-developer)
+consul intention create -allow 'frontend/web' 'frontend/public-api'
 
 exit 0

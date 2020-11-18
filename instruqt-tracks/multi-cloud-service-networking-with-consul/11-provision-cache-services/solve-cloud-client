@@ -2,7 +2,7 @@
 
 #creds
 vault login -method=userpass username=admin password=admin
-export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
 
 #tf
 terraform apply -auto-approve | tee terraform.out
