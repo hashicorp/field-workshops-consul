@@ -20,6 +20,13 @@ then
   exit 1
 fi
 
+#check the Ca infra
+ca=$(curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq -r '.Roots[1].Name')
+if [ "${ca}" != "Vault CA Root Cert" ]; then
+  fail-message "Ca is not Vault"
+  exit 1
+fi
+
 #check the gateway defaults - http & mgw local
 if [ "$(consul config read -kind proxy-defaults -name global | jq -r '.Config.protocol')" != "http" ]; then
   fail-message "Default protocol is not http"

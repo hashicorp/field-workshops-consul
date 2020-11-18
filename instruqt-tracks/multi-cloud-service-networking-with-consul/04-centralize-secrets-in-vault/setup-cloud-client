@@ -51,48 +51,13 @@ export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
 export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
 
 #admin policy
-echo 'path "*"
-{
-  capabilities = ["create", "read", "update", "delete", "list", "sudo"]
-}' | vault policy write admin -
-
-#tmp payments
-echo 'path "*"
-{
-  capabilities = ["create", "read", "update", "delete", "list", "sudo"]
-}' | vault policy write payments -
-
-#nomad policy
-echo 'path "kv/*"
-{
-  capabilities = ["read"]
-}
-path "pki/*"
-{
-  capabilities = ["read","update"]
-}
-path "auth/token/create/nomad-cluster" {
-  capabilities = ["update"]
-}
-path "auth/token/roles/nomad-cluster" {
-  capabilities = ["read"]
-}
-path "auth/token/lookup-self" {
-  capabilities = ["read"]
-}
-path "auth/token/lookup" {
-  capabilities = ["update"]
-}
-path "auth/token/revoke-accessor" {
-  capabilities = ["update"]
-}
-path "sys/capabilities-self" {
-  capabilities = ["update"]
-}
-path "auth/token/renew-self" {
-  capabilities = ["update"]
-}' | vault policy write nomad-server -
-curl https://nomadproject.io/data/vault/nomad-cluster-role.json -O -s -L
+vault policy write admin
+vault policy write nomad-server
+vault policy write connect
+vault policy write consul
+vault policy write payments
+vault policy write product-api
+curl  https://nomadproject.io/data/vault/nomad-cluster-role.json -O -s -L
 vault write /auth/token/roles/nomad-cluster @nomad-cluster-role.json
 
 vault auth enable userpass
@@ -102,42 +67,24 @@ vault write auth/userpass/users/admin \
 vault secrets enable transit
 vault auth enable aws
 vault auth enable azure
-vault secrets enable -version=2 kv
-vault secrets enable pki
 vault write auth/azure/config \
     tenant_id="$(az account show | jq -r .tenantId)" \
     resource="https://management.azure.com/"
+vault secrets enable -version=2 kv
+vault secrets enable pki
 private_key=$(vault write -field private_key pki/root/generate/exported\
     common_name="HashiCorp CA" \
     key_type="ec" \
     key_bits="521" \
     ttl=8760h)
 vault kv put kv/pki private_key="${private_key}"
+vault secrets enable -path connect-root pki
+vault secrets enable -path connect-intermediate pki
 vault write pki/roles/consul \
     allowed_domains=consul,internal \
     allow_subdomains=true \
     max_ttl=72h
 vault write -f transit/keys/payments
-
-#set up policy for consul
-echo 'path "kv/*"
-{
-  capabilities = ["read"]
-}
-path "pki/*"
-{
-  capabilities = ["read","update"]
-}' | vault policy write consul -
-
-#set up policy for product-api
-echo 'path "kv/*"
-{
-  capabilities = ["read"]
-}
-path "pki/*"
-{
-  capabilities = ["read","update"]
-}' | vault policy write product-api -
 
 #vault trust
 AWS_VAULT_IAM_ROLE_ARN=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_iam_role_arn)

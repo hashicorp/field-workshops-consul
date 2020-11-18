@@ -1,0 +1,20 @@
+#!/bin/bash
+
+vault login -method=userpass username=admin password=admin
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+
+consul acl policy create -name "cross-namespace-policy" -description "cross-namespace service discovery" -rules @cross-namespace-sd.hcl
+consul namespace update -name default -default-policy-name=cross-namespace-policy
+consul namespace write payments-namespace.hcl
+consul namespace write product-namespace.hcl
+consul namespace write frontend-namespace.hcl
+
+consul acl policy create -name "payments-developer-policy" -description "payments devloper" -rules @payments-developer.hcl
+consul acl policy create -name "product-developer-policy" -description  "product developer" -rules @product-developer.hcl
+consul acl policy create -name "frontend-developer-policy" -description "frontend developer" -rules @frontend-developer.hcl
+
+vault write consul/roles/payments-developer policies=payments-developer-policy ttl=30m
+vault write consul/roles/product-developer  policies=product-developer-policy ttl=30m
+vault write consul/roles/frontend-developer policies=frontend-developer-policy ttl=30m
+
+exit 0

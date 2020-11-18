@@ -48,4 +48,5 @@ namespace_prefix "" {
 }' |  consul acl policy create -name anonymous -rules -
 consul acl token update -id anonymous -policy-name anonymous
 
+
 exit 0

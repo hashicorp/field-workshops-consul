@@ -5,4 +5,6 @@ export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
 
 consul intention create -deny '*/*' '*/*'
 
+set-workdir /root/policies/consul
+
 exit 0

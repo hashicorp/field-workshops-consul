@@ -32,6 +32,7 @@ challenges:
     Inspect the terraform code in the code editor and create the VPCs and VNets for shared services and application workloads. <br>
 
     ```
+    terraform plan
     terraform apply -auto-approve
     ```
 
@@ -65,6 +66,7 @@ challenges:
     Insepect the Terrafrom code and provision the Vault infrastructure.
 
     ```
+    terraform plan
     terraform apply -auto-approve
     ```
 
@@ -221,11 +223,11 @@ challenges:
 
     You can monitor the init scripts with the below commands. <br>
 
+
     * Consul Server - `ssh ubuntu@$(terraform output aws_consul_public_ip) 'tail -f /var/log/cloud-init-output.log'`
     * Consul MGW - `ssh ubuntu@$(terraform output aws_mgw_public_ip) 'tail -f /var/log/cloud-init-output.log'`
-    ```
 
-    Wait for the server to elect a leader (it can take a few minutes for the EC2 intance to become avaiable).
+    Wait for the server to elect a leader (it can take a few minutes for the EC2 intance to become avaiable). <br>
 
     ```
     consul_api=$(terraform output aws_consul_public_ip)
@@ -264,6 +266,10 @@ challenges:
   assignment: |-
     In this assingment you will finish configuring the primary server
     and configure tokens and policies for federated clusters to connect to the primary. <br>
+
+    * [Vault CA](https://www.consul.io/docs/connect/ca/vault)
+    * [Secure Multi DC](https://learn.hashicorp.com/tutorials/consul/access-control-replication-multiple-datacenters)
+    * [Proxy Defaults](https://www.consul.io/docs/agent/config-entries/proxy-defaults)
 
     The Consul server is now available in the UI. <br>
 
@@ -317,6 +323,32 @@ challenges:
     consul acl token create -policy-name replication -secret=$(vault kv get -field replication_token kv/consul)
     ```
 
+    Then, configure the Connect CA to use the Vault infrastructure.
+
+    ```
+    cat << EOF > /root/terraform/aws-consul-primary/ca.json
+    {
+      "Provider": "vault",
+      "Config": {
+        "Address": "${VAULT_ADDR}",
+        "Token": "$(vault token create -field token -policy connect -period 8h)",
+        "RootPKIPath": "connect-root/",
+        "IntermediatePKIPath": "connect-intermediate/"
+      },
+      "ForceWithoutCrossSigning": true
+    }
+    EOF
+    consul connect ca set-config -config-file ca.json
+    ```
+
+    Cross-signing will take place immediately. Validate the new CA infrastructure.
+
+    ```
+    curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq '.Roots'
+    curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq '.Roots[1]'
+    curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq -r '.Roots[1].RootCert' | openssl x509 -text -noout
+    ```
+
     Last, apply defaults for the service mesh that you'll leverage in the last few assignments.
 
     ```
@@ -367,9 +399,32 @@ challenges:
   title: Create Namespaces & Policies
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assignment you will create namespaces in Consul for development groups. <br>
 
-    You can use any GitHub flavoured markdown.
+    Get an operator token. <br>
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+    ```
+
+    Create the namespaces. <br>
+
+    ```
+    consul acl policy create -name "cross-namespace-policy" -description "cross-namespace service discovery" -rules @cross-namespace-sd.hcl
+    consul namespace update -name default -default-policy-name=cross-namespace-policy
+    consul namespace write payments-namespace.hcl
+    consul namespace write product-namespace.hcl
+    consul namespace write frontend-namespace.hcl
+    ```
+
+    Review the namespaces. <br>
+
+    ```
+    consul namespace list
+    ```
+
+    Dev teams will deploy application workloads to the above namespaces in future assignments.
   tabs:
   - title: Shell
     type: terminal
@@ -379,10 +434,10 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
-  - title: Terraform
+  - title: Policies
     type: code
     hostname: cloud-client
-    path: /root/terraform/aws-consul-primary
+    path: /root/policies
   - title: Vault
     type: service
     hostname: cloud-client
@@ -640,15 +695,31 @@ challenges:
 
     We can use Terraform to configure Consul with the [Consul Provider](https://registry.terraform.io/providers/hashicorp/consul/latest/docs).
 
-    Retrive and operator token.
+    Inspect the Terraform, retrieve an operator token, and provision the Cache instances. <br>
 
     ```
+    vault login -method=userpass username=admin password=admin
+    export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+    terraform plan
+    terraform apply -auto-approve
     ```
 
-    Provision the ElastiCache instances
+    The managed Cache instance will now be available in the catalog.
 
-    Inspect the Consul configuration and apply the
+    ```
+    curl -s "${CONSUL_HTTP_ADDR}/v1/health/service/redis?passing=true" | jq
+    ```
+
+    You will use the managed Redis instance to process payments in future assignments.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
   - title: Shell
     type: terminal
     hostname: cloud-client
@@ -666,14 +737,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8500
-  - title: Cloud Consoles
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 80
-  - title: Lab Architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 300
 - slug: 12-provision-database-services
@@ -682,9 +745,26 @@ challenges:
   title: Provision Database Services
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assignment you will provision Azure Database Postgres instance to be consumed by the application. <br>
 
-    You can use any GitHub flavoured markdown.
+    We can use Terraform to configure Consul with the [Consul Provider](https://registry.terraform.io/providers/hashicorp/consul/latest/docs).
+
+    Inspect the Terraform, retrieve an operator token, and provision the Database instances. <br>
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    The managed database instance will now be available in the catalog.
+
+    ```
+    curl -s "${CONSUL_HTTP_ADDR}/v1/health/service/postgres?dc=azure-west-us-2&passing=true" | jq
+    ```
+
+    You will use the managed Postgres instance to query available products in future assignments.
   tabs:
   - title: Shell
     type: terminal
@@ -719,17 +799,35 @@ challenges:
   title: Provision Consul Terminating Gateways
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assignment you will provision Consul Terminating Gateways(TGW).
+    You can read [the docs](https://www.consul.io/docs/connect/gateways/terminating-gateway) for more information on how TGW works. <br>
 
-    You can monitor provisioning with the below commands. <br>
+    Inspect the Terraform, retrieve an operator token, and provision the TGWs. <br>
 
     ```
-    ssh ubuntu@$(terraform output aws_tgw_public_ip) 'tail -f /var/log/cloud-init-output.log'
-    ssh ubuntu@$(terraform output azure_tgw_public_ip) 'tail -f /var/log/cloud-init-output.log'
+    vault login -method=userpass username=admin password=admin
+    export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+    terraform plan
+    terraform apply -auto-approve
     ```
 
-    You can use any GitHub flavoured markdown.
+    You can monitor provisioning with the below commands: <br>
+
+    * AWS TGW - `ssh ubuntu@$(terraform output aws_tgw_public_ip) 'tail -f /var/log/cloud-init-output.log'`
+    * Azure TGW - `ssh ubuntu@$(terraform output azure_tgw_public_ip) 'tail -f /var/log/cloud-init-output.log'`
+
+    TGW services are now running. <br>
+
+    ```
+    consul catalog services -datacenter=aws-us-east-1
+    consul catalog services -datacenter=azure-west-us-2
+    ```
+
+    In future assignments you will route traffig to Vault, Redis, and Postgres leveraging the TGW in AWS & Azure.
   tabs:
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
   - title: Shell
     type: terminal
     hostname: cloud-client
@@ -752,9 +850,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8500
-  - title: Lab Architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 300
 - slug: 14-provision-nomad-scheduler-services
@@ -763,19 +858,42 @@ challenges:
   title: Provision Nomad Scheduler Services
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assignment you will provision Nomad to run payments workloads in AWS.
+    You can read the docs for more information about the Nomad integrations used in this lab environment: <br>
 
-    You can monitor provisioning with the below command. <br>
+    * [Introduction](https://www.nomadproject.io/intro)
+    * [Nomad & Vault](https://www.nomadproject.io/docs/integrations/vault-integration)
+    * [Nomad & Consul](https://www.nomadproject.io/docs/integrations/consul-integration)
+    * [Nomad & Consul Connect](https://www.nomadproject.io/docs/integrations/consul-connect)
+
+    Inspect the Terraform, retrieve an operator token, and provision Nomad servers and clients. <br>
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    You can monitor provisioning with the below command: <br>
 
     ```
     ssh ubuntu@$(terraform output aws_nomad_server_public_ip) 'tail -f /var/log/cloud-init-output.log'
     ```
 
-    You can access the Nomad UI at the below URL <br>
+    You can access the Nomad UI at the below URL: <br>
 
+    ```
     echo http://$(terraform output aws_nomad_server_public_ip):4646
+    ```
 
-    You can use any GitHub flavoured markdown.
+    Nomad services are now running in AWS. <br>
+
+    ```
+    consul catalog services -datacenter=aws-us-east-1
+    ```
+
+    You will schedule workloads on this nomad cluster in a later assignment.
   tabs:
   - title: Terraform
     type: code
@@ -809,7 +927,78 @@ challenges:
   type: challenge
   title: Provision K8s Scheduler Services
   teaser: test
-  assignment: test
+  assignment: |-
+    In this assignment you will provision K8s workload clusters in GCP.
+    These clusters will connect to the shared svcs GKE cluster in GCP. <br>
+
+    You can read the docs for more information on these patterns: <br>
+
+    * [Overview](https://www.consul.io/docs/k8s)
+    * [Multi-Cluster](https://www.consul.io/docs/k8s/installation/multi-cluster)
+
+    Inspect the Terraform and provision the K8s clusters. <br>
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    Next, configure the two provisioned workload K8s clusters and connect them to the shared svcs cluster.
+
+    Fetch credentials.
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    ```
+
+    First, deploy the React cluster. <br>
+
+    ```
+    gcloud container clusters get-credentials $(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_name) --region us-central1-a
+    kubectl config rename-context $(kubectl config current-context) react
+    kubectl config use-context react
+    kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
+    kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
+    kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
+    helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f react-values.yaml --debug --wait --timeout 10m
+    ```
+
+    Last, deploy the Graphql cluster. <br>
+
+    ```
+    gcloud container clusters get-credentials $(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_name) --region us-central1-a
+    kubectl config rename-context $(kubectl config current-context) graphql
+    kubectl config use-context graphql
+    kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
+    kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
+    kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
+    helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_graphql_endpoint)" -f graphql-values.yaml --debug --wait --timeout 10m
+    ```
+
+    If you get a helm error you can rerun the deployments with the upgrade command:
+
+
+    ```
+    #react
+    kubectl config use-context react
+    kubectl delete secret bootstrap-token
+    kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
+    helm upgrade consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f react-values.yaml --debug --wait --timeout 10m
+
+    #graphql
+    kubectl config use-context graphql
+    kubectl delete secret bootstrap-token
+    kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
+    helm upgrade consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_graphql_endpoint)" -f graphql-values.yaml --debug --wait --timeout 10m
+    ```
+
+    The K8s nodes are now registered in the Consul catalog.
+
+    ```
+    consul catalog nodes -datacenter gcp-us-central-1
+    ```
+
+    In later assignments you will use these clusters to run frontend application workloads.
   tabs:
   - title: Shell
     type: terminal
@@ -844,14 +1033,44 @@ challenges:
   title: Configure Intentions
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assignment you will log in as each persona and configure intentions for self-service access.
 
-    You can use any GitHub flavoured markdown.
+    Allow least privlege access to shared services as an infrastructure operator.
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+    consul intention create -allow '*/*' 'default/vault'
+    consul intention create -allow 'payments/*' 'default/redis'
+    consul intention create -allow 'product/*' 'default/postgres'
+    ```
+
+    As a payment developer grant access to frontend team APIs to connect to payment services.
+
+    ```
+    vault login -method=userpass username=payments password=payments
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/frontend)
+    consul intention create -allow 'frontend/public-api' 'payments/payments-api'
+    ```
+
+    As a product developer grant access to frontend team APIs to connect to product services.
+
+    ```
+    vault login -method=userpass username=product password=product
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/payments)
+    consul intention create -allow 'frontend/public-api' 'product/product-api'
+    ```
+
+    As a frontend developer allow intentions between services
+
+    ```
+    vault login -method=userpass username=frontend password=frontend
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+    consul intention create -allow 'frontend/*' 'product/*'
+    ```
+
+    In later assignments you will use these clusters to run frontend application workloads.
   tabs:
-  - title: Terraform
-    type: code
-    hostname: cloud-client
-    path: /root
   - title: Shell
     type: terminal
     hostname: cloud-client
@@ -873,6 +1092,10 @@ challenges:
   - title: Lab Architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/policies
   difficulty: basic
   timelimit: 300
 - slug: 17-deploy-payments-applications
@@ -996,6 +1219,11 @@ challenges:
 
     You can use any GitHub flavoured markdown.
   tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   - title: Consul
     type: service
     hostname: cloud-client
@@ -1004,11 +1232,6 @@ challenges:
   - title: Shell
     type: terminal
     hostname: cloud-client
-  - title: Cloud Consoles
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 80
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -1113,4 +1336,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 300
-checksum: "4688822735495454374"
+checksum: "6858407837788846071"
