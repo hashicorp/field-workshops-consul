@@ -1,4 +1,4 @@
-path "kv/consul"
+path "kv/data/consul"
 {
   capabilities = ["read"]
 }

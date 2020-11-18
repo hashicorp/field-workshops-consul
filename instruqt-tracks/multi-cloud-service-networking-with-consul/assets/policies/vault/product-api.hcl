@@ -1,8 +1,8 @@
-path "kv/*"
+path "kv/data/consul"
 {
   capabilities = ["read"]
 }
-path "pki/*"
+path "pki/cert/ca"
 {
-  capabilities = ["read","update"]
+  capabilities = ["read"]
 }
