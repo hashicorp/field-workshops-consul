@@ -5,10 +5,10 @@ set-workdir /root/terraform/nomad-scheduler-services
 NOMAD_IP=$(terraform output -state /root/terraform/nomad-scheduler-services/terraform.tfstate aws_nomad_server_public_ip)
 echo "export NOMAD_ADDR=http://${NOMAD_IP}:4646" >> ~/.bashrc
 
-cat << 'EOF' > /root/terraform/nomad-scheduler-services/payments.hcl
-job "payments" {
+cat << 'EOF' > /root/terraform/nomad-scheduler-services/payments-api.hcl
+job "payments-api" {
   datacenters = ["aws-us-east-1"]
-  group "payments" {
+  group "payments-api" {
     count = 2
     network {
       mode = "bridge"
@@ -17,10 +17,10 @@ job "payments" {
       }
     }
     service {
-      name = "payments"
+      name = "payments-api"
       port = "8080"
       check {
-        name     = "payments-health"
+        name     = "payments-api-health"
         type     = "http"
         port     = "healthcheck"
         path     = "/actuator/health"
@@ -43,7 +43,7 @@ job "payments" {
         }
       }
     }
-    task "payments" {
+    task "payments-api" {
       driver = "docker"
       config {
         image = "hashicorpdemoapp/payments:latest"

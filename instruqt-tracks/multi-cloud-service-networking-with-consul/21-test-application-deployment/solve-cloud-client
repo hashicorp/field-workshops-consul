@@ -2,7 +2,7 @@
 
 #ui
 kubectl config use-context react
-echo "http://$(kubectl get svc frontend-service -o json | jq -r .status.loadBalancer.ingress[0].ip)"
+echo "http://$(kubectl get svc web-service -o json | jq -r .status.loadBalancer.ingress[0].ip)"
 
 #public
 kubectl config use-context graphql

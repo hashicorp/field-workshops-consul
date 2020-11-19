@@ -16,6 +16,7 @@ owner: hashicorp
 developers:
 - lance@hashicorp.com
 - cpu@hashicorp.com
+- thomas@hashicorp.com
 private: true
 published: true
 show_timer: true
@@ -242,6 +243,9 @@ challenges:
 
     In the next assignment you will finish configuring the Consul primary server.
   tabs:
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
   - title: Shell
     type: terminal
     hostname: cloud-client
@@ -259,9 +263,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8200
-  - title: Lab Architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 14400
 - slug: 06-bootstrap-consul-primary
@@ -651,11 +652,9 @@ challenges:
     ```
 
     You can monitor the init scripts with the below commands. <br>
+    * AWS ESM - `ssh ubuntu@$(terraform output aws_esm_public_ip) 'tail -f /var/log/cloud-init-output.log'`
+    * Azure ESM - `ssh ubuntu@$(terraform output azure_esm_public_ip) 'tail -f /var/log/cloud-init-output.log'`
 
-    ```
-    ssh ubuntu@$(terraform output aws_esm_public_ip) 'tail -f /var/log/cloud-init-output.log'
-    ssh ubuntu@$(terraform output azure_esm_public_ip) 'tail -f /var/log/cloud-init-output.log'
-    ```
 
     ESM services are now available in your Consul datacenters. <br>
 
@@ -986,12 +985,14 @@ challenges:
 
     ```
     #react
+    vault login -method=userpass username=admin password=admin
     kubectl config use-context react
     kubectl delete secret bootstrap-token
     kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
     helm upgrade consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f react-values.yaml --debug --wait --timeout 10m
 
     #graphql
+    vault login -method=userpass username=admin password=admin
     kubectl config use-context graphql
     kubectl delete secret bootstrap-token
     kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
@@ -1006,6 +1007,10 @@ challenges:
 
     In later assignments you will use these clusters to run frontend application workloads.
   tabs:
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/k8s-scheduler-services
   - title: Shell
     type: terminal
     hostname: cloud-client
@@ -1014,10 +1019,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
-  - title: Terraform
-    type: code
-    hostname: cloud-client
-    path: /root/terraform/k8s-scheduler-services
   - title: Vault
     type: service
     hostname: cloud-client
@@ -1047,16 +1048,9 @@ challenges:
     vault login -method=userpass username=admin password=admin
     export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
     consul intention create -allow '*/*' 'default/vault'
-    consul intention create -allow 'payments/*' 'default/redis'
+    consul intention create -allow 'default/payments-api' 'default/redis'
+    consul intention create -allow 'frontend/public-api' 'default/payments-api'
     consul intention create -allow 'product/*' 'default/postgres'
-    ```
-
-    As a payment developer grant access to frontend team APIs to connect to payment services.
-
-    ```
-    vault login -method=userpass username=payments-developer password=payments
-    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/payments-developer)
-    consul intention create -allow 'frontend/public-api' 'payments/payments-api'
     ```
 
     As a product developer grant access to frontend team APIs to connect to product services.
@@ -1115,8 +1109,16 @@ challenges:
     Run the nomad job.
 
     ```
-    nomad run
+    nomad run payments-api.hcl
     ```
+
+    Payments API services should now be running in the clutser.
+
+    ```
+    curl -s ${CONSUL_HTTP_ADDR}/v1/health/service/payments-api?passing=true | jq
+    ```
+
+    In future assingments you will use these APIs to process payments.
   tabs:
   - title: Shell
     type: terminal
@@ -1151,9 +1153,26 @@ challenges:
   title: Deploy Product Tier
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assignment you will deploy product applications in Azure.
 
-    You can use any GitHub flavoured markdown.
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    You can monitor provisioning with the below command: <br>
+
+    ```
+    ssh ubuntu@$(terraform output azure_product_api_public_ip) 'tail -f /var/log/cloud-init-output.log'
+    ```
+
+    Product API services should now be running in the clutser.
+
+    ```
+    consul catalog services -datacenter azure-west-us-2 -namespace=product
+    ```
+
+    In future assingments you will use these APIs to process product queries.
   tabs:
   - title: Shell
     type: terminal
@@ -1188,9 +1207,32 @@ challenges:
   title: Deploy Frontend Tier
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assingment you will deploy frontend applications to the GKE clusters. <br>
 
-    You can use any GitHub flavoured markdown.
+    Review the k8s deployment specs in the code editor. <br>
+
+
+    Deploy the Public APIs. <br>
+
+    ```
+    kubectl config use-context graphql
+    kubectl apply -f public-api.yaml
+    ```
+
+    Deploy the React Frontend. <br>
+
+    ```
+    kubectl config use-context react
+    kubectl apply -f frontend.yaml
+    ```
+
+    Frontend services are now available.
+
+    ```
+    consul catalog services -datacenter gcp-us-central-1 -namespace=frontend
+    ```
+
+    In future assingments you will use these web interfaces and APIs to send traffic to backend application components.
   tabs:
   - title: Shell
     type: terminal
@@ -1225,9 +1267,28 @@ challenges:
   title: Review Application Deployment
   teaser: A short description of the challenge.
   assignment: |-
-    The assignment the participant needs to complete in order to proceed.
+    In this assignment you will validate the product DB and access to the payment queue. <br>
 
-    You can use any GitHub flavoured markdown.
+    Check the DB for available products. <br>
+
+    ```
+    export PGPASSWORD=$(terraform output -state /root/terraform/database-services/terraform.tfstate postgres_password)
+    psql -U postgres@$(terraform output -state /root/terraform/infra/terraform.tfstate env) \
+      -d postgres \
+      -h $(terraform output -state /root/terraform/database-services/terraform.tfstate postgres_fqdn) \
+      -c 'SELECT * FROM coffees' \
+      -a
+    ```
+
+    Check the queue for payments (there will be zero keys). <br>
+
+    ```
+    ssh -i ~/.ssh/id_rsa ubuntu@$(terraform output -state /root/terraform/infra/terraform.tfstate aws_bastion_ip) \
+      "redis-cli -h \
+      $(terraform output -state /root/terraform/cache-services/terraform.tfstate -json aws_elasticache_cache_nodes | jq -r .[0].address) -p 6379 keys '*'"
+    ```
+
+    In the next few assignments you will retrieve products and send payments.
   tabs:
   - title: Cloud Consoles
     type: service
@@ -1268,7 +1329,7 @@ challenges:
 
     ```
     kubectl config use-context react
-    echo "http://$(kubectl get svc frontend-service -o json | jq -r .status.loadBalancer.ingress[0].ip)"
+    echo "http://$(kubectl get svc web-service -o json | jq -r .status.loadBalancer.ingress[0].ip)"
     ```
 
     Monitor the cache for incoming payments in one window. <br>
@@ -1344,6 +1405,11 @@ challenges:
   - title: Lab Architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  - title: Web App
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "3949334237708438443"
+checksum: "7243628192126975933"

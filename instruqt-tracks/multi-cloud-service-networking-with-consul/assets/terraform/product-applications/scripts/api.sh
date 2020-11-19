@@ -75,6 +75,7 @@ cat <<EOF > /etc/consul.d/product-api.hcl
 service {
   name = "product-api"
   id = "product-api"
+  namespace = "product"
   port = 9090
   check = {
     http = "http://localhost:9090/health"
@@ -89,6 +90,7 @@ service {
         upstreams = [
           {
             destination_name = "postgres"
+            destination_namespace = "default"
             local_bind_port  = 5432
           }
         ]
@@ -112,7 +114,7 @@ Description=Envoy
 After=network-online.target
 Wants=consul.service
 [Service]
-ExecStart=/usr/bin/consul connect envoy -sidecar-for product-api -envoy-binary /usr/local/bin/envoy -- -l debug
+ExecStart=/usr/bin/consul connect envoy -namespace product -sidecar-for product-api -envoy-binary /usr/local/bin/envoy -- -l debug
 Restart=always
 RestartSec=5
 StartLimitIntervalSec=0

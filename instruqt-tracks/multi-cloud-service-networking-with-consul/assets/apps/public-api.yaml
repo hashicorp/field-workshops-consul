@@ -40,7 +40,7 @@ spec:
       annotations:
         prometheus.io/scrape: "true"
         consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/connect-service-upstreams: "product-api:9090:azure-west-us-2,payments:9091:aws-us-east-1"
+        consul.hashicorp.com/connect-service-upstreams: "product-api.product:9090:azure-west-us-2,payments-api.default:9091:aws-us-east-1"
     spec:
       serviceAccountName: public-api
       containers:

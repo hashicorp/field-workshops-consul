@@ -1,12 +1,15 @@
 #!/bin/bash
 
+#metadata
+local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
+
 #update packages
 curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) test"
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 sudo apt update -y
 
 #install packages
-sudo apt install consul-enterprise vault-enterprise nomad-enterprise awscli jq -y
+sudo apt install consul-enterprise vault-enterprise nomad-enterprise awscli jq docker.io -y
 
 #vault
 export VAULT_ADDR=http://$(aws ec2 describe-instances --filters "Name=tag:Name,Values=vault" \
@@ -81,7 +84,6 @@ EOF
 
 cat <<EOF> /etc/nomad.d/consul.hcl
 consul {
-  namespace = "payments"
   token = "$${AGENT_TOKEN}"
 }
 EOF

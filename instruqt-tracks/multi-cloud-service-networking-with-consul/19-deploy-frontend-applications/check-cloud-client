@@ -4,15 +4,15 @@
 vault login -method=userpass username=admin password=admin
 
 #aws
-gcp_frontend=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/frontend?dc=gcp-us-central-1&passing=true")
+gcp_frontend=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/web?dc=gcp-us-central-1&ns=frontend&passing=true")
 if [ "$(echo "${gcp_frontend}" | jq '. | length')" != "2" ]; then
-  fail-message "GKE frontend is not healthy. Expecting 2 instances."
+  fail-message "GKE web app is not healthy. Expecting 2 instances."
   exit 1
 fi
 
-gcp_public_api=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/public-api?dc=gcp-us-central-1&passing=true")
+gcp_public_api=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/public-api?dc=gcp-us-central-1&ns=frontend&passing=true")
 if [ "$(echo "${gcp_public_api}" | jq '. | length')" != "2" ]; then
-  fail-message "GKE public-api is not healthy. Expecting 2 instances."
+  fail-message "GKE public-api app is not healthy. Expecting 2 instances."
   exit 1
 fi
 

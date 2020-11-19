@@ -13,6 +13,7 @@ cat <<EOF>  /root/terraform/k8s-scheduler-services/react-values.yaml
 global:
   enabled: false
   name: consul-react
+  image: 'hashicorp/consul-enterprise:1.8.5-ent'
   datacenter: gcp-us-central-1
   acls:
       manageSystemACLs: true
@@ -28,6 +29,7 @@ global:
   gossipEncryption:
     secretName: hashicorp-consul-gossip-key
     secretKey: key
+  enableConsulNamespaces: true
 client:
   enabled: true
   join:
@@ -46,6 +48,8 @@ connectInject:
   enabled: true
   default: true
   k8sAllowNamespaces: ["default"]
+  consulNamespaces:
+    consulDestinationNamespace: "frontend"
 ingressGateways:
   enabled: true
   gateways:
@@ -59,6 +63,7 @@ cat <<EOF>  /root/terraform/k8s-scheduler-services/graphql-values.yaml
 global:
   enabled: false
   name: consul-graphql
+  image: 'hashicorp/consul-enterprise:1.8.5-ent'
   datacenter: gcp-us-central-1
   acls:
       manageSystemACLs: true
@@ -74,6 +79,7 @@ global:
   gossipEncryption:
     secretName: hashicorp-consul-gossip-key
     secretKey: key
+  enableConsulNamespaces: true
 client:
   enabled: true
   join:
@@ -92,6 +98,8 @@ connectInject:
   enabled: true
   default: true
   k8sAllowNamespaces: ["default"]
+  consulNamespaces:
+    consulDestinationNamespace: "frontend"
 ingressGateways:
   enabled: true
   gateways:

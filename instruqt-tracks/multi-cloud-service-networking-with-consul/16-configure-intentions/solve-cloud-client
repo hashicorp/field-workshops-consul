@@ -5,13 +5,9 @@
 vault login -method=userpass username=admin password=admin
 export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
 consul intention create -allow '*/*' 'default/vault'
-consul intention create -allow 'payments/*' 'default/redis'
+consul intention create -allow 'default/payments-api' 'default/redis'
+consul intention create -allow 'frontend/public-api' 'default/payments-api'
 consul intention create -allow 'product/*' 'default/postgres'
-
-#payments
-vault login -method=userpass username=payments-developer password=payments
-export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/payments-developer)
-consul intention create -allow 'frontend/public-api' 'payments/payments-api'
 
 #product
 vault login -method=userpass username=product-developer password=product

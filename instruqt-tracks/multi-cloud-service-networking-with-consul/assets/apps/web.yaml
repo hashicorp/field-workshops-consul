@@ -2,15 +2,15 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: frontend
+  name: web
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend-service
+  name: web-service
   labels:
-    app: frontend
+    app: web
   annotations:
     'consul.hashicorp.com/service-sync': 'true'
 spec:
@@ -19,7 +19,7 @@ spec:
     - port: 80
       targetPort: 80
   selector:
-    app: frontend
+    app: web
 
 ---
 apiVersion: v1
@@ -52,18 +52,18 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: web
 spec:
   replicas: 2
   selector:
     matchLabels:
-      service: frontend
-      app: frontend
+      service: web
+      app: web
   template:
     metadata:
       labels:
-        service: frontend
-        app: frontend
+        service: web
+        app: web
       annotations:
         prometheus.io/scrape: "true"
         consul.hashicorp.com/connect-inject: "true"
@@ -76,9 +76,9 @@ spec:
           items:
           - key: config
             path: default.conf
-      serviceAccountName: frontend
+      serviceAccountName: web
       containers:
-        - name: frontend
+        - name: web
           image: hashicorpdemoapp/frontend:v0.0.4
           ports:
             - containerPort: 80
