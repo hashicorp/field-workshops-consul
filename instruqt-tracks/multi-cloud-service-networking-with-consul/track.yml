@@ -270,105 +270,45 @@ challenges:
   type: challenge
   title: Bootstrap Consul Primary Datacenter
   teaser: A short description of the challenge.
-  assignment: |-
-    In this assingment you will finish configuring the primary server
-    and configure tokens and policies for federated clusters to connect to the primary. <br>
-
-    * [Vault CA](https://www.consul.io/docs/connect/ca/vault)
-    * [Secure Multi DC](https://learn.hashicorp.com/tutorials/consul/access-control-replication-multiple-datacenters)
-    * [Proxy Defaults](https://www.consul.io/docs/agent/config-entries/proxy-defaults)
-
-    The Consul server is now available in the UI. <br>
-
-    The Consul server was initialized with a [master token](https://www.consul.io/docs/security/acl/acl-system#builtin-tokens)
-    to facilitate the bootstrap process. <br>
-
-    Log in to Vault and get an admin token to finish setting up the Consul server cluster. <br>
-
-    ```
-    vault login -method=userpass username=admin password=admin
-    export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
-    ```
-
-    Vault can [create short lived tokens](https://www.vaultproject.io/docs/secrets/consul) for Consul access.
-    Configure that now so we can provide least privlege to operators. <br>
-
-    ```
-    AWS_CONSUL_IP=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip)
-    consul acl policy create -name operator -rules @/root/policies/consul/operator.hcl
-    vault secrets enable consul
-    vault write consul/config/access \
-        address=http://${AWS_CONSUL_IP}:8500 \
-        token=$(consul acl token create -description 'vault mgmt' -policy-name=global-management -format=json | jq -r '.SecretID')
-    vault write consul/roles/operator policies=operator ttl=30m
-    ```
-
-    You can now request a short lived token to make administrative changes to the cluster.
-
-    ```
-    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
-    consul acl token read -self
-    ```
-
-    Next, tie the token in Vault to the replication policy so we can establish trust with federated clusters.
-
-    ```
-    echo 'operator = "write"
-    agent_prefix "" {
-      policy = "read"
-    }
-    node_prefix "" {
-      policy = "write"
-    }
-    acl = "write"
-    service_prefix "" {
-      policy = "read"
-      intentions = "read"
-    }' |  consul acl policy create -name replication -rules -
-    consul acl token create -policy-name replication -secret=$(vault kv get -field replication_token kv/consul)
-    ```
-
-    Then, configure the Connect CA to use the Vault infrastructure.
-
-    ```
-    cat << EOF > /root/terraform/aws-consul-primary/ca.json
-    {
-      "Provider": "vault",
-      "Config": {
-        "Address": "${VAULT_ADDR}",
-        "Token": "$(vault token create -field token -policy connect -period 8h)",
-        "RootPKIPath": "connect-root/",
-        "IntermediatePKIPath": "connect-intermediate/"
-      }
-    }
-    EOF
-    consul connect ca set-config -config-file ca.json
-    ```
-
-    Cross-signing will take place immediately. Validate the new CA infrastructure.
-
-    ```
-    curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq '.Roots'
-    curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq '.Roots[1]'
-    curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq -r '.Roots[1].RootCert' | openssl x509 -text -noout
-    ```
-
-    Last, apply defaults for the service mesh that you'll leverage in the last few assignments.
-
-    ```
-    echo '
-    Kind      = "proxy-defaults"
-    Name      = "global"
-    Namespace = "default"
-    Config {
-      protocol = "http"
-    }
-    MeshGateway {
-       Mode = "local"
-    }' | consul config write -
-    ```
-
-    In the next few assignments you will connect secondary Consul datacenters to this cluster.
+  assignment: "In this assingment you will finish configuring the primary server\nand
+    configure tokens and policies for federated clusters to connect to the primary.
+    <br>\n\n* [Vault CA](https://www.consul.io/docs/connect/ca/vault)\n* [Secure Multi
+    DC](https://learn.hashicorp.com/tutorials/consul/access-control-replication-multiple-datacenters)\n*
+    [Proxy Defaults](https://www.consul.io/docs/agent/config-entries/proxy-defaults)\n\nThe
+    Consul server is now available in the UI. <br>\n\nThe Consul server was initialized
+    with a [master token](https://www.consul.io/docs/security/acl/acl-system#builtin-tokens)\nto
+    facilitate the bootstrap process. <br>\n\nLog in to Vault and get an admin token
+    to finish setting up the Consul server cluster. <br>\n\n```\nvault login -method=userpass
+    username=admin password=admin\nexport CONSUL_HTTP_TOKEN=$(vault kv get -field
+    master_token kv/consul)\n```\n\nVault can [create short lived tokens](https://www.vaultproject.io/docs/secrets/consul)
+    for Consul access.\nConfigure that now so we can provide least privlege to operators.
+    <br>\n\n```\nAWS_CONSUL_IP=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate
+    aws_consul_public_ip)\nconsul acl policy create -name operator -rules @/root/policies/consul/operator.hcl\nvault
+    secrets enable consul\nvault write consul/config/access \\\n    address=http://${AWS_CONSUL_IP}:8500
+    \\\n    token=$(consul acl token create -description 'vault mgmt' -policy-name=global-management
+    -format=json | jq -r '.SecretID')\nvault write consul/roles/operator policies=operator
+    ttl=30m\n```\n\nYou can now request a short lived token to make administrative
+    changes to the cluster.\n\n```\nexport CONSUL_HTTP_TOKEN=$(vault read -field token
+    consul/creds/operator)\nconsul acl token read -self\n```\n\nNext, tie the token
+    in Vault to the replication policy so we can establish trust with federated clusters.\n\n```\necho
+    'operator = \"write\"\nacl = \"write\"\nagent_prefix \"\" {\n\tpolicy = \"read\"\n}\nnode_prefix
+    \"\" {\n\tpolicy = \"write\"\n}\nservice_prefix \"\" {\n\tpolicy = \"write\"\n\tintentions
+    = \"write\"\n}' |  consul acl policy create -name replication -rules -\nconsul
+    acl token create -policy-name replication -secret=$(vault kv get -field replication_token
+    kv/consul)\n```\n\nThen, configure the Connect CA to use the Vault infrastructure.\n\n```\ncat
+    << EOF > /root/terraform/aws-consul-primary/ca.json\n{\n  \"Provider\": \"vault\",\n
+    \ \"Config\": {\n    \"Address\": \"${VAULT_ADDR}\",\n    \"Token\": \"$(vault
+    token create -field token -policy connect -period 8h)\",\n    \"RootPKIPath\":
+    \"connect-root/\",\n    \"IntermediatePKIPath\": \"connect-intermediate/\"\n  }\n}\nEOF\nconsul
+    connect ca set-config -config-file ca.json\n```\n\nCross-signing will take place
+    immediately. Validate the new CA infrastructure.\n\n```\ncurl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots
+    | jq '.Roots'\ncurl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq '.Roots[1]'\ncurl
+    -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq -r '.Roots[1].RootCert' | openssl
+    x509 -text -noout\n```\n\nLast, apply defaults for the service mesh that you'll
+    leverage in the last few assignments.\n\n```\necho '\nKind      = \"proxy-defaults\"\nName
+    \     = \"global\"\nNamespace = \"default\"\nConfig {\n  protocol = \"http\"\n}\nMeshGateway
+    {\n   Mode = \"local\"\n}' | consul config write -\n```\n\nIn the next few assignments
+    you will connect secondary Consul datacenters to this cluster."
   tabs:
   - title: Shell
     type: terminal
@@ -415,8 +355,8 @@ challenges:
     Create the namespaces. <br>
 
     ```
-    consul acl policy create -name "cross-namespace-policy" -description "cross-namespace service discovery" -rules @cross-namespace-sd.hcl
-    consul namespace update -name default -default-policy-name=cross-namespace-policy
+    consul acl policy create -name "cross-namespace-policy-sd" -description "cross-namespace service discovery" -rules @cross-namespace-sd.hcl
+    consul namespace update -name default -default-policy-name=cross-namespace-policy-sd
     consul namespace write payments-namespace.hcl
     consul namespace write product-namespace.hcl
     consul namespace write frontend-namespace.hcl
@@ -1223,7 +1163,7 @@ challenges:
 
     ```
     kubectl config use-context react
-    kubectl apply -f frontend.yaml
+    kubectl apply -f web.yaml
     ```
 
     Frontend services are now available.
@@ -1412,4 +1352,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "7243628192126975933"
+checksum: "1401337513841450214"

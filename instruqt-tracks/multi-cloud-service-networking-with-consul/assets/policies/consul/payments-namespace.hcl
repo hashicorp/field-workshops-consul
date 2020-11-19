@@ -3,7 +3,7 @@ Description = "namespace for frontend team"
 ACLs {
   PolicyDefaults = [
     {
-      Name = "cross-namespace-policy"
+      Name = "cross-namespace-policy-sd"
     }
   ]
   RoleDefaults = []
