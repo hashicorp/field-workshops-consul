@@ -14,18 +14,7 @@ vault write consul/config/access \
 vault write consul/roles/operator policies=operator ttl=30m
 
 #create the replication policy & token
-echo 'operator = "write"
-agent_prefix "" {
-  policy = "read"
-}
-node_prefix "" {
-  policy = "write"
-}
-acl = "write"
-service_prefix "" {
-  policy = "read"
-  intentions = "read"
-}' |  consul acl policy create -name replication -rules -
+consul acl policy create -name replication -rules @/root/policies/consul/replication.hcl
 consul acl token create -policy-name replication -secret=$(vault kv get -field replication_token kv/consul)
 
 #mesh defaults
