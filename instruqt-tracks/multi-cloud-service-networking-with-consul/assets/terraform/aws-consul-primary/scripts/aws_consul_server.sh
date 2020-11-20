@@ -24,7 +24,7 @@ CERT_BUNDLE=$(vault write pki/issue/consul \
     ip_sans="127.0.0.1" \
     key_usage="DigitalSignature,KeyEncipherment" \
     ext_key_usage="ServerAuth,ClientAuth" -format=json)
-CONNECT_TOKEN=$(vault token create -field token -policy connect -period 8h)
+CONNECT_TOKEN=$(vault token create -field token -policy connect -period 8h -orphan)
 
 #config
 cat <<EOF> /etc/consul.d/server.json

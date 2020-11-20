@@ -307,11 +307,10 @@ challenges:
     consul acl token create -policy-name replication -secret=$(vault kv get -field replication_token kv/consul)
     ```
 
-    Validate the Vault CA infrastructure.
+    Check the CA infrastructure for the primary. Notice the `pri-` prefix for primary DC. <br>
 
     ```
     curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq '.Roots'
-    curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq '.Roots[0]'
     curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq -r '.Roots[0].RootCert' | openssl x509 -text -noout
 
     ```
@@ -457,6 +456,14 @@ challenges:
     consul_api=$(terraform output azure_consul_public_ip)
     curl -s -v http://{$consul_api}:8500/v1/status/leader
     curl -s -v http://{$consul_api}:8500/v1/acl/replication | jq
+    ```
+
+    Check the CA infrastructure for the secondary. Notice the `sec-` prefix for secondary DC. <br>
+
+    ```
+    consul_api=$(terraform output azure_consul_public_ip)
+    curl -s http://${consul_api}:8500/v1/connect/ca/roots | jq '.Roots'
+    curl -s http://${consul_api}:8500/v1/connect/ca/roots | jq -r '.Roots[0].IntermediateCerts[0]' | openssl x509 -text -noout
     ```
 
     In the next assignment you will configure the remaining secondary cluster.
@@ -1372,4 +1379,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "10129903489299900395"
+checksum: "15009063496768101453"
