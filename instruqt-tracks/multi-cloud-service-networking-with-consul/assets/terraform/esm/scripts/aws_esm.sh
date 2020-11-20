@@ -16,10 +16,74 @@ sudo apt install consul-enterprise vault-enterprise awscli jq unzip -y
 export VAULT_ADDR=http://$(aws ec2 describe-instances --filters "Name=tag:Name,Values=vault" \
  --region us-east-1 --query 'Reservations[*].Instances[*].PrivateIpAddress' \
  --output text):8200
-vault login -method=aws role=consul
-AGENT_TOKEN=$(vault kv get -field=master_token kv/consul)
-GOSSIP_KEY=$(vault kv get -field=gossip_key kv/consul)
-CA_CERT=$(vault read -field certificate pki/cert/ca)
+mkdir -p /etc/vault-agent.d/
+cat <<EOF> /etc/vault-agent.d/consul-ca-template.ctmpl
+{{ with secret "pki/cert/ca" }}
+{{ .Data.certificate }}
+{{ end }}
+EOF
+cat <<EOF> /etc/vault-agent.d/consul-acl-template.ctmpl
+acl {
+  enabled        = true
+  default_policy = "deny"
+  down_policy   = "extend-cache"
+  enable_token_persistence = true
+  tokens {
+    agent  = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
+  }
+}
+encrypt = {{ with secret "kv/consul" }}"{{ .Data.data.gossip_key }}"{{ end }}
+EOF
+cat <<EOF> /etc/vault-agent.d/esm-token-template.ctmpl
+token = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
+EOF
+cat <<EOF> /etc/vault-agent.d/vault.hcl
+pid_file = "/var/run/vault-agent-pidfile"
+auto_auth {
+  method "aws" {
+      mount_path = "auth/aws"
+      config = {
+          type = "iam"
+          role = "consul"
+      }
+  }
+}
+template {
+  source      = "/etc/vault-agent.d/consul-ca-template.ctmpl"
+  destination = "/opt/consul/tls/ca-cert.pem"
+  command     = "sudo service consul restart"
+}
+template {
+  source      = "/etc/vault-agent.d/consul-acl-template.ctmpl"
+  destination = "/etc/consul.d/acl.hcl"
+  command     = "sudo service consul restart"
+}
+template {
+  source      = "/etc/vault-agent.d/esm-token-template.ctmpl"
+  destination = "/etc/consul-esm.d/config.hcl"
+  command     = "sudo service consul-esm restart"
+}
+vault {
+  address = "$${VAULT_ADDR}"
+}
+EOF
+cat <<EOF > /etc/systemd/system/vault-agent.service
+[Unit]
+Description=Envoy
+After=network-online.target
+Wants=consul.service
+[Service]
+ExecStart=/usr/bin/vault agent -config=/etc/vault-agent.d/vault.hcl -log-level=debug
+Restart=always
+RestartSec=5
+StartLimitIntervalSec=0
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo systemctl enable vault-agent.service
+sudo systemctl start vault-agent.service
+
+sleep 15
 
 #config
 cat <<EOF> /etc/consul.d/client.json
@@ -41,23 +105,7 @@ cat <<EOF> /etc/consul.d/client.json
 }
 EOF
 
-cat <<EOF> /etc/consul.d/secrets.hcl
-acl {
-  enabled        = true
-  default_policy = "deny"
-  enable_token_persistence = true
-  tokens {
-    agent  = "$${AGENT_TOKEN}"
-  }
-}
-
-encrypt = "$${GOSSIP_KEY}"
-
-EOF
-
 mkdir -p /opt/consul/tls/
-echo "$${CA_CERT}" > /opt/consul/tls/ca-cert.pem
-
 cat <<EOF> /etc/consul.d/tls.json
 {
   "verify_incoming": false,
@@ -80,10 +128,6 @@ mv consul-esm /usr/local/bin/consul-esm
 rm -f *.tgz
 
 mkdir -p /etc/consul-esm.d/
-cat <<EOF> /etc/consul-esm.d/config.hcl
-token = "$${AGENT_TOKEN}"
-EOF
-
 cat <<EOF> /usr/lib/systemd/system/consul-esm.service
 [Unit]
 Description=Consul ESM

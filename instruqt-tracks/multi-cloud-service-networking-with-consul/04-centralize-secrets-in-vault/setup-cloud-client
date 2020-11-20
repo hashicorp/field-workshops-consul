@@ -98,7 +98,7 @@ private_key=$(vault write -field private_key pki/root/generate/exported\
     ttl=8760h)
 vault kv put kv/pki private_key="${private_key}"
 vault secrets enable -path connect-root pki
-vault secrets enable -path connect-intermediate pki
+#vault secrets enable -path connect-intermediate pki
 vault write pki/roles/consul \
     allowed_domains=consul,internal \
     allow_subdomains=true \
