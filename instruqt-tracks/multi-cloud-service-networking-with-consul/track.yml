@@ -15,8 +15,8 @@ tags:
 owner: hashicorp
 developers:
 - lance@hashicorp.com
-- cpu@hashicorp.com
 - thomas@hashicorp.com
+- cpu@hashicorp.com
 private: true
 published: true
 show_timer: true
@@ -1384,4 +1384,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "777905035162418333"
+checksum: "14551309655587318492"
