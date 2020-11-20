@@ -119,7 +119,7 @@ EOF
 sudo systemctl enable consul.service
 sudo systemctl start consul.service
 
-sleep 15
+sleep 30
 
 #envoy mgw
 curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
