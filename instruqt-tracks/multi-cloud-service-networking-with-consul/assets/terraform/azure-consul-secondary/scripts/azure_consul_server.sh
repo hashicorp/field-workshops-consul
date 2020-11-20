@@ -20,7 +20,7 @@ sudo apt-get install azure-cli
 
 #get secrets
 az login --identity
-export VAULT_ADDR="http://$(az vm show -g $(curl -s -H Metadata:true "http://169.254.169.254/metadata/instance?api-version=2017-08-01" | jq -r '.compute | .resourceGroupName') -n vault-server-vm -d | jq -r .privateIps):8200"
+export VAULT_ADDR="http://$(az vm show -g $(curl -s -H Metadata:true "http://169.254.169.254/metadata/instance?api-version=2017-08-01" | jq -r '.compute | .resourceGroupName') -n vault-server-vm -d | jq -r .publicIps):8200"
 export VAULT_TOKEN=$(vault write -field=token auth/azure/login -field=token role="consul" \
      jwt="$(curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fmanagement.azure.com%2F' -H Metadata:true | jq -r '.access_token')")
  MASTER_TOKEN=$(vault kv get -field=master_token kv/consul)
@@ -32,6 +32,7 @@ export VAULT_TOKEN=$(vault write -field=token auth/azure/login -field=token role
      ip_sans="127.0.0.1" \
      key_usage="DigitalSignature,KeyEncipherment" \
      ext_key_usage="ServerAuth,ClientAuth" -format=json)
+CONNECT_TOKEN=$(vault token create -field token -policy connect -period 8h)
 
 #config
 cat <<EOF> /etc/consul.d/server.json
@@ -49,7 +50,14 @@ cat <<EOF> /etc/consul.d/server.json
   "primary_gateways" : ["${primary_wan_gateway}"],
   "connect": {
     "enable_mesh_gateway_wan_federation": true,
-    "enabled": true
+    "enabled": true,
+    "ca_provider": "vault",
+    "ca_config": {
+      "address": "$${VAULT_ADDR}",
+      "token": "$${CONNECT_TOKEN}",
+      "root_pki_path": "connect-root/",
+      "intermediate_pki_path": "connect-intermediate-west/"
+    }
   }
 }
 EOF

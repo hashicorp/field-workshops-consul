@@ -123,7 +123,7 @@ vault write auth/aws/role/consul auth_type=iam \
   policies=consul,admin ttl=30m
 AZURE_CONSUL_SERVICE_PRINCIPAL_ID=$(terraform output -state /root/terraform/iam/terraform.tfstate azure_consul_user_assigned_identity_principal_id)
 vault write auth/azure/role/consul \
-  policies=consul \
+  policies=consul,admin \
   bound_service_principal_ids="${AZURE_CONSUL_SERVICE_PRINCIPAL_ID}"
 
 #nomad trust

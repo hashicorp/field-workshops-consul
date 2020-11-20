@@ -47,7 +47,7 @@ cat <<EOF> /etc/consul.d/server.json
       "address": "$${VAULT_ADDR}",
       "token": "$${CONNECT_TOKEN}",
       "root_pki_path": "connect-root/",
-      "intermediate_pki_path": "connect-intermediate/"
+      "intermediate_pki_path": "connect-intermediate-east/"
     }
   }
 }
