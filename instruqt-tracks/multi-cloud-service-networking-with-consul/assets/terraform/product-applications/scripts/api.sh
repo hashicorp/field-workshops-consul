@@ -154,4 +154,10 @@ EOF
 sudo systemctl enable product-api.service
 sudo systemctl start product-api.service
 
+#license
+sudo crontab -l > consul
+sudo echo "*/28 * * * * sudo service consul restart" >> consul
+sudo crontab consul
+sudo rm consul
+
 exit 0

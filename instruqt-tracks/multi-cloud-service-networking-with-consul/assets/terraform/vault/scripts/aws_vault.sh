@@ -199,4 +199,10 @@ sudo echo "*/28 * * * * sudo service vault restart" >> vault
 sudo crontab vault
 sudo rm vault
 
+#license
+sudo crontab -l > consul
+sudo echo "*/28 * * * * sudo service consul restart" >> consul
+sudo crontab consul
+sudo rm consul
+
 exit 0

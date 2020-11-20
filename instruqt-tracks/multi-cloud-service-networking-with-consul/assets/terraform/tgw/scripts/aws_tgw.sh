@@ -97,4 +97,10 @@ EOF
 sudo systemctl enable envoy.service
 sudo systemctl start envoy.service
 
+#license
+sudo crontab -l > consul
+sudo echo "*/28 * * * * sudo service consul restart" >> consul
+sudo crontab consul
+sudo rm consul
+
 exit 0
