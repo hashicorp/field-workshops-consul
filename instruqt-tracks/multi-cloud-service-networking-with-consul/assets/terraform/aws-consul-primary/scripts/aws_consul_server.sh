@@ -13,7 +13,7 @@ sudo apt install consul-enterprise vault-enterprise awscli jq -y
 
 #get the secrets tokens from Vault
 export VAULT_ADDR=http://$(aws ec2 describe-instances --filters "Name=tag:Name,Values=vault" \
- --region us-east-1 --query 'Reservations[*].Instances[*].PrivateIpAddress' \
+ --region us-east-1 --query 'Reservations[*].Instances[*].PublicIpAddress' \
  --output text):8200
 vault login -method=aws role=consul
 MASTER_TOKEN=$(vault kv get -field=master_token kv/consul)
@@ -24,6 +24,7 @@ CERT_BUNDLE=$(vault write pki/issue/consul \
     ip_sans="127.0.0.1" \
     key_usage="DigitalSignature,KeyEncipherment" \
     ext_key_usage="ServerAuth,ClientAuth" -format=json)
+CONNECT_TOKEN=$(vault token create -field token -policy connect -period 8h)
 
 #config
 cat <<EOF> /etc/consul.d/server.json
@@ -40,7 +41,14 @@ cat <<EOF> /etc/consul.d/server.json
   "ui": true,
   "connect": {
     "enable_mesh_gateway_wan_federation": true,
-    "enabled": true
+    "enabled": true,
+    "ca_provider": "vault",
+    "ca_config": {
+      "address": "$${VAULT_ADDR}",
+      "token": "$${CONNECT_TOKEN}",
+      "root_pki_path": "connect-root/",
+      "intermediate_pki_path": "connect-intermediate/"
+    }
   }
 }
 EOF

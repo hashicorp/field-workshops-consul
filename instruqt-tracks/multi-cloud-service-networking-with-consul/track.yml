@@ -306,26 +306,14 @@ challenges:
     consul acl policy create -name replication -rules @/root/policies/consul/replication.hcl
     consul acl token create -policy-name replication -secret=$(vault kv get -field replication_token kv/consul)
     ```
-    Then, configure the Connect CA to use the Vault infrastructure.
-    ```
-    cat << EOF > /root/terraform/aws-consul-primary/ca.json
-    {
-      "Provider": "vault",
-      "Config": {
-        "Address": "${VAULT_ADDR}",
-        "Token": "$(vault token create -field token -policy connect -period 8h)",
-        "RootPKIPath": "connect-root/",
-        "IntermediatePKIPath": "connect-intermediate/"
-      }
-    }
-    EOF
-    consul connect ca set-config -config-file ca.json
-    ```
-    Cross-signing will take place immediately. Validate the new CA infrastructure.
+
+    Validate the Vault CA infrastructure.
+
     ```
     curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq '.Roots'
-    curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq '.Roots[1]'
-    curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq -r '.Roots[1].RootCert' | openssl x509 -text -noout
+    curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq '.Roots[0]'
+    curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq -r '.Roots[0].RootCert' | openssl x509 -text -noout
+
     ```
     Last, apply defaults for the service mesh that you'll leverage in the last few assignments.
     ```
@@ -1384,4 +1372,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "3868097634831707309"
+checksum: "16491127940670213153"

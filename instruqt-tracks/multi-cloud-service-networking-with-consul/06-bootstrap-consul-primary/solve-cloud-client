@@ -30,19 +30,19 @@ MeshGateway {
 }' | consul config write -
 
 
-cat << EOF > /root/terraform/aws-consul-primary/ca.json
-{
-  "Provider": "vault",
-  "Config": {
-    "Address": "${VAULT_ADDR}",
-    "Token": "$(vault token create -field token -policy connect -period 8h)",
-    "RootPKIPath": "connect-root/",
-    "IntermediatePKIPath": "connect-intermediate/"
-  },
-  "ForceWithoutCrossSigning": true
-}
-EOF
-consul connect ca set-config -config-file ca.json
+#cat << EOF > /root/terraform/aws-consul-primary/ca.json
+#{
+#  "Provider": "vault",
+#  "Config": {
+#    "Address": "${VAULT_ADDR}",
+#    "Token": "$(vault token create -field token -policy connect -period 8h)",
+#    "RootPKIPath": "connect-root/",
+#    "IntermediatePKIPath": "connect-intermediate/"
+#  },
+#  "ForceWithoutCrossSigning": true
+#
+#EOF
+#onsul connect ca set-config -config-file ca.json
 
 sleep 15
 
