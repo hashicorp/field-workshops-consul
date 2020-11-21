@@ -57,12 +57,12 @@ auto_auth {
 template {
   source      = "/etc/vault-agent.d/consul-ca-template.ctmpl"
   destination = "/opt/consul/tls/ca-cert.pem"
-  command     = "sudo service consul restart"
+  command     = "sudo service consul reload"
 }
 template {
   source      = "/etc/vault-agent.d/consul-acl-template.ctmpl"
   destination = "/etc/consul.d/acl.hcl"
-  command     = "sudo service consul restart"
+  command     = "sudo service consul reload"
 }
 template {
   source      = "/etc/vault-agent.d/esm-token-template.ctmpl"
@@ -89,7 +89,7 @@ EOF
 sudo systemctl enable vault-agent.service
 sudo systemctl start vault-agent.service
 
-sleep 15
+sleep 10
 
 #config
 cat <<EOF> /etc/consul.d/client.json
