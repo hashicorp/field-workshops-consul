@@ -13,7 +13,74 @@ echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO 
 sudo apt update -y
 sudo apt install azure-cli consul-enterprise vault-enterprise jq -y
 
-#get secrets
+#consul
+mkdir -p /opt/consul/tls/
+chown -R consul:consul /opt/consul/tls/
+cat <<EOF> /etc/consul.d/client.json
+{
+  "datacenter": "azure-west-us-2",
+  "primary_datacenter": "aws-us-east-1",
+  "advertise_addr": "$${local_ipv4}",
+  "data_dir": "/opt/consul/data",
+  "client_addr": "0.0.0.0",
+  "log_level": "INFO",
+  "retry_join": ["provider=azure tag_name=Env tag_value=consul-${env} subscription_id=${subscription_id}"],
+  "ui": true,
+  "connect": {
+    "enabled": true
+  },
+  "ports": {
+    "grpc": 8502
+  }
+}
+EOF
+
+cat <<EOF> /etc/consul.d/tls.json
+{
+  "verify_incoming": false,
+  "verify_outgoing": true,
+  "verify_server_hostname": true,
+  "ca_file": "/opt/consul/tls/ca-cert.pem",
+  "auto_encrypt": {
+    "tls": true
+  }
+}
+EOF
+
+#app config
+cat <<EOF > /etc/consul.d/product-api.hcl
+service {
+  name = "product-api"
+  id = "product-api"
+  namespace = "product"
+  port = 9090
+  check = {
+    http = "http://localhost:9090/health"
+    interval = "5s"
+    method = "GET"
+    name = "http health check"
+    timeout = "2s"
+  }
+  connect {
+    sidecar_service {
+      proxy {
+        upstreams = [
+          {
+            destination_name = "postgres"
+            destination_namespace = "default"
+            local_bind_port  = 5432
+          }
+        ]
+      }
+    }
+  }
+}
+EOF
+
+sudo systemctl enable consul.service
+sudo systemctl start consul.service
+
+#vault
 az login --identity
 export VAULT_ADDR="http://$(az vm show -g $(curl -s -H Metadata:true "http://169.254.169.254/metadata/instance?api-version=2017-08-01" | jq -r '.compute | .resourceGroupName') -n vault-server-vm -d | jq -r .privateIps):8200"
 mkdir -p /etc/vault-agent.d/
@@ -83,74 +150,6 @@ WantedBy=multi-user.target
 EOF
 sudo systemctl enable vault-agent.service
 sudo systemctl start vault-agent.service
-
-sleep 15
-
-#consul client config
-cat <<EOF> /etc/consul.d/client.json
-{
-  "datacenter": "azure-west-us-2",
-  "primary_datacenter": "aws-us-east-1",
-  "advertise_addr": "$${local_ipv4}",
-  "data_dir": "/opt/consul/data",
-  "client_addr": "0.0.0.0",
-  "log_level": "INFO",
-  "retry_join": ["provider=azure tag_name=Env tag_value=consul-${env} subscription_id=${subscription_id}"],
-  "ui": true,
-  "connect": {
-    "enabled": true
-  },
-  "ports": {
-    "grpc": 8502
-  }
-}
-EOF
-
-mkdir -p /opt/consul/tls/
-cat <<EOF> /etc/consul.d/tls.json
-{
-  "verify_incoming": false,
-  "verify_outgoing": true,
-  "verify_server_hostname": true,
-  "ca_file": "/opt/consul/tls/ca-cert.pem",
-  "auto_encrypt": {
-    "tls": true
-  }
-}
-EOF
-
-#app config
-cat <<EOF > /etc/consul.d/product-api.hcl
-service {
-  name = "product-api"
-  id = "product-api"
-  namespace = "product"
-  port = 9090
-  check = {
-    http = "http://localhost:9090/health"
-    interval = "5s"
-    method = "GET"
-    name = "http health check"
-    timeout = "2s"
-  }
-  connect {
-    sidecar_service {
-      proxy {
-        upstreams = [
-          {
-            destination_name = "postgres"
-            destination_namespace = "default"
-            local_bind_port  = 5432
-          }
-        ]
-      }
-    }
-  }
-}
-EOF
-
-sudo systemctl enable consul.service
-sudo systemctl start consul.service
 
 sleep 15
 

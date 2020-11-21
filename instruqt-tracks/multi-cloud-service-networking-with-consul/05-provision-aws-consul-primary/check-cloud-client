@@ -22,4 +22,5 @@ if [ "$(echo "${mgw_api}" | jq '. | length')" != "1" ]; then
   fail-message "AWS MGW not healthy"
   exit 1
 fi
+
 exit 0
