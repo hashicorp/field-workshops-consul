@@ -19,6 +19,42 @@ echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO 
 sudo apt-get update
 sudo apt-get install azure-cli
 
+#consul
+mkdir -p /opt/consul/tls/
+chown -R consul:consul /opt/consul/tls/
+cat <<EOF> /etc/consul.d/client.json
+{
+  "datacenter": "azure-west-us-2",
+  "primary_datacenter": "aws-us-east-1",
+  "advertise_addr": "$${local_ipv4}",
+  "data_dir": "/opt/consul/data",
+  "client_addr": "0.0.0.0",
+  "log_level": "INFO",
+  "retry_join": ["provider=azure tag_name=Env tag_value=consul-${env} subscription_id=${subscription_id}"],
+  "ui": true,
+  "connect": {
+    "enabled": true
+  },
+  "ports": {
+    "grpc": 8502
+  }
+}
+EOF
+cat <<EOF> /etc/consul.d/tls.json
+{
+  "verify_incoming": false,
+  "verify_outgoing": true,
+  "verify_server_hostname": true,
+  "ca_file": "/opt/consul/tls/ca-cert.pem",
+  "auto_encrypt": {
+    "tls": true
+  }
+}
+EOF
+
+sudo systemctl enable consul.service
+sudo systemctl start consul.service
+
 #get secrets
 az login --identity
 export VAULT_ADDR="http://$(az vm show -g $(curl -s -H Metadata:true "http://169.254.169.254/metadata/instance?api-version=2017-08-01" | jq -r '.compute | .resourceGroupName') -n vault-server-vm -d | jq -r .privateIps):8200"
@@ -58,12 +94,12 @@ auto_auth {
 template {
   source      = "/etc/vault-agent.d/consul-ca-template.ctmpl"
   destination = "/opt/consul/tls/ca-cert.pem"
-  command     = "sudo service consul restart"
+  command     = "sudo service consul reload"
 }
 template {
   source      = "/etc/vault-agent.d/consul-acl-template.ctmpl"
   destination = "/etc/consul.d/acl.hcl"
-  command     = "sudo service consul restart"
+  command     = "sudo service consul reload"
 }
 template {
   source      = "/etc/vault-agent.d/envoy-token-template.ctmpl"
@@ -89,44 +125,6 @@ WantedBy=multi-user.target
 EOF
 sudo systemctl enable vault-agent.service
 sudo systemctl start vault-agent.service
-
-sleep 15
-
-#config
-cat <<EOF> /etc/consul.d/client.json
-{
-  "datacenter": "azure-west-us-2",
-  "primary_datacenter": "aws-us-east-1",
-  "advertise_addr": "$${local_ipv4}",
-  "data_dir": "/opt/consul/data",
-  "client_addr": "0.0.0.0",
-  "log_level": "INFO",
-  "retry_join": ["provider=azure tag_name=Env tag_value=consul-${env} subscription_id=${subscription_id}"],
-  "ui": true,
-  "connect": {
-    "enabled": true
-  },
-  "ports": {
-    "grpc": 8502
-  }
-}
-EOF
-
-mkdir -p /opt/consul/tls/
-cat <<EOF> /etc/consul.d/tls.json
-{
-  "verify_incoming": false,
-  "verify_outgoing": true,
-  "verify_server_hostname": true,
-  "ca_file": "/opt/consul/tls/ca-cert.pem",
-  "auto_encrypt": {
-    "tls": true
-  }
-}
-EOF
-
-sudo systemctl enable consul.service
-sudo systemctl start consul.service
 
 sleep 15
 

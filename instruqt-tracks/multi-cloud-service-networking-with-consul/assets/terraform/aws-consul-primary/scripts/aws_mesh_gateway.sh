@@ -12,6 +12,40 @@ sudo apt update -y
 #install consul
 sudo apt install consul-enterprise vault-enterprise awscli jq -y
 
+mkdir -p /opt/consul/tls/
+chown -R consul:consul /opt/consul/tls/
+cat <<EOF> /etc/consul.d/client.json
+{
+  "datacenter": "aws-us-east-1",
+  "primary_datacenter": "aws-us-east-1",
+  "advertise_addr": "$${local_ipv4}",
+  "data_dir": "/opt/consul/data",
+  "client_addr": "0.0.0.0",
+  "log_level": "INFO",
+  "retry_join": ["provider=aws tag_key=Env tag_value=consul-${env}"],
+  "ui": true,
+  "connect": {
+    "enabled": true
+  },
+  "ports": {
+    "grpc": 8502
+  }
+}
+EOF
+cat <<EOF> /etc/consul.d/tls.json
+{
+  "verify_incoming": false,
+  "verify_outgoing": true,
+  "verify_server_hostname": true,
+  "ca_file": "/opt/consul/tls/ca-cert.pem",
+  "auto_encrypt": {
+    "tls": true
+  }
+}
+EOF
+sudo systemctl enable consul.service
+sudo systemctl start consul.service
+
 #vault
 export VAULT_ADDR=http://$(aws ec2 describe-instances --filters "Name=tag:Name,Values=vault" \
  --region us-east-1 --query 'Reservations[*].Instances[*].PrivateIpAddress' \
@@ -83,43 +117,7 @@ EOF
 sudo systemctl enable vault-agent.service
 sudo systemctl start vault-agent.service
 
-sleep 10
-
-#consul
-mkdir -p /opt/consul/tls/
-cat <<EOF> /etc/consul.d/client.json
-{
-  "datacenter": "aws-us-east-1",
-  "primary_datacenter": "aws-us-east-1",
-  "advertise_addr": "$${local_ipv4}",
-  "data_dir": "/opt/consul/data",
-  "client_addr": "0.0.0.0",
-  "log_level": "INFO",
-  "retry_join": ["provider=aws tag_key=Env tag_value=consul-${env}"],
-  "ui": true,
-  "connect": {
-    "enabled": true
-  },
-  "ports": {
-    "grpc": 8502
-  }
-}
-EOF
-cat <<EOF> /etc/consul.d/tls.json
-{
-  "verify_incoming": false,
-  "verify_outgoing": true,
-  "verify_server_hostname": true,
-  "ca_file": "/opt/consul/tls/ca-cert.pem",
-  "auto_encrypt": {
-    "tls": true
-  }
-}
-EOF
-sudo systemctl enable consul.service
-sudo systemctl start consul.service
-
-sleep 30
+sleep 15
 
 #envoy mgw
 curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
