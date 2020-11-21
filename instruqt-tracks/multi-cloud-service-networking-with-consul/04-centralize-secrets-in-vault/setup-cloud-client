@@ -36,7 +36,7 @@ vault operator init -recovery-shares=1 -recovery-threshold=1 -format=json | jq .
 export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
 export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
 vault write sys/replication/performance/primary/enable primary_cluster_addr="http://${AWS_VAULT_IP}:8201"
-sleep 15
+sleep 30
 
 #generate the secondary tokens & enable the performance secondaries
 AZURE_REPLICATION_TOKEN=$(vault write /sys/replication/performance/primary/secondary-token id="azure-west-us-2" -format=json | jq -r .wrap_info.token)
@@ -45,7 +45,7 @@ AZURE_REPLICATION_TOKEN=$(vault write /sys/replication/performance/primary/secon
 export VAULT_ADDR=http://${AZURE_VAULT_IP}:8200
 export VAULT_TOKEN=$(cat /root/azure_vault_keys.json | jq -r .root_token)
 vault write sys/replication/performance/secondary/enable token="${AZURE_REPLICATION_TOKEN}" primary_api_addr="http://${AWS_VAULT_IP}:8200"
-sleep 15
+sleep 30
 
 #vault config
 export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
