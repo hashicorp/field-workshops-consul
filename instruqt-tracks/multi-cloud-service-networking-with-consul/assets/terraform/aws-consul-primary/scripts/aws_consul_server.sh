@@ -3,30 +3,103 @@
 #metadata
 local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
 
-#update packages
+#packages
 curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
 sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 sudo apt update -y
-
-#install consul
 sudo apt install consul-enterprise vault-enterprise awscli jq -y
 
-#get the secrets tokens from Vault
+#vault
 export VAULT_ADDR=http://$(aws ec2 describe-instances --filters "Name=tag:Name,Values=vault" \
  --region us-east-1 --query 'Reservations[*].Instances[*].PublicIpAddress' \
  --output text):8200
 vault login -method=aws role=consul
-MASTER_TOKEN=$(vault kv get -field=master_token kv/consul)
-GOSSIP_KEY=$(vault kv get -field=gossip_key kv/consul)
-CERT_BUNDLE=$(vault write pki/issue/consul \
-    common_name=consul-server-0.server.aws-us-east-1.consul \
-    alt_names="consul-server-0.server.aws-us-east-1.consul,server.aws-us-east-1.consul,localhost" \
-    ip_sans="127.0.0.1" \
-    key_usage="DigitalSignature,KeyEncipherment" \
-    ext_key_usage="ServerAuth,ClientAuth" -format=json)
 CONNECT_TOKEN=$(vault token create -field token -policy connect -period 8h -orphan)
 
-#config
+mkdir -p /etc/vault-agent.d/
+mkdir -p /opt/consul/tls/
+cat <<EOF> /etc/vault-agent.d/consul-ca-template.ctmpl
+{{ with secret "pki/cert/ca" }}
+{{ .Data.certificate }}
+{{ end }}
+EOF
+cat <<EOF> /etc/vault-agent.d/consul-cert-template.ctmpl
+{{ with secret "pki/issue/consul" "common_name=consul-server-0.server.aws-us-east-1.consul" "alt_names=consul-server-0.server.aws-us-east-1.consul,server.aws-us-east-1.consul,localhost" "ip_sans=127.0.0.1" "key_usage=DigitalSignature,KeyEncipherment" "ext_key_usage=ServerAuth,ClientAuth" }}
+{{ .Data.certificate }}
+{{ end }}
+EOF
+cat <<EOF> /etc/vault-agent.d/consul-key-template.ctmpl
+{{ with secret "pki/issue/consul" "common_name=consul-server-0.server.aws-us-east-1.consul" "alt_names=consul-server-0.server.aws-us-east-1.consul,server.aws-us-east-1.consul,localhost" "ip_sans=127.0.0.1" "key_usage=DigitalSignature,KeyEncipherment" "ext_key_usage=ServerAuth,ClientAuth" }}
+{{ .Data.private_key }}
+{{ end }}
+EOF
+cat <<EOF> /etc/vault-agent.d/consul-acl-template.ctmpl
+acl = {
+  enabled        = true
+  default_policy = "deny"
+  down_policy   = "extend-cache"
+  enable_token_persistence = true
+  enable_token_replication = true
+  tokens {
+    master = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
+    agent  = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
+  }
+}
+encrypt = {{ with secret "kv/consul" }}"{{ .Data.data.gossip_key }}"{{ end }}
+EOF
+cat <<EOF> /etc/vault-agent.d/vault.hcl
+pid_file = "/var/run/vault-agent-pidfile"
+auto_auth {
+  method "aws" {
+      mount_path = "auth/aws"
+      config = {
+          type = "iam"
+          role = "consul"
+      }
+  }
+}
+template {
+  source      = "/etc/vault-agent.d/consul-ca-template.ctmpl"
+  destination = "/opt/consul/tls/ca-cert.pem"
+  command     = "sudo service consul reload"
+}
+template {
+  source      = "/etc/vault-agent.d/consul-cert-template.ctmpl"
+  destination = "/opt/consul/tls/server-cert.pem"
+  command     = "sudo service consul reload"
+}
+template {
+  source      = "/etc/vault-agent.d/consul-key-template.ctmpl"
+  destination = "/opt/consul/tls/server-key.pem"
+  command     = "sudo service consul reload"
+}
+template {
+  source      = "/etc/vault-agent.d/consul-acl-template.ctmpl"
+  destination = "/etc/consul.d/acl.hcl"
+  command     = "sudo service consul reload"
+}
+vault {
+  address = "$${VAULT_ADDR}"
+}
+EOF
+cat <<EOF > /etc/systemd/system/vault-agent.service
+[Unit]
+Description=Envoy
+After=network-online.target
+Wants=consul.service
+[Service]
+ExecStart=/usr/bin/vault agent -config=/etc/vault-agent.d/vault.hcl -log-level=debug
+Restart=always
+RestartSec=5
+StartLimitIntervalSec=0
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo systemctl enable vault-agent.service
+sudo systemctl start vault-agent.service
+sleep 10
+
+#consul
 cat <<EOF> /etc/consul.d/server.json
 {
   "datacenter": "aws-us-east-1",
@@ -52,28 +125,6 @@ cat <<EOF> /etc/consul.d/server.json
   }
 }
 EOF
-
-cat <<EOF> /etc/consul.d/secrets.hcl
-acl {
-  enabled        = true
-  default_policy = "deny"
-  down_policy    = "extend-cache"
-  enable_token_persistence = true
-  tokens {
-    master = "$${MASTER_TOKEN}"
-    agent  = "$${MASTER_TOKEN}"
-  }
-}
-
-encrypt = "$${GOSSIP_KEY}"
-
-EOF
-
-mkdir -p /opt/consul/tls/
-echo "$${CERT_BUNDLE}" | jq -r .data.certificate > /opt/consul/tls/server-cert.pem
-echo "$${CERT_BUNDLE}" | jq -r .data.private_key > /opt/consul/tls/server-key.pem
-echo "$${CERT_BUNDLE}" | jq -r .data.issuing_ca > /opt/consul/tls/ca-cert.pem
-
 cat <<EOF> /etc/consul.d/tls.json
 {
   "verify_incoming": true,
@@ -87,8 +138,13 @@ cat <<EOF> /etc/consul.d/tls.json
   }
 }
 EOF
-
+chown -R consul:consul /opt/consul/
+chown -R consul:consul /etc/consul.d/
 sudo systemctl enable consul.service
 sudo systemctl start consul.service
+sleep 15
+
+#make sure the config was picked up
+sudo service consul restart
 
 exit 0
