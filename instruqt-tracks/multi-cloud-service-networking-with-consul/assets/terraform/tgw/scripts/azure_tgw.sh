@@ -19,60 +19,22 @@ echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO 
 sudo apt-get update
 sudo apt-get install azure-cli
 
-#consul
-mkdir -p /opt/consul/tls/
-chown -R consul:consul /opt/consul/tls/
-cat <<EOF> /etc/consul.d/client.json
-{
-  "datacenter": "azure-west-us-2",
-  "primary_datacenter": "aws-us-east-1",
-  "advertise_addr": "$${local_ipv4}",
-  "data_dir": "/opt/consul/data",
-  "client_addr": "0.0.0.0",
-  "log_level": "INFO",
-  "retry_join": ["provider=azure tag_name=Env tag_value=consul-${env} subscription_id=${subscription_id}"],
-  "ui": true,
-  "connect": {
-    "enabled": true
-  },
-  "ports": {
-    "grpc": 8502
-  }
-}
-EOF
-cat <<EOF> /etc/consul.d/tls.json
-{
-  "verify_incoming": false,
-  "verify_outgoing": true,
-  "verify_server_hostname": true,
-  "ca_file": "/opt/consul/tls/ca-cert.pem",
-  "auto_encrypt": {
-    "tls": true
-  }
-}
-EOF
-
-sudo systemctl enable consul.service
-sudo systemctl start consul.service
-
-#get secrets
+#vault
 az login --identity
 export VAULT_ADDR="http://$(az vm show -g $(curl -s -H Metadata:true "http://169.254.169.254/metadata/instance?api-version=2017-08-01" | jq -r '.compute | .resourceGroupName') -n vault-server-vm -d | jq -r .privateIps):8200"
 mkdir -p /etc/vault-agent.d/
 cat <<EOF> /etc/vault-agent.d/consul-ca-template.ctmpl
-{{ with secret "pki/cert/ca" }}
-{{ .Data.certificate }}
-{{ end }}
+{{ with secret "pki/cert/ca" }}{{ .Data.certificate }}{{ end }}
 EOF
 cat <<EOF> /etc/vault-agent.d/consul-acl-template.ctmpl
-acl {
+acl =  {
   enabled        = true
   default_policy = "deny"
   down_policy   = "extend-cache"
   enable_token_persistence = true
+  enable_token_replication = true
   tokens {
     agent  = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
-    default  = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
   }
 }
 encrypt = {{ with secret "kv/consul" }}"{{ .Data.data.gossip_key }}"{{ end }}
@@ -125,14 +87,45 @@ WantedBy=multi-user.target
 EOF
 sudo systemctl enable vault-agent.service
 sudo systemctl start vault-agent.service
+sleep 10
 
-sleep 15
+#consul
+mkdir -p /opt/consul/tls/
+cat <<EOF> /etc/consul.d/consul.hcl
+datacenter = "azure-west-us-2"
+primary_datacenter = "aws-us-east-1"
+advertise_addr = "$${local_ipv4}"
+client_addr = "0.0.0.0"
+ui = true
+connect = {
+  enabled = true
+}
+data_dir = "/opt/consul/data"
+log_level = "INFO"
+ports = {
+  grpc = 8502
+}
+retry_join = ["provider=azure tag_name=Env tag_value=consul-${env} subscription_id=${subscription_id}"]
+EOF
+cat <<EOF> /etc/consul.d/tls.hcl
+ca_file = "/opt/consul/tls/ca-cert.pem"
+verify_incoming = false
+verify_outgoing = true
+verify_server_hostname = true
+auto_encrypt = {
+  tls = true
+}
+EOF
+chown -R consul:consul /opt/consul/
+chown -R consul:consul /etc/consul.d/
+sudo systemctl enable consul.service
+sudo systemctl start consul.service
+sleep 10
 
 #envoy tgw
 curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
 getenvoy fetch standard:1.14.1
 cp /root/.getenvoy/builds/standard/1.14.1/linux_glibc/bin/envoy /usr/local/bin/envoy
-
 cat <<EOF > /etc/systemd/system/envoy.service
 [Unit]
 Description=Envoy
@@ -146,14 +139,18 @@ StartLimitIntervalSec=0
 [Install]
 WantedBy=multi-user.target
 EOF
-
 sudo systemctl enable envoy.service
 sudo systemctl start envoy.service
+sleep 10
 
 #license
 sudo crontab -l > consul
 sudo echo "*/28 * * * * sudo service consul restart" >> consul
 sudo crontab consul
 sudo rm consul
+
+#make sure the config was picked up
+sudo service consul restart
+sudo service envoy restart
 
 exit 0

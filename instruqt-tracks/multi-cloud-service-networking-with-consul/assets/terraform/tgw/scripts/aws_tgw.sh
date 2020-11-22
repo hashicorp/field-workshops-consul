@@ -12,51 +12,13 @@ sudo apt update -y
 #install consul
 sudo apt install consul-enterprise vault-enterprise awscli jq -y
 
-#consul
-mkdir -p /opt/consul/tls/
-chown -R consul:consul /opt/consul/tls/
-cat <<EOF> /etc/consul.d/client.json
-{
-  "datacenter": "aws-us-east-1",
-  "primary_datacenter": "aws-us-east-1",
-  "advertise_addr": "$${local_ipv4}",
-  "data_dir": "/opt/consul/data",
-  "client_addr": "0.0.0.0",
-  "log_level": "INFO",
-  "retry_join": ["provider=aws tag_key=Env tag_value=consul-${env}"],
-  "ui": true,
-  "connect": {
-    "enabled": true
-  },
-  "ports": {
-    "grpc": 8502
-  }
-}
-EOF
-cat <<EOF> /etc/consul.d/tls.json
-{
-  "verify_incoming": false,
-  "verify_outgoing": true,
-  "verify_server_hostname": true,
-  "ca_file": "/opt/consul/tls/ca-cert.pem",
-  "auto_encrypt": {
-    "tls": true
-  }
-}
-EOF
-
-sudo systemctl enable consul.service
-sudo systemctl start consul.service
-
 #vault
 export VAULT_ADDR=http://$(aws ec2 describe-instances --filters "Name=tag:Name,Values=vault" \
  --region us-east-1 --query 'Reservations[*].Instances[*].PrivateIpAddress' \
  --output text):8200
 mkdir -p /etc/vault-agent.d/
 cat <<EOF> /etc/vault-agent.d/consul-ca-template.ctmpl
-{{ with secret "pki/cert/ca" }}
-{{ .Data.certificate }}
-{{ end }}
+{{ with secret "pki/cert/ca" }}{{ .Data.certificate }}{{ end }}
 EOF
 cat <<EOF> /etc/vault-agent.d/consul-acl-template.ctmpl
 acl {
@@ -66,7 +28,6 @@ acl {
   enable_token_persistence = true
   tokens {
     agent  = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
-    default  = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
   }
 }
 encrypt = {{ with secret "kv/consul" }}"{{ .Data.data.gossip_key }}"{{ end }}
@@ -119,14 +80,45 @@ WantedBy=multi-user.target
 EOF
 sudo systemctl enable vault-agent.service
 sudo systemctl start vault-agent.service
+sleep 10
 
-sleep 30
+#consul
+mkdir -p /opt/consul/tls/
+cat <<EOF> /etc/consul.d/consul.hcl
+datacenter = "aws-us-east-1"
+primary_datacenter = "aws-us-east-1"
+advertise_addr = "$${local_ipv4}"
+client_addr = "0.0.0.0"
+ui = true
+connect = {
+  enabled = true
+}
+data_dir = "/opt/consul/data"
+log_level = "INFO"
+ports = {
+  grpc = 8502
+}
+retry_join = ["provider=aws tag_key=Env tag_value=consul-${env}"]
+EOF
+cat <<EOF> /etc/consul.d/tls.hcl
+ca_file = "/opt/consul/tls/ca-cert.pem"
+verify_incoming = false
+verify_outgoing = true
+verify_server_hostname = true
+auto_encrypt = {
+  tls = true
+}
+EOF
+chown -R consul:consul /opt/consul/
+chown -R consul:consul /etc/consul.d/
+sudo systemctl enable consul.service
+sudo systemctl start consul.service
+sleep 10
 
 #envoy tgw
 curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
 getenvoy fetch standard:1.14.1
 cp /root/.getenvoy/builds/standard/1.14.1/linux_glibc/bin/envoy /usr/local/bin/envoy
-
 cat <<EOF > /etc/systemd/system/envoy.service
 [Unit]
 Description=Envoy
@@ -140,14 +132,18 @@ StartLimitIntervalSec=0
 [Install]
 WantedBy=multi-user.target
 EOF
-
 sudo systemctl enable envoy.service
 sudo systemctl start envoy.service
+sleep 10
 
 #license
 sudo crontab -l > consul
 sudo echo "*/28 * * * * sudo service consul restart" >> consul
 sudo crontab consul
 sudo rm consul
+
+#make sure the config was picked up
+sudo service consul restart
+sudo service envoy restart
 
 exit 0

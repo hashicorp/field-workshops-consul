@@ -1,5 +1,8 @@
 #!/bin/bash
 
+vault login -method=userpass username=admin password=admin
+export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+
 #aws - server
 consul_lb=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip)
 echo "consul Load balancer is: $consul_lb"
@@ -14,7 +17,7 @@ if [ "${consul_api}" != "200" ]; then
 fi
 
 #aws - mgw
-mgw_api=$(curl -s http://{$consul_lb}:8500/v1/health/service/mesh-gateway?passing=true)
+mgw_api=$(curl -v -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" http://{$consul_lb}:8500/v1/health/service/mesh-gateway?passing=true)
 if [ "$(echo "${mgw_api}" | jq '. | length')" != "1" ]; then
   fail-message "AWS MGW not healthy"
   exit 1

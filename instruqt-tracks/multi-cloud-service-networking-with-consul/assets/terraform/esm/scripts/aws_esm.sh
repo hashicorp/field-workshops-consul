@@ -12,54 +12,16 @@ sudo apt update -y
 #install consul
 sudo apt install consul-enterprise vault-enterprise awscli jq unzip -y
 
-#consul
-mkdir -p /opt/consul/tls/
-chown -R consul:consul /opt/consul/tls/
-cat <<EOF> /etc/consul.d/client.json
-{
-  "datacenter": "aws-us-east-1",
-  "primary_datacenter": "aws-us-east-1",
-  "advertise_addr": "$${local_ipv4}",
-  "data_dir": "/opt/consul/data",
-  "client_addr": "0.0.0.0",
-  "log_level": "INFO",
-  "retry_join": ["provider=aws tag_key=Env tag_value=consul-${env}"],
-  "ui": true,
-  "connect": {
-    "enabled": true
-  },
-  "ports": {
-    "grpc": 8502
-  }
-}
-EOF
-cat <<EOF> /etc/consul.d/tls.json
-{
-  "verify_incoming": false,
-  "verify_outgoing": true,
-  "verify_server_hostname": true,
-  "ca_file": "/opt/consul/tls/ca-cert.pem",
-  "auto_encrypt": {
-    "tls": true
-  }
-}
-EOF
-
-sudo systemctl enable consul.service
-sudo systemctl start consul.service
-
 #vault
 export VAULT_ADDR=http://$(aws ec2 describe-instances --filters "Name=tag:Name,Values=vault" \
  --region us-east-1 --query 'Reservations[*].Instances[*].PrivateIpAddress' \
  --output text):8200
 mkdir -p /etc/vault-agent.d/
 cat <<EOF> /etc/vault-agent.d/consul-ca-template.ctmpl
-{{ with secret "pki/cert/ca" }}
-{{ .Data.certificate }}
-{{ end }}
+{{ with secret "pki/cert/ca" }}{{ .Data.certificate }}{{ end }}
 EOF
 cat <<EOF> /etc/vault-agent.d/consul-acl-template.ctmpl
-acl {
+acl = {
   enabled        = true
   default_policy = "deny"
   down_policy   = "extend-cache"
@@ -118,8 +80,40 @@ WantedBy=multi-user.target
 EOF
 sudo systemctl enable vault-agent.service
 sudo systemctl start vault-agent.service
+sleep 10
 
-sleep 15
+#consul
+mkdir -p /opt/consul/tls/
+cat <<EOF> /etc/consul.d/consul.hcl
+datacenter = "aws-us-east-1"
+primary_datacenter = "aws-us-east-1"
+advertise_addr = "$${local_ipv4}"
+client_addr = "0.0.0.0"
+ui = true
+connect = {
+  enabled = true
+}
+data_dir = "/opt/consul/data"
+log_level = "INFO"
+ports = {
+  grpc = 8502
+}
+retry_join = ["provider=aws tag_key=Env tag_value=consul-${env}"]
+EOF
+cat <<EOF> /etc/consul.d/tls.hcl
+ca_file = "/opt/consul/tls/ca-cert.pem"
+verify_incoming = false
+verify_outgoing = true
+verify_server_hostname = true
+auto_encrypt = {
+  tls = true
+}
+EOF
+chown -R consul:consul /opt/consul/
+chown -R consul:consul /etc/consul.d/
+sudo systemctl enable consul.service
+sudo systemctl start consul.service
+sleep 10
 
 #esm
 curl -s -O https://releases.hashicorp.com/consul-esm/0.4.0/consul-esm_0.4.0_linux_amd64.tgz
@@ -153,11 +147,17 @@ EOF
 
 sudo systemctl enable consul-esm.service
 sudo systemctl start consul-esm.service
+sleep 10
 
 #license
 sudo crontab -l > consul
 sudo echo "*/28 * * * * sudo service consul restart" >> consul
 sudo crontab consul
 sudo rm consul
+
+#make sure the config was picked up
+sudo service consul restart
+sudo service consul-esm restart
+
 
 exit 0
