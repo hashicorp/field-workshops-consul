@@ -6,13 +6,13 @@ vault login -method=userpass username=admin password=admin
 #aws - nomad server
 aws_nomad_server=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/nomad?passing=true")
 if [ "$(echo "${aws_nomad_server}" | jq '. | length')" != "3" ]; then
-  fail-message "AWS noamd server is not healthy"
+  fail-message "AWS nomad server is not healthy"
   exit 1
 fi
 
 #aws - nomad client
 aws_nomad_client=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/nomad-client?passing=true")
-if [ "$(echo "${aws_nomad_client}" | jq '. | length')" != "2" ]; then
+if [ "$(echo "${aws_nomad_client}" | jq '. | length')" != "1" ]; then
   fail-message "AWS nomad client is not healthy"
   exit 1
 fi
