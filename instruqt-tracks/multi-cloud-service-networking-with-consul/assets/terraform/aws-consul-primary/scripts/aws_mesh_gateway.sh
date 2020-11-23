@@ -8,8 +8,6 @@ public_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)"
 curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
 sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 sudo apt update -y
-
-#install consul
 sudo apt install consul-enterprise vault-enterprise awscli jq -y
 
 #vault
