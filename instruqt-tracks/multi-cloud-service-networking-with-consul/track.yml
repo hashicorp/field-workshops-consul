@@ -553,8 +553,8 @@ challenges:
     Next, deploy the Consul servers. You can review the configuration in the code editor.
 
     ```
-    helm install hashicorp hashicorp/consul -f /root/terraform/gcp-consul-secondary/consul-values.yaml --debug --wait
     kubectl apply -f /root/terraform/gcp-consul-secondary/consul-join.yaml
+    helm install hashicorp hashicorp/consul -f /root/terraform/gcp-consul-secondary/consul-values.yaml --debug --wait
     ```
 
     Connect to the Consul API and check the leader and replication status.
@@ -568,11 +568,6 @@ challenges:
 
     In the next assignment you will connect Consul secondary components to the server clusters in AWS & Azure.
   tabs:
-  - title: Vault
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8200
   - title: Consul
     type: service
     hostname: cloud-client
@@ -584,6 +579,11 @@ challenges:
   - title: Shell
     type: terminal
     hostname: cloud-client
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   - title: Cloud Consoles
     type: service
     hostname: cloud-client
@@ -1379,4 +1379,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "10324615958889773921"
+checksum: "10643455646071958559"

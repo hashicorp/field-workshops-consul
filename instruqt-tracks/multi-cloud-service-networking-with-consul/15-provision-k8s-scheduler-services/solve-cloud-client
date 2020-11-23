@@ -19,8 +19,6 @@ kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(
 kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
 helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f react-values.yaml --debug --wait --timeout 10m
 
-sleep 15
-
 #graphql
 gcloud container clusters get-credentials $(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_name) --region us-central1-a
 kubectl config rename-context $(kubectl config current-context) graphql

@@ -38,9 +38,8 @@ EOF
 sleep 5
 
 #helm config
-helm install hashicorp hashicorp/consul -f /root/terraform/gcp-consul-secondary/consul-values.yaml --debug --wait
 kubectl apply -f /root/terraform/gcp-consul-secondary/consul-join.yaml
-
-sleep 90
+helm install hashicorp hashicorp/consul -f /root/terraform/gcp-consul-secondary/consul-values.yaml --debug --wait
+sleep 60
 
 exit 0

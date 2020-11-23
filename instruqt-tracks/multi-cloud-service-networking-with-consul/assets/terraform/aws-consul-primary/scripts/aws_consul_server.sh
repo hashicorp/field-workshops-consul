@@ -142,7 +142,7 @@ chown -R consul:consul /opt/consul/
 chown -R consul:consul /etc/consul.d/
 sudo systemctl enable consul.service
 sudo systemctl start consul.service
-sleep 15
+sleep 10
 
 #make sure the config was picked up
 sudo service consul restart

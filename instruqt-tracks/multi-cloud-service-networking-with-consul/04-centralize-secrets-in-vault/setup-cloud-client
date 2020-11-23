@@ -27,10 +27,12 @@ AZURE_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate
 #aws
 export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
 vault operator init -recovery-shares=1 -recovery-threshold=1 -format=json | jq . > /root/aws_vault_keys.json
+sleep 15
 
 #azure
 export VAULT_ADDR=http://${AZURE_VAULT_IP}:8200
 vault operator init -recovery-shares=1 -recovery-threshold=1 -format=json | jq . > /root/azure_vault_keys.json
+sleep 15
 
 #start performance replication on the AWS primary
 export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
