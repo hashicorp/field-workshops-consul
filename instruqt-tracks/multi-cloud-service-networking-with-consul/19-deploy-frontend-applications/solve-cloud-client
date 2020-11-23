@@ -6,4 +6,6 @@ kubectl apply -f public-api.yaml
 kubectl config use-context react
 kubectl apply -f web.yaml
 
+sleep 60
+
 exit 0
