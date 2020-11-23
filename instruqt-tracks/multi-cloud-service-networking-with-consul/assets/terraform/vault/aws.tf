@@ -56,7 +56,7 @@ resource "aws_security_group" "vault" {
 }
 
 resource "aws_instance" "vault" {
-  instance_type               = "t3.small"
+  instance_type               = "t3.large"
   ami                         = data.aws_ami.ubuntu.id
   key_name                    = data.terraform_remote_state.infra.outputs.aws_ssh_key_name
   vpc_security_group_ids      = [aws_security_group.vault.id]

@@ -96,6 +96,7 @@ metadata:
 spec:
   selector:
     app: consul
+    component: server
   ports:
     - name: api
       protocol: TCP
