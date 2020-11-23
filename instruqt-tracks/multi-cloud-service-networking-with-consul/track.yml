@@ -1087,6 +1087,9 @@ challenges:
 
     In future assingments you will use these APIs to process payments.
   tabs:
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
   - title: Shell
     type: terminal
     hostname: cloud-client
@@ -1109,9 +1112,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8500
-  - title: Lab Architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 300
 - slug: 18-deploy-product-applications
@@ -1379,4 +1379,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "6883505413105087183"
+checksum: "2765608746509392683"
