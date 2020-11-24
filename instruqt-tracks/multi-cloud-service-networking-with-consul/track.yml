@@ -62,9 +62,9 @@ challenges:
   title: Provision Vault Infrastructure
   teaser: Set up Vault Infrastructure and Enable Replication
   assignment: |-
-    Vault supports cross-site replication. In this assingment you provision Vault infrastructure in AWS & Azure. <br>
+    Vault supports cross-site replication. In this assignment you provision Vault infrastructure in AWS & Azure. <br>
 
-    Insepect the Terrafrom code and provision the Vault infrastructure.
+    Inspect the Terraform code and provision the Vault infrastructure.
 
     ```
     terraform plan
@@ -136,16 +136,16 @@ challenges:
   id: noyutzmuimix
   type: challenge
   title: Centralize Secrets in Vault
-  teaser: A short description of the challenge.
+  teaser: Create trust and seed bootstrap credentials.
   assignment: |-
     In this assignment you will centralize secrets in Vault that will be consumed by applications and services across clouds and runtimes. <br>
 
     The Vault server is now available and the UI can be accessed in the tab. <br>
 
-    Vault replication is confiugred across AWS & Azure.
+    Vault replication is configured across AWS & Azure.
     See the [documentation](https://www.vaultproject.io/docs/enterprise/replication) for more information about Vault replication. <br>
 
-    An admin account in Vault is now avaiable. Use the below command to log in. <br>
+    An admin account in Vault is now available. Use the below command to log in. <br>
 
     ```
     vault login -method=userpass username=admin password=admin
@@ -171,7 +171,7 @@ challenges:
     vault read /auth/azure/role/consul
     ```
 
-    Now that the configuration is valid, seed the inital secret for Consul.
+    Now that the configuration is valid, seed the initial secret for Consul.
 
     ```
     vault kv put kv/consul \
@@ -209,10 +209,10 @@ challenges:
   id: yvfuoi5cz8ll
   type: challenge
   title: Provision AWS Consul Primary Datacenter
-  teaser: A short description of the challenge.
+  teaser: Run Consul in AWS
   assignment: |-
-    In this assingment you will boostrap the initial cluster and validate the health of the server.
-    The primary Consul sever cluster resides in AWS. <br>
+    In this assignment you will bootstrap the initial cluster and validate the health of the server.
+    The primary Consul server cluster resides in AWS. <br>
 
     Inspect the initialization scripts in the CLI or UI.
 
@@ -234,7 +234,7 @@ challenges:
     * Consul Server - `ssh ubuntu@$(terraform output aws_consul_public_ip) 'tail -f /var/log/cloud-init-output.log'`
     * Consul MGW - `ssh ubuntu@$(terraform output aws_mgw_public_ip) 'tail -f /var/log/cloud-init-output.log'`
 
-    Wait for the server to elect a leader (it can take a few minutes for the EC2 intance to become avaiable). <br>
+    Wait for the server to elect a leader (it can take a few minutes for the EC2 instance to become available). <br>
 
     ```
     consul_api=$(terraform output aws_consul_public_ip)
@@ -269,23 +269,30 @@ challenges:
   id: ibjsiehore0f
   type: challenge
   title: Bootstrap Consul Primary Datacenter
-  teaser: A short description of the challenge.
+  teaser: Set up Consul for multi-datacenter
   assignment: |-
-    In this assingment you will finish configuring the primary server
+    In this assignment you will finish configuring the primary server
     and configure tokens and policies for federated clusters to connect to the primary. <br>
+
     * [Vault CA](https://www.consul.io/docs/connect/ca/vault)
     * [Secure Multi DC](https://learn.hashicorp.com/tutorials/consul/access-control-replication-multiple-datacenters)
     * [Proxy Defaults](https://www.consul.io/docs/agent/config-entries/proxy-defaults)
+
     The Consul server is now available in the UI. <br>
+
     The Consul server was initialized with a [master token](https://www.consul.io/docs/security/acl/acl-system#builtin-tokens)
     to facilitate the bootstrap process. <br>
+
     Log in to Vault and get an admin token to finish setting up the Consul server cluster. <br>
+
     ```
     vault login -method=userpass username=admin password=admin
     export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
     ```
+
     Vault can [create short lived tokens](https://www.vaultproject.io/docs/secrets/consul) for Consul access.
-    Configure that now so we can provide least privlege to operators. <br>
+    Configure that now so we can provide least privilege to operators. <br>
+
     ```
     AWS_CONSUL_IP=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip)
     consul acl policy create -name operator -rules @/root/policies/consul/operator.hcl
@@ -295,14 +302,17 @@ challenges:
         token=$(consul acl token create -description 'vault mgmt' -policy-name=global-management -format=json | jq -r '.SecretID')
     vault write consul/roles/operator policies=operator ttl=30m
     ```
-    You can now request a short lived token to make administrative changes to the cluster.
+
+    You can now request a short lived token to make administrative changes to the cluster. <br>
+
     ```
     export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
     consul acl token read -self
     ```
-    Next, tie the token in Vault to the replication policy so we can establish trust with federated clusters.
-    ```
 
+    Next, tie the token in Vault to the replication policy so we can establish trust with federated clusters. <br>
+
+    ```
     consul acl policy create -name replication -rules @/root/policies/consul/replication.hcl
     consul acl token create -policy-name replication -secret=$(vault kv get -field replication_token kv/consul)
     ```
@@ -312,9 +322,10 @@ challenges:
     ```
     curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq '.Roots'
     curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq -r '.Roots[0].RootCert' | openssl x509 -text -noout
-
     ```
-    Last, apply defaults for the service mesh that you'll leverage in the last few assignments.
+
+    Last, apply defaults for the service mesh that you'll leverage in the last few assignments. <br>
+
     ```
     echo '
     Kind      = "proxy-defaults"
@@ -327,6 +338,7 @@ challenges:
        Mode = "local"
     }' | consul config write -
     ```
+
     In the next few assignments you will connect secondary Consul datacenters to this cluster.
   tabs:
   - title: Shell
@@ -360,7 +372,7 @@ challenges:
   id: o7l9tufsx0pf
   type: challenge
   title: Create Namespaces & Policies
-  teaser: A short description of the challenge.
+  teaser: Configure multi-tenancy
   assignment: |-
     In this assignment you will create namespaces in Consul for development groups. <br>
 
@@ -426,9 +438,9 @@ challenges:
   id: wj17mzqxqwwf
   type: challenge
   title: Provision Azure Consul Secondary Datacenter
-  teaser: A short description of the challenge.
+  teaser: Run Consul in Azure
   assignment: |-
-    In this assingment you will bootstrap the Azure secondary Cluster, validate the health of the server and its connection to the primary.
+    In this assignment you will bootstrap the Azure secondary Cluster, validate the health of the server and its connection to the primary.
 
     Inspect the initialization scripts in the CLI or UI.
 
@@ -498,14 +510,14 @@ challenges:
 - slug: 09-provision-gcp-consul-secondary-datacenter
   id: v3j5eilrkji2
   type: challenge
-  title: Provision GCP  Consul Secondary Datacenter
-  teaser: A short description of the challenge.
+  title: Provision GCP Consul Secondary Datacenter
+  teaser: Run Consul in GKE
   assignment: |-
-    In this assingment you will boostrap the GCP secondary Cluster, validate the health of the server and its connection to the primary. <br>
+    In this assignment you will bootstrap the GCP secondary Cluster, validate the health of the server and its connection to the primary. <br>
 
     In this environment, Consul on GCP runs entirely in GKE K8s. The Consul helm chart easily supports running Consul in K8s for both Consul server agents, and Consul client agents. <br>
 
-    You can read the following resources for more information on running Consul in K8s:
+    You can read the following resources for more information on running Consul in K8s: <br>
       * https://www.consul.io/docs/k8s
       * https://www.consul.io/docs/k8s/installation/multi-cluster/kubernetes
 
@@ -516,7 +528,7 @@ challenges:
     terraform apply -auto-approve
     ```
 
-    Check the worker nodes are avaiable for the cluster. <br>
+    Check the worker nodes are available for the cluster. <br>
 
     ```
     gcloud container clusters get-credentials $(terraform output gcp_gke_cluster_shared_name) --region us-central1-a
@@ -599,7 +611,7 @@ challenges:
   id: vyrpfhgu6dtl
   type: challenge
   title: Provision Consul ESMs
-  teaser: A short description of the challenge.
+  teaser: Create health checks for external services
   assignment: |-
     In this assignment you will provision Consul External Services Monitors (ESMs) to health check services that do not run Consul agents. <br>
 
@@ -611,7 +623,7 @@ challenges:
       * https://www.hashicorp.com/resources/bloomberg-s-consul-story-to-20-000-nodes-and-beyond
 
 
-    Inspect the Terraform code and provision the extenral mointoring.
+    Inspect the Terraform code and provision the external monitoring.
 
     ```
     terraform plan
@@ -630,7 +642,7 @@ challenges:
     consul catalog services -datacenter=azure-west-us-2
     ```
 
-    In the next assingments you will provision cloud managed services and configure them for Consul ESM monitoring.
+    In the next assignments you will provision cloud managed services and configure them for Consul ESM monitoring.
   tabs:
   - title: Shell
     type: terminal
@@ -663,7 +675,7 @@ challenges:
   id: ifdxb3b4xeox
   type: challenge
   title: Provision Cache Services
-  teaser: A short description of the challenge.
+  teaser: Deploy managed Cache instances
   assignment: |-
     In this assignment you will provision AWS ElastiCache instances to be consumed by the application.
     The ElastiCache instances are Redis datastores. <br>
@@ -718,7 +730,7 @@ challenges:
   id: fcrcwre4rgvy
   type: challenge
   title: Provision Database Services
-  teaser: A short description of the challenge.
+  teaser: Deploy managed DB instances
   assignment: |-
     In this assignment you will provision Azure Database Postgres instance to be consumed by the application. <br>
 
@@ -772,7 +784,7 @@ challenges:
   id: fzmzvxw4yrbv
   type: challenge
   title: Provision Consul Terminating Gateways
-  teaser: A short description of the challenge.
+  teaser: Configure egress traffic for external services
   assignment: |-
     In this assignment you will provision Consul Terminating Gateways(TGW).
     You can read [the docs](https://www.consul.io/docs/connect/gateways/terminating-gateway) for more information on how TGW works. <br>
@@ -798,7 +810,7 @@ challenges:
     consul catalog services -datacenter=azure-west-us-2
     ```
 
-    In future assignments you will route traffig to Vault, Redis, and Postgres leveraging the TGW in AWS & Azure.
+    In future assignments you will route traffic to Vault, Redis, and Postgres leveraging the TGW in AWS & Azure.
   tabs:
   - title: Lab Architecture
     type: website
@@ -831,7 +843,7 @@ challenges:
   id: 2bhfenznbq26
   type: challenge
   title: Provision Nomad Scheduler Services
-  teaser: A short description of the challenge.
+  teaser: Deploy Nomad workload infrastructure
   assignment: |-
     In this assignment you will provision Nomad to run payments workloads in AWS.
     You can read the docs for more information about the Nomad integrations used in this lab environment: <br>
@@ -899,10 +911,10 @@ challenges:
   id: czoxbhi28zz4
   type: challenge
   title: Provision K8s Scheduler Services
-  teaser: test
+  teaser: Deploy K8s workload infrastructure
   assignment: |-
     In this assignment you will provision K8s workload clusters in GCP.
-    These clusters will connect to the shared svcs GKE cluster in GCP. <br>
+    These clusters will connect to the shared services Consul GKE cluster in GCP. <br>
 
     You can read the docs for more information on these patterns: <br>
 
@@ -1005,11 +1017,11 @@ challenges:
   id: xwvogflavyey
   type: challenge
   title: Configure Intentions
-  teaser: A short description of the challenge.
+  teaser: Allow selective mTLS between workloads
   assignment: |-
     In this assignment you will log in as each persona and configure intentions for self-service access.
 
-    Allow least privlege access to shared services as an infrastructure operator.
+    Allow least privilege access to shared services as an infrastructure operator.
 
     ```
     vault login -method=userpass username=admin password=admin
@@ -1069,9 +1081,9 @@ challenges:
   id: m1xx8rucidse
   type: challenge
   title: Deploy Payments Tier
-  teaser: A short description of the challenge.
+  teaser: Run Payments workloads
   assignment: |-
-    In this assingment you will schedule the payments-api with Nomad.
+    In this assignment you will schedule the payments-api with Nomad.
 
     Run the nomad job.
 
@@ -1079,13 +1091,13 @@ challenges:
     nomad run payments-api.hcl
     ```
 
-    Payments API services should now be running in the clutser.
+    Payments API services should now be running in the cluster.
 
     ```
     curl -s ${CONSUL_HTTP_ADDR}/v1/health/service/payments-api?passing=true | jq
     ```
 
-    In future assingments you will use these APIs to process payments.
+    In future assignments you will use these APIs to process payments.
   tabs:
   - title: Lab Architecture
     type: website
@@ -1118,7 +1130,7 @@ challenges:
   id: jmzuys1pidmc
   type: challenge
   title: Deploy Product Tier
-  teaser: A short description of the challenge.
+  teaser: Run Product workloads
   assignment: |-
     In this assignment you will deploy product applications in Azure.
 
@@ -1133,13 +1145,13 @@ challenges:
     ssh ubuntu@$(terraform output azure_product_api_public_ip) 'tail -f /var/log/cloud-init-output.log'
     ```
 
-    Product API services should now be running in the clutser.
+    Product API services should now be running in the cluster.
 
     ```
     consul catalog services -datacenter azure-west-us-2 -namespace=product
     ```
 
-    In future assingments you will use these APIs to process product queries.
+    In future assignments you will use these APIs to process product queries.
   tabs:
   - title: Shell
     type: terminal
@@ -1172,9 +1184,9 @@ challenges:
   id: ssdpxmpbtvjw
   type: challenge
   title: Deploy Frontend Tier
-  teaser: A short description of the challenge.
+  teaser: Run Frontend workloads
   assignment: |-
-    In this assingment you will deploy frontend applications to the GKE clusters. <br>
+    In this assignment you will deploy frontend applications to the GKE clusters. <br>
 
     Review the k8s deployment specs in the code editor. <br>
 
@@ -1199,7 +1211,7 @@ challenges:
     consul catalog services -datacenter gcp-us-central-1 -namespace=frontend
     ```
 
-    In future assingments you will use these web interfaces and APIs to send traffic to backend application components.
+    In future assignments you will use these web interfaces and APIs to send traffic to backend application components.
   tabs:
   - title: Shell
     type: terminal
@@ -1232,7 +1244,7 @@ challenges:
   id: urzpkkqnpl1n
   type: challenge
   title: Review Application Deployment
-  teaser: A short description of the challenge.
+  teaser: Validate workload configuration
   assignment: |-
     In this assignment you will validate the product DB and access to the payment queue. <br>
 
@@ -1288,7 +1300,7 @@ challenges:
   id: hsvzlsztityh
   type: challenge
   title: Test Application Deployment
-  teaser: A short description of the challenge.
+  teaser: Put it all together
   assignment: |-
     In this assignment you will test the application. <br>
 
@@ -1379,4 +1391,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "5505793789397840660"
+checksum: "5907931590425380410"
