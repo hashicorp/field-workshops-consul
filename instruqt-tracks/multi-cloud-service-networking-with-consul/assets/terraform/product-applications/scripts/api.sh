@@ -168,7 +168,7 @@ WantedBy=multi-user.target
 EOF
 sudo systemctl enable envoy.service
 sudo systemctl start envoy.service
-sleep 10
+sleep 5
 
 #install the application
 wget https://github.com/hashicorp-demoapp/product-api-go/releases/download/v0.0.12/product-api -O /product-api
@@ -192,7 +192,7 @@ WantedBy=multi-user.target
 EOF
 sudo systemctl enable product-api.service
 sudo systemctl start product-api.service
-sleep 10
+sleep 5
 
 #license
 sudo crontab -l > consul
