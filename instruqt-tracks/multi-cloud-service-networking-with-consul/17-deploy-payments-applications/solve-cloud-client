@@ -1,0 +1,6 @@
+#!/bin/bash
+
+nomad run /root/terraform/nomad-scheduler-services/payments-api.hcl
+sleep 90
+
+exit 0

@@ -1,0 +1,55 @@
+#!/bin/bash
+
+#cloud client setup
+apt-get update -y
+apt-get install software-properties-common -y
+curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+
+#packages
+apt-get update -y
+apt-get install terraform consul-enterprise vault-enterprise nomad-enterprise libcap-dev jq redis-server -y
+
+#tf creds
+echo 'export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)' >> /root/.bashrc
+
+#get assets
+echo "cloning assets..."
+git https://github.com/hashicorp/field-workshops-consul.git
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/terraform .
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/apps .
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/policies .
+rm -rf field-workshops-consul
+
+#fix path
+echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
+
+#ssh
+cat << EOF > ~/.ssh/config
+Host *
+    StrictHostKeyChecking no
+EOF
+
+# Ensure we load /etc/profile.d/instruqt-env.sh
+echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
+source /root/.bashrc
+
+#make vault run in instruqt container
+setcap cap_ipc_lock= /usr/bin/vault
+
+#aws
+aws configure set default.region us-east-1
+
+#tf
+cd /root/terraform/infra
+terraform init
+
+pubkey=$(cat ~/.ssh/id_rsa.pub)
+cat << EOF > /root/terraform/infra/terraform.tfvars
+gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
+ssh_public_key="${pubkey}"
+EOF
+
+set-workdir /root/terraform/infra
+
+exit 0

@@ -1,0 +1,112 @@
+#!/bin/bash
+
+cd /root/terraform/k8s-scheduler-services
+terraform init
+
+cat << EOF > /root/terraform/k8s-scheduler-services/terraform.tfvars
+gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
+EOF
+
+set-workdir /root/terraform/k8s-scheduler-services
+
+cat <<EOF>  /root/terraform/k8s-scheduler-services/react-values.yaml
+global:
+  enabled: false
+  name: consul-react
+  image: 'hashicorp/consul-enterprise:1.8.5-ent'
+  datacenter: gcp-us-central-1
+  acls:
+      manageSystemACLs: true
+      bootstrapToken:
+        secretName: bootstrap-token
+        secretKey: token
+  tls:
+    enabled: true
+    enableAutoEncrypt: true
+    caCert:
+      secretName: hashicorp-consul-ca-cert
+      secretKey: tls.crt
+  gossipEncryption:
+    secretName: hashicorp-consul-gossip-key
+    secretKey: key
+  enableConsulNamespaces: true
+client:
+  enabled: true
+  join:
+    - "10.1.0.10"
+externalServers:
+  enabled: true
+  hosts:
+    - '10.1.0.10'
+syncCatalog:
+  enabled: true
+  default: false
+  toConsul: true
+  toK8S: false
+  k8sTag: k8s-react
+connectInject:
+  enabled: true
+  default: true
+  k8sAllowNamespaces: ["default"]
+  consulNamespaces:
+    consulDestinationNamespace: "frontend"
+ingressGateways:
+  enabled: true
+  gateways:
+    - name: react-ingress-gateway
+      replicas: 1
+      service:
+        type: LoadBalancer
+EOF
+
+cat <<EOF>  /root/terraform/k8s-scheduler-services/graphql-values.yaml
+global:
+  enabled: false
+  name: consul-graphql
+  image: 'hashicorp/consul-enterprise:1.8.5-ent'
+  datacenter: gcp-us-central-1
+  acls:
+      manageSystemACLs: true
+      bootstrapToken:
+        secretName: bootstrap-token
+        secretKey: token
+  tls:
+    enabled: true
+    enableAutoEncrypt: true
+    caCert:
+      secretName: hashicorp-consul-ca-cert
+      secretKey: tls.crt
+  gossipEncryption:
+    secretName: hashicorp-consul-gossip-key
+    secretKey: key
+  enableConsulNamespaces: true
+client:
+  enabled: true
+  join:
+    - "10.1.0.10"
+externalServers:
+  enabled: true
+  hosts:
+    - '10.1.0.10'
+syncCatalog:
+  enabled: true
+  default: false
+  toConsul: true
+  toK8S: false
+  k8sTag: k8s-react
+connectInject:
+  enabled: true
+  default: true
+  k8sAllowNamespaces: ["default"]
+  consulNamespaces:
+    consulDestinationNamespace: "frontend"
+ingressGateways:
+  enabled: true
+  gateways:
+    - name: graphql-ingress-gateway
+      replicas: 1
+      service:
+        type: LoadBalancer
+EOF
+
+exit 0

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#creds
+vault login -method=userpass username=admin password=admin
+
+#aws
+azure_products=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/product-api?dc=azure-west-us-2&ns=product&passing=true")
+if [ "$(echo "${azure_products}" | jq '. | length')" != "1" ]; then
+  fail-message "Azure product-api is not healthy"
+  exit 1
+fi
+
+exit 0

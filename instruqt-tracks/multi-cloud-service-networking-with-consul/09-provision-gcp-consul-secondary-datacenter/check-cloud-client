@@ -1,0 +1,15 @@
+#!/bin/bash
+
+kubectl config use-context shared
+status=$(helm status hashicorp --output json | jq -r '.info.status')
+if [ "${status}" != "deployed" ]; then
+  fail-message "Helm chart is not deployed"
+  exit 1
+fi
+
+#check join lb
+if [ "$(kubectl get svc consul-join -o json | jq -r '.status.loadBalancer.ingress[0].ip')" != "10.1.0.10" ]; then
+  fail-message "Consul join svc does not have ip 10.1.0.10"
+  exit 1
+fi
+exit 0

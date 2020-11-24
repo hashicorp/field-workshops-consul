@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#creds
+#vault login -method=userpass username=admin password=admin
+#export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+
+#check
+#consul intention check frontend public-api
+#if [ $? -ne 0 ]
+#then
+#  fail-message "Could not check frontend <> public-api"
+#  exit 1
+#fi
+
+exit 0

@@ -1,0 +1,117 @@
+#!/bin/bash
+
+cd /root/terraform/gcp-consul-secondary
+terraform init
+
+set-workdir /root/terraform/gcp-consul-secondary
+
+cat << EOF > /root/terraform/gcp-consul-secondary/terraform.tfvars
+gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
+EOF
+
+#ip reservation
+#static IP for SANs
+gcloud beta compute addresses create internal-10-1-0-10 \
+    --region=us-central1 \
+    --subnet=shared \
+    --addresses=10.1.0.10 \
+    --purpose=SHARED_LOADBALANCER_VIP
+gcloud beta compute addresses create internal-10-1-0-11 \
+    --region=us-central1 \
+    --subnet=shared \
+    --addresses=10.1.0.11 \
+    --purpose=SHARED_LOADBALANCER_VIP
+gcloud beta compute addresses create internal-10-1-0-12 \
+    --region=us-central1 \
+    --subnet=shared \
+    --addresses=10.1.0.12 \
+    --purpose=SHARED_LOADBALANCER_VIP
+
+#helm3
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+helm repo add hashicorp https://helm.releases.hashicorp.com
+
+cat <<EOF>  /root/terraform/gcp-consul-secondary/consul-values.yaml
+global:
+  name: consul
+  datacenter: gcp-us-central-1
+  image: 'hashicorp/consul-enterprise:1.8.5-ent'
+  tls:
+    enabled: true
+    caCert:
+      secretName: consul-federation
+      secretKey: caCert
+    caKey:
+      secretName: consul-federation
+      secretKey: caKey
+    serverAdditionalIPSANs:
+      - 10.1.0.10
+    enableAutoEncrypt: true
+  gossipEncryption:
+    secretName: consul-federation
+    secretKey: gossipEncryptionKey
+  acls:
+    manageSystemACLs: true
+    replicationToken:
+      secretName: consul-federation
+      secretKey: replicationToken
+  federation:
+    enabled: true
+ui:
+  enabled: true
+  service:
+    enabled: true
+    type: LoadBalancer
+server:
+  replicas: 1
+  bootstrapExpect: 1
+  extraVolumes:
+    - type: secret
+      name: consul-federation
+      items:
+        - key: serverConfigJSON
+          path: config.json
+      load: true
+client:
+  enabled: true
+meshGateway:
+  enabled: true
+  replicas: 1
+syncCatalog:
+  enabled: true
+  default: false
+  toConsul: true
+  toK8S: false
+connectInject:
+  enabled: true
+EOF
+
+cat <<EOF>  /root/terraform/gcp-consul-secondary/consul-join.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul-join
+  annotations:
+    "cloud.google.com/load-balancer-type": "Internal"
+spec:
+  selector:
+    app: consul
+    component: server
+  ports:
+    - name: api
+      protocol: TCP
+      port: 8501
+      targetPort: 8501
+    - name: rpc
+      protocol: TCP
+      port: 8300
+      targetPort: 8300
+    - name: gossip
+      protocol: TCP
+      port: 8301
+      targetPort: 8301
+  type: LoadBalancer
+  loadBalancerIP: 10.1.0.10
+EOF
+
+exit 0
