@@ -17,6 +17,8 @@ sudo apt-add-repository "deb [arch=amd64] https://packages.microsoft.com/repos/a
 sudo apt update -y
 sudo apt install azure-cli -y
 
+#vault
+az login --identity
 export VAULT_ADDR="http://$(az vm show -g $(curl -s -H Metadata:true "http://169.254.169.254/metadata/instance?api-version=2017-08-01" | jq -r '.compute | .resourceGroupName') -n vault-server-vm -d | jq -r .privateIps):8200"
 mkdir -p /etc/vault-agent.d/
 cat <<EOF> /etc/vault-agent.d/consul-ca-template.ctmpl
