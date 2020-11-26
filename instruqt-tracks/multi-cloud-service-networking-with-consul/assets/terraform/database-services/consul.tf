@@ -22,3 +22,12 @@ resource "consul_service" "azure-pg" {
     timeout  = "3s"
   }
 }
+
+resource "consul_config_entry" "postgres" {
+  name = "postgres"
+  kind = "service-defaults"
+
+  config_json = jsonencode({
+    Protocol    = "tcp"
+  })
+}

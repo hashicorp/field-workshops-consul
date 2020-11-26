@@ -22,3 +22,12 @@ resource "consul_service" "aws-elastic-cache" {
     timeout  = "3s"
   }
 }
+
+resource "consul_config_entry" "redis" {
+  name = "redis"
+  kind = "service-defaults"
+
+  config_json = jsonencode({
+    Protocol    = "tcp"
+  })
+}

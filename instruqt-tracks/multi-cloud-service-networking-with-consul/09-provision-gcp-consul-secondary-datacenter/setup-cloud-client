@@ -35,7 +35,7 @@ cat <<EOF>  /root/terraform/gcp-consul-secondary/consul-values.yaml
 global:
   name: consul
   datacenter: gcp-us-central-1
-  image: 'hashicorp/consul-enterprise:1.8.5-ent'
+  image: 'hashicorp/consul-enterprise:1.9.0-ent'
   tls:
     enabled: true
     caCert:

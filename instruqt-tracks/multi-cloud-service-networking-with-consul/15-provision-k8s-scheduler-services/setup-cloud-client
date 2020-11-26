@@ -13,7 +13,7 @@ cat <<EOF>  /root/terraform/k8s-scheduler-services/react-values.yaml
 global:
   enabled: false
   name: consul-react
-  image: 'hashicorp/consul-enterprise:1.8.5-ent'
+  image: 'hashicorp/consul-enterprise:1.9.0-ent'
   datacenter: gcp-us-central-1
   acls:
       manageSystemACLs: true
@@ -63,7 +63,7 @@ cat <<EOF>  /root/terraform/k8s-scheduler-services/graphql-values.yaml
 global:
   enabled: false
   name: consul-graphql
-  image: 'hashicorp/consul-enterprise:1.8.5-ent'
+  image: 'hashicorp/consul-enterprise:1.9.0-ent'
   datacenter: gcp-us-central-1
   acls:
       manageSystemACLs: true

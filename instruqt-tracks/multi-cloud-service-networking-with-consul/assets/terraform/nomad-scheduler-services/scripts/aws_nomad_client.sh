@@ -88,6 +88,9 @@ mkdir -p /opt/nomad
 cat <<EOF> /etc/nomad.d/nomad.hcl
 datacenter = "aws-us-east-1"
 data_dir = "/opt/nomad"
+meta {
+    "connect.sidecar_image" = "envoyproxy/envoy:v1.16.0"
+}
 EOF
 
 cat <<EOF> /etc/nomad.d/client.hcl

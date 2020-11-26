@@ -151,8 +151,8 @@ sleep 10
 
 #install envoy
 curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
-getenvoy fetch standard:1.14.1
-cp /root/.getenvoy/builds/standard/1.14.1/linux_glibc/bin/envoy /usr/local/bin/envoy
+getenvoy fetch standard:1.16.0
+cp /root/.getenvoy/builds/standard/*/linux_glibc/bin/envoy /usr/local/bin/envoy
 cat <<EOF > /etc/systemd/system/envoy.service
 [Unit]
 Description=Envoy
