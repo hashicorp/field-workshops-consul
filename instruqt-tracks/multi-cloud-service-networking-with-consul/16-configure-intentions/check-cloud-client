@@ -1,15 +1,49 @@
 #!/bin/bash
 
 #creds
-#vault login -method=userpass username=admin password=admin
-#export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+vault login -method=userpass username=admin password=admin
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
 
-#check
-#consul intention check frontend public-api
-#if [ $? -ne 0 ]
-#then
-#  fail-message "Could not check frontend <> public-api"
-#  exit 1
-#fi
+#default
+consul intention check 'default/payments-api' 'default/vault'
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking payments-api > vault wildcard intention."
+  exit 1
+fi
+consul intention check 'default/payments-api' 'default/redis'
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking 'default/payments-api' > 'default/redis' intention."
+  exit 1
+fi
+consul intention check 'frontend/public-api' 'default/payments-api'
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking 'frontend/public-api' > 'default/payments-api' intention."
+  exit 1
+fi
+consul intention check 'product/*' 'default/postgres'
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking 'product/*' > 'default/postgres' intention."
+  exit 1
+fi
+
+#product
+consul intention check 'frontend/public-api' 'product/product-api'
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking 'frontend/public-api' > 'product/product-api' intention."
+  exit 1
+fi
+
+#frontend
+consul intention check 'frontend/web' 'frontend/public-api'
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking 'frontend/web' > 'frontend/public-api' intention."
+  exit 1
+fi
 
 exit 0
