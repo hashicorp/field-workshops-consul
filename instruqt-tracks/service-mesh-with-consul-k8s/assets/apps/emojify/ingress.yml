@@ -35,7 +35,7 @@ metadata:
   name: emojify-ingress-payments-intention
 spec:
   destination:
-    name: emojify-api-payments
+    name: emojify-payments
   sources:
     - name: emojify-ingress
       action: allow

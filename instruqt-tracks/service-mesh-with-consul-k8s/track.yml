@@ -102,6 +102,12 @@ challenges:
   title: Deploy the Application
   teaser: Bring our application to the world.
   assignment: |-
+    Start by deploying the default configuration for the mesh. <br>
+
+    ```
+    kubectl apply -f proxy-defaults.yaml
+    ```
+
     Before deploying your apps, investigate your config for the Emojify app in the code editor called `Emojify-Config`.
     Select any of the YAML files, you'll notice the service has the following annotations.
 
@@ -135,7 +141,6 @@ challenges:
     Wait for the pods. <br>
 
     ```
-    sleep 30
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-ingress -o name)
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-website -o name)
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-api -o name)
@@ -143,15 +148,7 @@ challenges:
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-facebox -o name)
     ```
 
-    By default, the Consul cluster has been configured to deny all traffic between applications. A deny all by default configuration is best practice. You should then allow traffic between applications using intentions.
-    Create the following four intentions so your microservices can serve traffic. <br>
-
-    ```
-    consul intention create -allow emojify-api emojify-facebox
-    consul intention create -allow emojify-api emojify-cache
-    consul intention create -allow emojify-ingress emojify-api
-    consul intention create -allow emojify-ingress emojify-website
-    ```
+    By default, the Consul cluster has been configured to deny all traffic between applications. A deny all by default configuration is best practice. You can review the intentions managed by K8s CRDs in the Consul UI.
 
     Now you've deployed your applications and created allow intentions, you should be able to access the website on the `Emojify-Website` tab.
   notes:
@@ -342,10 +339,9 @@ challenges:
     There is a sample dashboard built for you that can visualize metrics for your application stack. <br>
 
     To create the sample dashboard select the `+` in the left side navigation to `Import`.
-    You will need to paste the raw json into Grafana per the above documentation. <br>
 
     ```
-    https://raw.githubusercontent.com/hashicorp/consul-k8s-l7-obs-guide/master/overview_dashboard.json
+    https://grafana.com/grafana/dashboards/13396
     ```
 
     If you encounter issues, you can follow [the complete instructions](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) from Grafana to import your own dashboard.
@@ -370,6 +366,11 @@ challenges:
       We're spinning up a monitoring stack for you.
       Please be patient. This should take 1-2 minutes.
   tabs:
+  - title: Consul UI
+    type: service
+    hostname: kubernetes
+    path: /ui/
+    port: 30085
   - title: K8s
     type: terminal
     hostname: kubernetes
@@ -1006,4 +1007,4 @@ challenges:
     port: 31800
   difficulty: basic
   timelimit: 5400
-checksum: "17732613951244775938"
+checksum: "17589505357517983090"

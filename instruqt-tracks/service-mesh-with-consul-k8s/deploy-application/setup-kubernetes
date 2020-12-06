@@ -6,7 +6,7 @@ echo "export CONSUL_HTTP_TOKEN=${CONSUL_HTTP_TOKEN}" >> ~/.bashrc
 
 #Get the emojify app files
 git clone https://github.com/hashicorp/field-workshops-consul.git
-cp -r field-workshops-consul/apps/emojify .
+cp -r field-workshops-consul/instruqt-tracks/service-mesh-with-consul-k8s/assets/apps/emojify .
 rm -rf field-workshops-consul
 
 sleep 15

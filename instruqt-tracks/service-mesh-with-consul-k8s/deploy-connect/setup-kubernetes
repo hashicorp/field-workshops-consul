@@ -270,6 +270,21 @@ global:
 server:
   replicas: 1
   bootstrapExpect: 1
+  extraConfig: |
+    {
+      "telemetry": {
+        "prometheus_retention_time": "8h",
+        "disable_hostname": true
+      },
+      "ui_config": {
+        "enabled": true,
+        "metrics_provider": "prometheus",
+        "metrics_proxy": {
+          "base_url": "http://prometheus-server"
+        }
+      }
+    }
+ui:
 client:
   enabled: true
 ui:
@@ -278,12 +293,21 @@ controller:
   enabled: true
 syncCatalog:
   enabled: true
+  default: false
   toConsul: true
   toK8S: false
   default: true
 connectInject:
   enabled: true
   default: false
+ingressGateways:
+  enabled: true
+  defaults:
+    replicas: 1
+    service:
+      type: LoadBalancer
+      ports:
+        - port: 8080
 EOF
 
 exit 0
