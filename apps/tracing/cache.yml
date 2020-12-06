@@ -23,7 +23,7 @@ spec:
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
     spec:
-      serviceAccountName: api
+      serviceAccountName: cache
       containers:
       - name: cache
         image: "nicholasjackson/fake-service:v0.7.8"
