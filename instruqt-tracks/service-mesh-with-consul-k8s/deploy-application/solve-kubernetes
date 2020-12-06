@@ -1,6 +1,7 @@
 #!/bin/bash
 
 kubectl apply -f emojify/ingress.yml
+kubectl apply -f emojify/website_sa.yml
 kubectl apply -f emojify/website_v1.yml
 kubectl apply -f emojify/api.yml
 kubectl apply -f emojify/cache.yml

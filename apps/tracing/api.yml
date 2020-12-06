@@ -1,4 +1,10 @@
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: api
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,6 +25,7 @@ spec:
         "consul.hashicorp.com/connect-service-protocol": "grpc"
         "consul.hashicorp.com/connect-service-upstreams": "cache:9092,payments:9093"
     spec:
+      serviceAccountName: api
       containers:
       - name: api
         image: "nicholasjackson/fake-service:v0.7.8"

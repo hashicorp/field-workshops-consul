@@ -1,4 +1,10 @@
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cache
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -17,6 +23,7 @@ spec:
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
     spec:
+      serviceAccountName: api
       containers:
       - name: cache
         image: "nicholasjackson/fake-service:v0.7.8"

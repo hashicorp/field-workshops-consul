@@ -26,7 +26,7 @@ spec:
         "prometheus.io/scrape": "true"
         "prometheus.io/port": "9901"
     spec:
-      serviceAccountName: api
+      serviceAccountName: emojify-api
       containers:
       - name: emojify-api
         image: "nicholasjackson/emojify-api:v0.9.8"

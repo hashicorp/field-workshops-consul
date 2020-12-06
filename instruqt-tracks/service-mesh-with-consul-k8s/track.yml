@@ -121,15 +121,21 @@ challenges:
       default: false
     ```
 
-    Now, you can deploy your applications. Navigate back to the `_K8s` shell and execute the following commands.
+    Now, you can deploy your applications. Navigate back to the `_K8s` shell and execute the following commands. <br>
 
     ```
     kubectl apply -f emojify/ingress.yml
+    kubectl apply -f emojify/website_sa.yml
     kubectl apply -f emojify/website_v1.yml
     kubectl apply -f emojify/api.yml
     kubectl apply -f emojify/cache.yml
     kubectl apply -f emojify/facebox.yml
+    ```
 
+    Wait for the pods. <br>
+
+    ```
+    sleep 30
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-ingress -o name)
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-website -o name)
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-api -o name)
@@ -1000,4 +1006,4 @@ challenges:
     port: 31800
   difficulty: basic
   timelimit: 5400
-checksum: "15767737528909378313"
+checksum: "17732613951244775938"

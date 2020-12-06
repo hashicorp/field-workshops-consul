@@ -1,5 +1,9 @@
 #!/bin/sh
 
+#add the bootstrap token
+export CONSUL_HTTP_TOKEN=$(kubectl get secret lab-consul-bootstrap-acl-token -o json | jq -r .data.token | base64 -d)
+echo "export CONSUL_HTTP_TOKEN=${CONSUL_HTTP_TOKEN}" >> ~/.bashrc
+
 #Get the emojify app files
 git clone https://github.com/hashicorp/field-workshops-consul.git
 cp -r field-workshops-consul/apps/emojify .
@@ -9,5 +13,19 @@ sleep 15
 
 #Set up deny by default
 /usr/local/bin/consul intention create -deny '*' '*'
+
+#add proxy-defaults
+cat <<-EOF > /root/proxy-defaults.yaml
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ProxyDefaults
+metadata:
+  name: global
+spec:
+  config:
+    protocol: 'http'
+    envoy_tracing_json: '{"http":{"config":{"collector_cluster":"jaeger_9411","collector_endpoint":"/api/v2/spans"},"name":"envoy.zipkin"}}'
+    envoy_extra_static_clusters_json: '{"connect_timeout":"3.000s","dns_lookup_family":"V4_ONLY","lb_policy":"ROUND_ROBIN","load_assignment":{"cluster_name":"jaeger_9411","endpoints":[{"lb_endpoints":[{"endpoint":{"address":{"socket_address":{"address":"jaeger-collector","port_value":9411,"protocol":"TCP"}}}}]}]},"name":"jaeger_9411","type":"STRICT_DNS"}'
+    envoy_prometheus_bind_addr: '0.0.0.0:9901'
+EOF
 
 exit 0
