@@ -5,6 +5,30 @@ metadata:
   name: emojify-api
 
 ---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: emojify-api-facebox-intention
+spec:
+  destination:
+    name: emojify-facebox
+  sources:
+    - name: emojify-api
+      action: allow
+
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: emojify-api-cache-intention
+spec:
+  destination:
+    name: emojify-cache
+  sources:
+    - name: emojify-api
+      action: allow
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
