@@ -259,45 +259,31 @@ chmod +x /usr/local/bin/consul
 rm -f consul_1.8.0_linux_amd64.zip
 
 #Grab the helm chart
-git clone -b v0.23.1 https://github.com/hashicorp/consul-helm.git
+helm repo add hashicorp https://helm.releases.hashicorp.com
 
 #Set up the consul default values
 cat <<-EOF > /root/consul-values.yaml
 global:
   datacenter: dc1
-  image: "consul:1.8.0"
-
+  acls:
+    manageSystemACLs: true
 server:
   replicas: 1
   bootstrapExpect: 1
-
 client:
   enabled: true
-
 ui:
   enabled: true
-
+controller:
+  enabled: true
 syncCatalog:
   enabled: true
   toConsul: true
   toK8S: false
   default: true
-
 connectInject:
   enabled: true
-  #envoy image with curl and utils
-  imageEnvoy: nicholasjackson/consul-envoy:v1.7.0-v0.12.2
-
-  #true will inject by default, otherwise requires annotation
   default: false
-
-  centralConfig:
-    enabled: true
-    defaultProtocol: "http"
-    proxyDefaults: |
-      {
-      "envoy_prometheus_bind_addr": "0.0.0.0:9901"
-      }
 EOF
 
 exit 0

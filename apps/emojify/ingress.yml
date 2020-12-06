@@ -1,5 +1,11 @@
 ---
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: emojify-ingress
+
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: emojify-ingress
@@ -96,6 +102,7 @@ spec:
           items:
           - key: config
             path: nginx.conf
+      serviceAccountName: emojify-ingress
       containers:
       - name: emojify-ingress
         image: nginx:alpine

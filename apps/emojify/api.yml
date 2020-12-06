@@ -1,4 +1,10 @@
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: emojify-api
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,6 +26,7 @@ spec:
         "prometheus.io/scrape": "true"
         "prometheus.io/port": "9901"
     spec:
+      serviceAccountName: api
       containers:
       - name: emojify-api
         image: "nicholasjackson/emojify-api:v0.9.8"

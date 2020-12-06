@@ -1,4 +1,10 @@
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: emojify-facebox
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,6 +25,7 @@ spec:
         "prometheus.io/scrape": "true"
         "prometheus.io/port": "9901"
     spec:
+      serviceAccountName: emojify-facebox
       containers:
       - name: emojify-facebox
         image: "nicholasjackson/emojify-facedetection:v0.10.0"
