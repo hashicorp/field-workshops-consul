@@ -51,7 +51,7 @@ spec:
           - name: MESSAGE
             value: "Payments response"
           - name: NAME
-            value: "payments"
+            value: "fake-payments"
           - name: SERVER_TYPE
             value: "http"
           - name: TRACING_ZIPKIN

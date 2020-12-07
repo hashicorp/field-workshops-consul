@@ -38,7 +38,7 @@ spec:
           - name: MESSAGE
             value: "Currency response"
           - name: NAME
-            value: "currency"
+            value: "fake-currency"
           - name: SERVER_TYPE
             value: "http"
           - name: ERROR_RATE

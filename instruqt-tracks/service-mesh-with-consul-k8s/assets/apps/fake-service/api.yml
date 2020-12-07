@@ -64,7 +64,7 @@ spec:
           - name: MESSAGE
             value: "API response"
           - name: NAME
-            value: "api"
+            value: "fake-api"
           - name: SERVER_TYPE
             value: "grpc"
           - name: TIMING_50_PERCENTILE

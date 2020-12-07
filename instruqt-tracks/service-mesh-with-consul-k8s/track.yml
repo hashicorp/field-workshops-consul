@@ -16,6 +16,7 @@ developers:
 - lance@hashicorp.com
 private: false
 published: true
+maintenance: true
 show_timer: true
 challenges:
 - slug: deploy-connect
@@ -412,84 +413,28 @@ challenges:
     * Resolver - Creates a subsets of the website service. In this example, you will use the service tags.
 
     ```
-    kind           = "service-resolver"
-    name           = "emojify-website"
-    default_subset = "v1"
-    subsets = {
-      "v1" = {
-        filter = "v1 in Service.Tags"
-      }
-      "v2" = {
-        filter = "v2 in Service.Tags"
-      }
-    }
+    cat emojify/resolver.yaml
     ```
 
     * Splitter - Contains your traffic shaping rules. Since you're pretty confident in your app,
     you'll send 90% of the traffic to the new service.
 
     ```
-    kind = "service-splitter"
-    name = "emojify-website"
-    splits = [
-      {
-        weight         = 10
-        service_subset = "v1"
-      },
-      {
-        weight         = 90
-        service_subset = "v2"
-      },
-    ]
+    cat emojify/splitter.yaml
     ```
 
     * Router   - Allows you to do some version specific testing by supplying query params.
 
     ```
-    kind = "service-router"
-    name = "emojify-website"
-    routes = [
-      {
-        match {
-          http {
-            query_param = [
-              {
-                name  = "x-version"
-                exact = "1"
-              },
-            ]
-          }
-        }
-        destination {
-          service        = "emojify-website"
-          service_subset = "v1"
-        }
-      },
-      {
-        match {
-          http {
-            query_param = [
-              {
-                name  = "x-version"
-                exact = "2"
-              },
-            ]
-          }
-        }
-        destination {
-          service        = "emojify-website"
-          service_subset = "v2"
-        }
-      }
-    ]
+    cat emojify/router.yaml
     ```
 
     Next, apply the routing config. <br>
 
     ```
-    consul config write emojify/resolver.hcl
-    consul config write emojify/splitter.hcl
-    consul config write emojify/router.hcl
+    kubectl apply -f emojify/resolver.yaml
+    kubectl apply -f emojify/splitter.yaml
+    kubectl apply -f emojify/router.yaml
     ```
 
     With your new routing rules in place, go ahead and push the new version of the website with the payment service.
@@ -497,10 +442,8 @@ challenges:
     ```
     kubectl  apply -f emojify/website_v2.yml
     kubectl  apply -f emojify/payments.yml
-
+    sleep 5
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-payments -o name)
-
-    consul intention create -allow emojify-ingress emojify-payments
     ```
 
     Once your pods are healthy, you can start our testing.
@@ -542,21 +485,18 @@ challenges:
     Finally, you can shift all the traffic to the v2 version of the website now that your new feature is working properly.
 
     ```
-    cat <<-EOF > /root/emojify/splitter.hcl
-    kind = "service-splitter"
-    name = "emojify-website"
-    splits = [
-      {
-        weight         = 0
-        service_subset = "v1"
-      },
-      {
-        weight         = 100
-        service_subset = "v2"
-      },
-    ]
+    cat <<EOF | kubectl apply -f -
+    apiVersion: consul.hashicorp.com/v1alpha1
+    kind: ServiceSplitter
+    metadata:
+      name: emojify-website
+    spec:
+      splits:
+        - weight: 0
+          serviceSubset: 'v1'
+        - weight: 100
+          serviceSubset: 'v2'
     EOF
-    consul config write emojify/splitter.hcl
     ```
 
     You can additionally verify Consul has propagated this change to Envoy by running the above command again. <br>
@@ -606,75 +546,15 @@ challenges:
     kubectl get svc --selector=app=jaeger
     ```
 
-    You will use the following Connect configuration to configure Envoy to route your trace information to your Jaeger instance.
-
-    * [Cluster Bootstrap](https://www.consul.io/docs/connect/proxies/envoy.html#envoy_extra_static_clusters_json)
-    * [Tracing Bootstrap](https://www.consul.io/docs/connect/proxies/envoy.html#envoy_tracing_json)
+    Now you can deploy the tracing application and configure your intentions. <br>
 
     ```
-      {
-        "connect_timeout": "3.000s",
-        "dns_lookup_family": "V4_ONLY",
-        "lb_policy": "ROUND_ROBIN",
-        "load_assignment": {
-            "cluster_name": "jaeger_9411",
-            "endpoints": [
-                {
-                    "lb_endpoints": [
-                        {
-                            "endpoint": {
-                                "address": {
-                                    "socket_address": {
-                                        "address": "jaeger-collector",
-                                        "port_value": 9411,
-                                        "protocol": "TCP"
-                                    }
-                                }
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-        "name": "jaeger_9411",
-        "type": "STRICT_DNS"
-      }
-    ```
-
-    ```
-      {
-        "http": {
-          "name": "envoy.zipkin",
-          "config": {
-            "collector_cluster": "jaeger_9411",
-            "collector_endpoint": "/api/v1/spans",
-            "shared_span_context": false
-          }
-        }
-      }
-    ```
-
-    Go ahead and apply the config.
-
-    ```
-    consul config write trace.hcl
-    ```
-
-    Now you can deploy the tracing application and configure your intentions.
-
-    ```
-    kubectl apply -f tracing
-
-    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=web -o name)
-    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=api -o name)
-    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=cache -o name)
-    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=payments -o name)
-    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=currency -o name)
-
-    consul intention create -allow web api
-    consul intention create -allow api cache
-    consul intention create -allow api payments
-    consul intention create -allow payments currency
+    kubectl apply -f fake-service
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=fake-web -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=fake-api -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=fake-cache -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=fake-payments -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=fake-currency -o name)
     ```
 
     Once the pods are running, you can test the application through the `Frontend`, which is exposed over a NodePort.
@@ -748,7 +628,7 @@ challenges:
   - title: App - Config
     type: code
     hostname: kubernetes
-    path: /root/tracing
+    path: /root/fake-service
   - title: Jaeger UI
     type: service
     hostname: kubernetes
@@ -1007,4 +887,4 @@ challenges:
     port: 31800
   difficulty: basic
   timelimit: 5400
-checksum: "17589505357517983090"
+checksum: "14438829163944156278"

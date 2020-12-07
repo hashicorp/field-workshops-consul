@@ -293,10 +293,9 @@ controller:
   enabled: true
 syncCatalog:
   enabled: true
-  default: false
   toConsul: true
   toK8S: false
-  default: true
+  default: false
 connectInject:
   enabled: true
   default: false

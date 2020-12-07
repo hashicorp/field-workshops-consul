@@ -151,7 +151,7 @@ EOF
 kubectl apply -f jaeger-all-in-one-template.yml
 
 git clone https://github.com/hashicorp/field-workshops-consul.git
-cp -r field-workshops-consul/apps/tracing .
+cp -r field-workshops-consul/instruqt-tracks/service-mesh-with-consul-k8s/assets/apps/fake-service .
 rm -rf field-workshops-consul
 
 exit 0

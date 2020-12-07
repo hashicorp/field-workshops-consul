@@ -67,7 +67,7 @@ spec:
           - name: MESSAGE
             value: "Hello World"
           - name: NAME
-            value: "web"
+            value: "fake-web"
           - name: SERVER_TYPE
             value: "http"
           - name: TIMING_50_PERCENTILE
