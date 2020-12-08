@@ -1,44 +1,42 @@
-slug: service-mesh-with-consul-k8s
-id: ygz7z7sj3nyn
+slug: service-mesh-with-consul-k8s-jp
+id: 6cgzgzn2tteq
 type: track
-title: Service mesh with Consul K8s
-teaser: Unleash the full power of Consul's service mesh on the world's most popular
-  container orchestrator.
+title: Service mesh with Consul K8s (Japanese)
+teaser: 世界で最も人気のあるコンテナ・オーケストレーターであるConsulのサービスメッシュのフルパワーを発揮してください。
 description: |-
-  In this track you will use Consul Connect's first-class support on K8s
-  for service mesh.
-
-  You'll work through scaling, monitoring, and tracing applications. To complete the track you, will gain experience with the advanced L7 traffic patterns.
+  このトラックでは、K8s上でConsulのサービス メッシュを試していただけます。
+  スケーリング、監視、およびトレースアプリケーションなどに触れていただけます。このトラックを完了すれば、高度なL7トラフィックパターンを習得できるでしょう。
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags: []
 owner: hashicorp
 developers:
 - lance@hashicorp.com
+- masa@hashicorp.com
 private: false
 published: true
 show_timer: true
 challenges:
 - slug: deploy-connect
-  id: iyea2sohruxq
+  id: i1ib8dnuybzm
   type: challenge
-  title: Deploy Connect
-  teaser: Your first Consul cluster on K8s
+  title: Connectのデプロイ
+  teaser: K8sにConsulクラスタを構築する
   assignment: |-
-    First, use Helm with a custom values file to deploy Consul into the K8s cluster and enable Connect. <br>
+    まず、ConsulをCustom value fileを使ってK8sクラスタにHelmでデプロイし、Connectを有効にします。<br>
 
-    The helm chart has been cloned from GitHub and placed it in your lab environment.
-    Click on the `/root/consul-valules.yaml` file to view the Consul deployment configuration in the code editor. <br>
+    Helmは GitHub からクローンされラボ環境に配置されています。
+    `/root/consul-valules.yaml` をクリックして、コードエディタで Consul のデプロイメント設定を表示します。<br>
 
-    Navigate to the `_K8s` shell to install Consul. Note, Helm has been pre-initialized in this environment. Copy or type the following command in the shell.<br>
+    シェル `K8s` に移動して Consul をインストールしてください。注意: Helm はこの環境では事前に初期化されています。シェルに以下のコマンドをコピーするか入力してください。
 
     ```
     helm install -f consul-values.yaml lab ./consul-helm --wait --debug
     ```
 
-    The status output should indicate Consul was `DEPLOYED`. <br>
+    ステータス出力はConsulが `DEPLOYED` であることを示しているはずです。<br>
 
 
-    The Consul UI will become available once the Consul server pods are running. Monitor the progress with the following `kubectl` command. If `lab-consul-server-0` is `running`, then you should be able to access the Consul UI <br>
+    Consul サーバーのPodがデプロイされると、Consul UI が利用できるようになります。以下の `kubectl` コマンドで進捗状況を確認してください。もし `lab-consul-server-0` が `running` であれば、Consul UI にアクセスできるはずです。
 
     ```
     kubectl get pods
@@ -46,14 +44,14 @@ challenges:
 
     <br>
 
-    Now that you have successfully deployed Consul on K8s, you can deploy some apps! To continue, click the `Check` button.
+    これでK8sにConsulをデプロイすることができました。続行するには、`Check` ボタンをクリックしてください。
 
-    **Optional**
+    **オプション**
 
-    We've included the K8s dashboard for the duration of this lab if you want to compare the workloads using the K8s UI tab.
-    Note, you can use  the `skip` button to authenticate, since the dashboard is already configuration. <br>
+    K8s UIタブを使用してワークロードを比較したい場合は、このラボの期間中はK8sダッシュボードを使用します。
+    ダッシュボードはすでに設定されているので、`skip`ボタンを使って認証することができます。<br>
 
-    If you want to see a breakout of the Consul deployment from helm, run the following command. <br>
+    ヘルムからのConsulのデプロイの状態を見たい場合は、以下のコマンドを実行してください。<br>
 
     ```
     helm status lab
@@ -61,20 +59,20 @@ challenges:
   notes:
   - type: text
     contents: |-
-      Connect can be used with Kubernetes to secure pod communication with other pods and external Kubernetes services.
-      The Connect sidecar proxy running Envoy can be automatically injected into pods in your cluster, making configuration for Kubernetes automatic. <br>
+      ConnectはKubernetesと一緒に使用することで、他のポッドや外部のKubernetesサービスとのポッド通信を確保することができます。
+      Envoyを起動するConnectのサイドカープロキシをクラスタ内のPodに自動的に注入（Inject)することで、Kubernetes用の設定を自動化できます。<br> <br>
 
-      This functionality is provided by the consul-k8s project and can be automatically installed and configured using the official Consul Helm chart.
+      この機能はconsul-k8sプロジェクトによって提供されており、公式のConsul Helmチャートを使用して自動的にインストール、設定することができます。
   - type: text
     contents: |-
-      We recommend running Consul on Kubernetes with the same general architecture as running it anywhere else.
-      There are some benefits Kubernetes can provide that eases operating a Consul cluster and Connect mesh that we will explore.
-      The standard production [deployment guide](https://learn.hashicorp.com/consul/datacenter-deploy/deployment-guide?utm_source=instruqt&utm_medium=k8s-track&utm_term=dg) is still an important read even if running Consul within Kubernetes. <br>
+      Kubernetes上でのConsulクラスタの構築は他と同じ一般的なアーキテクチャで実行することをお勧めします。
+      Kubernetes を使用することで Consul クラスタと Connect メッシュの運用を容易にするいくつかの利点があります。
+      [デプロイメントガイド](https://learn.hashicorp.com/consul/datacenter-deploy/deployment-guide?utm_source=instruqt&utm_medium=k8s-track&utm_term=dg)は、Kubernetes内でConsulを実行する場合でも重要です。<br>。
 
-      We use a lightweight distro of K8s for this lab called [k3s](https://k3s.io/).
-      Your environment consists of a single node cluster of K8s.
-      We will expose services over [NodePorts](https://kubernetes.io/docs/concepts/services-networking/service/#nodeport) in our lab for simplicity.
-      This includes access to the Consul API on our K8s workstation.
+      このラボでは [k3s](https://k3s.io/) という K8s の軽量版を使用しています。
+      この環境は K8s のシングルノードクラスタで構成されています。
+      このラボでは、[NodePorts](https://kubernetes.io/docs/concepts/services-networking/service/#nodeport) でサービスを公開します。
+      K8s ワークステーション上の Consul API へのアクセスも同様に公開されます。
   - type: image
     url: https://d33wubrfki0l68.cloudfront.net/949e085caf846f7e512f420bcbd0d1a2935e27bb/4c93c/static/img/k8s-consul-simple.png
   tabs:
@@ -97,31 +95,33 @@ challenges:
   difficulty: basic
   timelimit: 600
 - slug: deploy-application
-  id: 71ekxt1ehjg5
+  id: d8at2oofwndv
   type: challenge
-  title: Deploy the Application
-  teaser: Bring our application to the world.
+  title: アプリケーションのデプロイ
+  teaser: アプリケーションをデプロイし公開します。
   assignment: |-
-    Before deploying your apps, investigate your config for the Emojify app in the code editor called `Emojify-Config`.
-    Select any of the YAML files, you'll notice the service has the following annotations.
+    アプリをデプロイする前に、Emojifyというアプリケーションの設定ファイル`Emojify-Config`をみてください。。
+    YAMLで記述されたマニフェストみると、サービスが以下のようなアノテーションを持っています。
+
 
     ```
     consul.hashicorp.com/connect-inject
     consul.hashicorp.com/connect-service-upstreams
     ```
 
-    If you view any of the other services, they will include the same annotations. <br>
+    他のサービスを見ても、同じアノテーションが含まれています。<br>
 
-    These annotations tell Consul that the pod should get an Envoy sidecar proxy to route traffic
-    and listeners for the requested service on the specified upstream port.
-    In the helm chart, you set  `connectInject` to `false`, so now you need to explicitly add the above annotations to deploy a sidecar proxy with your application.<br>
+    これらのアノテーションは、Podがトラフィックをルーティングするために Envoy サイドカープロキシを利用することを Consul に伝えます。
+    また、指定されたUpstreamのPort上に要求されたサービスのリスナーを指定します。
+    Helm chartでは `connectInject` を `false` に設定しているので、アプリケーションでサイドカープロキシをデプロイするためには、上記のアノテーションを明示的に追加する必要があります。
 
     ```
     connectInject:
       default: false
     ```
 
-    Now, you can deploy your applications. Navigate back to the `_K8s` shell and execute the following commands.
+    それではアプリケーションをデプロイしてみましょう。
+    `K8s` シェルに戻って、以下のコマンドを実行してください。
 
     ```
     kubectl apply -f emojify/ingress.yml
@@ -137,8 +137,11 @@ challenges:
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-facebox -o name)
     ```
 
-    By default, the Consul cluster has been configured to deny all traffic between applications. A deny all by default configuration is best practice. You should then allow traffic between applications using intentions.
-    Create the following four intentions so your microservices can serve traffic. <br>
+
+    現在の通信設定（Intention）を `Consul UI`タブで確認してください。<br>
+    デフォルトでは、Consul クラスタはアプリケーション間のすべてのトラフィックをDenyするように設定されています。次に、Intentionを設定してアプリケーション間のトラフィックをAllowしてみましょう。
+    以下の 4 つのIntentionを作成して、マイクロサービス間の通信を有効化します。
+
 
     ```
     consul intention create -allow emojify-api emojify-facebox
@@ -147,24 +150,25 @@ challenges:
     consul intention create -allow emojify-ingress emojify-website
     ```
 
-    Now you've deployed your applications and created allow intentions, you should be able to access the website on the `Emojify-Website` tab.
+    これでIntiontionが設定されました。`Consul UI`でIntentionの状態を確認してください。
+    これにより`Emojify-Web-site`タブからウェブサイトにアクセスできるはずです。
   notes:
   - type: text
     contents: |-
-      In this exercise, you will deploy a more complex microservice application called [Emojify](https://github.com/emojify-app). <br>
+      このラボでは、[Emojify](https://github.com/emojify-app)という、比較的複雑なマイクロサービスアプリケーションをデプロイします。<br>
 
-      The application has five distinct components that provide functionality:
+      このアプリケーションは、5つの異なるコンポーネントで構成されます。
 
-      * Ingress - Nginx container that gives us access to the API & Website.
-      * Website - Serves static content for the Emojify website.
-      * API - Provides API to machine learning backend.
-      * Cache - Cache layer for API.
-      * Facebox - Provides machine learning for detecting and identifies faces in photos.
+      * Ingress - APIとWebsiteへのアクセスを提供するNginxコンテナ。
+      * Website - Emojifyウェブサイトの静的コンテンツを提供します。
+      * API - 機械学習のバックエンドAPIを提供します。
+      * Cache - API用のキャッシュレイヤー。
+      * Facebox - 写真の顔を検出して識別するための機械学習を提供します。
 
-      In this exercise you'll also explore how these services can be easily connected, monitored, and scaled with Connect. <br>
+      このエクササイズでは、これらのサービスをConnectで簡単に接続し、監視し、拡張する方法などを行っていきます。<br>
 
-      Consul Connect supports more advanced ingress controllers, such as [Datawire's Ambassador](https://www.consul.io/docs/platform/k8s/ambassador.html),
-      but we will use the Nginx container in this lab to show basic functionality.
+      Consul Connectは、[Datawire's Ambassador](https://www.consul.io/docs/platform/k8s/ambassador.html)のような、高度なIngressコントローラをサポートしています。
+      しかし、このラボではNginxコンテナを使って基本的な機能を紹介します。
   tabs:
   - title: Consul UI
     type: service
@@ -190,26 +194,26 @@ challenges:
   difficulty: basic
   timelimit: 600
 - slug: use-the-application
-  id: ibdhfvn7xzbo
+  id: vqyyh0dyoy3t
   type: challenge
-  title: Use the Application
-  teaser: You get an emoji, and you get an emoji, and you get an emoji.
+  title: アプリケーションにアクセスする
+  teaser: デプロイされたEmojifyアプリケーションを使ってみましょう。
   assignment: |-
-    To use your Emojify app, enter a URL into the website to "emojify" the image. If you don't have an image you'd like to use try the one below of our founders.
+    Emojifyアプリを使用するには、ウェブサイトにURLを入力して画像を「絵文字化」します。使用したい画像がない場合は、以下の弊社創業者の画像をお試しください。
 
     ```
     https://cdn.geekwire.com/wp-content/uploads/2017/10/armon-dadgar-and-mitchell-hashimoto-630x419.jpg
     ```
 
-    Next, in the `Api-Service` tab, view the Consul service definition generated based on your K8s YAML files.
-    You can also discover the service definition using `kubectl`. In the `_K8s` shell tab, execute the command below. <br>
+    次に、`Api-Service` タブで、K8s の マニフェストに基づいて生成された Consul のサービス定義を表示します。
+    また、`kubectl` を使ってサービス定義を検索することもできます。 `K8s`タブ で、以下のコマンドを実行します。<br>
 
     ```
     kubectl exec $(kubectl get pod --selector=app=emojify-api -o name) -c consul-connect-envoy-sidecar -- cat  /consul/connect-inject/service.hcl
     ```
 
-    If you have previous Consul experience, you have practice creating service definitions by hand.
-    In K8s, all you needed is the following to generate all the necessary configurations.
+    もしConsulの経験がある方は、サービス定義を手動で作成したことがあると思います。
+    K8sでは、このような設定ファイルなどは以下のTemplateを指定するだけで自動生成することができます。
 
     ```
     template:
@@ -221,12 +225,12 @@ challenges:
           "consul.hashicorp.com/connect-service-upstreams": "emojify-facebox:8003,emojify-cache:8005"
     ```
 
-    Now that you've tested your Emojify app, you can move to more advanced use cases!
+    これでEmojifyアプリのテストが完了しました。それでは、より高度なユースケースを試してみましょう！
   notes:
   - type: text
     contents: |-
-      Now that your app is working, you can Emojify some faces.
-      Feel free to use your colleagues, or our sample. <br>
+      Emojifyアプリケーションは写真の顔を絵文字化することができます。<br>
+      お好きな写真を使っていただいても構いません。
   tabs:
   - title: Api -  Service
     type: code
@@ -252,45 +256,44 @@ challenges:
   difficulty: basic
   timelimit: 600
 - slug: scale-the-app
-  id: r2vgop1q59ix
+  id: 47wzmzmvhwhm
   type: challenge
-  title: Scale the Application
-  teaser: Handle increased demand
+  title: アプリケーションのスケーリング
+  teaser: 必要に応じたスケーリングをしてみましょう。
   assignment: |-
-    To scale the number of Facebox services providing our ML capabilities, increase the `replicas`. <br>
+    ML機能を提供するFaceboxサービスの数を増やすために、`replicas`を増やしてください。<br>
 
-    In the emojify app specs from earlier, change the number of replicas for the Facebox service to `2`. Note, save the changes by clicking the "save" icon next to the file name.
+    先ほどのemojifyアプリの仕様で、Faceboxサービスのレプリカの数を`2`に変更します。なお、ファイル名の横にある「save」アイコンをクリックして、変更内容を保存してください。
 
     ```
     spec:
       replicas: 2
     ```
 
-    Next, use `kubectl` to update the spec.
+    次に`K8s`タブで変更を適用します。
 
     ```
     kubectl apply -f emojify/facebox.yml
     ```
 
-    Finally, verify the Consul catalog has two healthy services. You can also do this in the `Consul UI` tab or by using the HTTP API command below in the `_K8s` shell.
+    Consul カタログに 2 つのヘルシーな`emojify-facebox`サービスがあることを確認してみましょう。これは `Consul UI` タブで行うこともできますし、`K8s` シェルの以下の HTTP API コマンドを使用して行うこともできます。
 
     ```
     curl -s localhost:30085/v1/catalog/service/emojify-facebox | jq '[.. |."ServiceAddress"? | select(. != null)]'
     ```
 
-    You should also verify Envoy sidecar proxy is healthy using `kubectl`.
+    また、`kubectl` を使って Envoy の sidecar プロキシが動いていることを確認できます。
 
     ```
     kubectl exec $(kubectl get pod --selector=app=emojify-api -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/clusters | grep facebox
     ```
 
-    Nice work! You just leveraged dynamic service discovery inside your service mesh to scale out a workload.
+    これでサービスメッシュ内でダイナミックなサービスディスカバリを利用して、ワークロードをスケールアウトできました。
   notes:
   - type: text
     contents: |-
-      Now that users have seen the power of Emojify, they are flocking to the application! <br>
-
-      In the next exercise you'll scale your backend services and preserve continuity in the mesh.
+      Emojifyのアプリケーションが何をするのかは見ていただいたと思います。<br>
+      次にバックエンドをスケールアウトし、サービス メッシュ上で可用性を向上してみましょう。
   tabs:
   - title: Facebox - Config
     type: code
@@ -311,58 +314,57 @@ challenges:
   difficulty: basic
   timelimit: 600
 - slug: get-metrics
-  id: hwu25pwhbljf
+  id: ya40q8w8edkz
   type: challenge
-  title: Get Metrics
-  teaser: Please observe
+  title: メトリクスの取得
+  teaser: アプリケーションの状態を監視してみましょう。
   assignment: |-
-    Your monitoring stack includes Grafana and Prometheus. Ensure both applications have healthy, running pods using `kubectl`. <br>
+    モニタリングスタックとして Grafana と Prometheus を使用します。
 
     ```
     kubectl get pod --selector=app=prometheus
-    kubectl get pod --selector=app.kubernetes.io/name=grafana
+    kubectl get pod --selector=app=grafana
     ```
 
-    They were installed via their respective helm charts.
+    これらは以下のHelm Chartsによりインストールされます。
 
     * [Grafana](https://github.com/helm/charts/tree/master/stable/grafana)
     * [Prometheus](https://github.com/helm/charts/tree/master/stable/prometheus)
 
-    You can log into Grafana in the UI tab with the below credentials:
+    GrafanaのUIには以下のクレデンシャルでログインできます。
 
     * username: `admin`
-    * password: `check the password tab`
+    * password: `Grafana - Password内のもの`
 
-    There is a sample dashboard built for you that can visualize metrics for your application stack. <br>
+    サンプルのDashboardを利用してアプリケーションのメトリクスを見ていきましょう。<br>
 
-    To create the sample dashboard select the `+` in the left side navigation to `Import`.
-    You will need to paste the raw json into Grafana per the above documentation. <br>
+    サンプルのDashboardは左側にある`+`ボタンの`Import`から指定します。
+    以下のURLを別のブラウザタブで開いて、表示されたJSONをコピーしてペーストしてください。<br>
 
     ```
     https://raw.githubusercontent.com/hashicorp/consul-k8s-l7-obs-guide/master/overview_dashboard.json
     ```
 
-    If you encounter issues, you can follow [the complete instructions](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) from Grafana to import your own dashboard.
+    もし問題が起きた場合は、[Grafanaのドキュメント](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) を参照してください。
 
 
-    You have a application that can simulate traffic for you. Let's run it now in the `_K8s` shell. <br>
+    アプリケーションへのトラフィックを発生させてみます。以下のコマンドを`K8s`タブで実行してください。<br>
 
     ```
     kubectl apply -f emojify/traffic.yml
     ```
 
-    Wait a few moments and check your dashboard. Metrics will be streaming in shortly. Nice work!
+    しばらく待つとGrafanaのDashboardでメトリクスが表示されます。
   notes:
   - type: text
     contents: |-
-      In the previous exercise you scaled up a component of your application,
-      but how would you have made that determination in the first place? <br>
+      前のラボでは、アプリケーションのコンポーネントをスケールアウトしました。
+       <br>
 
-      In this exercise you'll review detailed telemetry for your microservices.
-      This observability is a powerful feature of Consul Connect and gives you real-time insights on our application performance. <br>
+      このラボでは、マイクロサービスの詳細なTelemetryを観察してみます。
+      このObservabilityはConsul Connectの強力な機能であり、アプリケーションのパフォーマンスをリアルタイムで把握することができます。<br>。
 
-      We're spinning up a monitoring stack for you.
-      Please be patient. This should take 1-2 minutes.
+      監視系のコンポーネントを立ち上げているので１〜２分ほどお待ちください。
   tabs:
   - title: K8s
     type: terminal
@@ -387,22 +389,22 @@ challenges:
   difficulty: basic
   timelimit: 600
 - slug: ship-a-new-feature
-  id: w95srj56cyzm
+  id: 0tweijoofljz
   type: challenge
-  title: Ship a New Feature
-  teaser: Selectively bring users to a new version of the application.
+  title: 新機能の追加
+  teaser: 新しいバージョンのアプリケーションのA/Bテストをしてみましょう。
   assignment: |-
-    In this exercise, you will use Connect's traffic splitting feature for an a/b deployment. <br>
+    ここでは、ConnectのもつTraffic splitting機能を使ってA/Bテストを行います。<br>
 
-    Notice, you have a few more files in our `emojify` folder.
-    The new service will allow users to optionally purchase their photograph after its emojfied. <br>
+    emojifyのフォルダにあるいくつかの設定ファイルをみてください。
+    新しいバージョンのアプリケーションには、ユーザーが自分の写真をemojifyした後、オプションで購入できる機能を搭載します。<br>
 
-    You'll notice in the deployment spec for the `website`, the Consul definition called `consul.hashicorp.com/service-tags`.
-    This metadata will allow you to send traffic to either `v1` or `v2` of the website based on certain conditions. <br>
+    websiteのマニフェストのDeploymentの中に、`consul.hashicorp.com/service-tags`というConsulのアノテーションがあります。
+    この`service-tags`というメタデータにより、特定の条件に基づいてウェブサイトの `v1` または `v2` のどちらかにトラフィックを送ることができるようになります。<br> <br>
 
-    Start by deploying Connect's L7 routing config for this service. Each of these configurations do a few things. <br>
+    まずはConnect の L7 ルーティング設定をデプロイすることから始めます。 以下のいくつかの設定ファイルがあります。<br>
 
-    * Resolver - Creates a subsets of the website service. In this example, you will use the service tags.
+    * Resolver - Websiteのサービスのサブセットを作成します。この例では、サービスタグを使用します。
 
     ```
     kind           = "service-resolver"
@@ -418,8 +420,7 @@ challenges:
     }
     ```
 
-    * Splitter - Contains your traffic shaping rules. Since you're pretty confident in your app,
-    you'll send 90% of the traffic to the new service.
+    * Splitter - トラフィックのSplitルールが含まれています。この例では新しいサービスにトラフィックの90％を送信します。
 
     ```
     kind = "service-splitter"
@@ -436,7 +437,7 @@ challenges:
     ]
     ```
 
-    * Router   - Allows you to do some version specific testing by supplying query params.
+    * Router   - 様々な条件によるトラフィックのコントロールを設定します。ここではHTTP GET APIのQuery値で制御しますが、他にもHTTPのHeaderやリクエストのPathなどでも制御できます。
 
     ```
     kind = "service-router"
@@ -477,7 +478,7 @@ challenges:
     ]
     ```
 
-    Next, apply the routing config. <br>
+    それではこれらの設定を適用してみましょう。 <br>
 
     ```
     consul config write emojify/resolver.hcl
@@ -485,7 +486,9 @@ challenges:
     consul config write emojify/router.hcl
     ```
 
-    With your new routing rules in place, go ahead and push the new version of the website with the payment service.
+    設定が適用されたかは`Consul UI`の`emojify-website`サービスを開き、`Routing`というタブから確認できます。<br>
+
+    新しいルーティングルールができたら、決済機能のついた新しいバージョンのウェブサイトをデプロイしてください。
 
     ```
     kubectl  apply -f emojify/website_v2.yml
@@ -496,43 +499,50 @@ challenges:
     consul intention create -allow emojify-ingress emojify-payments
     ```
 
-    Once your pods are healthy, you can start our testing.
-    Check Consul for the `Website` service and look at the `ServiceTags` value.
-    We should see two tagged versions of the application using the HTTP API. <br>
+    Podが作成されReadyになったら、テストを開始できます。
+    Consul UIで`emojify-website`をチェックしてみてください。Tagが追加され二つのバージョンが登録されています。<br>
+    ConsulへのHTTP APIでも確認することができます。<br>
 
     ```
     curl -s http://127.0.0.1:8500/v1/catalog/service/emojify-website | jq
     ```
 
-    Use that header value you set up earlier to look at our different versions of the website config.
-    Pay attention to the `PAYMENT_ENABLED` value. <br>
+    それでゃQuery値を使ってそれぞれのバージョンへリクエストを送信してみましょう。
+    レスポンスに含まれる`PAYMENT_ENABLED`の値の違いをみてください。 <br>
 
     ```
     curl localhost:30000/config/env.js?x-version=1
     curl localhost:30000/config/env.js?x-version=2
     ```
 
-    Now, refresh the app a few times and look for `EmojifyEnterprise` in the top left banner.
-    This is the v2 version of our website. <br>
+    それでは`Emojify A/B`タブに切り替えて何度かリフレッシュしてみてください。バナーが新しいバージョンだと「Emojify Enterprise」と表示されます。<br>
 
-    Emojify another image and you will see a new option to purchase the image.
-    Fill in some dummy details and try it now. <br>
+    お好きな写真を指定してEmojifyしてみましょう。以下はいくつかのサンプル写真です<br>
 
-    It looks like you don't have enough funds (don't worry, this happens every time), better call your bank! <br>
+    ```
+    https://cdn.geekwire.com/wp-content/uploads/2019/09/20190911_140446-1260x945.jpg
+    ```
 
-    Notice that Envoy is now grouping clusters by your subsets.
+    ```
+    https://avatars1.githubusercontent.com/u/45160975?s=460&u=6aae7ccdb56d6017bc0b119d7b723b71fd5fd2fb&v=4
+    ```
+
+    Enterpriseのバージョンだと「Buy Now!」というボタンが表示されます。適当なクレジットカード番号（本当の情報は入力しないでくださいね）を入力して購入しようとしてください。`sorry insufficient funds`ということで決済に失敗します。<br>
+    Errorになるのは想定通りなので気にしないでください。<br>
+
+    さて、Envoyの設定もみてみましょう。v1とv2の設定があります。
 
     ```
     kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/clusters  | grep emojify-website
     ```
 
-    You can also see Envoy has updated your route definitions for your debug params and traffic weights. <br>
+    また、Envoyがルーティング定義を更新してくれていることも確認できます。<br>
 
     ```
     kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
     ```
 
-    Finally, you can shift all the traffic to the v2 version of the website now that your new feature is working properly.
+    最後に、すべてのトラフィックを新しいバージョンへ通信するように設定します。
 
     ```
     cat <<-EOF > /root/emojify/splitter.hcl
@@ -552,15 +562,15 @@ challenges:
     consul config write emojify/splitter.hcl
     ```
 
-    You can additionally verify Consul has propagated this change to Envoy by running the above command again. <br>
+    EnvoyやConsulの状態を再度確認すると変更が適用されていることがわかります。<br>
 
-    Nice work! you just used traffic splitting to safely move users to a new version of your application!
+    これで新しいバージョンのアプリケーションを安全にリリースできました。
   notes:
   - type: text
     contents: |-
-      Now that you've scaled the app and used some metrics to determine it's stable, you can ship a new feature.
+      これでアプリケーションのスケールアウトが行われ、モニタリングも設定されました。次にアプリケーションに新機能を加えて、新しいバージョンをリリースしてみましょう。<br>
 
-      In the next exercise, you'll use Connect's L7 routing capabilities to a/b test your application before you roll out to all our users.
+      このラボでは、Connectの持つL7ルーティングを使って、リリース前のA/Bテストを行ってみます。
   tabs:
   - title: K8s
     type: terminal
@@ -586,20 +596,19 @@ challenges:
   difficulty: basic
   timelimit: 900
 - slug: tracing
-  id: 8cnsp3ybcrlc
+  id: baqex0krwjmy
   type: challenge
-  title: Tracing Distributed Errors
-  teaser: Down the rabbit hole we go.
+  title: 分散エラーのトレーシング
+  teaser: 分散アプリケーションのエラーフローを可視化してみよう。
   assignment: |-
-    We've deployed a few Jaeger services for you while setting up this exercise.
-    They can be seen be running the below command.
-    The Jaeger UI is also exposed in the tab, you will use it shortly to visualize some traces. <br>
+    このラボのセットアップ中に、いくつかのJaegerサービスをデプロイしました。
+    これらのサービスは以下のコマンドを実行することで見ることができます。
+    タブにはJaeger UIも公開されていますので、それを使ってトレースを可視化してみましょう。
 
     ```
     kubectl get svc --selector=app=jaeger
     ```
-
-    You will use the following Connect configuration to configure Envoy to route your trace information to your Jaeger instance.
+    以下のConnect設定を使用して、トレース情報をJaegerインスタンスにルーティングするようにEnvoyを設定します。
 
     * [Cluster Bootstrap](https://www.consul.io/docs/connect/proxies/envoy.html#envoy_extra_static_clusters_json)
     * [Tracing Bootstrap](https://www.consul.io/docs/connect/proxies/envoy.html#envoy_tracing_json)
@@ -647,13 +656,14 @@ challenges:
       }
     ```
 
-    Go ahead and apply the config.
+    それでは設定を適用してみましょう。
 
     ```
     consul config write trace.hcl
     ```
 
-    Now you can deploy the tracing application and configure your intentions.
+    次にトレーシングアプリケーションをデプロイし、Intentionを設定します。
+
 
     ```
     kubectl apply -f tracing
@@ -670,65 +680,56 @@ challenges:
     consul intention create -allow payments currency
     ```
 
-    Once the pods are running, you can test the application through the `Frontend`, which is exposed over a NodePort.
-    It has been configured to have a 50% error rate for one of the backend services, so run this command twice.
+    Podが実行されたら、NodePortを介して公開されている `Frontend` を介してアプリケーションをテストすることができます。
+    バックエンドサービスの1つのエラー率が50%になるように設定されているので、このコマンドを2回実行してください。
 
     ```
     curl localhost:30900 | jq
     curl localhost:30900 | jq
     ```
 
-    Navigate to the Jaeger UI and check out the traces for the last two API requests.
-    For the failed API request, it is easy to determine where it occurred. <br>
+    次に`Jaeger UI`タブに移動して、最後の2つのAPIリクエストのトレースを確認します。
+    ここで失敗したAPIリクエストについて、どこで発生したかを簡単に判断することができます。<br>
+    トレースが表示されない場合は、一度リフレッシュしてみてください。
 
-    Trace data sent by Envoy will have a `component` span tag with a value of `proxy`.
-    You can see a detailed description of all the data Envoy sends [here](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/observability/tracing#what-data-each-trace-contains). <br>
+    Envoy が送信するトレースデータは、`component` span タグに `proxy` という値を持つものになります。
+    Envoyが送信する全てのデータの詳細な説明はこちらでご覧になれます[here](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/observability/tracing#what-data-each-trace-contains)。<br>
 
-    The other spans are instrumented with the application client library for tracing.
-    Compare the differences in the span tags and logs. Notice the granularity of the log events instrumented by the application's client library. <br>
+    他のSpanは、トレース用のアプリケーション・クライアント・ライブラリで設定されています。
+    Spanのタグとログの違いを比較してください。アプリケーションのクライアント・ライブラリで計測されたログ・イベントの粒度に注目してください。<br>
 
-    We can do a quick validation that Consul was able to apply the tracing definition to our Envoy proxy config.
-    Let's check this out for our API service.
+    Consul がトレース定義を Envoy プロキシ設定に適用できたか確認してみます。。
+    以下のコマンドで確認してみましょう。
 
     ```
     kubectl exec $(kubectl get pod --selector=app=api -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/config_dump | jq '[.. |."tracing"? | select(. != null)]'
     ```
 
-    Nice work, you just debugged a distributed app with tracing.
+    分散アプリケーションのAPIのトレースができました。
   notes:
   - type: text
     contents: |-
-      In this exercise you will take a look at Connect's tracing capabilities. <br>
+      この演習では、Connectのトレース機能を見てみましょう。<br>
 
-      Distributed tracing allows developers to obtain visualizations of call flows in large service oriented architectures.
-      It can be invaluable in understanding serialization, parallelism, and sources of latency. <br>
+      分散トレースにより、開発者は大規模なサービス指向アーキテクチャにおけるコールフローを可視化できます。<br>
+      Envoyは、以下の方法でConnectによる可視化を行います。
 
-      Envoy helps Connect do this in a few ways:
+      * プロキシを通過するリクエストのリクエストIDとトレースヘッダを生成
+      * 生成されたトレーススパンをトレースバックエンドに送信
+      * トレースヘッダをプロキシされたアプリケーションに転送
 
-      * Generates request IDs and trace headers for requests as they flow through the proxies
-      * Sends the generated trace spans to the tracing backends
-      * Forwards the trace headers to the proxied application
-
-      You'll explore this in this challenge using popular tracing solutions Zipkin and Jaeger. <br>
+      このラボでは、人気のあるトレースソリューションZipkinとJaegerを使っていきます。
   - type: text
     contents: |-
-      Connect sidecars will proxy both inbound and outbound requests, but it does not automatically know how to correlate them.
-      This correlation is called `header propagation` and requires instrumentation at the application level. <br>
+      コネクトサイドカーはインバウンドとアウトバウンドの両方のリクエストをプロキシしますが、それらの関連性は気にしません。<br>
+      この相関関係は `header propagation` と呼ばれ、アプリケーションレベルでの設定が必要になります。<br>
 
-      Your sample app does this with `zipkin-go` libraries and the OpenTracing API.
-      The application compliments the trace data sent by the proxies with useful span tags and logs for better traceability. <br>
+      サンプルアプリは `zipkin-go` ライブラリと OpenTracing API を使ってこれを行います。
+      アプリケーションは、プロキシから送られてくるトレースデータを、スパンタグとログで補完し、トレーサビリティを実現します。
   - type: text
-    contents: |-
-      You will use a purpose built app called `fake-service` to test your upstreams and trace these errors.
-      The app will deploy five services in the following configuration: <br>
-
-      * Frontend - Access to our application
-      * API - gRPC API to backend services
-      * Cache - Cache responses for our API
-      * Payments  - Process payments
-      * Currency - Do currency lookups for our payments
-
-      The application code can be found here: https://github.com/nicholasjackson/fake-service
+    contents: "アップストリームをテストし、これらのエラーをトレースするために `fake-service` という名前のアプリを使います。\nこのアプリは以下の5つのサービスをデプロイします。<br>
+      \n\n* Frontend - アプリケーションへのアクセス\n* API - バックエンドサービスへのgRPC API\n* Cache - APIのレスポンスのキャッシュ\n*
+      Payments - 支払いの処理\n* Currency - 支払いのための通貨検索\n\nアプリケーションコードはこちらからご覧いただけます: https://github.com/nicholasjackson/fake-service"
   tabs:
   - title: K8s
     type: terminal
@@ -759,22 +760,23 @@ challenges:
   difficulty: basic
   timelimit: 900
 - slug: ingress
-  id: ydjcyyarz7ef
+  id: xw1aadaj804x
   type: challenge
   title: Ingress
-  teaser: Use advanced ingress capabilities.
+  teaser: 高度なIngress設定を試してみよう。
   assignment: |-
-    We've configured Ambassador for you in this exercise with the following K8s deployment files: <br>
+    ラボのセットアップ中に、以下のK8のデプロイファイルを使用してAmbassadorを設定しました。<br>
 
     * https://www.getambassador.io/yaml/aes-crds.yaml
     * https://www.getambassador.io/yaml/aes.yaml
     * https://www.getambassador.io/yaml/consul/ambassador-consul-connector.yaml
 
-    We've also enabled [Ambassador tracing](https://www.getambassador.io/user-guide/tracing-tutorial-zipkin/), so you can see the gateway ingress in the Jaeger UI. <br>
+    [Ambassaeor tracing](https://www.getambassador.io/user-guide/tracing-tutorial-zipkin/)も有効にしたので、Jaeger UIでゲートウェイの入り口を確認することができます。<br>。
 
-    You can follow this [guide](https://www.getambassador.io/user-guide/consul/) to see all the integrations with Consul. <br>
+    ConsulとのIntegrationについては[こちらのガイド](https://www.getambassador.io/user-guide/consul/)を参照ください。<br>
 
-    For the integration to work, you need to set up an Ambassador resolver that can query Consul's catalog. <br>
+
+    ConsulとのIntegrationには、Consulのカタログを照会できるAmbassadorのリゾルバーを設定する必要があります
 
     ```
     cat <<EOF | kubectl -n ambassador apply -f -
@@ -789,7 +791,7 @@ challenges:
     EOF
     ```
 
-    That's it! Ambassador is ready to go. Now you can create a mapping for the application. <br>
+    Ambassadorの準備が整いました。これでアプリケーションのマッピングを作成することができます。<br>
 
     ```
     cat <<EOF | kubectl apply -f -
@@ -808,43 +810,42 @@ challenges:
     EOF
     ```
 
-    At this step, you can look at the route in the Ambassador UI tab and check its health. <br>
+    次に`Ambassador UI`タブでルーティング状態を確認してみてください。。<br>
 
-    We can also view all the mappings we've created, or a specific mapping.
-    Alternatively, you can manage these [inline](https://www.getambassador.io/reference/mappings/#mapping-resources-and-crds). <br>
+    作成したマッピングを表示したり、特定のマッピングを表示したりすることもできます。
+    コマンドでこれらを管理することもできます[inline](https://www.getambassador.io/reference/mappings/#mapping-resources-and-crds)。<br>
 
     ```
     kubectl get mappings
     kubectl describe mapping consul-web-mapping-tls
     ```
 
-    Ambassador is also trusted in the mesh and has it's own certificate to present to the proxies.
-    The integration manages this as a K8s tls secret. You can see this below. <br>
+    Ambassadorはメッシュ内でプロキシに提示する独自の証明書を持っており信頼されています。
+    IntegrationではそれをK8sのtls secretとして管理しています。この証明書は以下のコマンドで見ることができます。 <br>
 
     ```
     kubectl get secrets -n ambassador ambassador-consul-connect -o json | jq -r '.data."tls.crt"' | base64 -d | openssl x509 -text -noout
     ```
 
-    You need to tell Connect to allow this traffic. You can do this selectively on a per service basis. <br>
+    このトラフィックを許可するように Connect に指示する必要があります。これはサービスごとに選択的に行う必要があります。
 
     ```
     consul intention create -allow ambassador web
     ```
 
-    Remember, your ingress controller is sitting behind the K3s load balancer. <br>
+    イングレスコントローラはK3のロードバランサの後ろにあることを確認してください。 <br>
 
     ```
     kubectl describe svc -n ambassador ambassador
     ```
 
-    Last, let's set up end-user authentication with a [JWT filter](https://www.getambassador.io/reference/filter-reference/#filter-type-jwt).
-    Typically with web applications, the authentication is implemented at the edge, either via an API/edge gateway or via a top-level request filter within your application framework.
-    The mesh does not control these external clients, so we must authenticate them differently. <br>
+    最後に、[JWT filter](https://www.getambassador.io/reference/filter-reference/#filter-type-jwt)を使ってエンドユーザー認証を設定してみましょう。
+    通常、ウェブアプリケーションの場合、認証はエッジで実装され、API/エッジゲートウェイを経由するか、アプリケーションフレームワーク内のトップレベルのリクエストフィルタを経由します。
+    サービスメッシュはこのような外部クライアントの制御は行わないので、別の方法で認証を行う必要があります。<br>
 
-    The filter is configured to require a `web` audience, and it will also inject the JWT token and pass it to the downstream applications in the mesh.
-    We are using the [none algorithm](https://tools.ietf.org/html/rfc7518#section-3.6) for demo purposes.
-    Apply it now. <br>
-
+    JWT Filterは `web` のオーディエンスを必要とするように設定されており、JWT トークンを注入してメッシュ内のダウンストリームアプリケーションに渡します。
+    デモ用に[none algorithm](https://tools.ietf.org/html/rfc7518#section-3.6)を使用しています。
+    それでは適用してください。
 
     ```
     cat <<EOF | kubectl apply -f -
@@ -866,7 +867,7 @@ challenges:
     EOF
     ```
 
-    Next, configure the `/web/` route to use the filter.
+    次に、フィルタを使用するために `/web/` ルートを設定します。
 
     ```
     cat <<EOF | kubectl apply -f -
@@ -884,47 +885,43 @@ challenges:
     EOF
     ```
 
-    Get the load balancer IP for Ambassador. <br>
+    AmbassadorのロードバランサーのIPを取得します。<br>
 
     ```
     ambassador=$(kubectl get svc ambassador -n ambassador -o json | jq -r '.status.loadBalancer.ingress[0].ip')
     echo $ambassador
     ```
 
-    Now, send some traffic the application.
-    A sample JWT has been provided for you. Decode it first, then try the API.  <br>
+    それでは、アプリケーションにトラフィックを送信します。
+    サンプルJWTが用意されています。まずはこれをデコードしてから、APIを試してみてください。  <br>
 
     ```
     jwt eyJhbGciOiJub25lIiwidHlwIjoiSldUIiwiZXh0cmEiOiJzbyBtdWNoIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkxhbmNlIExhcnNlbiIsImlhdCI6MTU3Nzg4MDAwMCwgImF1ZCI6ICJ3ZWIifQ.
     ```
 
-    Experiment with authorization, and without it. <br>
+    JWT Token認証ありとなしで試してみてください。<br>
 
     ```
     curl http://${ambassador}/web/
     curl -H 'Authorization: Bearer eyJhbGciOiJub25lIiwidHlwIjoiSldUIiwiZXh0cmEiOiJzbyBtdWNoIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkxhbmNlIExhcnNlbiIsImlhdCI6MTU3Nzg4MDAwMCwgImF1ZCI6ICJ3ZWIifQ.' http://${ambassador}/web/
     ```
 
-    Log into the Jaeger UI and look at the new traces.
-    You'll see additional traffic from Ambassador.  Make sure to check out the `ext_autz` traces.
-    Nice work!! <br>
+    Jaeger UIにログインして、新しいトレースを見てみましょう。
+    Ambassador からの追加トラフィックが確認できます。 `ext_autz` のトレースをチェックしてください。
   notes:
   - type: text
     contents: |-
-      Consul supports a rich ecosystem of integrations and Connect is no exception.
-      In this exercise you'll leverage [Datawire's Ambassador](https://www.consul.io/docs/platform/k8s/ambassador.html)
-      to allow K8s ingress for your tracing application from the prior exercise. <br>
+      Consulは豊富なエコシステムをサポートしており、Connectも例外ではありません。
+      このラボでは、[Datawire's Ambassador](https://www.consul.io/docs/k8s/connect/ambassador) を活用します。
+      前のラボのトレーシングアプリケーションへK8sのIngressを設定してみます。<br>
 
-      Ingress exposes HTTP and HTTPS routes from outside the cluster to services within the cluster.
-      Ingress can be configured to give Services externally-reachable URLs, load balance traffic, terminate SSL / TLS, end-user authentication and more. <br>
+      Ingressは、クラスターの外部からクラスター内のサービスにHTTPとHTTPSのルートを公開します。<br>
 
-      It can be very expensive to run dedicated load balancers per application.
-      Ingress can help us manage this problem effectively. <br>
+      IngressコントローラはIngressを満たす役割を担っており、通常はロードバランサを使用します。
+      ただし、アプリケーションごとに専用のロードバランサーを稼働させるには、非常にコストがかかります。
+      Ingressはこの問題を効率的に管理するのに役立ちます。<br>
 
-      An Ingress controller is responsible for fulfilling the Ingress, usually with a load balancer.
-      We will use the [MetalLB load balancer](https://metallb.universe.tf/) to send Ambassador the traffic. <br>
-
-      Try it out with Ambassador and Connect!
+      アンバサダーにトラフィックを送るために[MetalLB load balancer](https://metallb.universe.tf/)を使用します。<br>
   tabs:
   - title: K8s UI
     type: service
@@ -960,16 +957,14 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: summary
-  id: neancacl0syl
+  id: w9kg9wvgwxhz
   type: challenge
-  title: Summary
+  title: まとめ
   teaser: Sandbox mode
-  assignment: |-
-    Congratulations on completing this lab!!! The environment will be available for the next hour and a half.
-    Click `check` when  you  are  done exploring to teardown the environment.
+  assignment: ラボ終了おめでとうございます! `check`をクリックするとこの環境は破棄されます。
   notes:
   - type: text
-    contents: The next assignment preserves the environment.
+    contents: すべてのラボは終了です。お疲れ様でした。
   tabs:
   - title: K8s
     type: terminal
@@ -1000,4 +995,4 @@ challenges:
     port: 31800
   difficulty: basic
   timelimit: 5400
-checksum: "5818011293351747119"
+checksum: "12907457531144472509"
