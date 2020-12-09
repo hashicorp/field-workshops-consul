@@ -6,6 +6,10 @@ export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
 
 #tf
 terraform apply -auto-approve | tee terraform.out
+<<<<<<< Updated upstream
 sleep 300
+=======
+sleep 600
+>>>>>>> Stashed changes
 
 exit 0

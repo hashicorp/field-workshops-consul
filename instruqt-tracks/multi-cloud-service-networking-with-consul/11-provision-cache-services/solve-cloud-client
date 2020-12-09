@@ -6,6 +6,6 @@ export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
 
 #tf
 terraform apply -auto-approve | tee terraform.out
-sleep 30
+sleep 300
 
 exit 0

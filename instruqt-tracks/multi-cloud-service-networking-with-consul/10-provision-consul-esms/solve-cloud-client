@@ -1,6 +1,10 @@
 #!/bin/bash
 
 terraform apply -auto-approve | tee terraform.out
+<<<<<<< Updated upstream
 sleep 300
+=======
+sleep 600
+>>>>>>> Stashed changes
 
 exit 0
