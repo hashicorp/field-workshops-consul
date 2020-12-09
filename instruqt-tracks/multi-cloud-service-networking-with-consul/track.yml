@@ -1391,8 +1391,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-<<<<<<< Updated upstream
-checksum: "13803739129646117019"
-=======
-checksum: "4260687893955638408"
->>>>>>> Stashed changes
+checksum: "14811489710099652981"
