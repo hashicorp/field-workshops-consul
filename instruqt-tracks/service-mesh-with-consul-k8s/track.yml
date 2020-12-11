@@ -16,8 +16,8 @@ developers:
 - lance@hashicorp.com
 private: false
 published: true
-maintenance: true
 show_timer: true
+skipping_enabled: true
 challenges:
 - slug: deploy-connect
   id: iyea2sohruxq
@@ -731,4 +731,4 @@ challenges:
     port: 31686
   difficulty: basic
   timelimit: 5400
-checksum: "18092837166164608084"
+checksum: "18229732582024908349"
