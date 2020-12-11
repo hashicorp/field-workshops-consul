@@ -63,18 +63,14 @@ spec:
             value: "true"
           - name: CACHE_ADDRESS
             value: localhost:8005
+          - name: CACHE_ERROR_RATE
+            value: "0.2"
           - name: FACEBOX_ADDRESS
             value: localhost:8003
           - name: BIND_ADDRESS
             value: "0.0.0.0:9090"
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 9090
-          initialDelaySeconds: 30
-          periodSeconds: 15
-          timeoutSeconds: 3
-          failureThreshold: 2
+          - name: LOG_LEVEL
+            value: debug
         resources:
           limits:
             cpu: 500m
