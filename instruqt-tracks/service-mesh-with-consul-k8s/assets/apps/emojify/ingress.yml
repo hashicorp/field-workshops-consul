@@ -1,5 +1,47 @@
 ---
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: emojify-ingress
+
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: emojify-ingress-website-intention
+spec:
+  destination:
+    name: emojify-website
+  sources:
+    - name: emojify-ingress
+      action: allow
+
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: emojify-ingress-api-intention
+spec:
+  destination:
+    name: emojify-api
+  sources:
+    - name: emojify-ingress
+      action: allow
+
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: emojify-ingress-payments-intention
+spec:
+  destination:
+    name: emojify-payments
+  sources:
+    - name: emojify-ingress
+      action: allow
+
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: emojify-ingress
@@ -96,6 +138,7 @@ spec:
           items:
           - key: config
             path: nginx.conf
+      serviceAccountName: emojify-ingress
       containers:
       - name: emojify-ingress
         image: nginx:alpine

@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: emojify-website-configmap-v1
+  name: emojify-website-configmap-v2
 data:
   config: |
     window.env = {};
@@ -11,7 +11,7 @@ data:
       API_URL: '/api/',
       HOME_URL: '/',
       PAYMENT_URL: '/api/payments',
-      PAYMENT_ENABLED: false,
+      PAYMENT_ENABLED: true,
       OAUTH_ENABLED: false,
       AUTH_DISABLED: true
     };
@@ -20,34 +20,35 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: emojify-website-v1
+  name: emojify-website-v2
   labels:
     app: emojify-website
-    version: v1
+    version: v2
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: emojify-website
-      version: v1
+      version: v2
   template:
     metadata:
       labels:
         app: emojify-website
-        version: v1
+        version: v2
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
-        "consul.hashicorp.com/service-tags": "v1"
+        "consul.hashicorp.com/service-tags": "v2"
         "prometheus.io/scrape": "true"
         "prometheus.io/port": "9901"
     spec:
       volumes:
       - name: config
         configMap:
-          name: emojify-website-configmap-v1
+          name: emojify-website-configmap-v2
           items:
           - key: config
             path: env.js
+      serviceAccountName: emojify-website
       containers:
       - name: emojify-website
         image: "nicholasjackson/emojify-website:v0.8.0"

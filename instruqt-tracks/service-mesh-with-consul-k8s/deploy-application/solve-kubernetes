@@ -1,15 +1,13 @@
 #!/bin/bash
 
+kubectl apply -f proxy-defaults.yaml
+
 kubectl apply -f emojify/ingress.yml
+kubectl apply -f emojify/website_sa.yml
 kubectl apply -f emojify/website_v1.yml
 kubectl apply -f emojify/api.yml
 kubectl apply -f emojify/cache.yml
 kubectl apply -f emojify/facebox.yml
-
-consul intention create -allow emojify-api emojify-facebox
-consul intention create -allow emojify-api emojify-cache
-consul intention create -allow emojify-ingress emojify-api
-consul intention create -allow emojify-ingress emojify-website
 
 kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-api -o name)
 kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-cache -o name)

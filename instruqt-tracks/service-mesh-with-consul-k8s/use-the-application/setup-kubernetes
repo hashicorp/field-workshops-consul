@@ -1,5 +1,6 @@
 #!/bin/sh
 
+sleep 60
 kubectl exec $(kubectl get pod --selector=app=emojify-api -o name) -c consul-connect-envoy-sidecar -- cat  /consul/connect-inject/service.hcl > /tmp/api-service.hcl
 
 exit 0

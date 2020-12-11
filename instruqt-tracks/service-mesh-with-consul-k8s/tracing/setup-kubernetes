@@ -150,58 +150,8 @@ EOF
 
 kubectl apply -f jaeger-all-in-one-template.yml
 
-cat <<-EOF > /root/trace.hcl
-kind = "proxy-defaults"
-name = "global-tracing"
-
-config {
-  envoy_extra_static_clusters_json = <<EOL
-  {
-    "connect_timeout": "3.000s",
-    "dns_lookup_family": "V4_ONLY",
-    "lb_policy": "ROUND_ROBIN",
-    "load_assignment": {
-        "cluster_name": "jaeger_9411",
-        "endpoints": [
-            {
-                "lb_endpoints": [
-                    {
-                        "endpoint": {
-                            "address": {
-                                "socket_address": {
-                                    "address": "jaeger-collector",
-                                    "port_value": 9411,
-                                    "protocol": "TCP"
-                                }
-                            }
-                        }
-                    }
-                ]
-            }
-        ]
-    },
-    "name": "jaeger_9411",
-    "type": "STRICT_DNS"
-  }
-  EOL
-
-  envoy_tracing_json = <<EOL
-  {
-    "http": {
-      "name": "envoy.zipkin",
-      "config": {
-        "collector_cluster": "jaeger_9411",
-        "collector_endpoint": "/api/v1/spans",
-        "shared_span_context": false
-      }
-    }
-  }
-  EOL
-}
-EOF
-
 git clone https://github.com/hashicorp/field-workshops-consul.git
-cp -r field-workshops-consul/apps/tracing .
+cp -r field-workshops-consul/instruqt-tracks/service-mesh-with-consul-k8s/assets/apps/fake-service .
 rm -rf field-workshops-consul
 
 exit 0

@@ -1,25 +1,44 @@
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fake-payments
+
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: fake-payments-currency-intention
+spec:
+  destination:
+    name: fake-currency
+  sources:
+    - name: fake-payments
+      action: allow
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: payments
+  name: fake-payments
   labels:
-    app: payments
+    app: fake-payments
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: payments
+      app: fake-payments
   template:
     metadata:
       labels:
-        app: payments
+        app: fake-payments
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
-        "consul.hashicorp.com/connect-service-upstreams": "currency:9094"
+        "consul.hashicorp.com/connect-service-upstreams": "fake-currency:9094"
     spec:
+      serviceAccountName: fake-payments
       containers:
-      - name: payments
+      - name: fake-payments
         image: "nicholasjackson/fake-service:v0.7.8"
         imagePullPolicy: Always
         ports:
@@ -32,7 +51,7 @@ spec:
           - name: MESSAGE
             value: "Payments response"
           - name: NAME
-            value: "payments"
+            value: "fake-payments"
           - name: SERVER_TYPE
             value: "http"
           - name: TRACING_ZIPKIN

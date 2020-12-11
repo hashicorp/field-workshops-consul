@@ -1,4 +1,10 @@
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: emojify-traffic
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,6 +21,7 @@ spec:
       labels:
         app: emojify-traffic
     spec:
+      serviceAccountName: emojify-traffic
       containers:
       - name: load-test
         image: nicholasjackson/emojify-traffic:v0.2.1

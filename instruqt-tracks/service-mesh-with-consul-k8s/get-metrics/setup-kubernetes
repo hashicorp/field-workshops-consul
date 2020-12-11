@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#metrics
 cat <<-EOF > /root/prometheus-values.yaml
 server:
   global:
@@ -10,6 +11,25 @@ pushgateway:
   enabled: false
 alertmanager:
   enabled: false
+extraScrapeConfigs: |
+  - job_name: 'consul'
+    metrics_path: "/v1/agent/metrics"
+    bearer_token: "$(kubectl get secret lab-consul-bootstrap-acl-token -o json | jq -r .data.token | base64 -d)"
+    params:
+      format: ['prometheus']
+    scheme: http
+    kubernetes_sd_configs:
+    - role: pod
+    relabel_configs:
+    - source_labels: [__meta_kubernetes_pod_label_app]
+      regex: consul
+      action: keep
+    - source_labels: [__meta_kubernetes_pod_label_component]
+      regex: server
+      action: keep
+    - source_labels: [__meta_kubernetes_pod_container_port_number]
+      regex: 8500
+      action: keep
 EOF
 
 cat <<-EOF > /root/grafana-values.yaml

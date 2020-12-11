@@ -1,24 +1,31 @@
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fake-currency
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: currency
+  name: fake-currency
   labels:
-    app: currency
+    app: fake-currency
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: currency
+      app: fake-currency
   template:
     metadata:
       labels:
-        app: currency
+        app: fake-currency
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
     spec:
+      serviceAccountName: fake-currency
       containers:
-      - name: currency
+      - name: fake-currency
         image: "nicholasjackson/fake-service:v0.7.8"
         imagePullPolicy: Always
         ports:
@@ -31,7 +38,7 @@ spec:
           - name: MESSAGE
             value: "Currency response"
           - name: NAME
-            value: "currency"
+            value: "fake-currency"
           - name: SERVER_TYPE
             value: "http"
           - name: ERROR_RATE

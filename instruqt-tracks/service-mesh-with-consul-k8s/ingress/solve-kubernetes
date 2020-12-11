@@ -1,65 +1,8 @@
 #!/bin/bash
 
-
-cat <<EOF | kubectl -n ambassador apply -f -
----
-apiVersion: getambassador.io/v2
-kind: ConsulResolver
-metadata:
-  name: lab-consul-dc1
-spec:
-  address: lab-consul-server.default.svc.cluster.local:8500
-  datacenter: dc1
-EOF
-
-cat <<EOF | kubectl apply -f -
----
-apiVersion: getambassador.io/v2
-kind: Mapping
-metadata:
-  name: consul-web-mapping-tls
-spec:
-  prefix: /web/
-  service: web-sidecar-proxy
-  resolver: lab-consul-dc1
-  tls: ambassador-consul
-  load_balancer:
-    policy: round_robin
-EOF
-
-cat <<EOF | kubectl apply -f -
----
-apiVersion: getambassador.io/v2
-kind: Filter
-metadata:
-  name: jwt-filter
-spec:
-  JWT:
-    jwksURI: "https://getambassador-demo.auth0.com/.well-known/jwks.json"
-    validAlgorithms:
-      - "none"
-    requireAudience: yes
-    audience: "web"
-    injectRequestHeaders:
-      - name: "X-Token-String"
-        value: "{{ .token.Raw }}"
-EOF
-
-cat <<EOF | kubectl apply -f -
----
-apiVersion: getambassador.io/v2
-kind: FilterPolicy
-metadata:
-  name: web-policy
-spec:
-  rules:
-    - host: "*"
-      path: /web/
-      filters:
-        - name: jwt-filter
-EOF
-
-consul intention create -allow ambassador web
+kubectl apply -f /root/fake-web-ingress-intention.yaml
+consul config write /root/fake-web-ingress-gateway.hcl
+consul config write /root/fake-service/fake-web-ingress-router.hcl
 
 sleep 60
 

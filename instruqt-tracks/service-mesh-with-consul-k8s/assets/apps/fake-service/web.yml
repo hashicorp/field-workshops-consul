@@ -1,12 +1,30 @@
 ---
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fake-web
+
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: fake-web-api-intention
+spec:
+  destination:
+    name: fake-api
+  sources:
+    - name: fake-web
+      action: allow
+
+---
+apiVersion: v1
 kind: Service
 metadata:
-  name: web
+  name: fake-web
 spec:
   type: NodePort
   selector:
-    app: web
+    app: fake-web
   ports:
   - name: http
     protocol: TCP
@@ -18,24 +36,25 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: web
+  name: fake-web
   labels:
-    app: web
+    app: fake-web
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: web
+      app: fake-web
   template:
     metadata:
       labels:
-        app: web
+        app: fake-web
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
-        "consul.hashicorp.com/connect-service-upstreams": "api:9091"
+        "consul.hashicorp.com/connect-service-upstreams": "fake-api:9091"
     spec:
+      serviceAccountName: fake-web
       containers:
-      - name: web
+      - name: fake-web
         image: "nicholasjackson/fake-service:v0.7.8"
         imagePullPolicy: Always
         ports:
@@ -48,7 +67,7 @@ spec:
           - name: MESSAGE
             value: "Hello World"
           - name: NAME
-            value: "web"
+            value: "fake-web"
           - name: SERVER_TYPE
             value: "http"
           - name: TIMING_50_PERCENTILE

@@ -17,6 +17,7 @@ developers:
 private: false
 published: true
 show_timer: true
+skipping_enabled: true
 challenges:
 - slug: deploy-connect
   id: iyea2sohruxq
@@ -32,7 +33,7 @@ challenges:
     Navigate to the `_K8s` shell to install Consul. Note, Helm has been pre-initialized in this environment. Copy or type the following command in the shell.<br>
 
     ```
-    helm install -f consul-values.yaml lab ./consul-helm --wait --debug
+    helm install -f /root/consul-values.yaml lab hashicorp/consul  --wait --debug
     ```
 
     The status output should indicate Consul was `DEPLOYED`. <br>
@@ -102,6 +103,12 @@ challenges:
   title: Deploy the Application
   teaser: Bring our application to the world.
   assignment: |-
+    Start by deploying the default configuration for the mesh. <br>
+
+    ```
+    kubectl apply -f proxy-defaults.yaml
+    ```
+
     Before deploying your apps, investigate your config for the Emojify app in the code editor called `Emojify-Config`.
     Select any of the YAML files, you'll notice the service has the following annotations.
 
@@ -121,15 +128,20 @@ challenges:
       default: false
     ```
 
-    Now, you can deploy your applications. Navigate back to the `_K8s` shell and execute the following commands.
+    Now, you can deploy your applications. Navigate back to the `_K8s` shell and execute the following commands. <br>
 
     ```
     kubectl apply -f emojify/ingress.yml
+    kubectl apply -f emojify/website_sa.yml
     kubectl apply -f emojify/website_v1.yml
     kubectl apply -f emojify/api.yml
     kubectl apply -f emojify/cache.yml
     kubectl apply -f emojify/facebox.yml
+    ```
 
+    Wait for the pods. <br>
+
+    ```
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-ingress -o name)
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-website -o name)
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-api -o name)
@@ -137,15 +149,7 @@ challenges:
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-facebox -o name)
     ```
 
-    By default, the Consul cluster has been configured to deny all traffic between applications. A deny all by default configuration is best practice. You should then allow traffic between applications using intentions.
-    Create the following four intentions so your microservices can serve traffic. <br>
-
-    ```
-    consul intention create -allow emojify-api emojify-facebox
-    consul intention create -allow emojify-api emojify-cache
-    consul intention create -allow emojify-ingress emojify-api
-    consul intention create -allow emojify-ingress emojify-website
-    ```
+    By default, the Consul cluster has been configured to deny all traffic between applications. A deny all by default configuration is best practice. You can review the intentions managed by K8s CRDs in the Consul UI.
 
     Now you've deployed your applications and created allow intentions, you should be able to access the website on the `Emojify-Website` tab.
   notes:
@@ -161,10 +165,7 @@ challenges:
       * Cache - Cache layer for API.
       * Facebox - Provides machine learning for detecting and identifies faces in photos.
 
-      In this exercise you'll also explore how these services can be easily connected, monitored, and scaled with Connect. <br>
-
-      Consul Connect supports more advanced ingress controllers, such as [Datawire's Ambassador](https://www.consul.io/docs/platform/k8s/ambassador.html),
-      but we will use the Nginx container in this lab to show basic functionality.
+      In this exercise you'll also explore how these services can be easily connected, monitored, and scaled with Connect.
   tabs:
   - title: Consul UI
     type: service
@@ -336,10 +337,9 @@ challenges:
     There is a sample dashboard built for you that can visualize metrics for your application stack. <br>
 
     To create the sample dashboard select the `+` in the left side navigation to `Import`.
-    You will need to paste the raw json into Grafana per the above documentation. <br>
 
     ```
-    https://raw.githubusercontent.com/hashicorp/consul-k8s-l7-obs-guide/master/overview_dashboard.json
+    https://grafana.com/grafana/dashboards/13396
     ```
 
     If you encounter issues, you can follow [the complete instructions](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) from Grafana to import your own dashboard.
@@ -351,7 +351,7 @@ challenges:
     kubectl apply -f emojify/traffic.yml
     ```
 
-    Wait a few moments and check your dashboard. Metrics will be streaming in shortly. Nice work!
+    Wait a few moments and check your dashboard in the Consul UI tab. Metrics will be streaming in shortly. Nice work!
   notes:
   - type: text
     contents: |-
@@ -364,6 +364,11 @@ challenges:
       We're spinning up a monitoring stack for you.
       Please be patient. This should take 1-2 minutes.
   tabs:
+  - title: Consul UI
+    type: service
+    hostname: kubernetes
+    path: /ui/dc1/services/emojify-api/topology
+    port: 30085
   - title: K8s
     type: terminal
     hostname: kubernetes
@@ -405,84 +410,28 @@ challenges:
     * Resolver - Creates a subsets of the website service. In this example, you will use the service tags.
 
     ```
-    kind           = "service-resolver"
-    name           = "emojify-website"
-    default_subset = "v1"
-    subsets = {
-      "v1" = {
-        filter = "v1 in Service.Tags"
-      }
-      "v2" = {
-        filter = "v2 in Service.Tags"
-      }
-    }
+    cat emojify/resolver.yaml
     ```
 
     * Splitter - Contains your traffic shaping rules. Since you're pretty confident in your app,
     you'll send 90% of the traffic to the new service.
 
     ```
-    kind = "service-splitter"
-    name = "emojify-website"
-    splits = [
-      {
-        weight         = 10
-        service_subset = "v1"
-      },
-      {
-        weight         = 90
-        service_subset = "v2"
-      },
-    ]
+    cat emojify/splitter.yaml
     ```
 
     * Router   - Allows you to do some version specific testing by supplying query params.
 
     ```
-    kind = "service-router"
-    name = "emojify-website"
-    routes = [
-      {
-        match {
-          http {
-            query_param = [
-              {
-                name  = "x-version"
-                exact = "1"
-              },
-            ]
-          }
-        }
-        destination {
-          service        = "emojify-website"
-          service_subset = "v1"
-        }
-      },
-      {
-        match {
-          http {
-            query_param = [
-              {
-                name  = "x-version"
-                exact = "2"
-              },
-            ]
-          }
-        }
-        destination {
-          service        = "emojify-website"
-          service_subset = "v2"
-        }
-      }
-    ]
+    cat emojify/router.yaml
     ```
 
     Next, apply the routing config. <br>
 
     ```
-    consul config write emojify/resolver.hcl
-    consul config write emojify/splitter.hcl
-    consul config write emojify/router.hcl
+    kubectl apply -f emojify/resolver.yaml
+    kubectl apply -f emojify/splitter.yaml
+    kubectl apply -f emojify/router.yaml
     ```
 
     With your new routing rules in place, go ahead and push the new version of the website with the payment service.
@@ -490,10 +439,8 @@ challenges:
     ```
     kubectl  apply -f emojify/website_v2.yml
     kubectl  apply -f emojify/payments.yml
-
+    sleep 5
     kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=emojify-payments -o name)
-
-    consul intention create -allow emojify-ingress emojify-payments
     ```
 
     Once your pods are healthy, you can start our testing.
@@ -535,24 +482,25 @@ challenges:
     Finally, you can shift all the traffic to the v2 version of the website now that your new feature is working properly.
 
     ```
-    cat <<-EOF > /root/emojify/splitter.hcl
-    kind = "service-splitter"
-    name = "emojify-website"
-    splits = [
-      {
-        weight         = 0
-        service_subset = "v1"
-      },
-      {
-        weight         = 100
-        service_subset = "v2"
-      },
-    ]
+    cat <<EOF | kubectl apply -f -
+    apiVersion: consul.hashicorp.com/v1alpha1
+    kind: ServiceSplitter
+    metadata:
+      name: emojify-website
+    spec:
+      splits:
+        - weight: 0
+          serviceSubset: 'v1'
+        - weight: 100
+          serviceSubset: 'v2'
     EOF
-    consul config write emojify/splitter.hcl
     ```
 
     You can additionally verify Consul has propagated this change to Envoy by running the above command again. <br>
+
+    ```
+    kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
+    ```
 
     Nice work! you just used traffic splitting to safely move users to a new version of your application!
   notes:
@@ -599,75 +547,15 @@ challenges:
     kubectl get svc --selector=app=jaeger
     ```
 
-    You will use the following Connect configuration to configure Envoy to route your trace information to your Jaeger instance.
-
-    * [Cluster Bootstrap](https://www.consul.io/docs/connect/proxies/envoy.html#envoy_extra_static_clusters_json)
-    * [Tracing Bootstrap](https://www.consul.io/docs/connect/proxies/envoy.html#envoy_tracing_json)
+    Now you can deploy the tracing application and configure your intentions. <br>
 
     ```
-      {
-        "connect_timeout": "3.000s",
-        "dns_lookup_family": "V4_ONLY",
-        "lb_policy": "ROUND_ROBIN",
-        "load_assignment": {
-            "cluster_name": "jaeger_9411",
-            "endpoints": [
-                {
-                    "lb_endpoints": [
-                        {
-                            "endpoint": {
-                                "address": {
-                                    "socket_address": {
-                                        "address": "jaeger-collector",
-                                        "port_value": 9411,
-                                        "protocol": "TCP"
-                                    }
-                                }
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-        "name": "jaeger_9411",
-        "type": "STRICT_DNS"
-      }
-    ```
-
-    ```
-      {
-        "http": {
-          "name": "envoy.zipkin",
-          "config": {
-            "collector_cluster": "jaeger_9411",
-            "collector_endpoint": "/api/v1/spans",
-            "shared_span_context": false
-          }
-        }
-      }
-    ```
-
-    Go ahead and apply the config.
-
-    ```
-    consul config write trace.hcl
-    ```
-
-    Now you can deploy the tracing application and configure your intentions.
-
-    ```
-    kubectl apply -f tracing
-
-    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=web -o name)
-    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=api -o name)
-    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=cache -o name)
-    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=payments -o name)
-    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=currency -o name)
-
-    consul intention create -allow web api
-    consul intention create -allow api cache
-    consul intention create -allow api payments
-    consul intention create -allow payments currency
+    kubectl apply -f fake-service
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=fake-web -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=fake-api -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=fake-cache -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=fake-payments -o name)
+    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=fake-currency -o name)
     ```
 
     Once the pods are running, you can test the application through the `Frontend`, which is exposed over a NodePort.
@@ -691,7 +579,7 @@ challenges:
     Let's check this out for our API service.
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=api -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/config_dump | jq '[.. |."tracing"? | select(. != null)]'
+    kubectl exec $(kubectl get pod --selector=app=fake-api -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/config_dump | jq '[.. |."tracing"? | select(. != null)]'
     ```
 
     Nice work, you just debugged a distributed app with tracing.
@@ -741,11 +629,11 @@ challenges:
   - title: App - Config
     type: code
     hostname: kubernetes
-    path: /root/tracing
+    path: /root/fake-service
   - title: Jaeger UI
     type: service
     hostname: kubernetes
-    path: /search?service=web
+    path: /search?service=fake-web
     port: 31686
   - title: Consul UI
     type: service
@@ -764,167 +652,30 @@ challenges:
   title: Ingress
   teaser: Use advanced ingress capabilities.
   assignment: |-
-    We've configured Ambassador for you in this exercise with the following K8s deployment files: <br>
-
-    * https://www.getambassador.io/yaml/aes-crds.yaml
-    * https://www.getambassador.io/yaml/aes.yaml
-    * https://www.getambassador.io/yaml/consul/ambassador-consul-connector.yaml
-
-    We've also enabled [Ambassador tracing](https://www.getambassador.io/user-guide/tracing-tutorial-zipkin/), so you can see the gateway ingress in the Jaeger UI. <br>
-
-    You can follow this [guide](https://www.getambassador.io/user-guide/consul/) to see all the integrations with Consul. <br>
-
-    For the integration to work, you need to set up an Ambassador resolver that can query Consul's catalog. <br>
+    The ingress gateway deployed with the helm chart is available as a load balancer service. <br>
 
     ```
-    cat <<EOF | kubectl -n ambassador apply -f -
-    ---
-    apiVersion: getambassador.io/v2
-    kind: ConsulResolver
-    metadata:
-      name: lab-consul-dc1
-    spec:
-      address: lab-consul-server.default.svc.cluster.local:8500
-      datacenter: dc1
-    EOF
+    kubectl describe svc lab-consul-ingress-gateway
     ```
 
-    That's it! Ambassador is ready to go. Now you can create a mapping for the application. <br>
+    Update intentions and create the virtual service. Ingress config will be supported by CRDs in the next release.
 
     ```
-    cat <<EOF | kubectl apply -f -
-    ---
-    apiVersion: getambassador.io/v2
-    kind: Mapping
-    metadata:
-      name: consul-web-mapping-tls
-    spec:
-      prefix: /web/
-      service: web-sidecar-proxy
-      resolver: lab-consul-dc1
-      tls: ambassador-consul
-      load_balancer:
-        policy: round_robin
-    EOF
+    kubectl apply -f /root/fake-web-ingress-intention.yaml
+    consul config write /root/fake-web-ingress-gateway.hcl
+    consul config write /root/fake-service/fake-web-ingress-router.hcl
     ```
 
-    At this step, you can look at the route in the Ambassador UI tab and check its health. <br>
-
-    We can also view all the mappings we've created, or a specific mapping.
-    Alternatively, you can manage these [inline](https://www.getambassador.io/reference/mappings/#mapping-resources-and-crds). <br>
+    Access your service through the ingress gateway. <br>
 
     ```
-    kubectl get mappings
-    kubectl describe mapping consul-web-mapping-tls
+    curl -s http://$(kubectl get svc lab-consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip'):8080/fake-service | jq
     ```
 
-    Ambassador is also trusted in the mesh and has it's own certificate to present to the proxies.
-    The integration manages this as a K8s tls secret. You can see this below. <br>
-
-    ```
-    kubectl get secrets -n ambassador ambassador-consul-connect -o json | jq -r '.data."tls.crt"' | base64 -d | openssl x509 -text -noout
-    ```
-
-    You need to tell Connect to allow this traffic. You can do this selectively on a per service basis. <br>
-
-    ```
-    consul intention create -allow ambassador web
-    ```
-
-    Remember, your ingress controller is sitting behind the K3s load balancer. <br>
-
-    ```
-    kubectl describe svc -n ambassador ambassador
-    ```
-
-    Last, let's set up end-user authentication with a [JWT filter](https://www.getambassador.io/reference/filter-reference/#filter-type-jwt).
-    Typically with web applications, the authentication is implemented at the edge, either via an API/edge gateway or via a top-level request filter within your application framework.
-    The mesh does not control these external clients, so we must authenticate them differently. <br>
-
-    The filter is configured to require a `web` audience, and it will also inject the JWT token and pass it to the downstream applications in the mesh.
-    We are using the [none algorithm](https://tools.ietf.org/html/rfc7518#section-3.6) for demo purposes.
-    Apply it now. <br>
-
-
-    ```
-    cat <<EOF | kubectl apply -f -
-    ---
-    apiVersion: getambassador.io/v2
-    kind: Filter
-    metadata:
-      name: jwt-filter
-    spec:
-      JWT:
-        jwksURI: "https://getambassador-demo.auth0.com/.well-known/jwks.json"
-        validAlgorithms:
-          - "none"
-        requireAudience: yes
-        audience: "web"
-        injectRequestHeaders:
-          - name: "X-Token-String"
-            value: "{{ .token.Raw }}"
-    EOF
-    ```
-
-    Next, configure the `/web/` route to use the filter.
-
-    ```
-    cat <<EOF | kubectl apply -f -
-    ---
-    apiVersion: getambassador.io/v2
-    kind: FilterPolicy
-    metadata:
-      name: web-policy
-    spec:
-      rules:
-        - host: "*"
-          path: /web/
-          filters:
-            - name: jwt-filter
-    EOF
-    ```
-
-    Get the load balancer IP for Ambassador. <br>
-
-    ```
-    ambassador=$(kubectl get svc ambassador -n ambassador -o json | jq -r '.status.loadBalancer.ingress[0].ip')
-    echo $ambassador
-    ```
-
-    Now, send some traffic the application.
-    A sample JWT has been provided for you. Decode it first, then try the API.  <br>
-
-    ```
-    jwt eyJhbGciOiJub25lIiwidHlwIjoiSldUIiwiZXh0cmEiOiJzbyBtdWNoIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkxhbmNlIExhcnNlbiIsImlhdCI6MTU3Nzg4MDAwMCwgImF1ZCI6ICJ3ZWIifQ.
-    ```
-
-    Experiment with authorization, and without it. <br>
-
-    ```
-    curl http://${ambassador}/web/
-    curl -H 'Authorization: Bearer eyJhbGciOiJub25lIiwidHlwIjoiSldUIiwiZXh0cmEiOiJzbyBtdWNoIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkxhbmNlIExhcnNlbiIsImlhdCI6MTU3Nzg4MDAwMCwgImF1ZCI6ICJ3ZWIifQ.' http://${ambassador}/web/
-    ```
-
-    Log into the Jaeger UI and look at the new traces.
-    You'll see additional traffic from Ambassador.  Make sure to check out the `ext_autz` traces.
-    Nice work!! <br>
+    Nice work !!
   notes:
   - type: text
-    contents: |-
-      Consul supports a rich ecosystem of integrations and Connect is no exception.
-      In this exercise you'll leverage [Datawire's Ambassador](https://www.consul.io/docs/platform/k8s/ambassador.html)
-      to allow K8s ingress for your tracing application from the prior exercise. <br>
-
-      Ingress exposes HTTP and HTTPS routes from outside the cluster to services within the cluster.
-      Ingress can be configured to give Services externally-reachable URLs, load balance traffic, terminate SSL / TLS, end-user authentication and more. <br>
-
-      It can be very expensive to run dedicated load balancers per application.
-      Ingress can help us manage this problem effectively. <br>
-
-      An Ingress controller is responsible for fulfilling the Ingress, usually with a load balancer.
-      We will use the [MetalLB load balancer](https://metallb.universe.tf/) to send Ambassador the traffic. <br>
-
-      Try it out with Ambassador and Connect!
+    contents: Consul Ingress Gateways will allow you to route traffic into your clusters.
   tabs:
   - title: K8s UI
     type: service
@@ -941,18 +692,8 @@ challenges:
   - title: Jaeger UI
     type: service
     hostname: kubernetes
-    path: /search?service=ambassador-ambassador
+    path: /search?service=fake-web
     port: 31686
-  - title: Ambassador UI
-    type: service
-    hostname: kubernetes
-    path: /ambassador/v0/diag/
-    port: 31877
-  - title: Ambassador Portal
-    type: service
-    hostname: kubernetes
-    path: /docs/
-    port: 31800
   - title: App - Config
     type: code
     hostname: kubernetes
@@ -986,18 +727,8 @@ challenges:
   - title: Jaeger UI
     type: service
     hostname: kubernetes
-    path: /search?service=ambassador-ambassador
+    path: /search?service=fake-web
     port: 31686
-  - title: Ambassador UI
-    type: service
-    hostname: kubernetes
-    path: /ambassador/v0/diag/
-    port: 31877
-  - title: Ambassador Portal
-    type: service
-    hostname: kubernetes
-    path: /docs/
-    port: 31800
   difficulty: basic
   timelimit: 5400
-checksum: "5818011293351747119"
+checksum: "734908562717179798"
