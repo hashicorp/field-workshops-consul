@@ -75,9 +75,9 @@ spec:
           httpGet:
             path: /health
             port: 9090
-          initialDelaySeconds: 10
-          periodSeconds: 30
+          initialDelaySeconds: 30
+          periodSeconds: 15
         resources:
-          requests:
+          limits:
             cpu: 500m
             memory: 300Mi
