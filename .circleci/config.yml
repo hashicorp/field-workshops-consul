@@ -184,45 +184,6 @@ jobs:
               echo "Instruqt track test failed three times."
               exit 1
             fi
-  service-mesh-with-consul-hybrid:
-    docker:
-      - image: docker.mirror.hashicorp.services/ubuntu:latest
-    steps:
-      - checkout
-      - run:
-          name: Service Mesh with Consul Hybrid
-          command: |
-            VERSION=$INSTRUQT_VERSION
-            apt -y update
-            apt -y install wget unzip
-            wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
-            cd /tmp
-            unzip instruqt.zip
-            cp instruqt /usr/local/bin/instruqt
-            chmod +x /usr/local/bin/instruqt
-            echo "yes" | instruqt version
-            RETVAL=$?
-            if [[ $RETVAL -ne 0 ]]; then
-              echo "Instruqt is not installed correctly."
-              exit 1
-            else
-              echo "Instruqt is installed and updated to most recent version."
-            fi
-            cd /root/project/instruqt-tracks/service-mesh-with-consul-hybrid
-            echo "Running instruqt track push..."
-            instruqt track push --force
-            echo "Running instruqt track test..."
-            # Retry instruqt track test up to 3 times
-            n=0
-            until [ $n -ge 3 ]; do
-              instruqt track test --skip-fail-check && break
-              n=$[$n+1]
-              sleep 60
-            done
-            if [ $n -ge 3 ]; then
-              echo "Instruqt track test failed three times."
-              exit 1
-            fi
   multi-cloud-consul:
     docker:
       - image: ubuntu:latest
@@ -300,13 +261,6 @@ workflows:
             branches:
               only:
                 - master
-      - service-mesh-with-consul-hybrid:
-          requires:
-            - validate
-          filters:
-            branches:
-              only:
-                - master
       - multi-cloud-consul:
           requires:
             - validate
@@ -334,9 +288,6 @@ workflows:
           requires:
             - validate
       - service-mesh-with-consul-k8s:
-          requires:
-            - validate
-      - service-mesh-with-consul-hybrid:
           requires:
             - validate
       - multi-cloud-consul:
