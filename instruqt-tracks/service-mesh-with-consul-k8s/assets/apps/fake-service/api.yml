@@ -6,6 +6,14 @@ metadata:
 
 ---
 apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: fake-api
+spec:
+  protocol: grpc
+
+---
+apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceIntentions
 metadata:
   name: fake-api-cache-intention
@@ -46,7 +54,6 @@ spec:
         app: fake-api
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
-        "consul.hashicorp.com/connect-service-protocol": "grpc"
         "consul.hashicorp.com/connect-service-upstreams": "fake-cache:9092,fake-payments:9093"
     spec:
       serviceAccountName: fake-api
