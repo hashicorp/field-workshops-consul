@@ -5,6 +5,14 @@ metadata:
   name: emojify-cache
 
 ---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: emojify-cache
+spec:
+  protocol: grpc
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22,7 +30,6 @@ spec:
         app: emojify-cache
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
-        "consul.hashicorp.com/connect-service-protocol": "grpc"
         "prometheus.io/scrape": "true"
         "prometheus.io/port": "9901"
     spec:
