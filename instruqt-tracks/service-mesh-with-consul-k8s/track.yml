@@ -19,7 +19,7 @@ published: true
 show_timer: true
 skipping_enabled: true
 challenges:
-- slug: deploy-connect
+- slug: 01-deploy-connect
   id: iyea2sohruxq
   type: challenge
   title: Deploy Connect
@@ -51,8 +51,8 @@ challenges:
 
     **Optional**
 
-    We've included the K8s dashboard for the duration of this lab if you want to compare the workloads using the K8s UI tab.
-    Note, you can use  the `skip` button to authenticate, since the dashboard is already configuration. <br>
+    We've included the K8s dashboard for the duration of this lab if you want to compare the workloads using the K8s Dashboard tab.
+    You can use the token included in the tabs to authenticate.  <br>
 
     If you want to see a breakout of the Consul deployment from helm, run the following command. <br>
 
@@ -91,13 +91,18 @@ challenges:
     hostname: kubernetes
     path: /ui/
     port: 30085
-  - title: K8s UI
+  - title: K8s Dashboard
     type: service
     hostname: kubernetes
-    port: 30443
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: K8s Dashboard Token
+    type: code
+    hostname: kubernetes
+    path: /root/dashboard-token.txt
   difficulty: basic
   timelimit: 600
-- slug: deploy-application
+- slug: 02-deploy-application
   id: 71ekxt1ehjg5
   type: challenge
   title: Deploy the Application
@@ -172,10 +177,11 @@ challenges:
     hostname: kubernetes
     path: /ui/dc1/intentions
     port: 30085
-  - title: K8s UI
+  - title: K8s Dashboard
     type: service
     hostname: kubernetes
-    port: 30443
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
   - title: Emojify - Config
     type: code
     hostname: kubernetes
@@ -188,9 +194,13 @@ challenges:
     hostname: kubernetes
     path: /
     port: 30000
+  - title: K8s Dashboard Token
+    type: code
+    hostname: kubernetes
+    path: /root/dashboard-token.txt
   difficulty: basic
   timelimit: 600
-- slug: use-the-application
+- slug: 03-use-the-application
   id: ibdhfvn7xzbo
   type: challenge
   title: Use the Application
@@ -241,18 +251,23 @@ challenges:
   - title: K8s
     type: terminal
     hostname: kubernetes
-  - title: K8s UI
+  - title: K8s Dashboard
     type: service
     hostname: kubernetes
-    port: 30443
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
   - title: Emojify - Website
     type: service
     hostname: kubernetes
     path: /
     port: 30000
+  - title: K8s Dashboard Token
+    type: code
+    hostname: kubernetes
+    path: /root/dashboard-token.txt
   difficulty: basic
   timelimit: 600
-- slug: scale-the-app
+- slug: 04-scale-the-app
   id: r2vgop1q59ix
   type: challenge
   title: Scale the Application
@@ -282,7 +297,7 @@ challenges:
     You should also verify Envoy sidecar proxy is healthy using `kubectl`.
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=emojify-api -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/clusters | grep facebox
+    kubectl exec $(kubectl get pod --selector=app=emojify-api -o name) -c consul-connect-envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep facebox
     ```
 
     Nice work! You just leveraged dynamic service discovery inside your service mesh to scale out a workload.
@@ -300,18 +315,23 @@ challenges:
   - title: K8s
     type: terminal
     hostname: kubernetes
-  - title: K8s UI
+  - title: K8s Dashboard
     type: service
     hostname: kubernetes
-    port: 30443
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
   - title: Consul UI
     type: service
     hostname: kubernetes
     path: /ui/
     port: 30085
+  - title: K8s Dashboard Token
+    type: code
+    hostname: kubernetes
+    path: /root/dashboard-token.txt
   difficulty: basic
   timelimit: 600
-- slug: get-metrics
+- slug: 05-get-metrics
   id: hwu25pwhbljf
   type: challenge
   title: Get Metrics
@@ -385,13 +405,18 @@ challenges:
     hostname: kubernetes
     path: /targets#job-kubernetes-pods
     port: 30090
-  - title: K8s UI
+  - title: K8s Dashboard
     type: service
     hostname: kubernetes
-    port: 30443
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: K8s Dashboard Token
+    type: code
+    hostname: kubernetes
+    path: /root/dashboard-token.txt
   difficulty: basic
   timelimit: 600
-- slug: ship-a-new-feature
+- slug: 06-ship-a-new-feature
   id: w95srj56cyzm
   type: challenge
   title: Ship a New Feature
@@ -420,7 +445,7 @@ challenges:
     cat emojify/splitter.yaml
     ```
 
-    * Router   - Allows you to do some version specific testing by supplying query params.
+    * Router - Allows you to do some version specific testing by supplying query params.
 
     ```
     cat emojify/router.yaml
@@ -462,6 +487,12 @@ challenges:
     Now, refresh the app a few times and look for `EmojifyEnterprise` in the top left banner.
     This is the v2 version of our website. <br>
 
+    You can use the image from earlier, and you will have the addiitonal option to purchase it. <br>
+
+    ```
+    https://cdn.geekwire.com/wp-content/uploads/2017/10/armon-dadgar-and-mitchell-hashimoto-630x419.jpg
+    ```
+
     Emojify another image and you will see a new option to purchase the image.
     Fill in some dummy details and try it now. <br>
 
@@ -470,13 +501,13 @@ challenges:
     Notice that Envoy is now grouping clusters by your subsets.
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/clusters  | grep emojify-website
+    kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters  | grep emojify-website
     ```
 
     You can also see Envoy has updated your route definitions for your debug params and traffic weights. <br>
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
+    kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
     ```
 
     Finally, you can shift all the traffic to the v2 version of the website now that your new feature is working properly.
@@ -499,7 +530,7 @@ challenges:
     You can additionally verify Consul has propagated this change to Envoy by running the above command again. <br>
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
+    kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
     ```
 
     Nice work! you just used traffic splitting to safely move users to a new version of your application!
@@ -527,13 +558,18 @@ challenges:
     hostname: kubernetes
     path: /ui/
     port: 30085
-  - title: K8s UI
+  - title: K8s Dashboard
     type: service
     hostname: kubernetes
-    port: 30443
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: K8s Dashboard Token
+    type: code
+    hostname: kubernetes
+    path: /root/dashboard-token.txt
   difficulty: basic
   timelimit: 900
-- slug: tracing
+- slug: 07-tracing
   id: 8cnsp3ybcrlc
   type: challenge
   title: Tracing Distributed Errors
@@ -579,7 +615,7 @@ challenges:
     Let's check this out for our API service.
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=fake-api -o name) -c consul-connect-envoy-sidecar -- wget -qO- localhost:19000/config_dump | jq '[.. |."tracing"? | select(. != null)]'
+    kubectl exec $(kubectl get pod --selector=app=fake-api -o name) -c consul-connect-envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."tracing"? | select(. != null)]'
     ```
 
     Nice work, you just debugged a distributed app with tracing.
@@ -640,13 +676,18 @@ challenges:
     hostname: kubernetes
     path: /ui/
     port: 30085
-  - title: K8s UI
+  - title: K8s Dashboard
     type: service
     hostname: kubernetes
-    port: 30443
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: K8s Dashboard Token
+    type: code
+    hostname: kubernetes
+    path: /root/dashboard-token.txt
   difficulty: basic
   timelimit: 900
-- slug: ingress
+- slug: 08-ingress
   id: ydjcyyarz7ef
   type: challenge
   title: Ingress
@@ -657,6 +698,11 @@ challenges:
     ```
     kubectl describe svc lab-consul-ingress-gateway
     ```
+
+    Review the configuration for ingress. <br>
+    * `cat fake-web-ingress-intention.yaml`
+    * `cat fake-web-ingress-gateway.hcl`
+    * `cat fake-service/fake-web-ingress-router.hcl`
 
     Update intentions and create the virtual service. Ingress config will be supported by CRDs in the next release.
 
@@ -677,10 +723,11 @@ challenges:
   - type: text
     contents: Consul Ingress Gateways will allow you to route traffic into your clusters.
   tabs:
-  - title: K8s UI
+  - title: K8s Dashboard
     type: service
     hostname: kubernetes
-    port: 30443
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
   - title: Consul UI
     type: service
     hostname: kubernetes
@@ -698,9 +745,13 @@ challenges:
     type: code
     hostname: kubernetes
     path: /root/tracing
+  - title: K8s Dashboard Token
+    type: code
+    hostname: kubernetes
+    path: /root/dashboard-token.txt
   difficulty: basic
   timelimit: 300
-- slug: summary
+- slug: 09-summary
   id: neancacl0syl
   type: challenge
   title: Summary
@@ -720,15 +771,20 @@ challenges:
     hostname: kubernetes
     path: /ui/
     port: 30085
-  - title: K8s UI
+  - title: K8s Dashboard
     type: service
     hostname: kubernetes
-    port: 30443
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
   - title: Jaeger UI
     type: service
     hostname: kubernetes
     path: /search?service=fake-web
     port: 31686
+  - title: K8s Dashboard Token
+    type: code
+    hostname: kubernetes
+    path: /root/dashboard-token.txt
   difficulty: basic
   timelimit: 5400
-checksum: "734908562717179798"
+checksum: "14606478069788970938"

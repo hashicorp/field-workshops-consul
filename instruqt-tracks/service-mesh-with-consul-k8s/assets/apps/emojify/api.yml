@@ -64,7 +64,7 @@ spec:
           - name: CACHE_ADDRESS
             value: localhost:8005
           - name: CACHE_ERROR_RATE
-            value: "0.2"
+            value: "0.1"
           - name: FACEBOX_ADDRESS
             value: localhost:8003
           - name: BIND_ADDRESS
