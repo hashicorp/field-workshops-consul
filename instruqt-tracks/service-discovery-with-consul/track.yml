@@ -20,8 +20,10 @@ developers:
 - lance@hashicorp.com
 private: false
 published: true
+show_timer: true
+skipping_enabled: true
 challenges:
-- slug: the-website-is-down
+- slug: 01-the-website-is-down
   id: lxxrrq17fcxz
   type: challenge
   title: "The website is DOWN! \U0001F631"
@@ -51,6 +53,7 @@ challenges:
   - title: Consul UI
     type: service
     hostname: consul-server-0
+    path: /ui/dc1/nodes/Database
     port: 8500
   - title: App Config
     type: code
@@ -62,7 +65,7 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 900
-- slug: register-service-check-db
+- slug: 02-register-service-check-db
   id: qy8zgg6pz8mv
   type: challenge
   title: Register a Service Check for the Database ✔️
@@ -118,7 +121,7 @@ challenges:
     hostname: database
   difficulty: basic
   timelimit: 900
-- slug: register-service-check-app
+- slug: 03-register-service-check-app
   id: rxiqqury4hcw
   type: challenge
   title: Register a Service Check for the Application ✔️
@@ -164,7 +167,7 @@ challenges:
     hostname: app
   difficulty: basic
   timelimit: 900
-- slug: automate-your-job
+- slug: 04-automate-your-job
   id: m99lb94yn3ac
   type: challenge
   title: "Automate Your Job with Consul Template\U0001F916"
@@ -182,10 +185,11 @@ challenges:
     Click on the *Consul Template* tab and look inside the file. Consul template can update your `wp-config.php` file whenever the database IP address changes. Notice the template configuration for DB_HOST on line 32 of the file. This part is automatically replaced with the address of your healthy database server.
 
     Run the following commands on in the *App Server* terminal to activate Consul Template.
+    You will run Consul Template in `once` mode for this example. In production this is typically a daemon. <br>
 
     ```
     cd /var/www/html
-    consul-template  -log-level debug -template "wp-config.php.tpl:wp-config.php"
+    consul-template -once -log-level debug -template "wp-config.php.tpl:wp-config.php"
     ```
 
     Reload the `wp-config.php` file in your *App Config* tab to see the updated IP address.
@@ -225,7 +229,7 @@ challenges:
     hostname: app
   difficulty: basic
   timelimit: 900
-- slug: seamless-service-discovery
+- slug: 05-seamless-service-discovery
   id: icwdlsw0pseb
   type: challenge
   title: "Seamless Service Discovery with Consul DNS \U0001F5A7"
@@ -299,5 +303,4 @@ challenges:
     hostname: app
   difficulty: basic
   timelimit: 900
-checksum: "9764133920270800113"
-show_timer: true
+checksum: "14383795001033504924"

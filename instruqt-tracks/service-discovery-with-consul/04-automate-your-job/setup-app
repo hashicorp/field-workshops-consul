@@ -8,7 +8,7 @@ tar -zxvf /tmp/consul-template.tgz
 chmod +x /usr/local/bin/consul-template
 
 echo "Creating the Consul template file for the app."
-cat <<-EOF > /var/www/html/wp-config.php.tpl
+cat <<-'EOF' > /var/www/html/wp-config.php.tpl
 <?php
 /**
  * The base configuration for WordPress
@@ -28,26 +28,19 @@ cat <<-EOF > /var/www/html/wp-config.php.tpl
  *
  * @package WordPress
  */
-
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
 define( 'DB_NAME', 'wordpress');
-
 /** MySQL database username */
 define( 'DB_USER', 'root');
-
 /** MySQL database password */
 define( 'DB_PASSWORD', 'HashiCorp123');
-
 /** MySQL hostname */
 define( 'DB_HOST', '{{ range service "mysql" }}{{ .Address }}{{ end }}');
-
 /** Database Charset to use in creating database tables. */
 define( 'DB_CHARSET', 'utf8');
-
 /** The Database Collate type. Don't change this if in doubt. */
 define( 'DB_COLLATE', '');
-
 /**#@+
  * Authentication Unique Keys and Salts.
  *
@@ -65,17 +58,14 @@ define( 'AUTH_SALT',        '8cd8412fe14c984a8104ddbede7490f2c9b63506');
 define( 'SECURE_AUTH_SALT', '17f7510f547b324d1633e6c3973001efe4f165f2');
 define( 'LOGGED_IN_SALT',   'f2965918ae5c10ce7deaa5c65ae60e8f290fed53');
 define( 'NONCE_SALT',       '8cd918b3d6886574405bf3e5db1b147a8daaadc5');
-
 /**#@-*/
-
 /**
  * WordPress Database Table prefix.
  *
  * You can have multiple installations in one database if you give each
  * a unique prefix. Only numbers, letters, and underscores please!
  */
-\$table_prefix = 'wp';
-
+$table_prefix = 'wp';
 /**
  * For developers: WordPress debugging mode.
  *
@@ -89,22 +79,22 @@ define( 'NONCE_SALT',       '8cd918b3d6886574405bf3e5db1b147a8daaadc5');
  * @link https://codex.wordpress.org/Debugging_in_WordPress
  */
 define( 'WP_DEBUG', false );
-
 // If we're behind a proxy server and using HTTPS, we need to alert Wordpress of that fact
 // see also http://codex.wordpress.org/Administration_Over_SSL#Using_a_Reverse_Proxy
-if (isset(\$_SERVER['HTTP_X_FORWARDED_PROTO']) && \$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
-	\$_SERVER['HTTPS'] = 'on';
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+	$_SERVER['HTTPS'] = 'on';
 }
-
 /* That's all, stop editing! Happy publishing. */
-
 /** Absolute path to the WordPress directory. */
 if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', dirname( __FILE__ ) . '/' );
 }
-
 /** Sets up WordPress vars and included files. */
 require_once( ABSPATH . 'wp-settings.php' );
+
+define('FORCE_SSL_ADMIN', true);
+if (strpos($_SERVER['HTTP_X_FORWARDED_PROTO'], 'https') !== false)
+$_SERVER['HTTPS']='on';
 EOF
 
 echo "Resetting the application config."
