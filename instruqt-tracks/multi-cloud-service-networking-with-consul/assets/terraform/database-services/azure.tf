@@ -1,5 +1,5 @@
 resource "random_password" "pg" {
-  length           = 15
+  length           = 20
   special          = true
   override_special = "!@#%"
 }

@@ -19,6 +19,7 @@ developers:
 - cpu@hashicorp.com
 private: true
 published: true
+maintenance: true
 show_timer: true
 skipping_enabled: true
 challenges:
@@ -51,6 +52,10 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/infra
+  - title: Packer
+    type: code
+    hostname: cloud-client
+    path: /root/packer
   - title: Lab Architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
@@ -1391,4 +1396,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "4260687893955638408"
+checksum: "5006568840202144217"
