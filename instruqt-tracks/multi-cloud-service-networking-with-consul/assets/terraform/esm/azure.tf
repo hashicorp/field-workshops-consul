@@ -1,3 +1,8 @@
+data "azurerm_image" "ubuntu" {
+  name_regex          = "hashistack-*"
+  resource_group_name = "packer"
+}
+
 resource "azurerm_public_ip" "esm" {
   name                = "consul-esm-ip"
   resource_group_name = data.terraform_remote_state.infra.outputs.azure_rg_name
@@ -49,10 +54,7 @@ resource "azurerm_virtual_machine" "consul-esm" {
   }
 
   storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
-    version   = "latest"
+    id = data.azurerm_image.ubuntu.id
   }
   storage_os_disk {
     name              = "consul-esm-disk"

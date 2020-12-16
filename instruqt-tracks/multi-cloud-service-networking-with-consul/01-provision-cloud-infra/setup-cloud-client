@@ -1,5 +1,12 @@
 #!/bin/bash
 
+#aws setup
+aws configure set default.region us-east-1
+aws ec2 create-default-vpc
+
+#azure setup
+az group create -l westus2 -n packer
+
 #cloud client setup
 apt update -y
 apt install software-properties-common -y
@@ -37,8 +44,9 @@ source /root/.bashrc
 #make vault run in instruqt container
 setcap cap_ipc_lock= /usr/bin/vault
 
-#aws
-aws configure set default.region us-east-1
+#packer builds
+cd /root/packer
+packer build hashistack.json
 
 #tf
 cd /root/terraform/infra

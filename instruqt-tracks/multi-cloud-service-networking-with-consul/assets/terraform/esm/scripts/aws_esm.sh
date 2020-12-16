@@ -4,14 +4,6 @@
 local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
 public_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)"
 
-#update packages
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-sudo apt update -y
-
-#install consul
-sudo apt install consul-enterprise vault-enterprise awscli jq unzip -y
-
 #vault
 export VAULT_ADDR=http://$(aws ec2 describe-instances --filters "Name=tag:Name,Values=vault" \
  --region us-east-1 --query 'Reservations[*].Instances[*].PrivateIpAddress' \

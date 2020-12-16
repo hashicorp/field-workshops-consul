@@ -1,3 +1,8 @@
+data "azurerm_image" "ubuntu" {
+  name_regex          = "hashistack-*"
+  resource_group_name = "packer"
+}
+
 resource "azurerm_public_ip" "vm" {
   name                = "product-api-ip"
   resource_group_name = data.terraform_remote_state.infra.outputs.azure_rg_name
@@ -34,10 +39,7 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
+    id = data.azurerm_image.ubuntu.id
   }
   storage_os_disk {
     name              = "product-api-disk"

@@ -1,14 +1,9 @@
 #!/bin/bash
 
+#ip
 local_ipv4=$(curl -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/privateIpAddress?api-version=2017-08-01&format=text")
 
-#update packages
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-sudo apt update -y
-
 #install vault & consul
-sudo apt install jq vault-enterprise consul-enterprise -y
 mkdir -p /opt/vault/raft
 chown vault:vault /opt/vault/raft
 
