@@ -39,6 +39,11 @@ challenges:
     ```
 
     In the next few challenges we will centralize secrets across environments.
+  notes:
+  - type: text
+    contents: |
+      You are being provisioned on-demand cloud infrastructure. <br>
+      Please be patient as this can take up to ~15 minutes.
   tabs:
   - title: Shell
     type: terminal
@@ -1396,4 +1401,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "5006568840202144217"
+checksum: "298662329741720371"
