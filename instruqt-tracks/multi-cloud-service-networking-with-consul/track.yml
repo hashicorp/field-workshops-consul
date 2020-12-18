@@ -30,6 +30,14 @@ challenges:
   assignment: |
     The terraform code will provision cloud infrastructure in AWS, GPC, and Azure. <br>
 
+    Your lab environment will leverage pre-built packer images.
+    You can inspect the image build in the code editor, and validate the images are available in AWS & Azure. <br>
+
+    ```
+    az image list -g packer | jq
+    aws ec2 describe-images --owners self | jq
+    ```
+
     Inspect the terraform code in the code editor and create the VPCs and VNets for shared services and application workloads. <br>
 
     ```
@@ -38,6 +46,11 @@ challenges:
     ```
 
     In the next few challenges we will centralize secrets across environments.
+  notes:
+  - type: text
+    contents: |
+      You are being provisioned on-demand cloud infrastructure. <br>
+      Please be patient as this can take up to ~15 minutes.
   tabs:
   - title: Shell
     type: terminal
@@ -51,6 +64,10 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/infra
+  - title: Packer
+    type: code
+    hostname: cloud-client
+    path: /root/packer
   - title: Lab Architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
@@ -1391,4 +1408,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "4260687893955638408"
+checksum: "6402002656830033658"

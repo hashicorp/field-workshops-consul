@@ -28,6 +28,6 @@ resource "consul_config_entry" "redis" {
   kind = "service-defaults"
 
   config_json = jsonencode({
-    Protocol    = "tcp"
+    Protocol = "tcp"
   })
 }

@@ -114,7 +114,7 @@ resource "aws_instance" "bastion-shared-svcs" {
   vpc_security_group_ids      = [aws_security_group.bastion-shared-svcs.id]
   subnet_id                   = module.aws-vpc-shared-svcs.public_subnets[0]
   associate_public_ip_address = true
-  user_data = <<EOF
+  user_data                   = <<EOF
 #!/bin/bash
 sudo apt update -y
 sudo apt install redis -y

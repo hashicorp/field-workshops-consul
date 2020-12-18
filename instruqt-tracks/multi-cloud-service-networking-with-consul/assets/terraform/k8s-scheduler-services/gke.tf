@@ -5,7 +5,7 @@ resource "google_container_cluster" "graphql" {
   location           = "us-central1-a"
   initial_node_count = 1
 
-  network = "vpc-shared-svcs"
+  network    = "vpc-shared-svcs"
   subnetwork = "shared"
 
   networking_mode = "VPC_NATIVE"
@@ -29,7 +29,7 @@ resource "google_container_cluster" "graphql" {
       disable-legacy-endpoints = "true"
     }
     machine_type = "n1-standard-2"
-    tags = ["consul-connect"]
+    tags         = ["consul-connect"]
   }
 
   enable_legacy_abac = true
@@ -47,7 +47,7 @@ resource "google_container_cluster" "react" {
   location           = "us-central1-a"
   initial_node_count = 1
 
-  network = "vpc-shared-svcs"
+  network    = "vpc-shared-svcs"
   subnetwork = "shared"
 
   networking_mode = "VPC_NATIVE"
@@ -71,7 +71,7 @@ resource "google_container_cluster" "react" {
       disable-legacy-endpoints = "true"
     }
     machine_type = "n1-standard-2"
-    tags = ["consul-connect"]
+    tags         = ["consul-connect"]
   }
 
   enable_legacy_abac = true

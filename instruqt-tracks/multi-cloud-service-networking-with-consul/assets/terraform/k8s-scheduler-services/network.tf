@@ -8,7 +8,7 @@ resource "google_compute_firewall" "shared-connect" {
   }
 
   source_ranges = ["0.0.0.0/0"]
-  target_tags = ["consul-connect"]
+  target_tags   = ["consul-connect"]
 }
 
 resource "google_compute_firewall" "app-connect" {
@@ -21,5 +21,5 @@ resource "google_compute_firewall" "app-connect" {
   }
 
   source_ranges = ["0.0.0.0/0"]
-  target_tags = ["consul-connect"]
+  target_tags   = ["consul-connect"]
 }

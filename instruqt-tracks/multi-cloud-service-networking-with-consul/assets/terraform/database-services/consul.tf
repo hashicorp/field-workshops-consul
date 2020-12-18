@@ -28,6 +28,6 @@ resource "consul_config_entry" "postgres" {
   kind = "service-defaults"
 
   config_json = jsonencode({
-    Protocol    = "tcp"
+    Protocol = "tcp"
   })
 }

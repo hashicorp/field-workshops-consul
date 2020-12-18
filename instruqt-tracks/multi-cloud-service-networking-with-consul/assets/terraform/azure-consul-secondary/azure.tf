@@ -1,3 +1,8 @@
+data "azurerm_image" "ubuntu" {
+  name_regex          = "hashistack-*"
+  resource_group_name = "packer"
+}
+
 resource "azurerm_public_ip" "consul" {
   name                = "consul-server-ip"
   resource_group_name = data.terraform_remote_state.infra.outputs.azure_rg_name
@@ -47,10 +52,7 @@ resource "azurerm_virtual_machine" "consul" {
   delete_data_disks_on_termination = true
 
   storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
-    version   = "latest"
+    id = data.azurerm_image.ubuntu.id
   }
   storage_os_disk {
     name              = "consul-disk"
@@ -132,10 +134,7 @@ resource "azurerm_virtual_machine" "consul-mgw" {
   }
 
   storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
-    version   = "latest"
+    id = data.azurerm_image.ubuntu.id
   }
   storage_os_disk {
     name              = "consul-mgw-disk"
