@@ -19,7 +19,6 @@ developers:
 - cpu@hashicorp.com
 private: true
 published: true
-maintenance: true
 show_timer: true
 skipping_enabled: true
 challenges:
@@ -30,6 +29,14 @@ challenges:
   teaser: Create cloud VPCs
   assignment: |
     The terraform code will provision cloud infrastructure in AWS, GPC, and Azure. <br>
+
+    Your lab environment will leverage pre-built packer images.
+    You can inspect the image build in the code editor, and validate the images are available in AWS & Azure. <br>
+
+    ```
+    az image list -g packer | jq
+    aws ec2 describe-images --owners self | jq
+    ```
 
     Inspect the terraform code in the code editor and create the VPCs and VNets for shared services and application workloads. <br>
 
@@ -1401,4 +1408,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "298662329741720371"
+checksum: "6402002656830033658"

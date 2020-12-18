@@ -106,6 +106,9 @@ LimitMEMLOCK=infinity
 WantedBy=multi-user.target
 EOF
 
+#azure cred issue
+sleep 120
+
 sudo systemctl enable vault.service
 sudo systemctl start vault.service
 
