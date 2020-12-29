@@ -14,7 +14,7 @@ tags: []
 owner: hashicorp
 developers:
 - lance@hashicorp.com
-private: false
+private: true
 published: true
 show_timer: true
 skipping_enabled: true
@@ -787,4 +787,4 @@ challenges:
     path: /root/dashboard-token.txt
   difficulty: basic
   timelimit: 5400
-checksum: "14606478069788970938"
+checksum: "5557338021820033197"

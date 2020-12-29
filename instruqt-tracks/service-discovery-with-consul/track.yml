@@ -18,7 +18,7 @@ tags:
 owner: hashicorp
 developers:
 - lance@hashicorp.com
-private: false
+private: true
 published: true
 show_timer: true
 skipping_enabled: true
@@ -303,4 +303,4 @@ challenges:
     hostname: app
   difficulty: basic
   timelimit: 900
-checksum: "14383795001033504924"
+checksum: "4627028940176809867"

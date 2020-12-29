@@ -24,7 +24,7 @@ tags:
 owner: hashicorp
 developers:
 - lance@hashicorp.com
-private: false
+private: true
 published: true
 show_timer: true
 skipping_enabled: true
@@ -370,4 +370,4 @@ challenges:
     path: /tmp/bootstrap.txt
   difficulty: basic
   timelimit: 600
-checksum: "7526493047174648524"
+checksum: "17282698375088453083"

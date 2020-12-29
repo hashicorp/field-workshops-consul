@@ -13,7 +13,7 @@ tags: []
 owner: hashicorp
 developers:
 - lance@hashicorp.com
-private: false
+private: true
 published: true
 show_timer: true
 skipping_enabled: true
@@ -397,4 +397,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 900
-checksum: "12554220403004851340"
+checksum: "2995614924975383451"
