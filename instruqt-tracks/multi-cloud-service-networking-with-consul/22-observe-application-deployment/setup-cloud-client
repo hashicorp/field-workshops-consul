@@ -6,10 +6,15 @@ set-workdir /root/terraform/monitoring
 vault login -method=userpass username=admin password=admin
 export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
 
+#intentions
+consul intention create -allow '*/*' 'default/jaeger-http-collector'
+consul intention create -allow '*/*' 'default/zipkin-http-collector'
+
 #tf
 cd /root/terraform/monitoring
 terraform init
 terraform apply -auto-approve
+sleep 120
 
 #nginx
 jaeger=$(terraform output -state /root/terraform/monitoring/terraform.tfstate aws_jaeger_ip)
