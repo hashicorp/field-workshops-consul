@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set-workdir /root/terraform/monitoring
+
+#creds
+vault login -method=userpass username=admin password=admin
+export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+
+#tf
+cd /root/terraform/monitoring
+terraform init
+terraform apply -auto-approve
+
+#nginx
+jaeger=$(terraform output -state /root/terraform/monitoring/terraform.tfstate aws_jaeger_ip)
+cat << EOF > /etc/nginx/conf.d/jaeger.conf
+server {
+  listen 16686;
+  location / {
+    proxy_pass http://${jaeger}:16686;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect off;
+  }
+  access_log /var/log/nginx/jaeger.log;
+}
+EOF
+service nginx restart
+
+exit 0
