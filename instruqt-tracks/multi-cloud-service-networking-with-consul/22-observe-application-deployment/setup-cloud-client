@@ -30,5 +30,28 @@ server {
 }
 EOF
 service nginx restart
+sleep 15
+
+#create some traces
+kubectl config use-context graphql
+endpoint=$(kubectl get svc public-api-service -o json | jq -r .status.loadBalancer.ingress[0].ip)
+#product api
+curl -s -v http://${endpoint}:8080/api \
+  -H 'Accept-Encoding: gzip, deflate, br' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
+  -H 'Connection: keep-alive' \
+  -H 'DNT: 1' \
+  --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+  --compressed | jq
+#payment api
+curl -s -v http://${endpoint}:8080/api \
+  -H 'Accept-Encoding: gzip, deflate, br' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
+  -H 'Connection: keep-alive' \
+  -H 'DNT: 1' \
+  --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+  --compressed | jq
 
 exit 0

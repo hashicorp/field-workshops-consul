@@ -344,57 +344,7 @@ challenges:
     Last, apply defaults for the service mesh that you'll leverage in the last few assignments. <br>
 
     ```
-    echo '
-    Kind      = "proxy-defaults"
-    Name      = "global"
-    Namespace = "default"
-    Config {
-      protocol = "http"
-      envoy_extra_static_clusters_json = <<EOL
-        {
-          "connect_timeout": "3.000s",
-          "dns_lookup_family": "V4_ONLY",
-          "lb_policy": "ROUND_ROBIN",
-          "load_assignment": {
-              "cluster_name": "jaeger_zipkin",
-              "endpoints": [
-                  {
-                      "lb_endpoints": [
-                          {
-                              "endpoint": {
-                                  "address": {
-                                      "socket_address": {
-                                          "address": "127.0.0.1",
-                                          "port_value": 9411,
-                                          "protocol": "TCP"
-                                      }
-                                  }
-                              }
-                          }
-                      ]
-                  }
-              ]
-          },
-          "name": "jaeger_zipkin",
-          "type": "STRICT_DNS"
-        }
-      EOL
-      envoy_tracing_json = <<EOL
-        {
-            "http": {
-                "name": "envoy.zipkin",
-                "config": {
-                    "collector_cluster": "jaeger_zipkin",
-                    "collector_endpoint": "/api/v1/spans",
-                    "shared_span_context": false
-                }
-            }
-        }
-      EOL
-    }
-    MeshGateway {
-       Mode = "local"
-    }' | consul config write -
+    consul config write proxy-defaults.hcl
     ```
 
     In the next few assignments you will connect secondary Consul datacenters to this cluster.
@@ -1444,10 +1394,15 @@ challenges:
 - slug: 22-observe-application-deployment
   id: cvcgo0hq0xlo
   type: challenge
-  title: 'BETA: Observe Application Deployment'
+  title: Observe Application Deployment
   teaser: Collect metrics and traces across clouds.
   assignment: View traces in the Jaeger UI.
   tabs:
+  - title: Jaeger
+    type: service
+    hostname: cloud-client
+    path: /search?service=public-api
+    port: 16686
   - title: Shell
     type: terminal
     hostname: cloud-client
@@ -1481,11 +1436,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8080
-  - title: Jaeger
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 16686
   difficulty: basic
   timelimit: 300
-checksum: "12087212011345614618"
+checksum: "1907106430762029822"

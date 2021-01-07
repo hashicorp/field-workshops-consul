@@ -271,14 +271,6 @@ services:
       depends_on:
         - cassandra-schema
 
-    jaeger-injestor:
-      image: jaegertracing/jaeger-ingester
-      network_mode: host
-      command: ["--cassandra.keyspace=jaeger_v1_dc1", "--cassandra.servers=127.0.0.1", "--kafka.consumer.brokers=127.0.0.1:9092"]
-      restart: on-failure
-      depends_on:
-        - cassandra-schema
-
     jaeger-agent:
       image: jaegertracing/jaeger-agent
       network_mode: host
