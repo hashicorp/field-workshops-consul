@@ -57,7 +57,7 @@ job "payments-api" {
         JAEGER_TAGS = "hostname=nomad"
       }
       config {
-        image = "hashicorpdemoapp/payments:v0.0.8"
+        image = "hashicorpdemoapp/payments:v0.0.9"
         mounts = [
           {
             type   = "bind"
