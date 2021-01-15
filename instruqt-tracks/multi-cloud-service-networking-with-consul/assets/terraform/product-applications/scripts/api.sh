@@ -170,53 +170,29 @@ sudo systemctl start envoy.service
 sleep 5
 
 #install the application
-#wget https://github.com/hashicorp-demoapp/product-api-go/releases/download/v0.0.12/product-api -O /product-api
-#chmod +x /product-api
-#cat <<EOF > /conf.json
-#{
-#  "db_connection": "host=localhost port=5432 user=postgres@${env} password=${postgres_password} dbname=postgres sslmode=disable",
-#  "bind_address": ":9090"
-#}
-#EOF
-#cat <<EOF > /etc/systemd/system/product-api.service
-#[Unit]
-#Description=Product API Service
-#After=network-online.target
-#[Service]
-#ExecStart=/product-api
-#Environment=JAEGER_ENDPOINT=http://127.0.0.1:14268/api/traces
-#Restart=always
-#RestartSec=5
-#[Install]
-#WantedBy=multi-user.target
-#EOF
-#sudo systemctl enable product-api.service
-#sudo systemctl start product-api.service
-#sleep 5
-
+wget https://github.com/hashicorp-demoapp/product-api-go/releases/download/v0.0.13/product-api -O /product-api
+chmod +x /product-api
 cat <<EOF > /conf.json
 {
   "db_connection": "host=localhost port=5432 user=postgres@${env} password=${postgres_password} dbname=postgres sslmode=disable",
   "bind_address": ":9090"
 }
 EOF
-
-curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
-cat <<-'EOF' > /docker-compose.yml
-version: '3.2'
-services:
-  product-api:
-     image: 'lanceplarsen/product-api:dev'
-     network_mode: host
-     environment:
-       - JAEGER_ENDPOINT=http://127.0.0.1:14268/api/traces
-     volumes:
-       - type: bind
-         source: ./conf.json
-         target: /conf.json
+cat <<EOF > /etc/systemd/system/product-api.service
+[Unit]
+Description=Product API Service
+After=network-online.target
+[Service]
+ExecStart=/product-api
+Environment=JAEGER_ENDPOINT=http://127.0.0.1:14268/api/traces
+Restart=always
+RestartSec=5
+[Install]
+WantedBy=multi-user.target
 EOF
-/usr/local/bin/docker-compose up -d
+sudo systemctl enable product-api.service
+sudo systemctl start product-api.service
+sleep 5
 
 #license
 sudo crontab -l > consul
@@ -227,6 +203,6 @@ sudo rm consul
 #make sure the config was picked up
 sudo service consul restart
 sudo service envoy restart
-#sudo service product-api restart
+sudo service product-api restart
 
 exit 0

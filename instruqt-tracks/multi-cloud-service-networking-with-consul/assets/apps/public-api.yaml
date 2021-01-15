@@ -45,7 +45,7 @@ spec:
       serviceAccountName: public-api
       containers:
         - name: public-api
-          image: lanceplarsen/public-api:dev
+          image: hashicorpdemoapp/public-api:v0.0.4
           ports:
             - containerPort: 8080
           env:
