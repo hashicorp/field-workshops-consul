@@ -1,0 +1,32 @@
+#!/bin/bash
+
+if [ -f /tmp/skip-check ]; then
+    rm /tmp/skip-check
+    exit 0
+fi
+
+vault login -method=userpass username=operations password=Password1
+
+CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+if [ -z "${CONSUL_HTTP_TOKEN}" ]; then
+  fail-message "Operator role is not configured in vault"
+  exit 1
+fi
+
+address=$(vault read -field address consul/config/access)
+if [ -z "${address}" ]; then
+  fail-message "Consul address is not stored in Vault"
+  exit 1
+fi
+
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+echo $CONSUL_HTTP_TOKEN
+consul acl policy read -name anonymous
+id=$(consul acl policy read -name anonymous -format=json | jq -r .ID)
+echo $id
+if [ -z "${id}" ]; then
+  fail-message "Anonymous policy is not configured"
+  exit 1
+fi
+
+exit 0

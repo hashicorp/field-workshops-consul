@@ -1,0 +1,62 @@
+#!/bin/bash
+
+
+#nginx
+set-workdir /root/terraform/vault
+
+vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate vault_lb)
+echo "export VAULT_ADDR=http://${vault_lb}" >> ~/.bashrc
+cat << EOF > /etc/nginx/conf.d/vault.conf
+server {
+  listen 8200;
+  location / {
+    proxy_pass http://${vault_lb};
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect off;
+  }
+  access_log /var/log/nginx/vault.log;
+}
+EOF
+consul_lb=$(terraform output -state /root/terraform/hcs/terraform.tfstate consul_url)
+echo "export CONSUL_HTTP_ADDR=${consul_lb}" >> ~/.bashrc
+cat << EOF > /etc/nginx/conf.d/consul.conf
+server {
+  listen 8500;
+  location / {
+    proxy_pass ${consul_lb};
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect off;
+  }
+  access_log /var/log/nginx/consul.log;
+}
+EOF
+/usr/sbin/service nginx restart
+
+#inital vault
+export VAULT_ADDR=http://${vault_lb}
+vault login root
+
+vault auth enable userpass
+vault write auth/userpass/users/operations password=Password1 policies=ops token_ttl=8h
+vault write auth/userpass/users/backend password=Password1 policies=backend token_ttl=30m
+vault secrets enable consul
+
+echo 'path "secret/*" {
+  capabilities = ["list"]
+}
+path "secret/data/consul" {
+  capabilities = ["create", "read", "update", "delete"]
+}
+path "consul/*"
+{
+  capabilities = ["create", "read", "update", "delete"]
+}' | vault policy write ops -
+
+echo 'path "consul/creds/backend-developer"
+{
+  capabilities = ["read"]
+}' | vault policy write backend -
+
+unset VAULT_TOKEN
+
+exit 0
