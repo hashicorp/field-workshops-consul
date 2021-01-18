@@ -4,8 +4,8 @@ resource "random_password" "pg" {
   override_special = "!@#%"
 
   # XXX masa added
-  min_upper = 1
-  min_lower = 1
+  min_upper   = 1
+  min_lower   = 1
   min_numeric = 1
   min_special = 1
 }

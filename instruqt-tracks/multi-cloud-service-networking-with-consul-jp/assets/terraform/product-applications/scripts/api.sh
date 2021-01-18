@@ -123,6 +123,18 @@ service {
             destination_name = "postgres"
             destination_namespace = "default"
             local_bind_port  = 5432
+          },
+          {
+            destination_name = "jaeger-http-collector"
+            destination_namespace = "default"
+            datacenter = "aws-us-east-1"
+            local_bind_port  = 14268
+          },
+          {
+            destination_name = "zipkin-http-collector"
+            destination_namespace = "default"
+            datacenter = "aws-us-east-1"
+            local_bind_port  = 9411
           }
         ]
       }
@@ -158,7 +170,7 @@ sudo systemctl start envoy.service
 sleep 5
 
 #install the application
-wget https://github.com/hashicorp-demoapp/product-api-go/releases/download/v0.0.12/product-api -O /product-api
+wget https://github.com/hashicorp-demoapp/product-api-go/releases/download/v0.0.13/product-api -O /product-api
 chmod +x /product-api
 cat <<EOF > /conf.json
 {
@@ -172,6 +184,7 @@ Description=Product API Service
 After=network-online.target
 [Service]
 ExecStart=/product-api
+Environment=JAEGER_ENDPOINT=http://127.0.0.1:14268/api/traces
 Restart=always
 RestartSec=5
 [Install]

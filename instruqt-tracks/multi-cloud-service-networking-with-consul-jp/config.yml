@@ -8,6 +8,7 @@ containers:
   - 8200
   - 8500
   - 8080
+  - 16686
   memory: 2048
 gcp_projects:
 - name: consul
