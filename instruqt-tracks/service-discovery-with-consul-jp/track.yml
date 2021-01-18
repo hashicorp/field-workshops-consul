@@ -1,0 +1,311 @@
+slug: service-discovery-with-consul-jp
+id: mmlqvkaceaf8
+type: track
+title: Service Discovery with Consul (Japanese)
+teaser: Tired of manually updating IP addresses in config files? Is your network CMDB
+  or spreadsheet woefully out of date? Learn how Consul can automatically keep your
+  service catalog up to date and current.
+description: |
+  Join us on an adventure of service discovery. In this track you'll learn how to connect a web application with its database using Consul. Topics covered include service registration, health checks, service discovery, automated config management, and seamless DNS integration.
+icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
+tags:
+- service discovery
+- health checks
+- dns
+- service registry
+- service catalog
+- consul
+owner: hashicorp
+developers:
+- lance@hashicorp.com
+<<<<<<< HEAD
+- masa@hashicorp.com
+=======
+>>>>>>> origin
+private: true
+published: true
+show_timer: true
+challenges:
+- slug: 01-the-website-is-down
+  id: y8mdtiwojag0
+  type: challenge
+  title: "The website is DOWN! \U0001F631"
+  teaser: |
+    ウェブサイトがダウンしているので修正する必要があります。Consulを使ってデータベースサーバーを見つけ、アプリに再接続しましょう。
+  assignment: |
+    ウェブサイトがダウンしています。アプリケーション サーバーが正常に動作していません。アプリがデータベースに接続できないことが原因のようです。
+
+    Consul UI の *Nodes* タブをクリックして、データベース サーバーの IP アドレスを見つけます。
+
+    App Config*タブの`wp-config.php`ファイルを編集します。32行目にデータベースサーバーの設定があります。ファイル内のIPアドレスを更新し、*CTRL-S*で保存します。
+
+    *Website*タブでアプリケーションがロードされていることを確認します。サイトが読み込まれるためには、更新ボタンを押す必要があるかもしれません。
+  notes:
+  - type: text
+    contents: |
+      Consulはネットワーク内の全てのホストの最新のマップを持っています。
+
+      煩雑でエラーが発生しやすいスプレッドシートや設定管理データベース (CMDB) システムの時代は終わりました。
+
+      各ホストのIPアドレスは、ConsulのUIで簡単に見つけることができます。
+
+      すべてのマシンの IP アドレスを見るには Consul UI の *Nodes* タブにアクセスします。
+  - type: text
+    contents: "\U0001F441️ ではConsulの世界へ参りましょう。 \U0001F570️"
+  tabs:
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    path: /ui/dc1/nodes/Database
+    port: 8500
+  - title: App Config
+    type: code
+    hostname: app
+    path: /var/www/html/wp-config.php
+  - title: Website
+    type: service
+    hostname: app
+    port: 80
+  difficulty: basic
+  timelimit: 900
+- slug: 02-register-service-check-db
+  id: zzeakqcnjxc0
+  type: challenge
+  title: データベースへのサービスチェックを登録してみよう。 ✔️
+  teaser: この課題では、データベースサービスにヘルスチェックを追加し、状態を監視します。
+  assignment: |
+    この課題では、Consul のカタログにデータベースサービスを登録するサービスチェックを作成します。サービスを有効にするには、サービス定義ファイルを Consul の設定ディレクトリにコピーする必要があります。
+
+    `Database Server` タブをクリックして、`cat` コマンドを使ってサービス定義ファイルの中を見てみましょう。
+    ```
+    cat /database_service.json
+    ```
+
+    設定ファイルには mysql という名前のサービスチェックが含まれており、ポート 3306 を監視するヘルスチェックが含まれています。データベースがダウンした場合、Consul は即座にそれをUnhealthyとしてマークします。また、Consul はトラフィックを自動的に健全なノードにルーティングすることができます。
+
+    次にこのファイルを Consul の設定ディレクトリにコピーします。
+    ```
+    cp /database_service.json /consul/config/database_service.json
+    ```
+
+    では、このサービスをリロードしてきてください。
+
+    ```
+    consul reload
+    ```
+
+    Consul UIのサービスタブを見てください。データベースのサービス名とヘルスチェックが表示されているはずです。
+
+    UI でヘルスチェックを見つけるには、*Services* をクリックしてから *mysql* をクリックしてください。
+
+    注: ヘルスチェックが健全であることが表示されるまで、しばらく時間がかかる場合があります。
+  notes:
+  - type: text
+    contents: |-
+      アプリケーションのヘルスチェックは簡単に作成でき、さまざまな条件をチェックすることができます。<br>
+
+      この課題では、データベース サーバー上のサービスの健全性チェックを作成します。
+      これにより、データベースサービスがどこにあるのか、そしてそれが健全かどうかをConsulは知ることができます。
+  - type: video
+    url: https://www.youtube.com/embed/CIv65T172mU?modestbranding=1&rel=0
+  - type: text
+    contents: "✔️ Check Yourself Before you Wreck Yourself \U0001F468‍\U0001F4BB"
+  tabs:
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
+  - title: Database Server
+    type: terminal
+    hostname: database
+  difficulty: basic
+  timelimit: 900
+- slug: 03-register-service-check-app
+  id: xondubnl6t7r
+  type: challenge
+  title: アプリケーションのサービスチェックを登録する ✔️
+  teaser: この課題では、アプリケーションの状態を監視できるように、アプリケーションのヘルスチェックを作成します。
+  assignment: |
+    前回のチャレンジと同様に、サービス定義ファイルをコピーしてConsulをリロードする必要があります。
+
+    アプリケーションサーバータブをクリックして `cat` コマンドを使ってサービス定義ファイルの中を確認してください。
+    ```
+    cat /app_service.json
+    ```
+
+    設定ファイルには http という名前のサービスチェックと 80 番ポートを監視するヘルスチェックが含まれています。アプリがダウンした場合、Consul Unhealthyなものとしてマークすることができます。Consul はトラフィックを自動的に健全なノードにルーティングすることができます。
+
+    次にこのファイルを Consul の設定ディレクトリにコピーします。
+    ```
+    cp /app_service.json /consul/config/app_service.json
+    ```
+
+    では、領事サービスをリロードしてきてください。
+
+    ```
+    consul reload
+    ```
+
+    Consul UIのサービスタブを見てください。アプリケーションのサービス名とヘルスチェックが表示されているはずです。
+
+    UI でヘルスチェックを見つけるには、*Services* をクリックし、次に *http* をクリックします。
+
+    注: ヘルスチェックが健康状態であることが表示されるまで、しばらく時間がかかる場合があります。
+  notes:
+  - type: text
+    contents: Consul を使用して、あらゆる種類のサービスを監視することができます。このチャレンジでは、アプリケーションにサービスチェックを追加します。
+  tabs:
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
+  - title: Application Server
+    type: terminal
+    hostname: app
+  difficulty: basic
+  timelimit: 900
+- slug: 04-automate-your-job
+  id: ryvaxstc5orf
+  type: challenge
+  title: "Consul Templateで自動化してみよう！　\U0001F916"
+  teaser: 夜中に再び起こされることのないように設定更新を自動化してみましょう。
+  assignment: |
+    この課題では、consul-template を使用して、アプリケーション構成が常に正しい IP アドレスを持っていることを確認します。以下のコマンドを *App Server* ターミナルタブで実行して、データベースサーバーの Consul サービスカタログを照会します。
+    `wp-connfig.php`はあえて元の状態に戻したので、ウェブアプリは動かないはずです。
+
+    ```
+    dig @localhost -p 8600 mysql.service.consul
+    ```
+
+    出力には `ANSWER SECTION` という行が表示されます。そのすぐ下にデータベースサーバーの現在のIPアドレスがあります。ConsulテンプレートはこのIPアドレスをアプリケーションの設定ファイルに自動的に挿入することができます。
+
+    *Consul Template* タブをクリックして、ファイルの中を見てください。Consul テンプレートは、データベースの IP アドレスが変更されるたびに `wp-config.php` ファイルを更新することができます。ファイルの28行目にあるDB_HOSTのテンプレート設定に注目してください。この部分は自動的に健全なデータベースサーバーのアドレスに置き換えられます。
+
+    以下のコマンドを *App Server* 端末で実行して Consul テンプレートを有効にしてください。
+    この例では Consul テンプレートを `once` モードで実行します。<br>
+
+    ```
+    cd /var/www/html
+    consul-template -once -log-level debug -template "wp-config.php.tpl:wp-config.php"
+    ```
+
+    更新されたIPアドレスを確認するには、*App Config*タブの`wp-config.php`ファイルをリロードします。
+
+    Webサイト*タブを開き、ウェブアプリが正しく読み込まれていることを確認してください。
+
+    ここでは*consul-teplate*コマンドに`-once`オプションを指定したので、１度きりの実行となりました。本番環境などでは、`-once`を省略しDaemonとして稼働させます。
+    そのためConsul Templateは継続的に変更を監視し、設定ファイルを自動的に更新します。
+  notes:
+  - type: text
+    contents: |
+      データベース、アプリケーションともにConsulのカタログに登録されています。各サービスの健康状態やIPアドレスは常に最新の状態になっており、いつでも参照できます。
+
+      次のチャレンジでは、Consul Templateを使ってwp-config.phpファイルの設定を自動化してみましょう。
+
+      Consul Templateは、ファイルを管理したり、Consulカタログのデータを入力したりすることができる便利なエージェントです。
+  - type: text
+    contents: "\U0001F5A7 All Your Service Are Belong To Us \U0001F469‍\U0001F4BB"
+  tabs:
+  - title: Website
+    type: service
+    hostname: app
+    port: 80
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
+  - title: App Config
+    type: code
+    hostname: app
+    path: /var/www/html/wp-config.php
+  - title: Consul Template
+    type: code
+    hostname: app
+    path: /var/www/html/wp-config.php.tpl
+  - title: App Server
+    type: terminal
+    hostname: app
+  difficulty: basic
+  timelimit: 900
+- slug: 05-seamless-service-discovery
+  id: zbxgcxlewnno
+  type: challenge
+  title: "Seamless Service Discovery with Consul DNS \U0001F5A7"
+  teaser: Consul can provide seamless access to all nodes and services in the catalog,
+    without rewriting your apps.
+  assignment: |-
+    この演習では、ローカル DNS サーバーとして動作するように Consul を設定します。
+    ここでも`wp-config.php`を元の状態に戻してあるので、ウェブアプリは動かないようになっています。
+    <br>
+    シンプルなDNSホスト名を介してサービスカタログへのシームレスなアクセスを提供します。シンプルなConsulのDNS名を使用して、サービスカタログにアクセスすることができます。
+    Linuxのdnsmasqサービスがアプリケーションサーバ上で動作しています。<br>
+
+    以下のコマンドを実行して、dnsmasqの設定を確認します。<br>
+
+    ```
+    cat /etc/dnsmasq.d/consul
+    ```
+
+    サーバ設定の行には、*.consulクエリのすべてのトラフィックをローカルポート8600のConsul* に、それ以外のすべてのトラフィックを通常のDNSサーバに転送する_と書かれています。<br>
+
+    次に `/etc/resolv.conf` ファイルを見てください。
+    これはDNSクエリがどこにルーティングされるかを制御するファイルです。<br> <br>
+
+    ```
+    cat /etc/resolv.conf
+    ```
+
+    現在、すべての DNS クエリをローカルシステム経由でルーティングしていますが、*.consul クエリのみ Consul が処理します。
+    他のすべての DNS トラフィックはアップストリームでネットワーク上のDNS サーバーに渡されます。
+    `dig`コマンドで試してみてください。<br>
+
+    ```
+    dig mysql.service.consul
+    ```
+
+    もう一度 `wp-config.php` ファイルの 32 行目を編集します。
+    データベースサーバーノードにはConsulのDNS名を使用します。<br>
+
+    ```
+    mysql.service.consul
+    ```
+
+    ウェブサイトタブにアクセスし、アプリがConsul DNSを使用してデータベースに接続されていることを確認します。<br>
+    この仕組みを使うことで、ウェブアプリはConsul DNSを使用して、常にヘルシーなデータベースへ接続することができます。
+  notes:
+  - type: text
+    contents: |
+      Consulカタログは、コードを変更することなく、現在のアプリケーションインフラストラクチャとシームレスに統合することができます。
+      すべてのアプリケーションやサービスに設定データやヘルスチェック、ネットワーク情報への簡単なアクセスを提供することができます。<br>
+
+      これが Consul DNS連携のコツです。DNS を使用するアプリケーションであれば、強力な Consul サービスカタログをややこしい修正なしに利用することができます。
+      次のチャレンジでは、dnsmasqを使用して、*.consulアドレスに対するすべてのローカルクエリをConsulサービスにルーティングします。このアプリケーションでは、データベースへの接続にシンプルなConsulによるDNS名を使用できるようになります。
+  - type: text
+    contents: |-
+      システムDNSにConsulを統合するには、いくつかの異なる方法があります。<br>
+      DNS転送の詳細については、HashiCorp Learnガイドをチェックしてください: https://learn.hashicorp.com/consul/security-networking/forwarding
+  - type: text
+    contents: "\U0001F310 Consul - A Powerful DNS-based Service Catalog \U0001F578️"
+  tabs:
+  - title: Website
+    type: service
+    hostname: app
+    port: 80
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
+  - title: App Config
+    type: code
+    hostname: app
+    path: /var/www/html/wp-config.php
+  - title: App Server
+    type: terminal
+    hostname: app
+  difficulty: basic
+  timelimit: 900
+<<<<<<< HEAD
+checksum: "5347324090087489986"
+=======
+checksum: "4627028940176809867"
+>>>>>>> origin

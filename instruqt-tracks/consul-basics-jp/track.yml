@@ -1,0 +1,626 @@
+slug: consul-basics-jp
+id: v38auj7aice3
+type: track
+title: Consul Basics (Japanese)
+teaser: 世界もっとも利用されているService DiscoveryツールのConsulを学びましょう！
+description: |-
+  Consulの基礎を学びます。
+
+  * ３ Nodeで構成されるConsul Clusterを構築します。
+  * Consul UI
+  * Consul CLI
+  * Consul API
+  * アプリケーションノードをクラスタへ追加
+  * Consul HA
+  * Consul ACLs
+icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
+tags:
+- introduction to consul
+- consul basics
+- serf
+- cluster
+<<<<<<< HEAD
+- japanese
+owner: hashicorp
+developers:
+- masa@hashicorp.com
+- lance@hashicorp.com
+private: true
+published: true
+show_timer: true
+challenges:
+- slug: meet-consul
+  id: x2u2v1rqmikr
+  type: challenge
+  title: Consulを知りましょう！
+  teaser: 最初のConsul Cluster
+  assignment: |
+    Consul の基礎知識へようこそ! このラボでは、3ノードの Consul クラスターを起動してみましょう。
+
+    3つのノードすべてがサーバクラスタに参加すると、Consul UIが正常になっているのがわかるはずです。
+
+    各クラスタノードで以下のコマンドで Consul サーバプロセスを起動してください。
+=======
+owner: hashicorp
+developers:
+- lance@hashicorp.com
+private: true
+published: true
+show_timer: true
+skipping_enabled: true
+challenges:
+- slug: 01-meet-consul
+  id: bgfx8nbzqnjv
+  type: challenge
+  title: Get to Know Consul
+  teaser: My First Consul cluster
+  assignment: |
+    Welcome to Consul Basics! In this lab you'll start up a three-node Consul cluster.
+
+    Once all three nodes have joined the server cluster you should see the Consul UI become healthy.
+
+    Start the Consul server process on each cluster node with the following command.
+>>>>>>> origin/master
+
+    ```
+    /bin/start_consul.sh
+    ```
+
+<<<<<<< HEAD
+    各サーバーのターミナルにコピーして貼り付けるだけです。また、コードエディタで Consul サーバの設定を見ることもできます。全てのオプションを理解する必要はありませんが、 Consul を `server` モードで起動していることに注意してください。(これは設定ファイルの 8 行目にあります)
+
+    各サーバを起動した後に UI をリロードしてみてください。
+
+    起動スクリプトはシンプルで、バックグラウンドプロセスとして Consul を実行します。本番環境では、これはDaemon化されているか、オーケストレータによって管理します。
+
+    健全なクラスタを構築すると、Consul の UI が利用できるようになります。Consul UI のノードタブをクリックすると、3台のサーバーが表示されます。リーダーには星印が付いています。
+  notes:
+  - type: text
+    contents: "\U0001F578️Consulの世界へようこそ！\U0001F47D"
+=======
+    You can simply copy and paste it into the terminal for each server. You may also view the config for one of the Consul servers in the code editor. You don't need to understand all the options, just notice that we are starting Consul in `server` mode. (This is on line 8 in the config file.)
+
+    Try reloading the UI after starting each server.
+
+    Our startup script is simple and runs Consul as a background process. In production this would be daemonized or managed by an orchestrator.
+
+    Once you have a healthy cluster, the Consul UI will become available. Click on the Nodes tab in the Consul UI to see your three servers. The leader is marked with a star. ⭐
+  notes:
+  - type: text
+    contents: "\U0001F578️You are about to enter the Consul Zone\U0001F47D"
+>>>>>>> origin/master
+  tabs:
+  - title: Consul0
+    type: terminal
+    hostname: consul-server-0
+  - title: Consul1
+    type: terminal
+    hostname: consul-server-1
+  - title: Consul2
+    type: terminal
+    hostname: consul-server-2
+  - title: Server0 - Config
+    type: code
+    hostname: consul-server-0
+    path: /consul/config/server.json
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
+  difficulty: basic
+  timelimit: 600
+<<<<<<< HEAD
+- slug: consul-cli
+  id: kxtiabdzr2jq
+  type: challenge
+  title: Consul CLI
+  teaser: Consul CLIを試してみましょう！
+  assignment: |-
+    Consul のバイナリは、サーバ、クライアント、コマンドラインツールとして動作します。環境変数 `CONSUL_HTTP_ADDR` でコマンドラインの設定を事前に設定しています。
+
+    この値を確認するには、次のコマンドを実行します: `echo $CONSUL_HTTP_ADDR`。これが Consul の API サーバーのエンドポイントです。Consul のコマンドラインツールは、127.0.0.0.1 または localhost で API と通信しています。
+
+    GUI やコマンドラインを介した Consul とのすべてのやり取りには、常に API の呼び出しがあります。
+
+    これらのコマンドを試して結果を見てみてください。どのサーバでもコマンドを実行することができます。<br>
+
+    * ヘルプを取得する。
+      - `consul help` または `consul subcommand -help` を参照してください。
+    * ログを表示します。
+      - `consul monitor` (CTRL-Cでエスケープ)
+    * メンバーをリストアップします。
+      - `consul members`
+    * ピアをリストアップします。
+      - `consul oeprator raft listt-peers`
+    * エージェント情報。
+      - `consul info` <br>
+
+    同じ情報をConsulのUIで確認することができます。
+  notes:
+  - type: text
+    contents: |-
+      Consul は単一のバイナリファイルとして配布されており、サーバーとしてもクライアントとしてもCLIとしても動作します。
+      コマンドの完全なリストについては [here](https://www.consul.io/docs/commands/index.html) を参照してください。
+=======
+- slug: 02-consul-cli
+  id: ur5wsyiizlac
+  type: challenge
+  title: Consul CLI
+  teaser: Take the Consul CLI for a spin
+  assignment: |-
+    The Consul binary can act as a server, client, or command line tool. We've preconfigured the command line settings for you with the `CONSUL_HTTP_ADDR` environment variable.
+
+    You can run the following command to see this value: `echo $CONSUL_HTTP_ADDR`. This is the API server endpoint for Consul. The Consul command line tool is communicating to the API on 127.0.0.1 or localhost.
+
+    All interactions with Consul, whether through the GUI, or command line always have an underlying API call.
+
+    Try these commands and view the results. You may run the commands on any server: <br>
+
+    * Get Help:
+      - `consul help` or `consul subcommand -help`
+    * View Logs:
+      - `consul monitor` (CTRL-C to escape)
+    * List Members:
+      - `consul members`
+    * List Peers:
+      - `consul operator raft list-peers`
+    * Agent Info:
+      - `consul info` <br>
+
+    You can check out the same info in the Consul UI.
+  notes:
+  - type: text
+    contents: |-
+      Consul is distributed as a single binary file, which means it can act as both a server or a command line client.
+      You can read more about the full list of commands [here](https://www.consul.io/docs/commands/index.html).
+>>>>>>> origin/master
+  tabs:
+  - title: Consul0
+    type: terminal
+    hostname: consul-server-0
+  - title: Consul1
+    type: terminal
+    hostname: consul-server-1
+  - title: Consul2
+    type: terminal
+    hostname: consul-server-2
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
+  difficulty: basic
+  timelimit: 600
+<<<<<<< HEAD
+- slug: consul-api
+  id: 0ene6z1wfygv
+  type: challenge
+  title: Consul API
+  teaser: Consul APIを試してみましょう！
+  assignment: |-
+    前回の課題と同じコマンドをいくつか試してみましょう。APIと対話するためにUnixの`curl`コマンドを使用します。各コマンドをコピーしてターミナルに貼り付け、出力を表示します。
+
+    * ログモニター
+      - `curl -s http://127.0.0.1:8500/v1/agent/monitor` (CTRL-C でエスケープ)
+    * メンバーをリストアップします
+      - `curl -s http://127.0.0.1:8500/v1/agent/members | jq`
+    * Consulリーダーを取得します
+      - `curl -s http://127.0.0.1:8500/v1/status/leader | jq`
+    * エージェント情報。
+      -  `curl -s http://127.0.0.1:8500/v1/agent/self | jq` <br> <br> <br>
+  notes:
+  - type: text
+    contents: |-
+      Consulとのやりとりに使用できる RESTful API があります。
+      Consul API のドキュメント [こちら](https://www.consul.io/api/index.html) を参照してください。
+=======
+- slug: 03-consul-api
+  id: 6mh7z4axuiix
+  type: challenge
+  title: Consul API
+  teaser: Use the Consul API
+  assignment: |-
+    Let's try some of the same commands from our last assignment with the API. We'll use the Unix `curl` command to interact with the API. Copy and paste each command into the terminal and view the output.
+
+    * Logs:
+      - `curl -s http://127.0.0.1:8500/v1/agent/monitor` (CTRL-C to escape)
+    * List Members:
+      - `curl -s http://127.0.0.1:8500/v1/agent/members | jq`
+    * Get Consul Leader:
+      - `curl -s http://127.0.0.1:8500/v1/status/leader | jq`
+    * Agent Info:
+      - `curl -s http://127.0.0.1:8500/v1/agent/self | jq` <br>
+  notes:
+  - type: text
+    contents: |-
+      Consul has a RESTful API which you can use to interact with Consul.
+      You can see the see Consul API documentation [here](https://www.consul.io/api/index.html).
+>>>>>>> origin/master
+  tabs:
+  - title: Consul0
+    type: terminal
+    hostname: consul-server-0
+  - title: Consul1
+    type: terminal
+    hostname: consul-server-1
+  - title: Consul2
+    type: terminal
+    hostname: consul-server-2
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
+  difficulty: basic
+  timelimit: 600
+<<<<<<< HEAD
+- slug: consul-agents
+  id: spzlyktjanij
+  type: challenge
+  title: Agentの追加
+  teaser: Consul Client agentをConsul clusterに追加してみましょう！
+  assignment: |-
+    ラボ環境に `App Server` を追加しました。アプリサーバは `client` モードで動作するように設定されています。
+
+    App Config`タブを見てください。*server* フラグが false に設定されていることに注意してください。
+
+    `App`タブでConsulの起動スクリプトを実行し、このエージェントをクラスタに参加させます。
+=======
+- slug: 04-consul-agents
+  id: unxdsxuwburk
+  type: challenge
+  title: Add an Agent
+  teaser: Add a Consul client agent to your Consul cluster.
+  assignment: |-
+    We've added an `App Server` to your lab environment. The app server is configured to run in `client` mode.
+
+    Look in the `App Config` tab. Note that the *server* flag is set to false.
+
+    Run the Consul startup script in the `App` tab and join this agent to the cluster.
+>>>>>>> origin/master
+
+    ```
+    /bin/start_consul.sh
+    ```
+
+<<<<<<< HEAD
+    Consul UI のノードリストを見るか、`consul members` コマンドを実行して、アプリサーバーがクラスタに参加したことを確認します。
+  notes:
+  - type: text
+    contents: |-
+      Consul agentは、Consuのサービスを受けたい全てのノード上で実行されます。Consul agentは、物理サーバ、VM、またはコンテナ上で動作します。
+
+      Consul agentは、ノードとそれに関連するサービスの情報情報を追跡します。Agentはこの情報を Consul サーバに報告します。
+=======
+    Look at the node list in the Consul UI or run the `consul members` command to verify that the app server has joined the cluster.
+  notes:
+  - type: text
+    contents: |-
+      The Consul agent runs on every node where you want to keep track of services. A node can be a physical server, VM, or container.
+
+      The agent tracks information about the node and its associated services. Agents report this information to the Consul servers, where we have a central view of node and service status.
+>>>>>>> origin/master
+  tabs:
+  - title: App
+    type: terminal
+    hostname: consul-agent-0
+  - title: App - Config
+    type: code
+    hostname: consul-agent-0
+    path: /consul/config/client.json
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
+  difficulty: basic
+  timelimit: 600
+<<<<<<< HEAD
+- slug: consul-ha
+  id: 0agjz1jzgthl
+  type: challenge
+  title: Consul High Availability
+  teaser: Consul HAを試してみよう！
+  assignment: |-
+    ラボ環境には3台のサーバーがあります。これは、1台のノードを失っても健全なクラスタを維持することができます。
+    コンセンサスのプロトコル[こちら](https://www.consul.io/docs/internals/consensus.html)。<br>
+
+    リーダーを無効にして、どうなるか観察してみましょう。<br>
+
+    まず、現在のリーダーを探します。
+    これはUIからでも、コマンドラインからでもできます。<br>
+=======
+- slug: 05-consul-ha
+  id: twklmkkkdxlb
+  type: challenge
+  title: Consul High Availability
+  teaser: Test Consul's High Availability Capabilities
+  assignment: |-
+    We have 3 servers in our lab environment. This means we can lose one
+    server and still have a healthy cluster. You can read more about the Consensus
+    Protocol [here](https://www.consul.io/docs/internals/consensus.html). <br>
+
+    Let's disable the leader and observe what happens. <br>
+
+    First, find your current leader.
+    You can  do this from the UI (look for the star), or on the command line: <br>
+>>>>>>> origin/master
+
+    ```
+    consul operator raft list-peers
+    ```
+
+<<<<<<< HEAD
+    現在のリーダーのタブに移動し、以下のコマンドを実行してを停止させます。<br>
+=======
+    Go to the tab of your current leader and run the following command to stop the Consul agent: <br>
+>>>>>>> origin/master
+
+    ```
+    pkill consul
+    ```
+
+<<<<<<< HEAD
+     <br>
+
+    もし、`Consul0`がリーダーの場合、即座にUIへのアクセスを失います。
+    最後のサーバーで以下のコマンドを実行します。<br>
+
+    この作業を次のリーダーに対しても行ってください。
+
+    最後に残ったサーバーで以下のコマンドを試してください。
+=======
+    If your leader happens to be `Consul0` you will temporarily lose access to the UI. <br>
+
+    Repeat the above process on the leading server terminal tab, and kill the new leader. <br>
+
+    Run the following commands on the last server: <br>
+>>>>>>> origin/master
+
+    ```
+    consul members
+    consul operator raft list-peers
+    consul catalog nodes
+    ```
+
+<<<<<<< HEAD
+    このようなエラーメッセージが表示されます。
+    <br>
+    ```
+    Unexpected response code: 500 (No cluster leader)
+    ```
+
+    この時点で、2台のサーバに障害が発生したため、クラスタは機能しなくなりました。
+    すべての API コマンドは、少なくとも他のサーバーの 1 つがオンラインに戻るまでエラーになります。
+    Consul を起動して復旧させてみましょう。障害が発生したノードの1つで以下のコマンドを実行します。<br>
+=======
+    You'll see error messages like this: `Unexpected response code: 500 (No cluster leader)` <br>
+
+    Now that two servers have failed your cluster is no longer functional,
+    all API commands will result in errors until at least one of your other servers comes back online.
+    Let's recover by starting Consul back up. Run the following command on one of the failed nodes: <br>
+>>>>>>> origin/master
+
+    ```
+    /bin/start_consul.sh
+    ```
+
+<<<<<<< HEAD
+    ここで `consul members` を実行して、Consul API が再び応答していることを確認します。<br>
+
+    起動スクリプトで3台目のサーバーを復活させます。<br>
+=======
+    Now run `consul members` to verify that the Consul API is responding again. <br>
+
+    Bring back your third server with the startup script: <br>
+>>>>>>> origin/master
+
+    ```
+    /bin/start_consul.sh
+    ```
+
+<<<<<<< HEAD
+    最後にもう一度 `consul members` を実行してください。これで、3つのサーバーノードがすべてアライブ状態になっているのがわかるはずです。<br> <br
+
+    おめでとうございます！Consul clusterがまた元気になりましたね。
+  notes:
+  - type: text
+    contents: |-
+      Consulサーバーは、クラスタの主要な Source of truth となるリーダーを選出します。。すべての更新はクラスタリーダーに転送されます。もしリーダーがダウンした場合は、他のサーバーがすぐにリーダーに選出されます。
+
+      システム内での高可用性を確保するために、3台または5台のサーバーノードでConsulを配備することをお勧めします。
+  - type: text
+    contents: |-
+      nをConsulのサーバー数とすると、Consulのリーダー選出には(n+1)/2のVoteが必要です。リーダーが選出される限りクラスタはヘルシーです。
+      <br>
+      これはつまり、(n-1)/2のサーバーがダウンしてもクラスタがヘルシーに機能することを意味しています。
+
+      例：　３ノードのクラスタの場合、1つノードが落ちても機能する。 <br>
+      例：　５ノードのクラスタの場合、2つノードが落ちても機能する。
+=======
+    And run `consul members` one last time. You should see all three server nodes in alive status. <br>
+
+    Congratulations, your Consul cluster is healthy again.
+  notes:
+  - type: text
+    contents: |-
+      Consul servers work together to elect a single leader, which becomes the primary source of truth for the cluster. All updates are forwarded to the cluster leader. If the leader goes down one of the other servers can immediately take its place.
+
+      To ensure high availability within the system, we recommend deploying Consul with 3 or 5 server nodes.
+  - type: text
+    contents: |-
+      Quorum requires at least (n+1)/2 members. You need quorum for a healthy cluster. <br>
+
+      A three-node cluster can tolerate the loss of a single member.
+      A five-node cluster can tolerate the loss of two members and continue to operate.
+>>>>>>> origin/master
+  tabs:
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
+  - title: Consul0
+    type: terminal
+    hostname: consul-server-0
+  - title: Consul1
+    type: terminal
+    hostname: consul-server-1
+  - title: Consul2
+    type: terminal
+    hostname: consul-server-2
+  - title: App
+    type: terminal
+    hostname: consul-agent-0
+  difficulty: basic
+  timelimit: 600
+<<<<<<< HEAD
+- slug: consul-acls
+  id: o5gqtsvub80q
+  type: challenge
+  title: Consul ACLs
+  teaser: Consul ACLを設定してみましょう！
+  assignment: |-
+    不正アクセスを防ぐために Consulクラスタにアクセス制御を適用してみましょう。ここでは、マスターブートストラップ トークンを使用して UI にアクセスし、アプリ サーバーのポリシーを有効にします。
+
+    UI がロックされていることを確認ください。デフォルトでは*deny*ポリシーのため、ノードとサービスのどれも表示されません。
+
+    consul ACLは、`consul acl bootstrap`コマンドを実行することで有効になります。
+
+    ここでは、すでにこのコマンドを実行して、出力結果を `ACL Bootstrap` コードエディタタブに保存しています。初期ブートストラップトークンは、この出力の `SecretID` フィールドです。このトークンは、クラスタを構成し、他のトークンを生成するために使用されます。ブートストラップトークンをコピーしてください。<br>
+
+    UIを再度有効にするには、Consul UIタブを選択し、ACLタブをクリックして、テキストフィールドにトークンを入力します。
+
+    コマンドラインでは、トークンと一緒に環境変数を設定する必要があります。App`タブで以下のコマンドを実行します。
+=======
+- slug: 06-consul-acls
+  id: qlfdatwayytc
+  type: challenge
+  title: Consul ACLs
+  teaser: Set up basic Consul ACLs
+  assignment: |-
+    Let's apply some access controls to our Consul cluster to prevent unauthorized access. In this challenge you'll use the master bootstrap token to access the UI and to enable a policy for your app server.
+
+    You may notice that you're locked out of the UI. None of the nodes and services are showing up because of a default *deny* policy.
+
+    Consul ACLs are enabled by running the `consul acl bootstrap` command.
+
+    We've already run this command for you and saved the output in the `ACL Bootstrap` code editor tab. The initial bootstrap token is the `SecretID` field of this output. This special token is used to configure your cluster and to generate other tokens. Copy the bootstrap token by highlighting it and pressing CTRL-C. <br>
+
+    To re-enable the UI, select the Consul UI tab, and click on the ACL tab and enter your token into the text field.
+
+    On the command line you should set an environment variable with your token. Run the following command on the `App` tab:
+>>>>>>> origin/master
+
+    ```
+    export CONSUL_HTTP_TOKEN=<your_token_here>
+    ```
+
+<<<<<<< HEAD
+    このラボではデフォルトで拒否ポリシーが設定されているため、`App`ノードではACLエラーがログに記録されます。ACLエラーを表示するには以下のコマンドを実行してください(終了するにはCTRL-Cを押してください)。
+=======
+    This lab has a deny by default policy, so your `App` node will be logging ACL errors. Run the following command to view the ACL errors (CTRL-C to exit):
+>>>>>>> origin/master
+
+    ```
+    consul monitor
+    ```
+
+    ```
+    2019/09/18 20:42:06 [WARN] agent: Coordinate update blocked by ACLs
+    ```
+
+<<<<<<< HEAD
+    アプリサーバーは現在、コンサルの更新やクエリの作成がブロックされています。
+
+    アプリノードの制限付きアクセスを有効にするポリシーを作成してみましょう。App`タブから以下のコマンドを実行します。
+
+    ```
+    consul acl policy create \
+    -name app \
+    -rules @/consul/policies/app.hcl
+    ```
+
+    次に、そのポリシーのトークンを作成します。
+
+    ```
+    consul acl token create -description "app agent token" \
+    -policy-name app
+    ```
+
+    最後にトークンを適用してアクティブにします。
+=======
+    The app server is currently blocked from making any consul updates or queries.
+
+    Let's create a policy to enable limited access for our app node. Run these commands from the `App` tab.
+
+    ```
+    consul acl policy create \
+     -name app \
+     -rules @/consul/policies/app.hcl
+    ```
+
+    Next, create a token for that policy.
+
+    ```
+    consul acl token create -description "app agent token" \
+      -policy-name app
+    ```
+
+    Finally apply the token to make it active.
+>>>>>>> origin/master
+
+    ```
+    consul acl set-agent-token agent "<your_app_agent_token>"
+    ```
+
+<<<<<<< HEAD
+    これで、`App`エージェントのログがエラーを記録しなくなったことが確認できます。
+    Consul agentをACLでセキュアに管理することができました。
+  notes:
+  - type: text
+    contents: |-
+      Consulは、UI、API、CLI、サービス通信、エージェント通信などのセキュリティを向上するためにアクセスコントロールリスト(ACL)を使用しています。
+      ACL は、ルールをポリシーにグループ化し、1 つ以上のポリシーをトークンに関連付けます。
+      ACL は本番環境の運用に不可欠です。<br>
+
+      ACLシステムの詳しい解説は、こちらの[ガイド](https://learn.hashicorp.com/consul/security-networking/production-acls)をご覧ください。<br>
+
+      このチャレンジは立ち上げるのに1～2分かかります。少々お待ちください。
+=======
+    You can now verify that the `App` agent logs are no longer logging errors.
+    Nice work!!! You just secured your first Consul agent!
+  notes:
+  - type: text
+    contents: |-
+      Consul uses Access Control Lists (ACLs) to secure the UI, API, CLI, service communications, and agent communications.
+      ACLs operate by grouping rules into policies, then associating one or more policies with a token.
+      ACLs are imperative for all Consul production environments. <br>
+
+      For a detailed explanation of the ACL system, check out this [guide](https://learn.hashicorp.com/consul/security-networking/production-acls). <br>
+
+      This challenge will take 1-2 minutes to spin up. Please be patient.
+>>>>>>> origin/master
+  tabs:
+  - title: Consul UI
+    type: service
+    hostname: consul-server-0
+    port: 8500
+  - title: App
+    type: terminal
+    hostname: consul-agent-0
+  - title: App Node Policy
+    type: code
+    hostname: consul-server-2
+    path: /consul/policies/app.hcl
+  - title: ACL Bootstrap
+    type: code
+    hostname: consul-server-2
+    path: /tmp/bootstrap.txt
+  difficulty: basic
+  timelimit: 600
+<<<<<<< HEAD
+<<<<<<< HEAD
+checksum: "11204688134422179670"
+=======
+checksum: "7526493047174648524"
+>>>>>>> origin/master
+=======
+checksum: "17282698375088453083"
+>>>>>>> origin

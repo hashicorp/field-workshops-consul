@@ -1,0 +1,7 @@
+#!/bin/sh
+
+/bin/start_consul.sh
+
+sleep 15
+
+exit 0

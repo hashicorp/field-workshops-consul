@@ -1,0 +1,150 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: emojify-ingress
+
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: emojify-ingress-website-intention
+spec:
+  destination:
+    name: emojify-website
+  sources:
+    - name: emojify-ingress
+      action: allow
+
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: emojify-ingress-api-intention
+spec:
+  destination:
+    name: emojify-api
+  sources:
+    - name: emojify-ingress
+      action: allow
+
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: emojify-ingress-payments-intention
+spec:
+  destination:
+    name: emojify-payments
+  sources:
+    - name: emojify-ingress
+      action: allow
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: emojify-ingress
+spec:
+  type: NodePort
+  selector:
+    app: emojify-ingress
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80
+    nodePort: 30000
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: emojify-ingress-configmap
+data:
+  config: |
+    events {
+      worker_connections  1024;
+    }
+
+    http {
+
+      upstream emojify-website {
+        keepalive_timeout 0;
+        server localhost:8000;
+      }
+
+      upstream emojify-api {
+        keepalive_timeout 0;
+        server localhost:8001;
+      }
+
+      upstream emojify-payments {
+        keepalive_timeout 0;
+        server localhost:8002;
+      }
+
+
+      server {
+
+        location / {
+          proxy_http_version 1.1;
+          proxy_pass http://emojify-website;
+          proxy_set_header Host $host;
+        }
+
+        location ~ ^/api(/.*)?$ {
+          proxy_http_version 1.1;
+          proxy_pass http://emojify-api$1$is_args$args;
+          proxy_pass_request_headers on;
+        }
+
+        location = /api/payments {
+          proxy_http_version 1.1;
+          proxy_pass http://emojify-payments/;
+          proxy_pass_request_headers on;
+        }
+
+      }
+    }
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emojify-ingress
+  labels:
+    app: emojify-ingress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emojify-ingress
+  template:
+    metadata:
+      name: emojify-ingress
+      labels:
+        app: emojify-ingress
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
+        "consul.hashicorp.com/connect-service-upstreams": "emojify-website:8000,emojify-api:8001,emojify-payments:8002"
+        "prometheus.io/scrape": "true"
+        "prometheus.io/port": "9901"
+    spec:
+      volumes:
+      - name: config
+        configMap:
+          name: emojify-ingress-configmap
+          items:
+          - key: config
+            path: nginx.conf
+      serviceAccountName: emojify-ingress
+      containers:
+      - name: emojify-ingress
+        image: nginx:alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: config
+          mountPath: /etc/nginx/

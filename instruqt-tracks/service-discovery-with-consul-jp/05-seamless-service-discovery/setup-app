@@ -1,0 +1,49 @@
+#!/bin/bash
+
+echo "Configuring dnsmasq for the local host..."
+apt -y update
+apt -y install dnsmasq
+
+cat <<-EOF > /etc/dnsmasq.d/consul
+user=root
+server=/consul/127.0.0.1#8600
+server=10.94.0.10
+EOF
+
+/etc/init.d/dnsmasq start
+
+sed "s/nameserver.*/nameserver 127.0.0.1/g" /etc/resolv.conf > /tmp/resolv.conf
+cp /tmp/resolv.conf /etc/resolv.conf
+
+echo "Resetting the application config."
+cp /tmp/wp-config.php.backup /var/www/html/wp-config.php
+
+echo "Configuring Consul to act as a DNS forwarder."
+cat <<-EOF > /consul/config/client.json
+{
+  "datacenter": "dc1",
+  "bind_addr": "0.0.0.0",
+  "client_addr": "0.0.0.0",
+  "data_dir": "/consul/data",
+  "log_level": "INFO",
+  "encrypt": "I+An5idzRV6DUN3nkApdiovwUOD3345eu1RU7u25Z04=",
+  "node_name": "Application",
+  "server": false,
+  "ui": false,
+  "recursors": ["10.94.0.10"],
+  "leave_on_terminate": false,
+  "skip_leave_on_interrupt": true,
+  "rejoin_after_leave": true,
+  "retry_join": [
+    "consul-server-0:8301",
+    "consul-server-1:8301",
+    "consul-server-2:8301"
+  ]
+}
+EOF
+
+echo "Restarting the consul service..."
+pkill consul
+
+echo "Starting Consul in Client Mode..."
+nohup sh -c "/usr/local/bin/consul agent -config-dir /consul/config &" && sleep 4

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+terraform apply -auto-approve | tee terraform.out
+
+exit 0

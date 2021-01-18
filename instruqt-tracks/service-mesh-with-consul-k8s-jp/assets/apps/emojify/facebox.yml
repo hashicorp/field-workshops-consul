@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: emojify-facebox
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emojify-facebox
+  labels:
+    app: emojify-facebox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emojify-facebox
+  template:
+    metadata:
+      labels:
+        app: emojify-facebox
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
+        "prometheus.io/scrape": "true"
+        "prometheus.io/port": "9901"
+    spec:
+      serviceAccountName: emojify-facebox
+      containers:
+      - name: emojify-facebox
+        image: "nicholasjackson/emojify-facedetection:v0.10.0"
+        ports:
+        - containerPort: 9090
+        env:
+        - name: MIN_NEIGHBORS
+          value: "14"
+        - name: SCALE_FACTOR
+          value: "1.03"

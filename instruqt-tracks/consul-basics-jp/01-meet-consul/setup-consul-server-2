@@ -1,0 +1,43 @@
+#!/bin/sh
+
+# Configures the Consul server
+cat <<-EOF > /consul/config/server.json
+{
+  "datacenter": "dc1",
+  "bind_addr": "0.0.0.0",
+  "client_addr": "0.0.0.0",
+  "data_dir": "/consul/data",
+  "log_level": "INFO",
+  "node_name": "ConsulServer2",
+  "server": true,
+  "ui": true,
+  "bootstrap_expect": 3,
+  "leave_on_terminate": false,
+  "skip_leave_on_interrupt": true,
+  "rejoin_after_leave": true,
+  "retry_join": [
+    "consul-server-0:8301",
+    "consul-server-1:8301",
+    "consul-server-2:8301"
+  ]
+}
+EOF
+
+echo "Killing the currently running Consul agent..."
+pkill consul
+
+echo "Creating Consul startup script..."
+cat <<-EOF > /bin/start_consul.sh
+#!/bin/sh
+echo "Starting HashiCorp Consul in Server Mode..."
+sleep 1
+echo "CMD: nohup consul agent -config-dir=/consul/config > /consul.out &"
+nohup consul agent -config-dir=/consul/config > /consul.out &
+echo "Log output will appear in consul.out..."
+sleep 1
+echo "Consul server startup complete."
+EOF
+
+chmod +x /bin/start_consul.sh
+
+exit 0

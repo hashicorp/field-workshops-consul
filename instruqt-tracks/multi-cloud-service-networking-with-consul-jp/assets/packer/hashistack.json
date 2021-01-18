@@ -1,0 +1,74 @@
+{
+  "variables": {
+    "azure_subscription_id": "{{ env `INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SUBSCRIPTION_ID` }}",
+    "azure_client_id": "{{ env `INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SPN_ID` }}",
+    "azure_client_secret": "{{ env `INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SPN_PASSWORD` }}"
+  },
+  "builders": [
+    {
+      "name": "amazon-ebs-ubuntu-bionic",
+      "type": "amazon-ebs",
+      "region": "us-east-1",
+      "spot_price": "0",
+      "force_deregister": true,
+      "force_delete_snapshot": true,
+      "ssh_pty": true,
+      "instance_type": "m5.large",
+      "associate_public_ip_address": true,
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*",
+          "root-device-type": "ebs"
+        },
+        "owners": [
+          "099720109477"
+        ],
+        "most_recent": true
+      },
+      "ssh_username": "ubuntu",
+      "ssh_timeout": "5m",
+      "ami_virtualization_type": "hvm",
+      "ami_name": "hashistack-{{isotime \"2006-01-02\"}}",
+      "ami_description": "Hashistack - Ubuntu",
+      "ami_regions": [
+        "us-east-1"
+      ],
+      "tags": {
+        "Name": "Hashistack",
+        "OS": "ubuntu",
+        "OS-Version": "bionic"
+      }
+    },
+    {
+      "name": "azure-ubuntu-bionic",
+      "type": "azure-arm",
+      "subscription_id": "{{ user `azure_subscription_id` }}",
+      "client_id": "{{ user `azure_client_id` }}",
+      "client_secret": "{{ user `azure_client_secret` }}",
+      "managed_image_resource_group_name": "packer",
+      "managed_image_name": "hashistack-{{isotime \"2006-01-02\"}}",
+      "os_type": "Linux",
+      "image_publisher": "Canonical",
+      "image_offer": "UbuntuServer",
+      "image_sku": "18.04-LTS",
+      "azure_tags": {
+        "name": "Hashistack",
+        "os": "ubuntu",
+        "os-version": "bionic"
+      },
+      "location": "West US 2",
+      "vm_size": "Standard_DS2_v2"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "scripts/setup.sh"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/cleanup.sh"
+    }
+  ]
+}

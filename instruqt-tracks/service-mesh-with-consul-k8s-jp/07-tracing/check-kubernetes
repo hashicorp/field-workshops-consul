@@ -1,0 +1,10 @@
+#!/bin/sh
+
+api=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:30900)
+
+if [ "$api" != "200" ] && [ "$api" != "500" ] ; then
+  fail-message "Could not get to web service."
+  exit 1
+fi
+
+exit 0

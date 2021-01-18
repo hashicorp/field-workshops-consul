@@ -1,0 +1,8 @@
+#!/bin/sh
+
+pkill consul
+sleep 5
+/bin/start_consul.sh
+sleep 15
+
+exit 0

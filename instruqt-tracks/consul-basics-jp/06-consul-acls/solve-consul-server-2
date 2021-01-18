@@ -1,0 +1,11 @@
+#!/bin/sh
+
+export CONSUL_HTTP_ADDR=http://consul-agent-0:8500
+export CONSUL_HTTP_TOKEN=$(cat /tmp/bootstrap.txt | grep SecretID | cut -d':' -f2 | xargs)
+
+consul acl policy create -name app -rules @/consul/policies/app.hcl
+consul acl token create -description "app agent token" -policy-name app > /tmp/token.txt
+export token=$(cat /tmp/token.txt | grep SecretID | cut -d':' -f2 | xargs)
+consul acl set-agent-token agent $token
+
+exit 0

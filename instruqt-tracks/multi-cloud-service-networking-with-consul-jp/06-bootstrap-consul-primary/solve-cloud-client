@@ -1,0 +1,49 @@
+#!/bin/bash
+
+#aws
+vault login -method=userpass username=admin password=admin
+export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+
+#create the replication policy & token
+AWS_CONSUL_IP=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip)
+consul acl policy create -name operator -rules @/root/policies/consul/operator.hcl
+vault secrets enable consul
+vault write consul/config/access \
+    address=http://${AWS_CONSUL_IP}:8500 \
+    token=$(consul acl token create -description 'vault mgmt' -policy-name=global-management -format=json | jq -r '.SecretID')
+vault write consul/roles/operator policies=operator ttl=30m
+
+#create the replication policy & token
+consul acl policy create -name replication -rules @/root/policies/consul/replication.hcl
+consul acl token create -policy-name replication -secret=$(vault kv get -field replication_token kv/consul)
+
+#mesh defaults
+echo '
+Kind      = "proxy-defaults"
+Name      = "global"
+Namespace = "default"
+Config {
+  protocol = "http"
+}
+MeshGateway {
+   Mode = "local"
+}' | consul config write -
+
+
+#cat << EOF > /root/terraform/aws-consul-primary/ca.json
+#{
+#  "Provider": "vault",
+#  "Config": {
+#    "Address": "${VAULT_ADDR}",
+#    "Token": "$(vault token create -field token -policy connect -period 8h)",
+#    "RootPKIPath": "connect-root/",
+#    "IntermediatePKIPath": "connect-intermediate/"
+#  },
+#  "ForceWithoutCrossSigning": true
+#
+#EOF
+#onsul connect ca set-config -config-file ca.json
+
+sleep 15
+
+exit 0

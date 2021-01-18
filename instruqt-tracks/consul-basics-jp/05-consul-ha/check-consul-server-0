@@ -1,0 +1,10 @@
+#!/bin/sh
+
+NODES=$(consul operator raft list-peers | grep Consul | wc -l)
+
+if [ $NODES -ne "3" ]; then
+  fail-message "It looks like your cluster has not fully recovered. Run start_consul.sh on each server to fix it."
+  exit 1
+fi
+
+exit 0

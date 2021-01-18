@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd /root/terraform/nomad-scheduler-services
+terraform init
+set-workdir /root/terraform/nomad-scheduler-services
+
+exit 0

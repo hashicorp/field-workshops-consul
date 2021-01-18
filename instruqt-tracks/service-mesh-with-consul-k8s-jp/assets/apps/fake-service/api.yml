@@ -1,0 +1,86 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fake-api
+
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: fake-api
+spec:
+  protocol: grpc
+
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: fake-api-cache-intention
+spec:
+  destination:
+    name: fake-cache
+  sources:
+    - name: fake-api
+      action: allow
+
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: fake-api-payments-intention
+spec:
+  destination:
+    name: fake-payments
+  sources:
+    - name: fake-api
+      action: allow
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fake-api
+  labels:
+    app: fake-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fake-api
+  template:
+    metadata:
+      labels:
+        app: fake-api
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
+        "consul.hashicorp.com/connect-service-upstreams": "fake-cache:9092,fake-payments:9093"
+    spec:
+      serviceAccountName: fake-api
+      containers:
+      - name: fake-api
+        image: "nicholasjackson/fake-service:v0.7.8"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9091
+        env:
+          - name: LISTEN_ADDR
+            value: "0.0.0.0:9091"
+          - name: UPSTREAM_URIS
+            value: "http://127.0.0.1:9092, http://127.0.0.1:9093"
+          - name: MESSAGE
+            value: "API response"
+          - name: NAME
+            value: "fake-api"
+          - name: SERVER_TYPE
+            value: "grpc"
+          - name: TIMING_50_PERCENTILE
+            value: "20ms"
+          - name: TIMING_90_PERCENTILE
+            value: "30ms"
+          - name: TIMING_90_PERCENTILE
+            value: "40ms"
+          - name: TIMING_VARIANCE
+            value: "10"
+          - name: TRACING_ZIPKIN
+            value: "http://jaeger-collector:9411"

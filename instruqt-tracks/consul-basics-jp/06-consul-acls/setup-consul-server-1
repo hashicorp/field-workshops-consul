@@ -1,0 +1,35 @@
+#!/bin/sh
+
+pkill -15 consul
+sleep  5
+
+cat <<-EOF > /consul/config/acl.json
+{
+  "primary_datacenter": "dc1",
+  "acl": {
+    "enabled": true,
+    "default_policy": "deny",
+    "enable_token_persistence": true
+  }
+}
+EOF
+
+mkdir /consul/policies
+
+cat <<-EOF > /consul/policies/server.hcl
+# server.hcl
+node_prefix "ConsulServer" {
+  policy = "write"
+}
+EOF
+
+cat <<-EOF > /consul/policies/app.hcl
+# app.hcl
+node "App" {
+  policy = "write"
+}
+EOF
+
+/bin/start_consul.sh
+
+exit 0

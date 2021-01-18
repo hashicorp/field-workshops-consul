@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cp /database_service.json /consul/config/database_service.json
+/usr/local/bin/consul reload
+
+exit 0

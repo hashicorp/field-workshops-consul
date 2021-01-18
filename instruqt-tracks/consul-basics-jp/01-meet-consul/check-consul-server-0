@@ -1,0 +1,10 @@
+#!/bin/sh
+
+leader=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8500/v1/operator/raft/configuration)
+
+if [ "$leader" != "200" ]; then
+  fail-message "Your Consul cluster does not have a leader."
+  exit 1
+fi
+
+exit 0

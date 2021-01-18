@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cd /root/terraform/azure-consul-secondary
+terraform init
+
+set-workdir /root/terraform/azure-consul-secondary
+
+pubkey=$(cat ~/.ssh/id_rsa.pub)
+cat << EOF > /root/terraform/azure-consul-secondary/terraform.tfvars
+ssh_public_key="${pubkey}"
+EOF
+
+exit 0

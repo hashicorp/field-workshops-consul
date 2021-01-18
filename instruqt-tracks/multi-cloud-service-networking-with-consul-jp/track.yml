@@ -1,0 +1,1452 @@
+slug: multi-cloud-service-networking-with-consul-jp
+id: 1auhrtlehosu
+type: track
+title: Multi Cloud Service Networking with Consul (Japanese)
+teaser: Consulでマルチクラウド環境のServide Meshをデプロイする
+description: |-
+  マルチクラウド環境へConsuをデプロイし、Mesh Gatewayで必要コンポネント同士を接続します。
+  このトラックでは、以下のことを行います。<br>
+  - TerraformでAWS、GCP、Azureの環境をプロビジョン
+  - TerraformでVault、Consul、データベース、K8sなどをプロビジョン
+  - Vaultで安全にシークレットへ各環境からアクセス
+  - Consulで各環境間のサービスを接続
+  - NomadもしくはK8sでタスクのオーケストレーション
+icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+tags:
+- consul
+- vault
+- terraform
+- k8s
+- nomad
+owner: hashicorp
+developers:
+- lance@hashicorp.com
+- thomas@hashicorp.com
+- cpu@hashicorp.com
+- masa@hashicorp.com
+private: true
+published: false
+show_timer: true
+challenges:
+- slug: 01-provision-cloud-infra
+  id: 4c011ikxwvha
+  type: challenge
+  title: クラウドインフラのプロビジョニング
+  teaser: クラウドVPCの作成
+  assignment: |
+    Terraformで、AWS、GPC、Azureにクラウド基盤をプロビジョニングします。<br>
+
+    このラボ環境では、事前に構築されたパッカーイメージを利用します。
+    PackerタブからでどのようにしてAzure用とAWS用のイメージをビルドしているか確認できます。GCPではVMではなくGKEをプロビジョニングして、K8s環境を構築します。<br>
+    作成されたイメージは以下のコマンドで確認できます。
+
+    ```
+    az image list -g packer | jq
+    aws ec2 describe-images --owners self | jq
+    ```
+
+    コードエディタでTerraformのコードを確認してください。これを実行して、共有サービスやアプリケーションのワークロード用のVPCとVNetsを構築します。<br>
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    次からの課題では、環境を横断してシークレットを共有するためにVaultをデプロイしていきます。
+  notes:
+  - type: text
+    contents: |
+      クラウド環境を構築しています。この作業は最大で15分くらいかかる場合があります。
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/infra
+  - title: Packer
+    type: code
+    hostname: cloud-client
+    path: /root/packer
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 300
+- slug: 02-provision-vault
+  id: llpvon8fupak
+  type: challenge
+  title: VaultのProvision
+  teaser: Vaultを構築し、マルチクラウド間でのRepolicationを有効化する。
+  assignment: |-
+    Vault はクロスサイトレプリケーションをサポートしています。
+
+    ここでは、AWS と Azure で Vault インフラストラクチャをプロビジョニングします。<br>
+
+    Terraformのコードを確認してください。<br>
+
+    それでは、Vaultのインフラストラクチャをプロビジョニングします。
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    インフラが構築された後にCloud Initが実行されます。以下のコマンドでinitスクリプトの実行状態を監視することができます。<br>
+
+    * AWS Vault - `ssh ubuntu@$(terraform output aws_vault_ip) 'tail -f /var/log/cloud-init-output.log'`
+    * Azure Vault - `ssh ubuntu@$(terraform output azure_vault_ip) 'tail -f /var/log/cloud-init-output.log'`
+
+    Vaultは、複数の環境間で必要となるシークレットを安全に受け渡しするために利用します。
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/vault
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 300
+- slug: 03-provision-identities
+  id: jhxq6atiqnyx
+  type: challenge
+  title: サービスやワークロードのデプロイに必要なIdentiyの作成
+  teaser: サービスやワークロードのデプロイに必要なIdentiyの作成
+  assignment: |-
+    ここでは、様々なランタイムプラットフォーム上での信頼できるRoleを作成します。これらのRoleは、Vaultがシークレットを安全に受け渡しするために必要です。<br> <br>
+
+    サポートされている Vault 認証メカニズムの詳細については、[Vault website](https://www.vaultproject.io/docs/auth) を参照してください。<br>
+
+    Terraformを実行し、必要なRoleを作成します。<br>
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    次の課題では、これらのRole Identityでシークレットを集中管理します。
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/iam
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 300
+- slug: 04-centralize-secrets-in-vault
+  id: jau2lnxgqmta
+  type: challenge
+  title: Vaultでシークレットを一元管理
+  teaser: 信頼情報とブートストラップ用のシークレットを作成する。
+  assignment: |-
+    ここでは、クラウドやランタイムにまたがるアプリケーションやサービスで使用されるシークレットをVaultに集中管理させます。<br>
+
+    一つ前のチャレンジでVaultサーバーが使えるようになり、タブでUIを確認できるようになりました。<br> <br>
+
+    Vaultレプリケーションは、AWS(Primary) -> Azure(Secondary)で構成されています。
+    Vaultレプリケーションの詳細については、[ドキュメント](https://www.vaultproject.io/docs/enterprise/replication)を参照してください。<br>
+
+    このチャレンジのセットアップ中にVaultの管理者アカウントなどは予め作成しておきました。
+    管理者として以下のコマンドでログインしてください。<br>
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    ```
+
+    レプリケーションの状態を確認して、AWS VaultがAzure Vaultに接続されていることを確認します。<br>
+
+    ```
+    vault read -format=json sys/replication/status | jq
+    ```
+
+    また、有効化されている[auth methods](https://www.vaultproject.io/docs/auth)と[secrets engines](https://www.vaultproject.io/docs/secrets)も見ることができます。
+
+    ```
+    vault secrets list
+    vault auth list
+    ```
+
+    Consul Serverに設定されているロールバインディングを調べます。
+    Consul ServerのRoleに対して`admin`と`consul`のポリシーが付随されているのが確認できます。
+    ポリシーもこのチャレンジのセットアップ中に作成してあります。各ポリシーは`/root/policies/vault`以下にありますので確認ください。
+
+
+    ```
+    vault read /auth/aws/role/consul
+    vault read /auth/azure/role/consul
+    ```
+
+    これで設定が有効になったので、Consulの初期シークレットをVaultへ保管します。
+
+    ```
+    vault kv put kv/consul \
+      master_token=$(cat /proc/sys/kernel/random/uuid) \
+      replication_token=$(cat /proc/sys/kernel/random/uuid) \
+      gossip_key=$(consul keygen) \
+      ttl=5m
+    ```
+
+    このシークレット(`kv/consul`)は後のチャレンジでConsulによって読み出されます。
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/vault
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 300
+- slug: 05-provision-aws-consul-primary
+  id: 3bt9hzkfdqwx
+  type: challenge
+  title: AWS Consul Primary Datacenterをプロビジョニングする
+  teaser: AWSにConsulをデプロイします。
+  assignment: |-
+    このチャレンジでは、AWS上へConsulの初期クラスタをブートストラップします。
+    このクラスタがプライマリとなります。
+
+    Consulをデプロイする手順などは以下の初期化スクリプトを見てください。<br>
+
+    ```
+    cat scripts/aws_consul_server.sh
+    cat scripts/aws_mesh_gateway.sh
+    ```
+
+    注）
+    * ConsulはVault agentで自動認証し、Template機能でシークレットを取得します。
+    * Vault agentはAWS認証でIdentityを担保します。
+    * AWS認証のためのRoleは前のチャレンジで作成したものを使用します。
+
+    TerraformでConsulサーバーをプロビジョニングします。
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    ここでも、以下のコマンドでinitスクリプトの実行状態を確認することができます。<br>
+
+
+    * Consul Server - `ssh ubuntu@$(terraform output aws_consul_public_ip) 'tail -f /var/log/cloud-init-output.log'`
+    * Consul MGW - `ssh ubuntu@$(terraform output aws_mgw_public_ip) 'tail -f /var/log/cloud-init-output.log'`
+
+    サーバーがリーダーを選出するのを待ちます（EC2インスタンスが利用可能になるまで数分かかることもあります）。<br>
+
+    ```
+    consul_api=$(terraform output aws_consul_public_ip)
+    curl -s -v http://{$consul_api}:8500/v1/status/leader
+    ```
+
+    次のチャレンジでは、Consul のプライマリサーバーの設定を完了します。
+  tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/aws-consul-primary
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  difficulty: basic
+  timelimit: 14400
+- slug: 06-bootstrap-consul-primary
+  id: 4ixkw4ogyh3o
+  type: challenge
+  title: Consul Primary Datacenterをブートストラップする
+  teaser: Consul プライマリサーバーの設定をする。
+  assignment: |-
+    このチャレンジでは、Consulのプライマリサーバーに接続するために必要なトークンやポリシーの設定を行います。<br>
+
+    * [Vault CA](https://www.consul.io/docs/connect/ca/vault)
+    * [Secure Multi DC](https://learn.hashicorp.com/tutorials/consul/access-control-replication-multiple-datacenters)
+    * [Proxy Defaults](https://www.consul.io/docs/agent/config-entries/proxy-defaults)
+
+    ConsulサーバーのUIへはConsulタブからもアクセスできるようになっています。
+
+    まず、Consulサーバーは[master token](https://www.consul.io/docs/security/acl/acl-system#builtin-tokens)で初期化されています。
+    VaultにLogin（認証）してそのトークンを取得し、`CONSUL_HTTP_TOKEN`環境変数へセットします。`CONSUL_HTTP_TOKENN`はConsulとやりとりする際に必要となるトークンになります。
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+    ```
+
+    VaultからConsulへのアクセスに必要な[短命なトークン](https://www.vaultproject.io/docs/secrets/consul)を発行できるように設定します。（この例では30分）
+
+    ```
+    AWS_CONSUL_IP=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip)
+    consul acl policy create -name operator -rules @/root/policies/consul/operator.hcl
+    vault secrets enable consul
+    vault write consul/config/access \
+        address=http://${AWS_CONSUL_IP}:8500 \
+        token=$(consul acl token create -description 'vault mgmt' -policy-name=global-management -format=json | jq -r '.SecretID')
+    vault write consul/roles/operator policies=operator ttl=30m
+    ```
+
+    これでVaultから`operator`ポリシーが付随されたConsulの短命なトークン（30分）を発行できるようになりました。
+
+    ```
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+    consul acl token read -self
+    ```
+
+    次に、そのトークンをReplication設定用のポリシーと紐付けます。これにより複数のクラスタ間の統制をコントロールします。
+    ここで設定される実際のポリシーは`/root/policies/consul`以下で参照できます。
+
+    ```
+    consul acl policy create -name replication -rules @/root/policies/consul/replication.hcl
+    consul acl token create -policy-name replication -secret=$(vault kv get -field replication_token kv/consul)
+    ```
+
+    ConsulのプライマリクラスタのCA設定をチェックしてみましょう。CN（Common Name)に `pri-`の接頭詞がついている事を確認してください。
+
+    ```
+    curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq '.Roots'
+    curl -s ${CONSUL_HTTP_ADDR}/v1/connect/ca/roots | jq -r '.Roots[0].RootCert' | openssl x509 -text -noout
+    ```
+
+    最後に、このService Meshのデフォルト設定をConsulのConfigに書き込みます。
+
+    ```
+    echo '
+    Kind      = "proxy-defaults"
+    Name      = "global"
+    Namespace = "default"
+    Config {
+      protocol = "http"
+    }
+    MeshGateway {
+       Mode = "local"
+    }' | consul config write -
+    ```
+
+    次からのチャレンジでは、二つ目以降のConsulクラスタをこのプライマリに接続する設定を行っていきます。
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/aws-consul-primary
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 300
+- slug: 07-create-namespaces-and-policies
+  id: g3apda3sltwq
+  type: challenge
+  title: Namespacesとポリシーを作成する
+  teaser: ConsulのNamespace機能でマルチテナンシーを設定する。
+  assignment: |-
+    このチャレンジでは、開発チーム毎にNamespaceを分ける設定を行います。これはConsul Enterprise版だけの機能となります。
+
+    まずは各設定を行うためのOperatorトークンをVaultから取得します。
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+    ```
+
+    Namespaceを開発チーム毎に作成します。 <br>
+
+    ```
+    consul acl policy create -name "cross-namespace-policy-sd" -description "cross-namespace service discovery" -rules @cross-namespace-sd.hcl
+    consul namespace update -name default -default-policy-name=cross-namespace-policy-sd
+    consul namespace write payments-namespace.hcl
+    consul namespace write product-namespace.hcl
+    consul namespace write frontend-namespace.hcl
+    ```
+
+    各チーム用のConsulのポリシーを作成し、それぞれをVaultのConsulシークレットエンジンのRoleと紐付けます。
+
+    ```
+    consul acl policy create -name "payments-developer-policy" -description "payments devloper" -rules @payments-developer.hcl
+    consul acl policy create -name "product-developer-policy" -description  "product developer" -rules @product-developer.hcl
+    consul acl policy create -name "frontend-developer-policy" -description "frontend developer" -rules @frontend-developer.hcl
+
+    vault write consul/roles/payments-developer policies=payments-developer-policy ttl=30m
+    vault write consul/roles/product-developer  policies=product-developer-policy ttl=30m
+    vault write consul/roles/frontend-developer policies=frontend-developer-policy ttl=30m
+    ```
+
+    これで各開発チームはそれぞれのNamespaceでスコープが分けられました。これにより、各チームは自分の権限で許されている部分にのみ作業することができ、安全安心に分業することができます。
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Policies
+    type: code
+    hostname: cloud-client
+    path: /root/policies
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 300
+- slug: 08-provision-azure-consul-secondary-datacenter
+  id: jjshbwye3mpb
+  type: challenge
+  title: セカンダリのデータセンターをAzure上にプロビジョンする。
+  teaser: AzureにConsulのデータセンターを構築する。
+  assignment: |-
+    このチャレンジでは、Azure上にセカンダリのConsulクラスタを構築し、プライマリとの接続を行います。
+
+    Consulサーバー及びMesh Gatewayを構築するスクリプトは以下から確認ください。
+    このクラスタにおいては、Vault agentは`Azure認証`をおこなってシークレットを取得しています。
+
+    ```
+    cat scripts/azure_consul_server.sh
+    cat scripts/azure_mesh_gateway.sh
+    ```
+
+    それではTerraformでプロビジョニングしてみましょう。
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    インスタンスのプロビジョニングが終わったあとにInitスクリプトが実行されます。スクリプとの実行状態は以下のコマンドで確認できます。<br>
+
+    * Consul Server - `ssh ubuntu@$(terraform output azure_consul_public_ip) 'tail -f /var/log/cloud-init-output.log'`
+    * Consul MGW    - `ssh ubuntu@$(terraform output azure_mgw_public_ip) 'tail -f /var/log/cloud-init-output.log'`
+
+    ConsulサーバーがLeaderとして選出されるのを待ってください。インスタンスのInitスクリプトが終わるまで数分かかる場合があります。
+    以下のコマンドでLeaderの確認ができます。
+
+    ```
+    consul_api=$(terraform output azure_consul_public_ip)
+    curl -s -v http://{$consul_api}:8500/v1/status/leader
+    ```
+
+    以下のコマンドで、Replicationが有効になっているか確認できます。
+
+    ```
+    consul_api=$(terraform output azure_consul_public_ip)
+    curl -s -v http://{$consul_api}:8500/v1/acl/replication | jq
+    ```
+
+    この段階で、セカンダリクラスタ（Azure）がプライマリクラスタ（AWS）にJoinできていることがUIからも確認できます。CLIからは以下のコマンドで確認できます。
+
+    ```
+    consul members -wan
+    ```
+
+    ConsulのセカンダリクラスタのCA設定をチェックしてみましょう。CN（Common Name)に `sec-`の接頭詞がついている事を確認してください。<br>
+
+    ```
+    consul_api=$(terraform output azure_consul_public_ip)
+    curl -s http://${consul_api}:8500/v1/connect/ca/roots | jq '.Roots'
+    curl -s http://${consul_api}:8500/v1/connect/ca/roots | jq -r '.Roots[0].IntermediateCerts[0]' | openssl x509 -text -noout
+    ```
+
+    次のチャレンジでは、GCPのセカンダリの設定を行います。
+  tabs:
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/azure-consul-secondary
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  difficulty: basic
+  timelimit: 300
+- slug: 09-provision-gcp-consul-secondary-datacenter
+  id: jr6tlyznhk9g
+  type: challenge
+  title: GCP上にセカンダリデータセンターをプロビジョニングする。
+  teaser: GKEにConsulクラスタを構築する。
+  assignment: |-
+    ここでは、GCP上のセカンダリクラスタとしてGKEを立ち上げ、K8s上へConsulをデプロイします。
+    そして、GKE上にサーバーが無事に立ち上がったか確認し、プライマリとの接続を行います。
+
+    この環境では、Consulは全てGKE上で動きます。Consulのヘ`helm chart`により、簡単にConsulサーバーやConsulクライアントをデプロイできます。
+
+    K8sでConsulを実行する方法については、以下のリソースを参照してください。<br>
+      * https://www.consul.io/docs/k8s
+      * https://www.consul.io/docs/k8s/installation/multi-cluster/kubernetes
+
+    TerraformでK8のサービスクラスタをプロビジョニングします。<br>
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    Terraformのapplyが終わったらWorker nodesを確認してください。<br>
+
+    ```
+    gcloud container clusters get-credentials $(terraform output gcp_gke_cluster_shared_name) --region us-central1-a
+    kubectl config rename-context $(kubectl config current-context) shared
+    kubectl config use-context shared
+    kubectl get nodes
+    ```
+
+    これでK8sが準備されました。次に、K8s用のFederation secretを作成します。
+    K8sの`Secret`として、`serverConfigJSON`や証明書などを格納します。
+
+    ＊　`serverConfigJSON`にはプライマリデータセンターへのアクセス情報が入っています。
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    aws_mgw=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_mgw_public_ip)
+    server_json=$(jq -n --arg mgw "$aws_mgw" '{primary_datacenter: "aws-us-east-1",primary_gateways:["\($mgw):443"]}')
+    cat <<EOF | kubectl apply -f -
+    {
+    "apiVersion": "v1",
+    "kind": "Secret",
+      "data": {
+        "caCert": "$(vault read -field certificate pki/cert/ca | base64 -w 0)",
+        "caKey": "$(vault kv get -field private_key kv/pki | base64 -w 0)",
+        "gossipEncryptionKey": "$(vault kv get -field gossip_key kv/consul | base64 -w 0)",
+        "replicationToken": "$(vault kv get -field replication_token kv/consul | base64 -w 0)",
+        "serverConfigJSON": "$(echo $server_json | base64 -w 0)"
+        },
+        "metadata": {
+            "name": "consul-federation",
+            "namespace": "default"
+        }
+    }
+    EOF
+    ```
+
+    次に、Consulサーバーをデプロイします。`consul-join.yaml`と`consul-values.yaml`の内容を確認ください。
+
+    ```
+    kubectl apply -f /root/terraform/gcp-consul-secondary/consul-join.yaml
+    helm install hashicorp hashicorp/consul -f /root/terraform/gcp-consul-secondary/consul-values.yaml --debug --wait
+    ```
+
+    ConsulのAPIを叩いて、LeaderやReplicationの状態を確認します。
+
+    ```
+    kubectl get svc consul-ui -o json | jq -r .status.loadBalancer.ingress[0].ip
+    consul_api=$(kubectl get svc consul-ui -o json | jq -r .status.loadBalancer.ingress[0].ip)
+    curl -k -s https://{$consul_api}/v1/status/leader
+    curl -k -s https://{$consul_api}/v1/acl/replication | jq
+    ```
+
+    次のエクササイズでは、Consulによる外部サービスの監視に必要なコンポネントをプロビジョンします。
+  tabs:
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/gcp-consul-secondary
+  difficulty: basic
+  timelimit: 300
+- slug: 10-provision-consul-esms
+  id: p6k6finxxyi4
+  type: challenge
+  title: Consul ESMをプロビジョンする
+  teaser: Consul ESM機能で外部サービスへのヘルスチェックを設定します。
+  assignment: |-
+    ここでは、Consul External Services Monitor（ESM)という機能を使って、Consul agentが動いていないサービスに対してヘルスチェックを設定します。<br>
+
+    ESMはクラウド上のマネージドサービスやConsulが実行できない環境のサービスなどに対してよく使われます。
+
+    ESMについての詳細については以下を参照ください。
+      * https://learn.hashicorp.com/tutorials/consul/service-registration-external-services
+      * https://github.com/hashicorp/consul-esm
+      * https://www.hashicorp.com/resources/bloomberg-s-consul-story-to-20-000-nodes-and-beyond
+
+
+    TerraformでESMを行うインスタンスをプロビジョンします。
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    インスタンスがプロビジョンされたら、Initスクリプトが実行されます。状況を確認する場合は、以下のコマンドを実行してください。
+    * AWS ESM - `ssh ubuntu@$(terraform output aws_esm_public_ip) 'tail -f /var/log/cloud-init-output.log'`
+    * Azure ESM - `ssh ubuntu@$(terraform output azure_esm_public_ip) 'tail -f /var/log/cloud-init-output.log'`
+
+
+    ConsulクラスタでESMサービスが立ち上がっているか確認してください。`consul-esm`というサービスが表示されればOKです。
+
+    ```
+    consul catalog services -datacenter=aws-us-east-1
+    consul catalog services -datacenter=azure-west-us-2
+    ```
+
+    次のエクササイズからは、クラウドマネージドサービスをプロビジョンし、ESMからモニタリングをする設定をします。
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/esm
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 300
+- slug: 11-provision-cache-services
+  id: 65m9rubvhaiu
+  type: challenge
+  title: Cacheサービスのプロビジョン
+  teaser: クラウドマネージドサービスをデプロイします。
+  assignment: |-
+    ここでは、アプリケーションで使用するAWS ElastiCacheのインスタンスをプロビジョンします。
+    ElastiCacheはRedisのデータストアになります。<br>
+
+    Consulの設定もTerraformで行うことができます。[Consul Provider](https://registry.terraform.io/providers/hashicorp/consul/latest/docs).
+
+    Terraformコードを確認して、 どのようにConsulのサービスとして登録しているか確認ください。
+    Consulとやりとりをするために`CONSUL_HTTP_TOKEN`という環境変数でトークンを設定しています。
+    それではTerraformでapplyします。<br>
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    プロビジョンが終わると、ConsulのサービスカタログにCacheインスタンスが登録されます。
+
+    ```
+    curl -s "${CONSUL_HTTP_ADDR}/v1/health/service/redis?passing=true" | jq
+    ```
+
+    この後のエクササイズでこのマネージドのRedisインスタンスでPaymentsの処理をおこなっていきます。
+  tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/cache-services
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  difficulty: basic
+  timelimit: 300
+- slug: 12-provision-database-services
+  id: s50gbxyycmjl
+  type: challenge
+  title: データベースサービスのプロビジョン
+  teaser: マネージドのデータベースインスタンスをプロビジョンします。
+  assignment: |-
+    ここでは、Azure上にPostgresデータベースをプロビジョンします。
+
+    先ほどのエクササイズでやったように、Consulの設定はTerraformでやっていきます。 [Consul Provider](https://registry.terraform.io/providers/hashicorp/consul/latest/docs).
+
+    Terraformのコードを確認して、Applyを実行してください。
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    プロビジョンが終わると、データベースサービスがサービスカタログに登録されます。
+
+    ```
+    curl -s \"${CONSUL_HTTP_ADDR}/v1/health/service/postgres?dc=azure-west-us-2&passing=true\" | jq
+    ```
+
+    この後のエクササイズで、Postgresで商品リストの管理を行っていきます。
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/database-services
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 300
+- slug: 13-provision-consul-terminating-gateways
+  id: ysaduzmvrelc
+  type: challenge
+  title: Consul Terminating Gatewayのプロビジョン
+  teaser: 外部サービスへのEgress通信の設定をします。
+  assignment: |-
+    ここでは、Consulの **Terminating Gateways (TGW)** の設定を行います。
+    TGWは、Consul Service meshから外部サービスへの通信を可能にする機能になります。<br>
+
+    TGWについての詳細はこちらを参照ください。[the docs](https://www.consul.io/docs/connect/gateways/terminating-gateway) <br>
+
+    Terraformで設定をおこなっていきます。Operator tokenの取得や、TGWのプロビジョンを行います。
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    プロビジョン後のInitスクリプトの動作状況などは以下のコマンドで確認できます。
+
+    * AWS TGW - `ssh ubuntu@$(terraform output aws_tgw_public_ip) 'tail -f /var/log/cloud-init-output.log'`
+    * Azure TGW - `ssh ubuntu@$(terraform output azure_tgw_public_ip) 'tail -f /var/log/cloud-init-output.log'`
+
+    Initスクリプトが実行されると、以下のコマンドでTGWがサービスとして登録されたか確認できます。
+    `aws-us-east-1-terminating-gateway`のようなサービス名で登録されています。
+
+    ```
+    consul catalog services -datacenter=aws-us-east-1
+    consul catalog services -datacenter=azure-west-us-2
+    ```
+
+    この後のエクササイズでは、Vault、Redis、Postgresなどへの通信はTGWを使ってやっていきます。
+  tabs:
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/tgw
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  difficulty: basic
+  timelimit: 300
+- slug: 14-provision-nomad-scheduler-services
+  id: yjn48gkd8fla
+  type: challenge
+  title: Nomadのプロビジョン
+  teaser: Nomadをデプロイします。
+  assignment: |-
+    ここでは、PaymentアプリケーションをデプロイするためにNomadをAWSへプロビジョンします。
+    NomadとVaultやConsulとの連携については以下を参照ください。
+
+    * [Introduction](https://www.nomadproject.io/intro)
+    * [Nomad & Vault](https://www.nomadproject.io/docs/integrations/vault-integration)
+    * [Nomad & Consul](https://www.nomadproject.io/docs/integrations/consul-integration)
+    * [Nomad & Consul Connect](https://www.nomadproject.io/docs/integrations/consul-connect)
+
+    Terraformのコードを確認し、プロビジョンを行なってください。<br>
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    Initスクリプトの動作状況は以下のコマンドで確認ください。
+
+    ```
+    ssh ubuntu@$(terraform output aws_nomad_server_public_ip) 'tail -f /var/log/cloud-init-output.log'
+    ```
+
+    Nomadのプロビジョンが終わると、UIにアクセスできるようになります。
+    以下のコマンドからNomad UIのURLを取得してアクセスしてみてください。
+
+    ```
+    echo http://$(terraform output aws_nomad_server_public_ip):4646
+    ```
+
+    これでNomadがAWS上に構築されました。
+
+    ```
+    consul catalog services -datacenter=aws-us-east-1
+    ```
+
+    アプリケーションのワークロードはこのあとのエクササイズで、Nomadを使ってデプロイしていきます。
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/nomad-scheduler-services
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  difficulty: basic
+  timelimit: 300
+- slug: 15-provision-k8s-scheduler-services
+  id: ngdaka5ujzsy
+  type: challenge
+  title: フロントエンドのK8sをプロビジョン
+  teaser: K8s上へフロントエンドのアプリケーションをデプロイする
+  assignment: |-
+    ここではGCPのK8sで実行するワークロードをデプロイします。
+    新たに二つのGKEクラスタをプロビジョンし、それらを予め作っておいたGKEと連携させます。
+
+    ここで行う連携パターンなどについては、以下のドキュメントを参照ください。
+
+    * [Overview](https://www.consul.io/docs/k8s)
+    * [Multi-Cluster](https://www.consul.io/docs/k8s/installation/multi-cluster)
+
+    Terraformのコードを確認し、Applyを行なってください。
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    次に、新たに作成されった2つのK8sクラスタを先につくっておいたクラスタと連携させます。<br>
+
+    まず、Reactクラスタをデプロイします。<br>
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    gcloud container clusters get-credentials $(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_name) --region us-central1-a
+    kubectl config rename-context $(kubectl config current-context) react
+    kubectl config use-context react
+    kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
+    kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
+    kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
+    helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f react-values.yaml --debug --wait --timeout 10m
+    helm list -a
+    ```
+
+    次に、Graphqlクラスタをデプロイします。<br>
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    gcloud container clusters get-credentials $(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_name) --region us-central1-a
+    kubectl config rename-context $(kubectl config current-context) graphql
+    kubectl config use-context graphql
+    kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
+    kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
+    kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
+    helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_graphql_endpoint)" -f graphql-values.yaml --debug --wait --timeout 10m
+    helm list -a
+    ```
+
+    もし、Helmでエラーが起きたら、Deploymentを`upgrade`コマンドで再実行してください。
+
+
+    ```
+    #react
+    vault login -method=userpass username=admin password=admin
+    kubectl config use-context react
+    kubectl delete secret bootstrap-token
+    kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
+    helm upgrade consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f react-values.yaml --debug --wait --timeout 10m
+
+    #graphql
+    vault login -method=userpass username=admin password=admin
+    kubectl config use-context graphql
+    kubectl delete secret bootstrap-token
+    kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
+    helm upgrade consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_graphql_endpoint)" -f graphql-values.yaml --debug --wait --timeout 10m
+    ```
+
+    問題なくデプロイされれば、これらの新たにデプロイされたサービスもカタログに追加されているはずです。
+
+    ```
+    consul catalog nodes -datacenter gcp-us-central-1
+    ```
+
+    このあとのエクササイズでは、これらのクラスタでフロントエンドのアプリケーションワークロードを実行していきます。
+  tabs:
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/k8s-scheduler-services
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 500
+- slug: 16-configure-intentions
+  id: k47la8jnxzmm
+  type: challenge
+  title: Intentionsの設定
+  teaser: 各サービス間のmTLSの設定を行います。
+  assignment: |-
+    ここでは、各担当者による必要な通信設定を行なっていきます。
+
+    各担当者事に必要最低限のアクセスを許可していきます。
+    まずはインフラの管理者の設定です。
+    Intentionは `consul  inteintion create`コマンドで作成していきます。
+
+    ```
+    vault login -method=userpass username=admin password=admin
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+    consul intention create -allow '*/*' 'default/vault'
+    consul intention create -allow 'default/payments-api' 'default/redis'
+    consul intention create -allow 'frontend/public-api' 'default/payments-api'
+    consul intention create -allow 'product/*' 'default/postgres'
+    ```
+
+    次にDeveloperとしてアクセスできる権限を設定します。
+
+    ```
+    vault login -method=userpass username=product-developer password=product
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/product-developer)
+    consul intention create -allow 'frontend/public-api' 'product/product-api'
+    ```
+
+    次にフロントエンドエンジニアとしてアクセスできる権限を設定します。
+
+    ```
+    vault login -method=userpass username=frontend-developer password=frontend
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/frontend-developer)
+    consul intention create -allow 'frontend/web' 'frontend/public-api'
+    ```
+
+    このあとのエクササイズでは、これらのIntentionで設定されたサービス間通信をデプロイしていきます。
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/policies
+  difficulty: basic
+  timelimit: 300
+- slug: 17-deploy-payments-applications
+  id: b4vjlxj8gkwz
+  type: challenge
+  title: Payments APIのデプロイ
+  teaser: PaymentsワークロードをNomadでデプロイ
+  assignment: |-
+    ここではNomadでPayments APIをスケジューリング＆デプロイしていきます。
+    NomadはHashiCorpが開発しているJob Schedulerです。コンテナに限らず様々なタスクのオーケストレーションを行うツールです。
+
+    では、NomadでJobをデプロイしてみましょう。<br>
+
+    ```
+    nomad run payments-api.hcl
+    ```
+
+    しばらくすると、Payments APIサービスがNomadクラスタで実行されます。<br>
+    以下のヘルスチェックAPIでConsulのカタログに追加されたか確認ください。
+
+    ```
+    curl -s ${CONSUL_HTTP_ADDR}/v1/health/service/payments-api?passing=true | jq
+    ```
+
+    これでPayments APIのデプロイは完了しました。
+  tabs:
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/nomad-scheduler-services
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  difficulty: basic
+  timelimit: 300
+- slug: 18-deploy-product-applications
+  id: y1aqt8km1ypv
+  type: challenge
+  title: プロダクトアプリケーションのデプロイ
+  teaser: プロダクトの情報を扱うワークロードのデプロイを行います。
+  assignment: |-
+    ここでは、プロダクト（商品）を扱うアプリケーションのデプロイをおこないます。このアプリケーションはAzureにデプロイされます。<br>
+
+    では、プロビジョンをTerraformで行いましょう。
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    Initスクリプトの実行状況は以下で確認ください。
+
+    ```
+    ssh ubuntu@$(terraform output azure_product_api_public_ip) 'tail -f /var/log/cloud-init-output.log'
+    ```
+
+    Product APIサービスがクラスタで実行されているか、以下のコマンドで確認ください。
+
+    ```
+    consul catalog services -datacenter azure-west-us-2 -namespace=product
+    ```
+
+    この後のエクササイズで、プロダクトに対するクエリをハンドリングするAPIが有効になりました。
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/product-applications
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 300
+- slug: 19-deploy-frontend-applications
+  id: avmwxgqkcmbv
+  type: challenge
+  title: フロントエンドのデプロイ
+  teaser: GKEで実行されるフロンエンドAPIとアプリケーションをデプロイします。
+  assignment: |-
+    ここでは、GKEで実行されるフロントエンドAPIをデプロイします。
+
+    K8sのDeployment specを確認Appsタブから確認してください。<br>
+    それではAPIをデプロイしてみましょう。<br>
+
+    ```
+    kubectl config use-context graphql
+    kubectl apply -f public-api.yaml
+    ```
+
+    次にReactで動くフロントエンドアプリケーションをデプロイします。<br>
+
+    ```
+    kubectl config use-context react
+    kubectl apply -f web.yaml
+    ```
+
+    フロントエンドがこれでデプロイされました。Frontend services are now available.
+
+    ```
+    consul catalog services -datacenter gcp-us-central-1 -namespace=frontend
+    ```
+
+    次からのエクササイズでは、これらのWebインターフェースを介して、他のデータセンターで動くバックエンドとの連携を設定していきます。
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Apps
+    type: code
+    hostname: cloud-client
+    path: /root/apps
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 300
+- slug: 20-review-application-deployment
+  id: szoq7pvuiuk7
+  type: challenge
+  title: Review Application Deployment
+  teaser: Validate workload configuration
+  assignment: |-
+    In this assignment you will validate the product DB and access to the payment queue. <br>
+
+    Check the DB for available products. <br>
+
+    ```
+    export PGPASSWORD=$(terraform output -state /root/terraform/database-services/terraform.tfstate postgres_password)
+    psql -U postgres@$(terraform output -state /root/terraform/infra/terraform.tfstate env) \
+      -d postgres \
+      -h $(terraform output -state /root/terraform/database-services/terraform.tfstate postgres_fqdn) \
+      -c 'SELECT * FROM coffees' \
+      -a
+    ```
+
+    Check the queue for payments (there will be zero keys). <br>
+
+    ```
+    ssh -i ~/.ssh/id_rsa ubuntu@$(terraform output -state /root/terraform/infra/terraform.tfstate aws_bastion_ip) \
+      "redis-cli -h \
+      $(terraform output -state /root/terraform/cache-services/terraform.tfstate -json aws_elasticache_cache_nodes | jq -r .[0].address) -p 6379 keys '*'"
+    ```
+
+    In the next few assignments you will retrieve products and send payments.
+  tabs:
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 300
+- slug: 21-test-application-deployment
+  id: k92sm8er5y5i
+  type: challenge
+  title: Test Application Deployment
+  teaser: Put it all together
+  assignment: |-
+    In this assignment you will test the application. <br>
+
+    The UI is available on the react cluster. <br>
+
+    ```
+    kubectl config use-context react
+    echo "http://$(kubectl get svc web-service -o json | jq -r .status.loadBalancer.ingress[0].ip)"
+    ```
+
+    Monitor the cache for incoming payments in one window. <br>
+
+    ```
+    ssh -i ~/.ssh/id_rsa ubuntu@$(terraform output -state /root/terraform/infra/terraform.tfstate aws_bastion_ip) \
+      "redis-cli -h \
+      $(terraform output -state /root/terraform/cache-services/terraform.tfstate -json aws_elasticache_cache_nodes | jq -r .[0].address) -p 6379 MONITOR"
+    ```
+
+    In the other window send traffic to the HashiCups public APIs. <br>
+
+    ```
+    kubectl config use-context graphql
+    endpoint=$(kubectl get svc public-api-service -o json | jq -r .status.loadBalancer.ingress[0].ip)
+    ```
+
+    Try the Product API. <br>
+
+    ```
+    curl -s -v http://${endpoint}:8080/api \
+      -H 'Accept-Encoding: gzip, deflate, br' \
+      -H 'Content-Type: application/json' \
+      -H 'Accept: application/json' \
+      -H 'Connection: keep-alive' \
+      -H 'DNT: 1' \
+      --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+      --compressed | jq
+    ```
+
+    Try the payment API. <br>
+
+    #payments
+
+    ```
+    curl -s -v http://${endpoint}:8080/api \
+      -H 'Accept-Encoding: gzip, deflate, br' \
+      -H 'Content-Type: application/json' \
+      -H 'Accept: application/json' \
+      -H 'Connection: keep-alive' \
+      -H 'DNT: 1' \
+      --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+      --compressed | jq
+    ```
+
+    You just connected the HashiCups app across three clouds!
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  - title: Web App
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8080
+  difficulty: basic
+  timelimit: 300
+checksum: "13241017359705647852"

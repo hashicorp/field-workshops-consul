@@ -1,0 +1,50 @@
+version: "2"
+containers:
+- name: app
+  image: wordpress
+  shell: /bin/bash
+  ports:
+  - 80
+  - 443
+  environment:
+    WORDPRESS_DB_HOST: Database
+    WORDPRESS_DB_NAME: wordpress
+    WORDPRESS_DB_PASSWORD: HashiCorp123
+    WORDPRESS_DB_USER: root
+    WORDPRESS_TABLE_PREFIX: wp
+- name: database
+  image: gcr.io/instruqt-hashicorp/hashidb:latest
+  ports:
+  - 3306
+  environment:
+    MYSQL_DATABASE: wordpress
+    MYSQL_PASS: HashiCorp123
+    MYSQL_ROOT_PASSWORD: HashiCorp123
+    MYSQL_USER: wp-user
+- name: consul-server-0
+  image: consul:latest
+  ports:
+  - 8300
+  - 8301
+  - 8302
+  - 8500
+  - 8600
+  memory: 128
+- name: consul-server-1
+  image: consul:latest
+  ports:
+  - 8300
+  - 8301
+  - 8302
+  - 8500
+  - 8600
+  memory: 128
+- name: consul-server-2
+  image: consul:latest
+  ports:
+  - 8300
+  - 8301
+  - 8302
+  - 8500
+  - 8600
+  memory: 128

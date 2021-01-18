@@ -1,0 +1,8 @@
+version: "2"
+virtualmachines:
+- name: kubernetes
+  image: instruqt/k3s-v1-18-8
+  shell: /bin/bash
+  environment:
+    CONSUL_HTTP_ADDR: http://127.0.0.1:30085
+  machine_type: n1-standard-2

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+FILE=/consul/data/acl-tokens.json
+if ! [ -f "$FILE" ]; then
+  fail-message "It doesn't look like your agent has a token..."
+  exit 1
+fi
+
+exit 0

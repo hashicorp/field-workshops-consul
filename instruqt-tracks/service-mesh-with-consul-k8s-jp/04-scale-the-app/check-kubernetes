@@ -1,0 +1,10 @@
+#!/bin/sh
+
+pods=$(kubectl get pod --selector=app=emojify-facebox --field-selector=status.phase=Running -o name | wc -l)
+
+if [ "$pods" != "2" ]; then
+  fail-message "You have ${pods} number of backend pods running. Try again..."
+  exit 1
+fi
+
+exit 0

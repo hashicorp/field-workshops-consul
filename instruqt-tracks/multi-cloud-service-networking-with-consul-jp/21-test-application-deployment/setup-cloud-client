@@ -1,0 +1,18 @@
+#!/bin/sh
+
+kubectl config use-context react
+endpoint=$(kubectl get svc web-service -o json | jq -r .status.loadBalancer.ingress[0].ip)
+cat << EOF > /etc/nginx/conf.d/app.conf
+server {
+  listen 8080;
+  location / {
+    proxy_pass http://${endpoint};
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect off;
+  }
+  access_log /var/log/nginx/app.log;
+}
+EOF
+/usr/sbin/service nginx restart
+
+exit 0

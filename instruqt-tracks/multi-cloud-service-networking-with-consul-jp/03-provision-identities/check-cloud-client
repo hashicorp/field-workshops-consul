@@ -1,0 +1,36 @@
+#!/bin/bash
+
+#check aws roles
+aws iam get-role --role-name consul-$(terraform output -state /root/terraform/infra/terraform.tfstate env)
+if [ $? -ne 0 ]
+then
+  fail-message "Error getting AWS Consul IAM role"
+  exit 1
+fi
+aws iam get-role --role-name nomad-$(terraform output -state /root/terraform/infra/terraform.tfstate env)
+if [ $? -ne 0 ]
+then
+  fail-message "Error getting AWS Nomad IAM role"
+  exit 1
+fi
+
+#check azure roles
+rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
+az identity show \
+  --name consul-$(terraform output -state /root/terraform/infra/terraform.tfstate env) \
+  --resource-group "${rg}"
+if [ $? -ne 0 ]
+then
+  fail-message "Error getting Azure Consul IAM role"
+  exit 1
+fi
+rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
+az identity show \
+  --name product-api-$(terraform output -state /root/terraform/infra/terraform.tfstate env) \
+  --resource-group "${rg}"
+if [ $? -ne 0 ]
+then
+  fail-message "Error getting Azure Consul IAM role"
+  exit 1
+fi
+exit 0

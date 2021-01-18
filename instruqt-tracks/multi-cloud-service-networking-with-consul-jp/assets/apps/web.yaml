@@ -1,0 +1,88 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: web
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+  labels:
+    app: web
+  annotations:
+    'consul.hashicorp.com/service-sync': 'true'
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: web
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-configmap
+data:
+  config: |
+    server {
+        listen       80;
+        server_name  localhost;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+        }
+        location /api {
+            proxy_pass http://127.0.0.1:8080;
+        }
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      service: web
+      app: web
+  template:
+    metadata:
+      labels:
+        service: web
+        app: web
+      annotations:
+        prometheus.io/scrape: "true"
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/connect-service-upstreams: "public-api:8080"
+    spec:
+      volumes:
+      - name: config
+        configMap:
+          name: nginx-configmap
+          items:
+          - key: config
+            path: default.conf
+      serviceAccountName: web
+      containers:
+        - name: web
+          image: hashicorpdemoapp/frontend:v0.0.4
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: config
+              mountPath: /etc/nginx/conf.d
+              readOnly: true

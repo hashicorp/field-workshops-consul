@@ -1,0 +1,43 @@
+#!/bin/bash
+# Creating the Consul client config
+cat <<-EOF > /consul/config/client.json
+{
+  "datacenter": "dc1",
+  "bind_addr": "0.0.0.0",
+  "client_addr": "0.0.0.0",
+  "data_dir": "/consul/data",
+  "log_level": "INFO",
+  "encrypt": "I+An5idzRV6DUN3nkApdiovwUOD3345eu1RU7u25Z04=",
+  "node_name": "Database",
+  "server": false,
+  "ui": false,
+  "leave_on_terminate": false,
+  "skip_leave_on_interrupt": true,
+  "rejoin_after_leave": true,
+  "retry_join": [
+    "consul-server-0:8301",
+    "consul-server-1:8301",
+    "consul-server-2:8301"
+  ]
+}
+EOF
+
+echo "Starting Consul in Client Mode..."
+nohup sh -c "/usr/local/bin/consul agent -config-dir /consul/config &" && sleep 4
+
+echo "Creating database service and health check definition file..."
+cat <<-EOF > /database_service.json
+{ "service":
+  { "name": "mysql",
+    "tags": ["database","production"],
+    "port": 3306,
+    "check": {
+      "id": "mysql",
+      "name": "MySQL TCP on port 3306",
+      "tcp": "localhost:3306",
+      "interval": "10s",
+      "timeout": "1s"
+    }
+  }
+}
+EOF

@@ -1,0 +1,69 @@
+#!/bin/bash
+# Configures the App server
+
+echo "Fixing our path..."
+export PATH=$PATH:/usr/local/bin
+
+echo "Installing utilities..."
+apt -y update
+apt -y install unzip wget dnsutils jq
+echo "Installing consul..."
+wget https://releases.hashicorp.com/consul/1.6.1/consul_1.6.1_linux_amd64.zip -O /tmp/consul.zip
+cd /usr/local/bin
+unzip /tmp/consul.zip
+chmod +x /usr/local/bin/consul
+mkdir -p /consul/config
+mkdir -p /consul/data
+
+echo "Installing the WP-CLI tool..."
+wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/local/bin/wp
+chmod +x /usr/local/bin/wp
+
+cat <<-EOF > /consul/config/client.json
+{
+  "datacenter": "dc1",
+  "bind_addr": "0.0.0.0",
+  "client_addr": "0.0.0.0",
+  "data_dir": "/consul/data",
+  "log_level": "INFO",
+  "encrypt": "I+An5idzRV6DUN3nkApdiovwUOD3345eu1RU7u25Z04=",
+  "node_name": "Application",
+  "server": false,
+  "ui": false,
+  "leave_on_terminate": false,
+  "skip_leave_on_interrupt": true,
+  "rejoin_after_leave": true,
+  "retry_join": [
+    "consul-server-0:8301",
+    "consul-server-1:8301",
+    "consul-server-2:8301"
+  ]
+}
+EOF
+
+echo "Starting Consul in Client Mode..."
+nohup sh -c "/usr/local/bin/consul agent -config-dir /consul/config &" && sleep 4
+
+echo "Configuring user and theme..."
+sleep 10 # wait for DB server to be up
+URL="https://app-80-${INSTRUQT_PARTICIPANT_ID}.env.play.instruqt.com"
+/usr/local/bin/wp core install --url="$URL" --title="Consul Service Discovery" --admin_user=consul --admin_password=consul --admin_email=consul@example.com --skip-email --allow-root --path=/var/www/html
+/usr/local/bin/wp theme activate twentyseventeen --allow-root --path=/var/www/html
+/usr/local/bin/wp option update blogdescription "Dynamically locate any service or app on your network" --allow-root --path=/var/www/html
+/usr/local/bin/wp post create --post_title='Consul Enterprise Features' --post_content='<ul><li><a href="https://consul.io/docs/enterprise/backups/index.html">Automated Backups</a></li><li><a href="https://consul.io/docs/enterprise/upgrades/index.html">Automated Upgrades</a></li><li><a href="https://consul.io/docs/enterprise/read-scale/index.html">Enhanced Read Scalability</a></li><li><a href="https://consul.io/docs/enterprise/redundancy/index.html">Redundancy Zones</a></li><li><a href="https://consul.io/docs/enterprise/federation/index.html">Advanced Federation for Complex NetworkTopologies</a></li><li><a href="https://consul.io/docs/enterprise/network-segments/index.html">Network Segments</a></li><li><a href="https://consul.io/docs/enterprise/sentinel/index.html">Sentinel</a></li></ul><p>These features are part of <a href="https://www.hashicorp.com/consul.html">Consul Enterprise</a>.</p>' --allow-root --path=/var/www/html --post_status=publish
+/usr/local/bin/wp post create --post_title='Service Discoveryなんて簡単だい！' --post_content='<img class="alignleft size-medium" src="https://www.datocms-assets.com/2885/1588888987-consulprimarylogofullcolorrgb.svg" width="192" height="192" />Consul の主な使用例の 1 つは、サービスのDiscoveryです。<p>Consulは、各サービスがローカルのConsulクライアントに登録するため、これらのサービスがどこにあるかを知っています。オペレータは手動でサービスを登録することができ、構成管理ツールは配備時にサービスを登録することができ、コンテナオーケストレーションプラットフォームは統合を介して自動的にサービスを登録することができます。' --allow-root --path=/var/www/html --post_status=publish
+/usr/local/bin/wp comment create --comment_post_ID=5 --comment_content="Wow, best Service Discovery tool ever. 🐱‍👤" --comment_author="A. Turing" --allow-root --path=/var/www/html
+/usr/local/bin/wp comment create --comment_post_ID=5 --comment_content="🤘👩‍🎤 Consul Rocks! We use it in all our datacenters and cloud environments and can find all our healthy services instantly." --comment_author="A. Lovelace" --allow-root --path=/var/www/html
+/usr/local/bin/wp comment create --comment_post_ID=5 --comment_content="Consulはいいなぁー。🕸️" --comment_author="伊藤" --allow-root --path=/var/www/html
+
+cat <<-'EOF' >> /var/www/html/wp-config.php
+define('FORCE_SSL_ADMIN', true);
+if (strpos($_SERVER['HTTP_X_FORWARDED_PROTO'], 'https') !== false)
+$_SERVER['HTTPS']='on';
+EOF
+
+echo "Breaking the Wordpress connection..."
+perl -p -i -e "s/'Database'/'10.94.99.99'/" /var/www/html/wp-config.php
+
+echo "Making a backup of the Wordpress config file..."
+cp /var/www/html/wp-config.php /tmp/wp-config.php.backup

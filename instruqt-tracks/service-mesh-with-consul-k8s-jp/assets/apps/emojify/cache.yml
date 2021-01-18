@@ -1,0 +1,46 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: emojify-cache
+
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: emojify-cache
+spec:
+  protocol: grpc
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emojify-cache
+  labels:
+    app: emojify-cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emojify-cache
+  template:
+    metadata:
+      labels:
+        app: emojify-cache
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
+        "prometheus.io/scrape": "true"
+        "prometheus.io/port": "9901"
+    spec:
+      serviceAccountName: emojify-cache
+      containers:
+      - name: emojify-cache
+        image: "nicholasjackson/emojify-cache:v0.4.3"
+        ports:
+        - containerPort: 9090
+        env:
+        - name: BIND_ADDRESS
+          value: "0.0.0.0"
+        - name: CACHE_MAX_LIFE
+          value: 30s

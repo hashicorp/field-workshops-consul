@@ -1,0 +1,9 @@
+#!/bin/bash
+
+/usr/local/bin/consul catalog services -node Application | grep -q http
+STATUS=$?
+
+if [ $STATUS -ne 0 ]; then
+  fail-message "The application health check was not found. Please try again."
+  exit 1
+fi

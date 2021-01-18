@@ -1,0 +1,41 @@
+#!/bin/bash
+
+#aws - 2 new + default vpc
+echo "Checking AWS VNETs"
+aws_vpc=$(aws ec2 describe-vpcs | jq '[.. |."State"? | select(. == "available")] | length')
+if [ "${aws_vpc}" = "3" ]; then
+  exit 0
+fi
+#should be 5 total VPCs
+if [ "${aws_vpc}" != "3" ]; then
+  fail-message "VPCs did not provision successful."
+  exit 1
+fi
+
+#azure
+echo "Verifying Azure VNETs"
+rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
+vnet_count=$(az network vnet list -g "${rg}" | jq '. | length')
+if [ -z "$vnet_count" ]; then
+      fail-message "Could not get Azure VNets. Check your Terraform."
+      exit 1
+fi
+if [ "$vnet_count" = "2" ]; then
+  exit 0
+fi
+if [ "$vnet_count" != "2" ]; then
+  fail-message "VNETs did not provision successful."
+  exit 1
+fi
+
+#gcp
+gcp_vpc=$(gcloud compute networks list --format=json | jq '. | length')
+if [ "${gcp_vpc}" = "2" ]; then
+  exit 0
+fi
+#should be 5 total VPCs
+if [ "${gcp_vpc}" != "3" ]; then
+  fail-message "VPCs did not provision successful."
+  exit 1
+fi
+exit 0
