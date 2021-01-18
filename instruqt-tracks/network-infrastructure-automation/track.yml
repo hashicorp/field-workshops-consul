@@ -1,0 +1,610 @@
+slug: network-infrastructure-automation
+id: zd9iqr8wyub0
+version: 0.0.1
+type: track
+title: Network Infrastructure Automation
+teaser: Automate the provisioning and ongoing management of network infrastructure.
+description: In this workshop you'll learn how to automate the provisioning and management
+  of traditional network infrastructure using Terraform, Consul, and Consul Terraform
+  Sync. Eliminate exposure to operational overhead and security risk while accelerating
+  the deployment and scaling of applications and services.
+icon: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/NIA-CTS-Icon.png
+tags:
+- consul
+- NIA
+owner: hashicorp
+developers:
+- lance@hashicorp.com
+- npearce@hashicorp.com
+private: true
+published: true
+show_timer: true
+skipping_enabled: true
+challenges:
+- slug: 1-review-lab-objectives
+  id: rihjzbfzsm9m
+  type: challenge
+  title: Review Lab Objectives
+  teaser: Before we begin, lets quickly review the architecture.
+  assignment: "In this workshop we will build the infrastructure depicted in the in
+    the 'NIA - Traffic Flow' tab on the left, but before we do lets quickly review
+    the operational challenges we are going to address.\n\n**Navigate to the 'NetOps
+    - Operational Pattern' tab.**\n\nIn this diagram we have a two-tier application
+    running on virtual machines that is being delivered by Consul Service Discovery.
+    Not a complex use-case but a very common one. New virtual machins are frequently
+    added and removed to handle scaling requirements and to 'A/B test' new functionality.
+    These changes require frequent invovlement with the already overworked Net Operations
+    team who must adjust/update security and load-balancing configurations.\nThe long
+    hours and lengthy job queues results in deployment errors and, potnetially, security
+    issues.\n\n**Navigate to the 'NIA - Operational Pattern' tab.**\n\nWith `Consul`
+    providing real-time application state (IP Addresses and App meta-data), Consul
+    Terraform Sync uses that infromation, and its visibility of all application state
+    changes, to configure the network infrastructure eliminating the need for Network
+    Operations teams invovlement in Day 2 Ops.\n\n**Navigate to the 'NIA - Traffic
+    Flow' tab.**\n\nIn this diagram you can see the Traffic Flow of the infrastructure
+    we are going to build in the following steps. \n\nNOTE: A fine-grained policy
+    on the Palo Alto firewall is possible, without increasing operational overhead,
+    when Consul Terraform Sync is automating the management of the policy address
+    group.\n\nIn the next few challenges we are going to provision resources to build
+    the cloud environment depicted in this diagram enabling you to see this workflow
+    in operation."
+  notes:
+  - type: text
+    contents: |-
+      Every journey begins with a single step!
+
+      Step 1, review the environment you will build using Terraform, and manage using Consul Terraform Sync.
+  tabs:
+  - title: NetOps - Operational Pattern
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/1.NIA-Workshop-NetOps.html
+  - title: NIA - Operational Pattern
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/1.NIA-Workshop-CTS.html
+  - title: NIA - Traffic Flow
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/1.NIA-Workshop-CTS_Traffic.html
+  difficulty: basic
+  timelimit: 300
+- slug: 2-provision-azure-vnets
+  id: y1cns7c1xooc
+  type: challenge
+  title: Provision Azure VNETs
+  teaser: Deploy basic network infrastructure using Terraform
+  assignment: |-
+    In this assignment you will provision the VNets in the "Current Lab Setup" tab that will used in the following assignments. <br>
+
+    Navigate to the "Terraform Code" tab and inspect the Infrastructure as Code templates used by Terraform to build the VNETs.
+
+    In the `Shell` tab, deploy the Azure VNETs by running the following commands.
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    Their CIDR blocks are listed below:
+    ```
+    hcs-vnet: 10.0.0.0/16
+    shared-svcs-vnet: 10.2.0.0/16
+    app-vnet: 10.3.0.0/16
+    ```
+
+    The subnets created within 'app-vnet' are as follows:
+    ```
+    MGMT: 10.3.1.0/24
+    INTERNET: 10.3.2.0/24
+    DMZ: 10.3.3.0/24
+    APP: 10.3.4.0/24
+    ```
+
+    You will leverage these VNETs in the next few assignments.
+  notes:
+  - type: text
+    contents: |
+      Setting up your environment... Your Azure account will be ready in ~5 minutes.
+      Keep an eye on the bottom right corner to know when you can get started.
+  tabs:
+  - title: Current Lab Setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/2.NIA-Workshop-VNETs.html
+  - title: Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/vnet
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
+  difficulty: basic
+  timelimit: 3000
+- slug: 3-provision-core-services
+  id: 8g5r3gchzqun
+  type: challenge
+  title: Provision Core Services
+  teaser: Provision Vault and HCS using Terraform
+  assignment: "With the VNETs provisioned you are now ready to deploy HCS (Hashicorp
+    Consul Service, aka. Consul-as-a-Service), Vault, and a Bastian Host used to access
+    various services in future challenges.\n\nYou will use Terraform to provision
+    while you set up Consul in the next few assignments. <br>\n\nStart with Vault.
+    Vault is a secrets management solution that we will use to securely store sensitive
+    information such as usernames, passwords, certificates, and tokens.<br>\n\nYou
+    can review the Terraform templates used to simplify and accelerate the deployment
+    of Vault in the 'Vault Terraform Code' tab.\n\nWhen ready, switch to the `Shell`
+    tab and run the following commands.\n\n ```\ncd /root/terraform/vault\nterraform
+    plan\nterraform apply -auto-approve\n``` \n\nNow provision HCS:\n\nIn the `Shell`
+    tab run the following commands.\n\n ```\ncd /root/terraform/hcs\nterraform plan\nnohup
+    terraform apply -auto-approve > /root/terraform/hcs/terraform.out &\n```\n\nNOTE:
+    HCS will continue to provision in the background allowing you to progress to the
+    next step."
+  notes:
+  - type: text
+    contents: |
+      Terraform allows you to document, share, and deploy environments in one workflow by using Infrastructure as Code!
+  tabs:
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/3.NIA-Workshop-Core_Svcs.html
+  - title: Vault Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/vault
+  - title: HCS Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/hcs
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
+  difficulty: basic
+  timelimit: 3000
+- slug: 4-provision-network-infra
+  id: fbyphtsxladi
+  type: challenge
+  title: Provision F5 BIG-IP & Palo Alto Firewall
+  teaser: Provision an F5 BIG-IP VE & Palo Alto Firewall using Terraform
+  assignment: "First we will provision the Palo Alto Firewall.\n <br>\n\nIn the `Shell`
+    tab run the following commands.\n```\ncd /root/terraform/panw-vm\nterraform plan\nnohup
+    terraform apply -auto-approve > /root/terraform/panw-vm/terraform.out &\n```\n\n
+    NOTE: The Palo Alto Firewall will continue to provision in the background allowing
+    you to progress to the next step.\n\n Now we will provision the F5 BIG-IP Virtual
+    Edition using Terraform. <br>\n\nIn the `Shell` tab run the following commands.\n
+    ```\ncd /root/terraform/bigip\nterraform plan\nterraform apply -auto-approve\n```\n\n
+    This can take several minutes to complete, while you are waiting\ntake the opportunity
+    to review the `Palo Alto Terraform Code` and `F5 BIG-IP Terraform Code` tabs to
+    see the IaC definitions.\n\nOnce the apply is complete, you can Navigate to the
+    BIG-IP at the IP address in the Terraform output.\n\n**NOTE:** you will need open
+    the URL provided by the output in a separate tab. If you are using chrome, you\nmay
+    be presented with a certificate error, to bypass this you can type \"thisisunsafe\"
+    into the Chrome window.\n\nThe HCS services may not be running quite yet, but
+    are required before we move on to the next challenge. \nYou can monitor its progress
+    with the following command:\n\nMontior HCS provisioning\n```\ntail -f /root/terraform/hcs/terraform.out\n```"
+  notes:
+  - type: text
+    contents: |
+      In this exercise we will be provisioning an F5 BIG-IP Virtual Edition and Palo Alto VM Series Firewall using Terraform.
+  tabs:
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/4.NIA-Workshop-F5_PA.html
+  - title: Palo Alto Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/panw-vm
+  - title: F5 BIG-IP Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/bigip
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
+  difficulty: basic
+  timelimit: 3000
+- slug: 5-configure-palo-alto-firewall
+  id: fyfegnx6ag8o
+  type: challenge
+  title: Configure Palo Alto Firewall
+  teaser: Provision a Palo Alto VM-Series Firewall using Terraform.
+  assignment: |-
+    Now we will configure the Palo Alto Firewall using Terraform.
+
+     First, let's verify that the Palo Alto VM Series has been instanciated.
+     In the `Shell` tab run the following commands.
+
+     ```
+    tail /root/terraform/panw-vm/terraform.out
+    ```
+
+     You should see `Apple complete!`. If not, take the time to review the Terraform IaC definition that will be used to configure the firewall in the 'Terraform Code' tab. If it has complete, proceed with the following commands to configure the firewall:
+
+     ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    Now we must instrut the firewall to `commit` this change using the following command:
+    ```
+    /root/terraform/panos_commit/panos-commit -config /root/terraform/panos_commit/panos-commit.json
+    ```
+
+    Once the apply is complete, you can Navigate to the Palo Alto Firewall
+    using the information in the 'Access Info' tab. Open new browser tabs to access the Palo Alto and BIG-IP Virtual Machines.
+
+    For CLI access to the Firewall execute:
+    ```
+    ssh -q -A -J azure-user@$bastion_ip paloalto@$firewall_ip
+    ```
+  notes:
+  - type: text
+    contents: Next we shall configure the newly deployed Palo Alto virtual machine.
+  tabs:
+  - title: Provision PANW
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/4.NIA-Workshop-F5_PA.html
+  - title: Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/panw-config
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Access Info
+    type: code
+    hostname: workstation
+    path: /access.md
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
+  difficulty: basic
+  timelimit: 300
+- slug: 6-validate-hcs
+  id: z5sy2diwt2hl
+  type: challenge
+  title: Validate HCS
+  teaser: Verify Vault, HCS, and Consul are operational
+  assignment: |
+    Consul HCS and Vault should now be provisioned and accessible from the corresponding tabs.
+
+    In this exercise we will gather the information required to connect to HCS and securely store this information in Vault.
+
+    In the `Shell` tab run the following commands.
+    ```
+    vault login -method=userpass username=operations password=Password1
+    ```
+
+    Retrieve the bootstrap token and gossip key from HCS and save it to your Vault instance.
+
+    ```
+    echo $CONSUL_HTTP_ADDR
+    echo $VAULT_ADDR
+    bootstrap_token=$(az hcs create-token --resource-group $(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name) --name hcs | jq  -r .masterToken.secretId)
+    gossip_key=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .encrypt)
+    vault kv put secret/consul master_token=${bootstrap_token} gossip_key=${gossip_key}
+    ```
+
+    Now inspect the credentials.
+
+    ```
+    echo $VAULT_ADDR
+    vault kv get secret/consul
+    ```
+    You can use this token to login and explore the Consul UI, use of the master token should be highly restricted, instead let's configure Vault to issue [dynamic secrets](https://www.vaultproject.io/docs/secrets/consul/) for Consul. <br>
+
+    Get a management token for Vault to manage Consul tokens with.
+    You can retrieve the privileged token for this operation from Vault.  <br>
+
+    ```
+    export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
+    vault_consul_mgmt_token=$(consul acl token create -policy-name=global-management -description "vault mgmt" | grep SecretID | cut -d ":" -f2 | xargs)
+
+    ```
+    Now configure the secrets engine.
+
+    ```
+    vault write consul/config/access address=${CONSUL_HTTP_ADDR} token=${vault_consul_mgmt_token}
+    vault read consul/config/access
+    ```
+
+    Last, create a policy for the operations team, and link it to the Vault role.
+
+    ```
+    consul acl policy create -name "ops" -description "admin policy for ops" -rules 'acl = "write" operator = "write" namespace_prefix "" {acl = "write"}'
+    vault write consul/roles/ops policies=ops ttl=1h
+    ```
+
+    Now you are ready to get a dynamic Consul token from Vault for an operator.
+    Validate the token after you fetch it. <br>
+
+    ```
+    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
+    consul acl token read -self
+    ```
+
+    You can use this token to set up the anonymous policy.
+
+    ```
+    echo '
+    node_prefix "" {
+      policy = "read"
+    }
+    service_prefix "" {
+      policy = "read"
+    }
+    session_prefix "" {
+      policy = "read"
+    }
+    agent_prefix "" {
+      policy = "read"
+    }
+    query_prefix "" {
+      policy = "read"
+    }
+    operator = "read"' |  consul acl policy create -name anonymous -rules -
+    consul acl token update -id anonymous -policy-name anonymous
+    ```
+
+    You will use this role in a later assignment to configure access for Consul service consumers.
+  notes:
+  - type: text
+    contents: |
+      Next we shall verify the core services are operating as expected and then configure HCS to use Vault secrets for its tokens.
+  tabs:
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/6.NIA-Workshop-Tokens.html
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
+  difficulty: basic
+  timelimit: 3000
+- slug: 7-deploy-app-environments
+  id: k0reagnnfzuc
+  type: challenge
+  title: Deploy App environments
+  teaser: Deploy a 2-tier VM based application to the cloud.
+  assignment: "\nIn this assignment we will be deploying the current application into
+    Azure based VM's. <br>\n\nAs part of the cloud migration, the VM's will also be
+    configured to run a Consul agent that registers these services with Consul.  This
+    will make it easy to refactor the application, as the application is no longer
+    dependent upon static IP addresses which are hardcoded into configuration and
+    application code. <br>\n\nThis also means that IP addresses no longer have to
+    be known before provisioning can occur, thus, decoupling steps in the provisioning
+    workflow.\n\n\nReview the code in the `Terraform Code` this defines the VMSS for
+    the web and app tiers of the application.\n\nBegin provisioning the application
+    in the background.\n\n```\nterraform plan\nnohup terraform apply -auto-approve
+    > deploy_app.log 2>&1 &\n```\n\nBy registering nodes and services in Consul other
+    services can easily discover their status and location. <br>\n\nYou can now monitor
+    the progress of the App deployment by watching the `Consul` tab as the new App
+    and Web services auto-register.\n\nYou could also watch the output of the app
+    deployment log by executing the following command in the `Shell` tab \n```\ntail
+    -f /root/terraform/app/deploy_app.log\n```\n\n You will explore the environment
+    in more detail in the next challange. <br>"
+  notes:
+  - type: text
+    contents: |
+      Now we'll deploy the last piece of infrastructure before experiencing the magic of Network Infrastructure Automation w/ Consul Terraform Sync.
+  tabs:
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/7.NIA-Workshop-App_Deploy.html
+  - title: Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/app
+  - title: Access Info
+    type: code
+    hostname: workstation
+    path: /access.md
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
+  difficulty: basic
+  timelimit: 3000
+- slug: 8-install-consul-terraform-sync
+  id: jskeddctb13s
+  type: challenge
+  title: Deploy 'Consul Terraform Sync'
+  teaser: Now we are going install Consul Terraform Sync and bring dynamic service
+    discovery to network infrastructure.
+  assignment: |-
+    Before installing Consul Terraform Sync, lets take a look at the F5 BIG-IP and the Palo Alto Firewall.
+
+    Using the credentials in the 'Access Info' tab, open new browser windows and login to the BIG-IP and Palo Alto Firewall.
+
+    **BIG-IP Configuration**
+
+    In the BIG-IP, click on 'Local Traffic', then 'Network Map' (a new window will open). In this new window, change the partition from 'Common' to 'All' and then reload the page with `Cmd/Ctrl+R`.
+
+    This will be empty. Typically a BIG-IP administrator would now configure the Virtual IP, all the protocol profiles, the monitor, the load-balancer pool, and then add all the web server to the pool. Consul Terraform Sync is going to take care of this for us in the next step.
+
+    ** Palo Alto Configuration**
+
+    Switch to the Palo Alto browser tab. Under the Policies tab, note that the second rule "Allow traffic from BIG-IP to App" has a Destination Address Group titled "cts-add-grp-web".
+
+    Navigate to the "Objects" tab and select "Address Groups". Under the 'Addresses' column for "cts-add-grp-web" click on "more...". Note that the Address Group is empty. Consul Terraform Sync is going to take care of this.
+
+    Lastly, navigate to the 'App' tab and note that the App is not currently available through the network infrastructure.
+
+     **Deploy Consul Terraform Sync**
+
+    Now its time to take care of all the Network Infrastructure operations with Consul Terraform Sync.
+    ```
+    cd /root/terraform/consul-tf-sync/
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    When complete, connect to the image
+    ```
+    consul_terraform_sync=$(curl -s $CONSUL_HTTP_ADDR/v1/catalog/node/consul-terraform-sync | jq -r '.Node.Address')
+    ssh -q -A -J azure-user@$bastion_ip azure-user@$consul_terraform_sync
+    ```
+
+    Take a look at the `consul-terraform-sync` configuration
+
+    ```
+    cat /etc/consul-tf-sync.d/consul-tf-sync.hcl
+    ```
+
+    Review the terraform-consul-sync service status with the following command
+    ```
+    service consul-tf-sync status
+    ```
+
+    Now complete the review of the Palo Alto & BIG-IP once again, per the steps above. Note that their configurations have been updated.
+
+    Next, navigate to the App tab. The app is now available through the Firewall and Load-balanced. Their configurations have been inherited from Consul.
+
+    Lastly, navigate back to the 'Current Lab Setup' tab and marvel and the beauty of Network Infrastructure Automation. You did this.
+
+    Move to the next assignment when they are ready.
+  notes:
+  - type: text
+    contents: |
+      Now we're going to eliminate a lot of operational friction by installing `consul-terraform-sync`. This will auto-update network infrastructure as service changes occur!
+  tabs:
+  - title: Current Lab Setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/8.NIA-Workshop-CTS_Install.html
+  - title: Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/consul-tf-sync
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Access Info
+    type: code
+    hostname: workstation
+    path: /access.md
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: App
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8080
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
+  difficulty: basic
+  timelimit: 3000
+- slug: 9-scale-the-application
+  id: tjlwihpjo0s9
+  type: challenge
+  title: Scale the application
+  teaser: Let Consul take care of routine adds/moves/changes of services instances.
+  assignment: "Now let's re-run the Terraform code for the app application, but pass
+    in some new variables for the scale parameters.\n\n```\nterraform apply -var app_count=3
+    -var web_count=3 -auto-approve\n```\n\nAfter the Terraform run completes, you
+    can monitor the status of your nodes and services using the Consul UI. Once all
+    of the new instances are online and healthy, you can revisit some of the things
+    we reviewed in the previous exercise.\n\nView the nodes and services via CLI\n\n```\nconsul
+    members\nconsul catalog services\n```\n\nReview all of the web instances\n```\ncurl
+    -s $CONSUL_HTTP_ADDR/v1/catalog/service/web | jq\n```\n\nReview all of the app
+    instances\n```\ncurl -s $CONSUL_HTTP_ADDR/v1/catalog/service/app | jq\n```\n\nOnce
+    the new instances have finished booting, review the Palo Alto address group and
+    the BIG-IP Pool member list once again and not they now have three addresses to
+    reflect the increased server scale group.\n\nThe resources for this lab will self-destruct
+    in 8 hours, but to save a little money, **please scale the application back down.**\n\nRe-run
+    Terraform, and monitor the various integration points once again. We'll do so
+    in the background so that you can move on whenever you're ready. <br>\n\n```\nnohup
+    terraform apply -var app_count=1 -var web_count=1 -auto-approve > /root/terraform/app/scaledown.out
+    &\n```\n\nThis concludes the final step in the Network Infrastructure Automation
+    workshop. "
+  notes:
+  - type: text
+    contents: |
+      75% companies surveyed take Days or even Weeks to complete networking tasks.
+
+      Organizations seeking to improve application delivery cycle are often blocked at the networking layer
+
+      [source](https://zkresearch.com/research/2017-application-delivery-controller-study)
+  tabs:
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/9.NIA-Workshop-App_Scale.html
+  - title: Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/app
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Access Info
+    type: code
+    hostname: workstation
+    path: /access.md
+  - title: App
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8080
+  - title: Vault
+    type: service
+    hostname: workstation
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: workstation
+    path: /
+    port: 8500
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
+  difficulty: basic
+  timelimit: 3000
+checksum: "13540192176628817400"

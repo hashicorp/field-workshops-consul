@@ -13,10 +13,12 @@ tags: []
 owner: hashicorp
 developers:
 - lance@hashicorp.com
-private: false
+private: true
 published: true
+show_timer: true
+skipping_enabled: true
 challenges:
-- slug: sidecar-services
+- slug: 01-sidecar-services
   id: 4zvgi4rkfawl
   type: challenge
   title: "Get Into My Sidecar \U0001F697"
@@ -95,7 +97,7 @@ challenges:
     path: /consul/config/database_service.json
   difficulty: basic
   timelimit: 900
-- slug: sidecar-proxies
+- slug: 02-sidecar-proxies
   id: l8hfdudhif7b
   type: challenge
   title: "Introducing the Envoy Proxy \U0001F5A7"
@@ -144,7 +146,7 @@ challenges:
     path: /consul/config/database_service.json
   difficulty: basic
   timelimit: 900
-- slug: sidecar-upstreams
+- slug: 03-sidecar-upstreams
   id: 7vynj1nfnnan
   type: challenge
   title: "Connect Upstream with Envoy \U0001F517"
@@ -229,7 +231,7 @@ challenges:
     path: /consul/config/application_service.json
   difficulty: basic
   timelimit: 900
-- slug: enable-localhost-proxy
+- slug: 04-enable-localhost-proxy
   id: tymg5yhlxjgb
   type: challenge
   title: "Enter the Meshtrix \U0001F469\U0001F3FB‍\U0001F4BB"
@@ -265,7 +267,7 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 900
-- slug: open-and-close-the-gates
+- slug: 05-open-and-close-the-gates
   id: d3mqrfaegmle
   type: challenge
   title: "Open and Close the Gates \U0001F511\U0001F6AA"
@@ -317,7 +319,7 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 900
-- slug: sidecar-envoy
+- slug: 06-sidecar-envoy
   id: ntf48xx67xaz
   type: challenge
   title: Pop Open the Hood ⚙️
@@ -395,5 +397,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 900
-checksum: "18056022773874450838"
-show_timer: true
+checksum: "2995614924975383451"

@@ -1,0 +1,60 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fake-payments
+
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: fake-payments-currency-intention
+spec:
+  destination:
+    name: fake-currency
+  sources:
+    - name: fake-payments
+      action: allow
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fake-payments
+  labels:
+    app: fake-payments
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fake-payments
+  template:
+    metadata:
+      labels:
+        app: fake-payments
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
+        "consul.hashicorp.com/connect-service-upstreams": "fake-currency:9094"
+    spec:
+      serviceAccountName: fake-payments
+      containers:
+      - name: fake-payments
+        image: "nicholasjackson/fake-service:v0.7.8"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9093
+        env:
+          - name: LISTEN_ADDR
+            value: "0.0.0.0:9093"
+          - name: UPSTREAM_URIS
+            value: "http://127.0.0.1:9094"
+          - name: MESSAGE
+            value: "Payments response"
+          - name: NAME
+            value: "fake-payments"
+          - name: SERVER_TYPE
+            value: "http"
+          - name: TRACING_ZIPKIN
+            value: "http://jaeger-collector:9411"
+          - name:  HTTP_CLIENT_REQUEST_TIMEOUT
+            value: "10s"

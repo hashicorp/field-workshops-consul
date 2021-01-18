@@ -1,6 +1,0 @@
-#!/bin/bash
-
-helm install -f /root/consul-values.yaml lab /root/consul-helm  --wait
-sleep 10
-
-exit 0

@@ -1,11 +1,11 @@
 data "aws_ami" "ubuntu" {
-  owners = ["099720109477"]
+  owners = ["self"]
 
   most_recent = true
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+    values = ["hashistack-*"]
   }
 
   filter {
@@ -44,7 +44,7 @@ resource "aws_security_group" "vault" {
     from_port   = 8301
     to_port     = 8301
     protocol    = "tcp"
-    cidr_blocks = ["10.1.0.0/16","10.2.0.0/16"]
+    cidr_blocks = ["10.1.0.0/16", "10.2.0.0/16"]
   }
 
   egress {

@@ -1,0 +1,57 @@
+#!/bin/bash
+
+set-workdir /root/terraform/monitoring
+
+#creds
+vault login -method=userpass username=admin password=admin
+export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+
+#intentions
+consul intention create -allow '*/*' 'default/jaeger-http-collector'
+consul intention create -allow '*/*' 'default/zipkin-http-collector'
+
+#tf
+cd /root/terraform/monitoring
+terraform init
+terraform apply -auto-approve
+sleep 120
+
+#nginx
+jaeger=$(terraform output -state /root/terraform/monitoring/terraform.tfstate aws_jaeger_ip)
+cat << EOF > /etc/nginx/conf.d/jaeger.conf
+server {
+  listen 16686;
+  location / {
+    proxy_pass http://${jaeger}:16686;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect off;
+  }
+  access_log /var/log/nginx/jaeger.log;
+}
+EOF
+service nginx restart
+sleep 15
+
+#create some traces
+kubectl config use-context graphql
+endpoint=$(kubectl get svc public-api-service -o json | jq -r .status.loadBalancer.ingress[0].ip)
+#product api
+curl -s -v http://${endpoint}:8080/api \
+  -H 'Accept-Encoding: gzip, deflate, br' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
+  -H 'Connection: keep-alive' \
+  -H 'DNT: 1' \
+  --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+  --compressed | jq
+#payment api
+curl -s -v http://${endpoint}:8080/api \
+  -H 'Accept-Encoding: gzip, deflate, br' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
+  -H 'Connection: keep-alive' \
+  -H 'DNT: 1' \
+  --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+  --compressed | jq
+
+exit 0

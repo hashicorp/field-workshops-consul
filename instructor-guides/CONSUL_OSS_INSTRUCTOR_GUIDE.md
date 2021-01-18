@@ -92,7 +92,7 @@ Once you've gotten an invite to the HashiCorp organization you can create tempor
 7. Turn on the **Allow Anonymous** switch so you can hand the URL out on the day of training.
 
 ### Configuring the Instruqt Pools
-We recommend that you configure Instruqt pools for each Instruqt track used in this workshop 1-2 hours before your workshop begins. Please see this Confluence [doc](https://hashicorp.atlassian.net/wiki/spaces/SE/pages/511574174/Instruqt+and+Remark+Contributor+Guide#InstruqtandRemarkContributorGuide-ConfiguringInstruqtPools) for instructions.
+We recommend that you configure Instruqt pools for each Instruqt track used in this workshop 1 hour before you plan to use the track. Please see this Confluence [doc](https://hashicorp.atlassian.net/wiki/spaces/SE/pages/511574174/Instruqt+and+Remark+Contributor+Guide#InstruqtandRemarkContributorGuide-ConfiguringInstruqtPools) for instructions.
 
 ### The Live Demo
 Between Chapters 1 and 2 there is a slide that says *Live Demo*. You can use an instruqt track to do a brief Consul demo for your participants. Follow these steps to do the demo:

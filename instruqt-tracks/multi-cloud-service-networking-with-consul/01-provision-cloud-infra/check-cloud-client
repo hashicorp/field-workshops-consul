@@ -1,13 +1,13 @@
 #!/bin/bash
 
-#aws
+#aws - 2 new + default vpc
 echo "Checking AWS VNETs"
 aws_vpc=$(aws ec2 describe-vpcs | jq '[.. |."State"? | select(. == "available")] | length')
-if [ "${aws_vpc}" = "2" ]; then
+if [ "${aws_vpc}" = "3" ]; then
   exit 0
 fi
 #should be 5 total VPCs
-if [ "${aws_vpc}" != "2" ]; then
+if [ "${aws_vpc}" != "3" ]; then
   fail-message "VPCs did not provision successful."
   exit 1
 fi

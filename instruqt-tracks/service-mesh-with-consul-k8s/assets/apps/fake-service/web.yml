@@ -1,0 +1,82 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fake-web
+
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: fake-web-api-intention
+spec:
+  destination:
+    name: fake-api
+  sources:
+    - name: fake-web
+      action: allow
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fake-web
+spec:
+  type: NodePort
+  selector:
+    app: fake-web
+  ports:
+  - name: http
+    protocol: TCP
+    port: 9090
+    targetPort: 9090
+    nodePort: 30900
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fake-web
+  labels:
+    app: fake-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fake-web
+  template:
+    metadata:
+      labels:
+        app: fake-web
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
+        "consul.hashicorp.com/connect-service-upstreams": "fake-api:9091"
+    spec:
+      serviceAccountName: fake-web
+      containers:
+      - name: fake-web
+        image: "nicholasjackson/fake-service:v0.7.8"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9090
+        env:
+          - name: LISTEN_ADDR
+            value: "0.0.0.0:9090"
+          - name: UPSTREAM_URIS
+            value: "grpc://127.0.0.1:9091"
+          - name: MESSAGE
+            value: "Hello World"
+          - name: NAME
+            value: "fake-web"
+          - name: SERVER_TYPE
+            value: "http"
+          - name: TIMING_50_PERCENTILE
+            value: "30ms"
+          - name: TIMING_90_PERCENTILE
+            value: "60ms"
+          - name: TIMING_90_PERCENTILE
+            value: "90ms"
+          - name: TIMING_VARIANCE
+            value: "10"
+          - name: TRACING_ZIPKIN
+            value: "http://jaeger-collector:9411"

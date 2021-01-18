@@ -10,7 +10,7 @@ tags: []
 owner: hashicorp
 developers:
 - lance@hashicorp.com
-private: false
+private: true
 published: true
 show_timer: true
 challenges:

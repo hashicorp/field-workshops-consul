@@ -30,6 +30,14 @@ challenges:
   assignment: |
     The terraform code will provision cloud infrastructure in AWS, GPC, and Azure. <br>
 
+    Your lab environment will leverage pre-built packer images.
+    You can inspect the image build in the code editor, and validate the images are available in AWS & Azure. <br>
+
+    ```
+    az image list -g packer | jq
+    aws ec2 describe-images --owners self | jq
+    ```
+
     Inspect the terraform code in the code editor and create the VPCs and VNets for shared services and application workloads. <br>
 
     ```
@@ -38,6 +46,11 @@ challenges:
     ```
 
     In the next few challenges we will centralize secrets across environments.
+  notes:
+  - type: text
+    contents: |
+      You are being provisioned on-demand cloud infrastructure. <br>
+      Please be patient as this can take up to ~15 minutes.
   tabs:
   - title: Shell
     type: terminal
@@ -51,6 +64,10 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/infra
+  - title: Packer
+    type: code
+    hostname: cloud-client
+    path: /root/packer
   - title: Lab Architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
@@ -327,16 +344,7 @@ challenges:
     Last, apply defaults for the service mesh that you'll leverage in the last few assignments. <br>
 
     ```
-    echo '
-    Kind      = "proxy-defaults"
-    Name      = "global"
-    Namespace = "default"
-    Config {
-      protocol = "http"
-    }
-    MeshGateway {
-       Mode = "local"
-    }' | consul config write -
+    consul config write proxy-defaults.hcl
     ```
 
     In the next few assignments you will connect secondary Consul datacenters to this cluster.
@@ -375,16 +383,12 @@ challenges:
   teaser: Configure multi-tenancy
   assignment: |-
     In this assignment you will create namespaces in Consul for development groups. <br>
-
     Get an operator token. <br>
-
     ```
     vault login -method=userpass username=admin password=admin
     export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
     ```
-
     Create the namespaces. <br>
-
     ```
     consul acl policy create -name "cross-namespace-policy-sd" -description "cross-namespace service discovery" -rules @cross-namespace-sd.hcl
     consul namespace update -name default -default-policy-name=cross-namespace-policy-sd
@@ -392,19 +396,15 @@ challenges:
     consul namespace write product-namespace.hcl
     consul namespace write frontend-namespace.hcl
     ```
-
     Create the developer policies and link them to vault roles. <br>
-
     ```
     consul acl policy create -name "payments-developer-policy" -description "payments devloper" -rules @payments-developer.hcl
     consul acl policy create -name "product-developer-policy" -description  "product developer" -rules @product-developer.hcl
     consul acl policy create -name "frontend-developer-policy" -description "frontend developer" -rules @frontend-developer.hcl
-
     vault write consul/roles/payments-developer policies=payments-developer-policy ttl=30m
     vault write consul/roles/product-developer  policies=product-developer-policy ttl=30m
     vault write consul/roles/frontend-developer policies=frontend-developer-policy ttl=30m
     ```
-
     Dev teams will deploy application workloads to the above namespaces in future assignments.
   tabs:
   - title: Shell
@@ -1391,4 +1391,77 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "13803739129646117019"
+- slug: 22-observe-application-deployment
+  id: cvcgo0hq0xlo
+  type: challenge
+  title: Observe Application Deployment
+  teaser: Collect metrics and traces across clouds.
+  assignment: |-
+    In this assignment you will view traces in the Jaeger UI. <br>
+
+    Simulate application traffic. <br>
+
+    ```
+    kubectl config use-context graphql
+    endpoint=$(kubectl get svc public-api-service -o json | jq -r .status.loadBalancer.ingress[0].ip)
+    curl -s -v http://${endpoint}:8080/api \
+      -H 'Accept-Encoding: gzip, deflate, br' \
+      -H 'Content-Type: application/json' \
+      -H 'Accept: application/json' \
+      -H 'Connection: keep-alive' \
+      -H 'DNT: 1' \
+      --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+      --compressed | jq
+    curl -s -v http://${endpoint}:8080/api \
+      -H 'Accept-Encoding: gzip, deflate, br' \
+      -H 'Content-Type: application/json' \
+      -H 'Accept: application/json' \
+      -H 'Connection: keep-alive' \
+      -H 'DNT: 1' \
+      --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+      --compressed | jq
+    ```
+
+    Review the traces in the Jaeger UI for each cloud.
+  tabs:
+  - title: Jaeger
+    type: service
+    hostname: cloud-client
+    path: /search?service=public-api
+    port: 16686
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  - title: Web App
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8080
+  difficulty: basic
+  timelimit: 300
+checksum: "16378257635709210178"

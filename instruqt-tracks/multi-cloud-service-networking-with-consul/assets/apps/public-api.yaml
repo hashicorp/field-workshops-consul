@@ -40,12 +40,12 @@ spec:
       annotations:
         prometheus.io/scrape: "true"
         consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/connect-service-upstreams: "product-api.product:9090:azure-west-us-2,payments-api.default:9091:aws-us-east-1"
+        consul.hashicorp.com/connect-service-upstreams: "product-api.product:9090:azure-west-us-2,payments-api.default:9091:aws-us-east-1,jaeger-http-collector.default:14268:aws-us-east-1,zipkin-http-collector.default:9411:aws-us-east-1"
     spec:
       serviceAccountName: public-api
       containers:
         - name: public-api
-          image: hashicorpdemoapp/public-api:v0.0.2
+          image: hashicorpdemoapp/public-api:v0.0.4
           ports:
             - containerPort: 8080
           env:
@@ -55,3 +55,5 @@ spec:
               value: "http://localhost:9090"
             - name: PAYMENT_API_URI
               value: "http://localhost:9091"
+            - name: JAEGER_ENDPOINT
+              value: http://127.0.0.1:14268/api/traces

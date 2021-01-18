@@ -1,7 +1,7 @@
 resource "random_password" "pg" {
-  length  = 15
-  special = true
-  override_special = "!$#%"
+  length           = 20
+  special          = true
+  override_special = "!@#%"
 }
 
 resource "azurerm_postgresql_server" "postgres" {
@@ -14,7 +14,7 @@ resource "azurerm_postgresql_server" "postgres" {
 
   sku_name   = "GP_Gen5_4"
   version    = "9.6"
-  storage_mb = 640000
+  storage_mb = 5120
 
   public_network_access_enabled = true
   ssl_enforcement_enabled       = false

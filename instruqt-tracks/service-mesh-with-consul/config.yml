@@ -1,7 +1,7 @@
 version: "2"
 containers:
 - name: consul-server-2
-  image: consul:1.8.0
+  image: consul:latest
   ports:
   - 8300
   - 8301
@@ -35,7 +35,7 @@ containers:
     WORDPRESS_DB_USER: root
     WORDPRESS_TABLE_PREFIX: wp
 - name: consul-server-0
-  image: consul:1.8.0
+  image: consul:latest
   ports:
   - 8300
   - 8301
@@ -46,7 +46,7 @@ containers:
     CONSUL_HTTP_ADDR: http://127.0.0.1:8500
   memory: 128
 - name: consul-server-1
-  image: consul:1.8.0
+  image: consul:latest
   ports:
   - 8300
   - 8301

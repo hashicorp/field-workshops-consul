@@ -1,0 +1,89 @@
+#!/bin/bash
+set -e
+
+sleep 20
+
+echo ""
+echo ""
+echo ">>----------------------------<<"
+echo ">> Starting Azure VNETs Setup <<"
+echo ">>----------------------------<<"
+
+#install consul
+cd /tmp
+echo "installing consul..."
+curl -O https://releases.hashicorp.com/consul/1.9.0+ent/consul_1.9.0+ent_linux_amd64.zip
+unzip *.zip
+mv consul /usr/local/bin/consul
+rm -f *.zip
+cd /root
+
+#install vault
+cd /tmp
+echo "installing vault..."
+curl -O https://releases.hashicorp.com/vault/1.4.3/vault_1.4.3_linux_amd64.zip
+unzip *.zip
+mv vault /usr/local/bin/vault
+rm -f *.zip
+cd /root
+
+#install terraform
+cd /tmp
+echo "installing terraform..."
+curl -O https://releases.hashicorp.com/terraform/0.13.2/terraform_0.13.2_linux_amd64.zip
+unzip *.zip
+mv terraform /usr/local/bin/terraform
+rm -f *.zip
+cd /root
+
+#get assets
+echo "cloning assets..."
+git clone https://github.com/hashicorp/field-workshops-consul.git
+cp -r field-workshops-consul/instruqt-tracks/network-infrastructure-automation/assets/terraform /root/terraform
+rm -rf field-workshops-consul
+
+#ssh agent
+cat << EOF > ~/.ssh/config
+Host *
+    StrictHostKeyChecking no
+EOF
+eval $(ssh-agent)
+ssh-add ~/.ssh/id_rsa
+
+#fix path
+echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
+
+# Ensure we load /etc/profile.d/instruqt-env.sh
+echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
+source /root/.bashrc
+
+# Azure needs time before the next step
+sleep 60
+
+#enable marketplace
+az provider register --namespace 'Microsoft.Solutions' --subscription "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SUBSCRIPTION_ID}"
+
+#enable hcs ext
+az extension add --source https://releases.hashicorp.com/hcs/0.3.1/hcs-0.3.1-py2.py3-none-any.whl --yes
+
+#provision
+cd /root/terraform/vnet
+/usr/local/bin/terraform init
+
+pubkey=$(cat ~/.ssh/id_rsa.pub)
+cat << EOF > /root/terraform/vnet/terraform.tfvars
+ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
+EOF
+
+#assignment
+set-workdir /root/terraform/vnet
+cd /root/terraform/vnet
+
+echo ""
+echo ""
+echo ">>----------------------------<<"
+echo ">> Azure VNETs Setup Complete <<"
+echo ">>----------------------------<<"
+
+
+exit 0

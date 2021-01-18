@@ -4,19 +4,6 @@
 local_ipv4="$(curl -s -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/privateIpAddress?api-version=2017-08-01&format=text")"
 public_ipv4="$(curl -s -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/publicIpAddress?api-version=2017-08-01&format=text")"
 
-#update & install packages
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-sudo apt update -y
-sudo apt install consul-enterprise vault-enterprise jq -y
-
-#azure cli
-curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo apt-key add -
-AZ_REPO=$(lsb_release -cs)
-sudo apt-add-repository "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main"
-sudo apt update -y
-sudo apt install azure-cli -y
-
 #vault
 az login --identity
 export VAULT_ADDR="http://$(az vm show -g $(curl -s -H Metadata:true "http://169.254.169.254/metadata/instance?api-version=2017-08-01" | jq -r '.compute | .resourceGroupName') -n vault-server-vm -d | jq -r .privateIps):8200"
@@ -136,6 +123,18 @@ service {
             destination_name = "postgres"
             destination_namespace = "default"
             local_bind_port  = 5432
+          },
+          {
+            destination_name = "jaeger-http-collector"
+            destination_namespace = "default"
+            datacenter = "aws-us-east-1"
+            local_bind_port  = 14268
+          },
+          {
+            destination_name = "zipkin-http-collector"
+            destination_namespace = "default"
+            datacenter = "aws-us-east-1"
+            local_bind_port  = 9411
           }
         ]
       }
@@ -171,7 +170,7 @@ sudo systemctl start envoy.service
 sleep 5
 
 #install the application
-wget https://github.com/hashicorp-demoapp/product-api-go/releases/download/v0.0.12/product-api -O /product-api
+wget https://github.com/hashicorp-demoapp/product-api-go/releases/download/v0.0.13/product-api -O /product-api
 chmod +x /product-api
 cat <<EOF > /conf.json
 {
@@ -185,6 +184,7 @@ Description=Product API Service
 After=network-online.target
 [Service]
 ExecStart=/product-api
+Environment=JAEGER_ENDPOINT=http://127.0.0.1:14268/api/traces
 Restart=always
 RestartSec=5
 [Install]

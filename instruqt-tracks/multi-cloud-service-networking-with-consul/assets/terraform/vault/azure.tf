@@ -1,3 +1,8 @@
+data "azurerm_image" "ubuntu" {
+  name_regex          = "hashistack-*"
+  resource_group_name = "packer"
+}
+
 resource "azurerm_key_vault" "vault" {
   name                        = "vault-${data.terraform_remote_state.infra.outputs.env}"
   resource_group_name         = data.terraform_remote_state.infra.outputs.azure_rg_name
@@ -111,10 +116,7 @@ resource "azurerm_virtual_machine" "vault" {
   delete_data_disks_on_termination = true
 
   storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
-    version   = "latest"
+    id = data.azurerm_image.ubuntu.id
   }
   storage_os_disk {
     name              = "vault-disk"

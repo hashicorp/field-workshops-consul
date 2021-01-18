@@ -1,0 +1,49 @@
+#!/bin/sh
+
+echo ""
+echo ">>"
+echo ">> Configuring Palo Alto Firewall"
+echo ">>"
+echo ">> Sleeping 60 for bootup"
+
+sleep 60
+
+echo ""
+echo ">>"
+echo ">> Probing Palo Alto Firewall API"
+echo ">>"
+
+# Block until PANOS API ready
+firewall_ip=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate FirewallIP)
+pa_username=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_username)
+pa_password=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_password)
+
+while [ "$(curl -sk -o /dev/null  -u ${pa_username}:${pa_password} -w ''%{http_code}'' https://${firewall_ip}/restapi/v9.1/Device/VirtualSystems)" != "200" ]
+do
+    echo 'PANOS API not ready...'
+    sleep 5
+done
+
+# Give the boot-up auto-commit plenty of time to finish, or it will fail... trust me.
+sleep 240
+
+# Applying Config
+cd /root/terraform/panw-config
+terraform apply -refresh=false -auto-approve > /root/terraform/panw-config/terraform.out
+
+echo ""
+echo ">>"
+echo ">> Terraform Apply executed after API started responding..."
+echo ">>"
+echo ">> Running panos-commit now"
+echo ">>"
+
+/root/terraform/panos_commit/panos-commit -config /root/terraform/panos_commit/panos-commit.json -force
+
+echo ""
+echo ">>"
+echo ">> 'panos-commit' complete..."
+echo ">>"
+echo ">>"
+
+exit 0
