@@ -24,11 +24,19 @@ fi
 #  exit 1
 #fi
 
-#terraform outputs
-url=$(terraform output -state /root/terraform/bigip/terraform.tfstate -json | jq -r .mgmt_url.value)
-echo "F5 Management URL is: $url"
-if [ -z "${url}" ] || [ "${url}" = "null" ]; then
+#F5 BIG-IP
+f5_url=$(terraform output -state /root/terraform/bigip/terraform.tfstate -json | jq -r .mgmt_url.value)
+echo "F5 Management URL is: $f5_url"
+if [ -z "${f5_url}" ] || [ "${f5_url}" = "null" ]; then
   fail-message "BIG-IP is not provisoned yet"
+  exit 1
+fi
+
+#PANW FW
+pa_url=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate FirewallIPURL)
+echo "PANW URL is: $pa_url"
+if [ -z "${pa_url}" ] || [ "${pa_url}" = "null" ]; then
+  fail-message "PA Firewall is not provisoned yet"
   exit 1
 fi
 

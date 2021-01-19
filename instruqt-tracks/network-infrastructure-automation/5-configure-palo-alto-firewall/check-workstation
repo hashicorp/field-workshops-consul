@@ -1,0 +1,19 @@
+#!/bin/sh
+
+firewall_ip=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate FirewallIP)
+pa_username=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_username)
+pa_password=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_password)
+
+pa_virtual_systems=$(curl -sk -o /dev/null  -u ${pa_username}:${pa_password} -w ''%{http_code}'' https://${firewall_ip}/restapi/v9.1/Device/VirtualSystems)
+if [ "${pa_virtual_systems}" != "200" ]; then
+  fail-message "Palo Alto VM Series Firewall 'base configuration' not applied. "
+  exit 1
+fi
+
+consul_api=$(curl -s -o /dev/null -w "%{http_code}" http://{$consul_lb}:8500/v1/status/leader)
+if [ "${consul_api}" != "200" ]; then
+  fail-message "AWS consul server service did not return a 200. Please wait a few moments and try again."
+  exit 1
+fi
+
+exit 0
