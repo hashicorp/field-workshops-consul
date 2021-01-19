@@ -1,12 +1,12 @@
 ##Bootstrap
 variable "StorageAccountName" {
-  default     = ""
+  default     = "vvstg11"
   description = "The name of the storage account"
   type        = string
 }
 
 variable "adminUsername" {
-  default = ""
+  default = "paloalto"
   type    = string
 }
 
