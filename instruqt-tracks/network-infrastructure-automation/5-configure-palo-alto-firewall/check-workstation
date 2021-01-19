@@ -10,10 +10,4 @@ if [ "${pa_virtual_systems}" != "200" ]; then
   exit 1
 fi
 
-consul_api=$(curl -s -o /dev/null -w "%{http_code}" http://{$consul_lb}:8500/v1/status/leader)
-if [ "${consul_api}" != "200" ]; then
-  fail-message "AWS consul server service did not return a 200. Please wait a few moments and try again."
-  exit 1
-fi
-
 exit 0
