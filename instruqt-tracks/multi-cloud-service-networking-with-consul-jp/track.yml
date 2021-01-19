@@ -526,12 +526,14 @@ challenges:
 
     次のチャレンジでは、GCPのセカンダリの設定を行います。
   tabs:
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
   - title: Lab Architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
-  - title: Shell
-    type: terminal
-    hostname: cloud-client
   - title: Cloud Consoles
     type: service
     hostname: cloud-client
@@ -541,11 +543,9 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/azure-consul-secondary
-  - title: Vault
-    type: service
+  - title: Shell
+    type: terminal
     hostname: cloud-client
-    path: /
-    port: 8200
   - title: Consul
     type: service
     hostname: cloud-client
@@ -1453,12 +1453,12 @@ challenges:
 - slug: 22-observe-application-deployment
   id: rodh551rif2r
   type: challenge
-  title: Observe Application Deployment
-  teaser: Collect metrics and traces across clouds.
+  title: アプリケーションデプロイのオブザーバビリティ
+  teaser: マルチクラウドのメトリクスとトレースをやってみましょう。
   assignment: |-
-    In this assignment you will view traces in the Jaeger UI. <br>
+    このエクササイズでは、Jaegerを使ってトレーシングを行います。<br>
 
-    Simulate application traffic. <br>
+    それでは、アプリケーションの通信のシミュレーションを行います。<br>
 
     ```
     kubectl config use-context graphql
@@ -1481,7 +1481,7 @@ challenges:
       --compressed | jq
     ```
 
-    Review the traces in the Jaeger UI for each cloud.
+    Jaeger UIからトレーシングの詳細などを確認してみてください。
   tabs:
   - title: Jaeger
     type: service
@@ -1523,4 +1523,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "5035341006906217312"
+checksum: "4762484641653003201"
