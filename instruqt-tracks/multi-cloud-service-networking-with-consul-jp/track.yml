@@ -27,6 +27,7 @@ developers:
 private: true
 published: false
 show_timer: true
+skipping_enabled: true
 challenges:
 - slug: 01-provision-cloud-infra
   id: 4c011ikxwvha
@@ -1301,12 +1302,13 @@ challenges:
 - slug: 20-review-application-deployment
   id: szoq7pvuiuk7
   type: challenge
-  title: アプリケーションのデプイ確認
+  title: アプリケーションのデプロイの確認
   teaser: ワークロードがちゃんと設定されたか確認してみましょう。
   assignment: |-
     このエクササイズでは、データベースやペイメントサービスの設定などが正しく設定されているか検証します。
 
-    まずは、データベースにプロダクト情報が入っているか確認します。<br>
+    まずは、データベースにプロダクト情報が入っているか確認します。
+    SELECTクエリにより、プロダクトの一覧が返ってくればOKです。 <br>
 
     ```
     export PGPASSWORD=$(terraform output -state /root/terraform/database-services/terraform.tfstate postgres_password)
@@ -1317,7 +1319,7 @@ challenges:
       -a
     ```
 
-    次に、ペイメントサービスの確認をします。現時点では何も入っていないはずです。<br>
+    次に、ペイメントサービスの確認をします。現時点では何も入っていないので、何も表示されなくて大丈夫です。<br>
 
     ```
     ssh -i ~/.ssh/id_rsa ubuntu@$(terraform output -state /root/terraform/infra/terraform.tfstate aws_bastion_ip) \
@@ -1357,19 +1359,19 @@ challenges:
 - slug: 21-test-application-deployment
   id: k92sm8er5y5i
   type: challenge
-  title: Test Application Deployment
-  teaser: Put it all together
+  title: アプリケーションのテスト
+  teaser: 全ての準備が整いましたので実際にテストしてみましょう。
   assignment: |-
-    In this assignment you will test the application. <br>
+    このエクササイズでは、実際のアプリケーションをテストしてみます。<br>
 
-    The UI is available on the react cluster. <br>
+    Reactで実行されているUIが公開されているはずなので、以下のコマンドでURLを取得します。<br>
 
     ```
     kubectl config use-context react
     echo "http://$(kubectl get svc web-service -o json | jq -r .status.loadBalancer.ingress[0].ip)"
     ```
 
-    Monitor the cache for incoming payments in one window. <br>
+    ペイメントサービスへのリクエストをモニタリングします。
 
     ```
     ssh -i ~/.ssh/id_rsa ubuntu@$(terraform output -state /root/terraform/infra/terraform.tfstate aws_bastion_ip) \
@@ -1377,14 +1379,15 @@ challenges:
       $(terraform output -state /root/terraform/cache-services/terraform.tfstate -json aws_elasticache_cache_nodes | jq -r .[0].address) -p 6379 MONITOR"
     ```
 
-    In the other window send traffic to the HashiCups public APIs. <br>
+    べつのShellタブから、HashiCupsアプリのパブリックAPIへリクエストを送信するためのIPアドレスを取得します。<br>
+    こんIPアドレスは`endpoint`という環境変数に設定します。
 
     ```
     kubectl config use-context graphql
     endpoint=$(kubectl get svc public-api-service -o json | jq -r .status.loadBalancer.ingress[0].ip)
     ```
 
-    Try the Product API. <br>
+    では、プロダクトAPIを試してみましょう。プロダクトのリストが返ってればOKです。<br>
 
     ```
     curl -s -v http://${endpoint}:8080/api \
@@ -1397,9 +1400,7 @@ challenges:
       --compressed | jq
     ```
 
-    Try the payment API. <br>
-
-    #payments
+    次に、ペイメントAPIを試してみましょう。<br>
 
     ```
     curl -s -v http://${endpoint}:8080/api \
@@ -1412,7 +1413,7 @@ challenges:
       --compressed | jq
     ```
 
-    You just connected the HashiCups app across three clouds!
+    これで、マルチクラウド環境で全てのサービスへの接続が可能なことが分かりました。
   tabs:
   - title: Shell
     type: terminal
@@ -1450,7 +1451,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 22-observe-application-deployment
-  id: 
+  id: rodh551rif2r
   type: challenge
   title: Observe Application Deployment
   teaser: Collect metrics and traces across clouds.
@@ -1522,4 +1523,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: 
+checksum: "5035341006906217312"
