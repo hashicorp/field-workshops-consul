@@ -1301,12 +1301,12 @@ challenges:
 - slug: 20-review-application-deployment
   id: szoq7pvuiuk7
   type: challenge
-  title: Review Application Deployment
-  teaser: Validate workload configuration
+  title: アプリケーションのデプイ確認
+  teaser: ワークロードがちゃんと設定されたか確認してみましょう。
   assignment: |-
-    In this assignment you will validate the product DB and access to the payment queue. <br>
+    このエクササイズでは、データベースやペイメントサービスの設定などが正しく設定されているか検証します。
 
-    Check the DB for available products. <br>
+    まずは、データベースにプロダクト情報が入っているか確認します。<br>
 
     ```
     export PGPASSWORD=$(terraform output -state /root/terraform/database-services/terraform.tfstate postgres_password)
@@ -1317,7 +1317,7 @@ challenges:
       -a
     ```
 
-    Check the queue for payments (there will be zero keys). <br>
+    次に、ペイメントサービスの確認をします。現時点では何も入っていないはずです。<br>
 
     ```
     ssh -i ~/.ssh/id_rsa ubuntu@$(terraform output -state /root/terraform/infra/terraform.tfstate aws_bastion_ip) \
@@ -1325,7 +1325,7 @@ challenges:
       $(terraform output -state /root/terraform/cache-services/terraform.tfstate -json aws_elasticache_cache_nodes | jq -r .[0].address) -p 6379 keys '*'"
     ```
 
-    In the next few assignments you will retrieve products and send payments.
+    次のエクササイズからこれらのサービスを実際に試していきましょう。
   tabs:
   - title: Cloud Consoles
     type: service
@@ -1450,7 +1450,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 22-observe-application-deployment
-  id: cvcgo0hq0xlo
+  id: 
   type: challenge
   title: Observe Application Deployment
   teaser: Collect metrics and traces across clouds.
@@ -1522,4 +1522,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "13241017359705647852"
+checksum: 
