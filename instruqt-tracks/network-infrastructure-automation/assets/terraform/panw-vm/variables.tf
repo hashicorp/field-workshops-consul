@@ -1,16 +1,41 @@
-variable "resource_group_name" {}
-variable "location" {}
+variable "resource_group_name" {
+  default = "vvrg12"
+}
+variable "location" {
+  default = "centralus"
+}
 
-variable "StorageAccountName" {}
-variable "FirewallDnsName" {}
-variable "WebServerDnsName" {}
-variable "FirewallVmName" {}
-variable "FirewallVmSize" {}
-variable "FromGatewayLogin" {}
-variable "IPAddressDmzNetwork" {}
-variable "IPAddressAppNetwork" {}
-variable "IPAddressMgmtNetwork" {}
-variable "IPAddressInternetNetwork" {}
+variable "StorageAccountName" {
+  default = "vvstg11"
+}
+variable "FirewallDnsName" {
+  default = "pan-fw"
+}
+
+variable "WebServerDnsName" {
+  default = "pan-web"
+}
+variable "FirewallVmName" {
+  default = "vvPANW"
+}
+variable "FirewallVmSize" {
+  default = "Standard_D3_v2"
+}
+variable "FromGatewayLogin" {
+  default = "0.0.0.0/0"
+}
+variable "IPAddressDmzNetwork" {
+  default = "10.3.3.5"
+}
+variable "IPAddressAppNetwork" {
+  default = "10.3.4.5"
+}
+variable "IPAddressMgmtNetwork" {
+  default = "10.3.1.5"
+}
+variable "IPAddressInternetNetwork" {
+  default = "10.3.2.5"
+}
 
 variable "storageAccountType" {
   default = "Standard_LRS"
