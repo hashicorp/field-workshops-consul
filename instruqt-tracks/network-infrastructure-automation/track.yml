@@ -225,10 +225,10 @@ challenges:
      In the `Shell` tab run the following commands.
 
      ```
-    tail /root/terraform/panw-vm/terraform.out
+    tail /root/terraform/panw-vm/terraform.out -n 12
     ```
 
-     You should see `Apple complete!`. If not, take the time to review the Terraform IaC definition that will be used to configure the firewall in the 'Terraform Code' tab. If it has complete, proceed with the following commands to configure the firewall:
+     You should see `Apply complete!`. If not, take the time to review the Terraform IaC definition that will be used to configure the firewall in the 'Terraform Code' tab. If it has complete, proceed with the following commands to configure the firewall:
 
      ```
     terraform plan
