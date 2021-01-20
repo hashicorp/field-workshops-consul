@@ -26,22 +26,22 @@ challenges:
   type: challenge
   title: Review Lab Objectives
   teaser: Before we begin, lets quickly review the architecture.
-  assignment: "In this workshop we will build the infrastructure depicted in the in
-    the 'NIA - Traffic Flow' tab on the left, but before we do lets quickly review
-    the operational challenges we are going to address.\n\n**Navigate to the 'NetOps
-    - Operational Pattern' tab.**\n\nIn this diagram we have a two-tier application
-    running on virtual machines that is being delivered by Consul Service Discovery.
-    Not a complex use-case but a very common one. New virtual machins are frequently
-    added and removed to handle scaling requirements and to 'A/B test' new functionality.
-    These changes require frequent invovlement with the already overworked Net Operations
-    team who must adjust/update security and load-balancing configurations.\nThe long
-    hours and lengthy job queues results in deployment errors and, potnetially, security
-    issues.\n\n**Navigate to the 'NIA - Operational Pattern' tab.**\n\nWith `Consul`
-    providing real-time application state (IP Addresses and App meta-data), Consul
-    Terraform Sync uses that infromation, and its visibility of all application state
-    changes, to configure the network infrastructure eliminating the need for Network
-    Operations teams invovlement in Day 2 Ops.\n\n**Navigate to the 'NIA - Traffic
-    Flow' tab.**\n\nIn this diagram you can see the Traffic Flow of the infrastructure
+  assignment: "In this workshop we will build the infrastructure depicted in the 'NIA
+    - Traffic Flow' tab on the left, but before we do lets quickly review the operational
+    challenges we are going to address.\n\n**Navigate to the 'NetOps - Operational
+    Pattern' tab.**\n\nIn this diagram we have a two-tier application running on virtual
+    machines that is being delivered by Consul Service Discovery. Not a complex use-case
+    but a very common one. New virtual machines are frequently added and removed to
+    handle scaling requirements, and to 'A/B test' new functionality. These changes
+    require frequent invovlement with the already overworked Network Operations And
+    Securty Operations teams who must adjust/update load-balancing and security configurations.\nThe
+    long hours and lengthy job queues result in deployment errors and, potnetially,
+    security issues.\n\n**Navigate to the 'NIA - Operational Pattern' tab.**\n\nWith
+    `Consul` providing real-time application state (IP Addresses and App meta-data),
+    Consul Terraform Sync uses that infromation, and its visibility of all application
+    state changes, to configure the network infrastructure eliminating the need for
+    Network Operations teams invovlement in Day 2 Ops.\n\n**Navigate to the 'NIA -
+    Traffic Flow' tab.**\n\nIn this diagram you can see the Traffic Flow of the infrastructure
     we are going to build in the following steps. \n\nNOTE: A fine-grained policy
     on the Palo Alto firewall is possible, without increasing operational overhead,
     when Consul Terraform Sync is automating the management of the policy address
@@ -607,4 +607,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-checksum: "3896725850718228482"
+checksum: "8885984355939220473"
