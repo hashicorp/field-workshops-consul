@@ -5,9 +5,6 @@ variable "location" {
   default = "centralus"
 }
 
-variable "StorageAccountName" {
-  default = "vvstg11"
-}
 variable "FirewallDnsName" {
   default = "pan-fw"
 }
@@ -15,12 +12,7 @@ variable "FirewallDnsName" {
 variable "WebServerDnsName" {
   default = "pan-web"
 }
-variable "FirewallVmName" {
-  default = "vvPANW"
-}
-variable "FirewallVmSize" {
-  default = "Standard_D3_v2"
-}
+
 variable "FromGatewayLogin" {
   default = "0.0.0.0/0"
 }
@@ -37,26 +29,6 @@ variable "IPAddressInternetNetwork" {
   default = "10.3.2.5"
 }
 
-variable "storageAccountType" {
-  default = "Standard_LRS"
-}
-
-variable "fwpublicIPName" {
-  default = "fwPublicIP"
-}
-
-variable "publicIPAddressType" {
-  default = "Dynamic"
-}
-
-variable "WebPublicIPName" {
-  default = "WebPublicIP"
-}
-
-variable "IPAddressPrefix" {
-  default = "10.5"
-}
-
 variable "routeTableWeb" {
   default = "Web-to-FW"
 }
@@ -69,43 +41,8 @@ variable "routeTableTrust" {
   default = "Trust-to-intranetwork"
 }
 
-variable "vnetName" {
-  default = "fwVNET"
-}
-
-variable "subnet0Name" {
-  default = "Mgmt"
-}
-
-variable "subnet1Name" {
-  default = "Untrust"
-}
-
-variable "subnet2Name" {
-  default = "Trust"
-}
-
-variable "subnet3Name" {
-  default = "Web"
-}
-
-variable "subnet4Name" {
-  default = "DB"
-}
-
 # Note internally there is an assumption
 # for the two NSG to have the same name!
-variable "nsgname-mgmt" {
-  default = "DefaultNSG"
-}
-
-variable "nsgname-untrust" {
-  default = "DefaultNSG"
-}
-
-variable "nicName" {
-  default = "eth"
-}
 
 variable "fwSku" {
   default = "bundle1"
