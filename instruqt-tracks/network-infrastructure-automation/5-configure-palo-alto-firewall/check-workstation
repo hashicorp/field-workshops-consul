@@ -4,7 +4,7 @@ firewall_ip=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate 
 pa_username=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_username)
 pa_password=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_password)
 
-pa_addr_group=$(curl -sk -o /dev/null -u ${pa_username}:${pa_password} "https://${firewall_ip}/restapi/v9.1/Objects/AddressGroups?location=vsys&vsys=vsys1&name=cts-addr-grp-web" | jq '.result.entry[0]["@name"]')
+pa_addr_group=$(curl -sk -u ${pa_username}:${pa_password} "https://${firewall_ip}/restapi/v9.1/Objects/AddressGroups?location=vsys&vsys=vsys1&name=cts-addr-grp-web" | jq '.result.entry[0]["@name"]')
 if [ "${pa_addr_group}" != "cts-addr-grp-web" ]; then
   fail-message "Palo Alto VM Series Firewall 'base configuration' not applied. "
   exit 1
