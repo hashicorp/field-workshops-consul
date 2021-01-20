@@ -39,7 +39,7 @@ resource "random_password" "pafwpassword" {
 }
 
 resource "azurerm_storage_account" "PAN_FW_STG_AC" {
-  name                     = "storgeAccountPaFw-${random_id.suffix.dec}"
+  name                     = join("", list("strgaccpafw", random_id.suffix.dec))
   location                 = data.terraform_remote_state.vnet.outputs.resource_group_location
   resource_group_name      = data.terraform_remote_state.vnet.outputs.resource_group_name
   account_replication_type = "LRS"

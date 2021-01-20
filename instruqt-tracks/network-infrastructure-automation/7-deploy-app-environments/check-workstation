@@ -1,28 +1,13 @@
 #!/bin/bash
 
-if [ -f /tmp/skip-check ]; then
-    rm /tmp/skip-check
-    exit 0
+#get rg
+echo "Checking App Deployment..."
+
+rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+status=$(az vmss show -g "${rg}" --name web-vmss | jq -r '.provisioningState')
+if [ "${status}" != "Creating" ] && [ "${status}" != "Updating" ] && [ "${status}" != "Succeeded" ] ; then
+  fail-message "App is not provisioning/provisioned. Wait a few moments and try again. Current state is: ${status}"
+  exit 1
 fi
-
-### We are deploying AS3 until later, via NIA. 
-
-##we should get a 200
-#app=$(terraform output -state /root/terraform/bigip/terraform.tfstate app_url)
-#n=0
-#until [ $n -ge 3 ]; do
-#  curl --output /dev/null --silent --head --fail ${app} && break
-#  n=$[$n+1]
-#  echo "retrying api..."
-#  sleep 5
-#done
-#if [ $n -ge 3 ]; then
-#  echo "Logging a BIG-IP API response for debug: $(curl --output /dev/null --silent --head --fail -w "%{http_code}" ${app})"
-#  echo "Logging a verbose API request for debug..."
-#  response=$(curl -v --silent ${app})
-#  echo ${response}
-#  fail-message "Service did not return an expected 200. Check BIG-IP."
-#  exit 1
-#fi
 
 exit 0

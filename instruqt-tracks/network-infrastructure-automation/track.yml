@@ -237,7 +237,7 @@ challenges:
 
     Now we must instrut the firewall to `commit` this change using the following command:
     ```
-    /root/terraform/panos_commit/panos-commit -config /root/terraform/panos_commit/panos-commit.json
+    /root/terraform/panos_commit/panos-commit -config /root/terraform/panos_commit/panos-commit.json -force
     ```
 
     Once the apply is complete, you can Navigate to the Palo Alto Firewall
@@ -607,4 +607,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-checksum: "7770287140165630661"
+checksum: "3896725850718228482"
