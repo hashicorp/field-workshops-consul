@@ -51,7 +51,7 @@ resource "azurerm_public_ip" "PublicIP_0" {
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location
   resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
   allocation_method   = "Static"
-  domain_name_label   = var.FirewallDnsName
+  domain_name_label   = join("", list(var.FirewallDnsName, random_id.suffix.dec))
 }
 
 resource "azurerm_public_ip" "PublicIP_1" {
@@ -59,7 +59,7 @@ resource "azurerm_public_ip" "PublicIP_1" {
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location
   resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
   allocation_method   = "Static"
-  domain_name_label   = var.WebServerDnsName
+  domain_name_label   = join("", list(var.WebServerDnsName, random_id.suffix.dec))
 }
 
 resource "azurerm_network_interface" "VNIC0" {
