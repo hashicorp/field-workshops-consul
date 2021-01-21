@@ -5,12 +5,16 @@ title: Multi Cloud Service Networking with Consul (Japanese)
 teaser: Consulでマルチクラウド環境のServide Meshをデプロイする
 description: |-
   マルチクラウド環境へConsuをデプロイし、Mesh Gatewayで必要コンポネント同士を接続します。
-  このトラックでは、以下のことを行います。<br>
+  このトラックでは、以下のことを行います。
+
   - TerraformでAWS、GCP、Azureの環境をプロビジョン
   - TerraformでVault、Consul、データベース、K8sなどをプロビジョン
   - Vaultで安全にシークレットへ各環境からアクセス
   - Consulで各環境間のサービスを接続
   - NomadもしくはK8sでタスクのオーケストレーション
+
+
+  このトラックは起動する際に、Packerで各環境にマシンイメージを作成します。そのため２０〜３０分ほど起動に時間がかかります。
 icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
 tags:
 - consul
@@ -25,7 +29,7 @@ developers:
 - cpu@hashicorp.com
 - masa@hashicorp.com
 private: true
-published: false
+published: true
 show_timer: true
 skipping_enabled: true
 challenges:
@@ -279,6 +283,9 @@ challenges:
 
     次のチャレンジでは、Consul のプライマリサーバーの設定を完了します。
   tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
   - title: Cloud Consoles
     type: service
     hostname: cloud-client
@@ -296,9 +303,6 @@ challenges:
   - title: Lab Architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
-  - title: Shell
-    type: terminal
-    hostname: cloud-client
   difficulty: basic
   timelimit: 14400
 - slug: 06-bootstrap-consul-primary
@@ -1523,4 +1527,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "4762484641653003201"
+checksum: "5637613552315348258"
