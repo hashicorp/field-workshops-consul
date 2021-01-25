@@ -162,13 +162,7 @@ challenges:
     * AWS Vault - `ssh ubuntu@$(terraform output aws_vault_ip)`
     * Azure Vault - `ssh ubuntu@$(terraform output azure_vault_ip)`
 
-    Run the setup script to configure Vault and enable the replication between clouds. <br>
-
-    ```
-    ./setup_vault.sh
-    ```
-
-    Check the replication status when the script completes. <br>
+    Check the replication status. <br>
 
     ```
     vault read -format=json sys/replication/status | jq
@@ -1484,4 +1478,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "12538708284444838490"
+checksum: "17145357968934167630"
