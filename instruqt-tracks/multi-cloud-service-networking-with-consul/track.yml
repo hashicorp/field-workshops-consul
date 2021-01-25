@@ -157,7 +157,22 @@ challenges:
   assignment: |-
     In this assignment you will centralize secrets in Vault that will be consumed by applications and services across clouds and runtimes. <br>
 
-    The Vault server is now available and the UI can be accessed in the tab. <br>
+    The Vault servers are now available and the UI can be accessed in the tab. <br>
+
+    * AWS Vault - `ssh ubuntu@$(terraform output aws_vault_ip)`
+    * Azure Vault - `ssh ubuntu@$(terraform output azure_vault_ip)`
+
+    Run the setup script to configure Vault and enable the replication between clouds. <br>
+
+    ```
+    ./setup_vault.sh
+    ```
+
+    Check the replication status when the script completes. <br>
+
+    ```
+    vault read -format=json sys/replication/status | jq
+    ```
 
     Vault replication is configured across AWS & Azure.
     See the [documentation](https://www.vaultproject.io/docs/enterprise/replication) for more information about Vault replication. <br>
@@ -166,12 +181,6 @@ challenges:
 
     ```
     vault login -method=userpass username=admin password=admin
-    ```
-
-    Check the status of replication to validate that the AWS Vault is connected to the Azure Vault. <br>
-
-    ```
-    vault read -format=json sys/replication/status | jq
     ```
 
     You can also view the [auth methods](https://www.vaultproject.io/docs/auth) and [secrets engines](https://www.vaultproject.io/docs/secrets) that are configured for the environments.
@@ -198,6 +207,13 @@ challenges:
       ttl=5m
     ```
 
+    **NOTE**: If you receive errors you can run the following two scripts to repair your Vault environment.
+
+    ```
+    /root/terraform/vault/reset_vault.sh
+    /root/terraform/vault/setup_vault.sh
+    ```
+
     You will tie these tokens to Consul policies in a later assignment.
   tabs:
   - title: Shell
@@ -212,6 +228,10 @@ challenges:
     type: code
     hostname: cloud-client
     path: /root/terraform/vault
+  - title: Vault Setup Script
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/vault/setup_vault.sh
   - title: Vault
     type: service
     hostname: cloud-client
@@ -480,14 +500,6 @@ challenges:
 
     In the next assignment you will configure the remaining secondary cluster.
   tabs:
-  - title: Shell
-    type: terminal
-    hostname: cloud-client
-  - title: Cloud Consoles
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 80
   - title: Terraform
     type: code
     hostname: cloud-client
@@ -505,6 +517,14 @@ challenges:
   - title: Lab Architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
   difficulty: basic
   timelimit: 300
 - slug: 09-provision-gcp-consul-secondary-datacenter
@@ -647,15 +667,15 @@ challenges:
   - title: Shell
     type: terminal
     hostname: cloud-client
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/esm
   - title: Cloud Consoles
     type: service
     hostname: cloud-client
     path: /
     port: 80
-  - title: Terraform
-    type: code
-    hostname: cloud-client
-    path: /root/terraform/esm
   - title: Vault
     type: service
     hostname: cloud-client
@@ -1464,4 +1484,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "16378257635709210178"
+checksum: "12538708284444838490"

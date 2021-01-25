@@ -3,11 +3,221 @@
 #login
 vault login -method=userpass username=admin password=admin
 
-#check secret
+#vault checks
+echo "running Vault checks..."
+
+##aws vault
+vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
+echo "Vault Load balancer is: ${vault_lb}"
+if [ -z "${vault_lb}" ]; then
+  fail-message "AWS Vault is not provisioned yet"
+  exit 1
+fi
+vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://{$vault_lb}:8200/v1/sys/health)
+if [ "${vault_api}" != "200" ]; then
+  fail-message "AWS Vault service did not return a 200. Please wait a few moments and try again."
+  exit 1
+fi
+
+##azure vault
+vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate azure_vault_ip)
+echo "Vault Load balancer is: ${vault_lb}"
+if [ -z "${vault_lb}" ]; then
+  fail-message "Azure Vault is not provisioned yet"
+  exit 1
+fi
+vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://{$vault_lb}:8200/v1/sys/health)
+if [ "${vault_api}" != "200" ]; then
+  fail-message "Azure Vault service did not return a 200. Please wait a few moments and try again."
+  exit 1
+fi
+
+##vault replication
+status=$(vault read -format=json sys/replication/status | jq -r .data.performance.secondaries[0].connection_status)
+if [ "${status}" != "connected" ]; then
+  fail-message "Vault replication is not connected."
+  exit 1
+fi
+
+##check policies
+vault policy read admin
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking admin policy"
+  exit 1
+fi
+vault policy read nomad-server
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking nomad-server policy"
+  exit 1
+fi
+vault policy read connect
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking connect policy"
+  exit 1
+fi
+vault policy read consul
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking consul policy"
+  exit 1
+fi
+vault policy read vault
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking vault policy"
+  exit 1
+fi
+vault policy read payments
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking payments policy"
+  exit 1
+fi
+vault policy read product-api
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking product-api policy"
+  exit 1
+fi
+vault policy read payments-developer
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking payments-developer policy"
+  exit 1
+fi
+vault policy read product-developer
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking product-developer policy"
+  exit 1
+fi
+vault policy read frontend-developer
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking frontend-developer policy"
+  exit 1
+fi
+vault read auth/token/roles/nomad-cluster
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking nomad-cluster token role"
+  exit 1
+fi
+
+##check users
+vault read auth/userpass/users/admin
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking admin user"
+  exit 1
+fi
+vault read auth/userpass/users/payments-developer
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking payments-developer user"
+  exit 1
+fi
+vault read auth/userpass/users/product-developer
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking product-developer user"
+  exit 1
+fi
+vault read auth/userpass/users/frontend-developer
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking frontend-developer user"
+  exit 1
+fi
+
+##check auth methods and engines
+vault read transit/keys/payments
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking transit payments keys"
+  exit 1
+fi
+aws=$(vault auth list -format json | jq -r '."aws/".type')
+if [ "${aws}" != "aws" ]; then
+  fail-message "Error checking aws auth"
+  exit 1
+fi
+vault read auth/azure/config
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking azure auth"
+  exit 1
+fi
+vault read pki/cert/ca
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking PKI engine"
+  exit 1
+fi
+vault kv get -field private_key kv/pki
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking kv for pki root private key"
+  exit 1
+fi
+connect_root=$(vault secrets list -format json | jq -r '."connect-root/".type')
+if [ "${connect_root}" != "pki" ]; then
+  fail-message "Error checking connect root PKI engine"
+  exit 1
+fi
+vault read pki/roles/consul
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking Consul PKI role"
+  exit 1
+fi
+
+##check IAM roles
+vault read auth/aws/role/vault
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking AWS Vault IAM role"
+  exit 1
+fi
+vault read auth/azure/role/vault
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking Azure Vault IAM role"
+  exit 1
+fi
+vault read auth/aws/role/consul
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking Consul AWS IAM role"
+  exit 1
+fi
+vault read auth/azure/role/consul
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking Consul Azure IAM role"
+  exit 1
+fi
+vault read auth/aws/role/nomad
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking Nomad AWS IAM role"
+  exit 1
+fi
+vault read auth/azure/role/product-api
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking Azure product API IAM role"
+  exit 1
+fi
+
+##check kv access
 vault kv get kv/consul
 if [ $? -ne 0 ]
 then
-  fail-message "Error getting Consul bootstrap secret"
+  fail-message "Error getting Consul bootstrap secret. Check KV access."
   exit 1
 fi
 exit 0
