@@ -225,10 +225,10 @@ challenges:
      In the `Shell` tab run the following commands.
 
      ```
-    tail /root/terraform/panw-vm/terraform.out
+    tail /root/terraform/panw-vm/terraform.out -n 12
     ```
 
-     You should see `Apple complete!`. If not, take the time to review the Terraform IaC definition that will be used to configure the firewall in the 'Terraform Code' tab. If it has complete, proceed with the following commands to configure the firewall:
+     You should see `Apply complete!`. If not, take the time to review the Terraform IaC definition that will be used to configure the firewall in the 'Terraform Code' tab. If it has complete, proceed with the following commands to configure the firewall:
 
      ```
     terraform plan
@@ -468,7 +468,7 @@ challenges:
 
     Navigate to the "Objects" tab and select "Address Groups". Under the 'Addresses' column for "cts-add-grp-web" click on "more...". Note that the Address Group is empty. Consul Terraform Sync is going to take care of this.
 
-    Lastly, navigate to the 'App' tab and note that the App is not currently available through the network infrastructure.
+    Lastly, in the Lab Console navigate to the 'App' tab and note that the App is not currently available through the network infrastructure.
 
      **Deploy Consul Terraform Sync**
 
