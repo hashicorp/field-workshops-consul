@@ -152,7 +152,7 @@ resource "azurerm_role_assignment" "vault-reader" {
 
 resource "azurerm_role_assignment" "vault-key-admin" {
   scope                = data.azurerm_subscription.current.id
-  role_definition_name = "Key Vault Administrator (preview)"
+  role_definition_name = "Key Vault Administrator"
   principal_id         = azurerm_virtual_machine.vault.identity.0.principal_id
 }
 
