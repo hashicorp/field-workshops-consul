@@ -67,7 +67,7 @@ az provider register --namespace 'Microsoft.Solutions' --subscription "${INSTRUQ
 /opt/az/bin/python3 -m pip install --upgrade pip
 
 #enable hcs ext
-az extension add --source https://releases.hashicorp.com/hcs/0.3.1/hcs-0.3.1-py2.py3-none-any.whl --yes
+az extension add --source https://releases.hashicorp.com/hcs/0.4.4/hcs-0.4.4-py2.py3-none-any.whl --yes
 
 #provision
 cd /root/terraform/vnet
