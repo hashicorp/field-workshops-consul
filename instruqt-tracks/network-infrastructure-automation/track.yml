@@ -78,8 +78,6 @@ challenges:
 
     In the `Shell` tab, deploy the Azure VNETs by running the following commands.
     ```
-    cd /root/terraform/vnet
-    terraform init
     terraform plan
     terraform apply -auto-approve
     ```
