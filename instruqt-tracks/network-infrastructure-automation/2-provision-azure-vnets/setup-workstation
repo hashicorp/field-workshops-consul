@@ -63,6 +63,9 @@ sleep 60
 #enable marketplace
 az provider register --namespace 'Microsoft.Solutions' --subscription "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SUBSCRIPTION_ID}"
 
+# Workround for az cli certificate pinning issue: https://github.com/Azure/azure-cli/issues/16858
+/opt/az/bin/python3 -m pip install --upgrade pip
+
 #enable hcs ext
 az extension add --source https://releases.hashicorp.com/hcs/0.3.1/hcs-0.3.1-py2.py3-none-any.whl --yes
 
