@@ -33,14 +33,14 @@ challenges:
     machines that is being delivered by Consul Service Discovery. Not a complex use-case
     but a very common one. New virtual machines are frequently added and removed to
     handle scaling requirements, and to 'A/B test' new functionality. These changes
-    require frequent invovlement with the already overworked Network Operations And
-    Securty Operations teams who must adjust/update load-balancing and security configurations.\nThe
-    long hours and lengthy job queues result in deployment errors and, potnetially,
+    require frequent involvement with the already overworked Network Operations And
+    Security Operations teams who must adjust/update load-balancing and security configurations.\nThe
+    long hours and lengthy job queues result in deployment errors and, potentially,
     security issues.\n\n**Navigate to the 'NIA - Operational Pattern' tab.**\n\nWith
     `Consul` providing real-time application state (IP Addresses and App meta-data),
-    Consul Terraform Sync uses that infromation, and its visibility of all application
+    Consul Terraform Sync uses that information, and its visibility of all application
     state changes, to configure the network infrastructure eliminating the need for
-    Network Operations teams invovlement in Day 2 Ops.\n\n**Navigate to the 'NIA -
+    Network Operations teams involvement in Day 2 Ops.\n\n**Navigate to the 'NIA -
     Traffic Flow' tab.**\n\nIn this diagram you can see the Traffic Flow of the infrastructure
     we are going to build in the following steps. \n\nNOTE: A fine-grained policy
     on the Palo Alto firewall is possible, without increasing operational overhead,
@@ -186,7 +186,7 @@ challenges:
     be presented with a certificate error, to bypass this you can type \"thisisunsafe\"
     into the Chrome window.\n\nThe HCS services may not be running quite yet, but
     are required before we move on to the next challenge. \nYou can monitor its progress
-    with the following command:\n\nMontior HCS provisioning\n```\ntail -f /root/terraform/hcs/terraform.out\n```"
+    with the following command:\n\nMonitor HCS provisioning\n```\ntail -f /root/terraform/hcs/terraform.out\n```"
   notes:
   - type: text
     contents: |
@@ -221,7 +221,7 @@ challenges:
   assignment: |-
     Now we will configure the Palo Alto Firewall using Terraform.
 
-     First, let's verify that the Palo Alto VM Series has been instanciated.
+     First, let's verify that the Palo Alto VM Series has been instantiated.
      In the `Shell` tab run the following commands.
 
      ```
@@ -235,7 +235,7 @@ challenges:
     terraform apply -auto-approve
     ```
 
-    Now we must instrut the firewall to `commit` this change using the following command:
+    Now we must instruct the firewall to `commit` this change using the following command:
     ```
     /root/terraform/panos_commit/panos-commit -config /root/terraform/panos_commit/panos-commit.json -force
     ```
@@ -408,7 +408,7 @@ challenges:
     and Web services auto-register.\n\nYou could also watch the output of the app
     deployment log by executing the following command in the `Shell` tab \n```\ntail
     -f /root/terraform/app/deploy_app.log\n```\n\n You will explore the environment
-    in more detail in the next challange. <br>"
+    in more detail in the next challenge. <br>"
   notes:
   - type: text
     contents: |
