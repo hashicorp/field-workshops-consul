@@ -1,13 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 
 echo ""
 echo ""
 echo ">>------------------------------<<"
 echo ">> Starting Network Infra Setup <<"
 echo ">>------------------------------<<"
-
-consul_lb=$(terraform output -state /root/terraform/hcs/terraform.tfstate consul_url)
-echo "export CONSUL_HTTP_ADDR=${consul_lb}" >> ~/.bashrc
 
 set-workdir /root/terraform/panw-vm
 

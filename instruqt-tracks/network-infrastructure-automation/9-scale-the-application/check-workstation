@@ -1,4 +1,11 @@
 #!/bin/bash
 
+## Access the App through the Automated Network Infrastructure
+app_service=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate WebFQDN)
+app_service_resp=$(curl -s -o /dev/null -w ''%{http_code}'' $app_service)
+if [ "${app_service_resp}" != "200" ]; then
+  fail-message "Unable to access 'Web' Service through Network Infrastructure. NIA is not implemented. "
+  exit 1
+fi
 
 exit 0
