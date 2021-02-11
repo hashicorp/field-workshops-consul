@@ -1,10 +1,13 @@
 #!/bin/bash
 
-## Access the App through the Automated Network Infrastructure
-app_service=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate WebFQDN)
-app_service_resp=$(curl -s -o /dev/null -w ''%{http_code}'' $app_service)
-if [ "${app_service_resp}" != "200" ]; then
-  fail-message "Unable to access 'Web' Service through Network Infrastructure. NIA is not implemented. "
+echo "Checking App Scale-down has executed..."
+
+#get rg
+rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+
+status=$(az vmss show -g "${rg}" --name web-vmss | jq -r '.provisioningState')
+if [ [ "${status}" != "Updating" ] && [ "${status}" != "Succeeded" ] ; then
+  fail-message "App scale-down has not been executed. Please run the terraform command provided. Current state is: ${status}"
   exit 1
 fi
 
