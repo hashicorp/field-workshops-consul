@@ -5,7 +5,7 @@ aws configure set default.region us-east-1
 aws ec2 create-default-vpc
 
 #azure setup
-sleep 120
+sleep 180
 az group create -l westus2 -n packer
 
 #cloud client setup
