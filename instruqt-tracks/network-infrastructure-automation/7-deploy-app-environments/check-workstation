@@ -1,9 +1,10 @@
 #!/bin/bash
 
-#get rg
 echo "Checking App Deployment..."
 
+#get rg
 rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+
 status=$(az vmss show -g "${rg}" --name web-vmss | jq -r '.provisioningState')
 if [ "${status}" != "Creating" ] && [ "${status}" != "Updating" ] && [ "${status}" != "Succeeded" ] ; then
   fail-message "App is not provisioning/provisioned. Wait a few moments and try again. Current state is: ${status}"
