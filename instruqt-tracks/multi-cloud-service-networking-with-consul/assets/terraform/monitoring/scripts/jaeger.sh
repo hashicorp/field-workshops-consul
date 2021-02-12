@@ -258,7 +258,7 @@ services:
     jaeger-collector:
       image: jaegertracing/jaeger-collector
       network_mode: host
-      command: ["--cassandra.keyspace=jaeger_v1_dc1", "--cassandra.servers=127.0.0.1", "--collector.zipkin.http-port=9411"]
+      command: ["--cassandra.keyspace=jaeger_v1_dc1", "--cassandra.servers=127.0.0.1", "--collector.zipkin.host-port=9411"]
       restart: on-failure
       depends_on:
         - cassandra-schema
