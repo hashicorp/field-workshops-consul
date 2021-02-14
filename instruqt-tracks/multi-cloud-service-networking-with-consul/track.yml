@@ -104,13 +104,13 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
   - title: Terraform
     type: code
     hostname: cloud-client
     path: /root/terraform/vault
-  - title: Lab Architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 300
 - slug: 03-provision-identities
@@ -1478,4 +1478,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "17145357968934167630"
+checksum: "693327287731575830"

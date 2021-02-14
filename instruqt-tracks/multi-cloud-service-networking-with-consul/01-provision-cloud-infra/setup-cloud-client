@@ -1,11 +1,29 @@
 #!/bin/bash
 
+# Ensure we load /etc/profile.d/instruqt-env.sh
+echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
+source /root/.bashrc
+
+#wait at least five minutes for Azure SPN to propagate
+echo "Logging in with Azure SPN..."
+n=0
+until [ $n -ge 5 ]; do
+  az login --service-principal \
+  --username "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SPN_ID}" \
+  --password "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SPN_PASSWORD}" \
+  --tenant "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_TENANT_ID}"  && break
+  n=$[$n+1]
+  sleep 60
+done
+if [ $n -ge 5 ]; then
+  exit 1
+fi
+
 #aws setup
 aws configure set default.region us-east-1
 aws ec2 create-default-vpc
 
-#azure setup
-sleep 180
+#azure packer setup
 az group create -l westus2 -n packer
 
 #cloud client setup
@@ -38,10 +56,6 @@ cat << EOF > ~/.ssh/config
 Host *
     StrictHostKeyChecking no
 EOF
-
-# Ensure we load /etc/profile.d/instruqt-env.sh
-echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
-source /root/.bashrc
 
 #make vault run in instruqt container
 setcap cap_ipc_lock= /usr/bin/vault
