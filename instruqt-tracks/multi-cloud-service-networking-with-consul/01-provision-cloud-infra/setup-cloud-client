@@ -5,6 +5,7 @@ echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
 source /root/.bashrc
 
 #wait at least five minutes for Azure SPN to propagate
+az upgrade -y
 echo "Logging in with Azure SPN..."
 n=0
 until [ $n -ge 5 ]; do
