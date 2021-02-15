@@ -9,7 +9,7 @@ containers:
   - 8500
   - 8080
   - 16686
-  memory: 8192
+  memory: 2000
 gcp_projects:
 - name: consul
   services:
