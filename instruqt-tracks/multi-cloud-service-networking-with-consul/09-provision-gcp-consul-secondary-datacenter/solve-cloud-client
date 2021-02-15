@@ -2,7 +2,7 @@
 
 #provision K8s clusters
 export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)
-terraform apply -auto-approve | tee terraform.out
+terraform apply -auto-approve 2>&1 | tee terraform.out
 
 sleep 15
 

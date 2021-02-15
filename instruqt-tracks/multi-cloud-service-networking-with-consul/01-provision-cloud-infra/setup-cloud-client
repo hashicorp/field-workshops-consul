@@ -4,15 +4,15 @@
 echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
 source /root/.bashrc
 
-#wait at least five minutes for Azure SPN to propagate
+#wait at least five minutes for Azure User to propagate
 az upgrade -y
+az account clear
 echo "Logging in with Azure SPN..."
 n=0
 until [ $n -ge 5 ]; do
-  az login --service-principal \
-  --username "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SPN_ID}" \
-  --password "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SPN_PASSWORD}" \
-  --tenant "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_TENANT_ID}"  && break
+  az login \
+  --username "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_USERNAME}" \
+  --password "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_PASSWORD}" && break
   n=$[$n+1]
   sleep 60
 done
