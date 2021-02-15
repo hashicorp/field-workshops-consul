@@ -10,7 +10,7 @@ provider "google" {
 }
 
 provider "azurerm" {
-  version = "=2.43.0"
+  version = "=2.47.0"
   features {}
 }
 
