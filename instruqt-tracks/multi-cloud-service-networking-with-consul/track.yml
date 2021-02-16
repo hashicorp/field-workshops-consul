@@ -86,6 +86,8 @@ challenges:
     ```
     terraform plan
     terraform apply -auto-approve
+    #run this cmd again due to TF Azure Bug
+    terraform apply -auto-approve
     ```
 
     You can monitor the init scripts with the below commands. <br>
@@ -1478,4 +1480,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "3401211532118247805"
+checksum: "6415427096425345121"
