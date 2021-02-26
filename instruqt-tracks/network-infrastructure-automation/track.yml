@@ -323,7 +323,7 @@ challenges:
     echo $CONSUL_HTTP_ADDR
     echo $VAULT_ADDR
     bootstrap_token=$(az hcs create-token --resource-group $(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name) --name hcs | jq  -r .masterToken.secretId)
-    gossip_key=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .encrypt)
+    gossip_key=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hcs" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .encrypt)
     vault kv put secret/consul master_token=${bootstrap_token} gossip_key=${gossip_key}
     ```
 
@@ -458,9 +458,6 @@ challenges:
     type: code
     hostname: workstation
     path: /access.md
-  - title: Shell
-    type: terminal
-    hostname: workstation
   - title: Vault
     type: service
     hostname: workstation
@@ -476,6 +473,9 @@ challenges:
     hostname: workstation
     path: /
     port: 80
+  - title: Shell
+    type: terminal
+    hostname: workstation
   difficulty: basic
   timelimit: 3000
 - slug: 8-install-consul-terraform-sync
@@ -659,4 +659,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-checksum: "9419914425761710297"
+checksum: "2107784906300423202"
