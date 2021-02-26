@@ -5,7 +5,7 @@ title: Multi Cloud Service Networking with Consul
 teaser: Deploy a multi-cloud service mesh solution with Consul
 description: Run a shared Consul service across multiple clouds and enable self-service
   for application teams.
-icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags:
 - consul
 - vault
@@ -1480,4 +1480,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "11904975516432662349"
+checksum: "10093131850057491038"
