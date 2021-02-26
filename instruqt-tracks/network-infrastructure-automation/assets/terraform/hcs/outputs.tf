@@ -1,5 +1,5 @@
 output "consul_url" {
-  value       = hcs_cluster.hcs.consul_external_endpoint
+  value       = hcs_cluster.hcs.consul_external_endpoint_url
   description = "URL of the HCS for Azure Consul Cluster API and UI."
 }
 
