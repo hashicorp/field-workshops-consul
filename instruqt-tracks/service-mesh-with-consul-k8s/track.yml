@@ -86,6 +86,10 @@ challenges:
   - title: K8s
     type: terminal
     hostname: kubernetes
+  - title: K8s Dashboard Token
+    type: code
+    hostname: kubernetes
+    path: /root/dashboard-token.txt
   - title: Consul UI
     type: service
     hostname: kubernetes
@@ -96,10 +100,6 @@ challenges:
     hostname: kubernetes
     path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
     port: 8001
-  - title: K8s Dashboard Token
-    type: code
-    hostname: kubernetes
-    path: /root/dashboard-token.txt
   difficulty: basic
   timelimit: 600
 - slug: 02-deploy-application
@@ -216,7 +216,7 @@ challenges:
     You can also discover the service definition using `kubectl`. In the `_K8s` shell tab, execute the command below. <br>
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=emojify-api -o name) -c consul-connect-envoy-sidecar -- cat  /consul/connect-inject/service.hcl
+    kubectl exec $(kubectl get pod --selector=app=emojify-api -o name) -c envoy-sidecar -- cat  /consul/connect-inject/service.hcl
     ```
 
     If you have previous Consul experience, you have practice creating service definitions by hand.
@@ -297,7 +297,7 @@ challenges:
     You should also verify Envoy sidecar proxy is healthy using `kubectl`.
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=emojify-api -o name) -c consul-connect-envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep facebox
+    kubectl exec $(kubectl get pod --selector=app=emojify-api -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep facebox
     ```
 
     Nice work! You just leveraged dynamic service discovery inside your service mesh to scale out a workload.
@@ -501,13 +501,13 @@ challenges:
     Notice that Envoy is now grouping clusters by your subsets.
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters  | grep emojify-website
+    kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters  | grep emojify-website
     ```
 
     You can also see Envoy has updated your route definitions for your debug params and traffic weights. <br>
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
+    kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
     ```
 
     Finally, you can shift all the traffic to the v2 version of the website now that your new feature is working properly.
@@ -530,7 +530,7 @@ challenges:
     You can additionally verify Consul has propagated this change to Envoy by running the above command again. <br>
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c consul-connect-envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
+    kubectl exec $(kubectl get pod --selector=app=emojify-ingress -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
     ```
 
     Nice work! you just used traffic splitting to safely move users to a new version of your application!
@@ -615,7 +615,7 @@ challenges:
     Let's check this out for our API service.
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=fake-api -o name) -c consul-connect-envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."tracing"? | select(. != null)]'
+    kubectl exec $(kubectl get pod --selector=app=fake-api -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."tracing"? | select(. != null)]'
     ```
 
     Nice work, you just debugged a distributed app with tracing.
@@ -654,9 +654,6 @@ challenges:
 
       The application code can be found here: https://github.com/nicholasjackson/fake-service
   tabs:
-  - title: K8s
-    type: terminal
-    hostname: kubernetes
   - title: App UI
     type: service
     hostname: kubernetes
@@ -685,6 +682,9 @@ challenges:
     type: code
     hostname: kubernetes
     path: /root/dashboard-token.txt
+  - title: K8s
+    type: terminal
+    hostname: kubernetes
   difficulty: basic
   timelimit: 900
 - slug: 08-ingress
@@ -723,6 +723,10 @@ challenges:
   - type: text
     contents: Consul Ingress Gateways will allow you to route traffic into your clusters.
   tabs:
+  - title: K8s Dashboard Token
+    type: code
+    hostname: kubernetes
+    path: /root/dashboard-token.txt
   - title: K8s Dashboard
     type: service
     hostname: kubernetes
@@ -745,10 +749,6 @@ challenges:
     type: code
     hostname: kubernetes
     path: /root/tracing
-  - title: K8s Dashboard Token
-    type: code
-    hostname: kubernetes
-    path: /root/dashboard-token.txt
   difficulty: basic
   timelimit: 300
 - slug: 09-summary
@@ -787,4 +787,4 @@ challenges:
     path: /root/dashboard-token.txt
   difficulty: basic
   timelimit: 5400
-checksum: "5557338021820033197"
+checksum: "1043998483807709954"
