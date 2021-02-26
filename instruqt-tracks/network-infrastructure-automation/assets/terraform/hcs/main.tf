@@ -22,7 +22,7 @@ resource "hcs_cluster" "hcs" {
   resource_group_name      = data.terraform_remote_state.vnet.outputs.resource_group_name
   managed_application_name = "hcs"
   email                    = "instruqt@hashicorp.com"
-  cluster_mode             = "Development"
+  cluster_mode             = "development"
   vnet_cidr                = "10.0.0.0/24"
   location                 = "eastus"
   consul_datacenter        = "east-us"
