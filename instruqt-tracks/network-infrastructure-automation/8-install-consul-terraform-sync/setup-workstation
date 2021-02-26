@@ -16,8 +16,8 @@ terraform init
 vault login -method=userpass username=operations password=Password1
 export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
 
-consulconfig=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d)
-ca_cert=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hashicorp-consul-cluster" --api-version 2018-09-01-preview | jq -r .properties.consulCaFile | base64 -d)
+consulconfig=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hcs" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d)
+ca_cert=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hcs" --api-version 2018-09-01-preview | jq -r .properties.consulCaFile | base64 -d)
 token=$(vault kv get -field=master_token secret/consul)
 bigip_mgmt_addr=$(terraform output -state=/root/terraform/bigip/terraform.tfstate mgmt_ip)
 bigip_admin_user=$(terraform output -state=/root/terraform/bigip/terraform.tfstate f5_username)
