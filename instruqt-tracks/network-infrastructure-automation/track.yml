@@ -588,8 +588,7 @@ challenges:
     View the nodes and services via CLI:
 
     ```
-    consul
-    members
+    consul members
     consul catalog services
     ```
 
