@@ -63,7 +63,7 @@ setcap cap_ipc_lock= /usr/bin/vault
 
 #packer builds
 cd /root/packer
-packer build hashistack.json
+packer build hashistack.json 2>&1 | tee packer.out
 
 #tf
 cd /root/terraform/infra
