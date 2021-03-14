@@ -5,7 +5,7 @@ title: Multi Cloud Service Networking with Consul (Japanese)
 teaser: Consulでマルチクラウド環境のServide Meshをデプロイする
 description: |-
   マルチクラウド環境へConsuをデプロイし、Mesh Gatewayで必要コンポネント同士を接続します。
-  このトラックでは、以下のことを行います。
+  このトラックでは以下のことを行います。
 
   - TerraformでAWS、GCP、Azureの環境をプロビジョン
   - TerraformでVault、Consul、データベース、K8sなどをプロビジョン
@@ -57,11 +57,13 @@ challenges:
     terraform apply -auto-approve
     ```
 
+    Cloud Consolesタブに各CSPのポータルへやAPIにアクセスするためのクレデンシャルが記載されていますので、必要に応じて利用ください。
+
     次からの課題では、環境を横断してシークレットを共有するためにVaultをデプロイしていきます。
   notes:
   - type: text
     contents: |
-      クラウド環境を構築しています。この作業は最大で15分くらいかかる場合があります。
+      クラウド環境を構築しています。この作業は15~30分くらいかかる場合があります。
   tabs:
   - title: Shell
     type: terminal
@@ -214,6 +216,12 @@ challenges:
       replication_token=$(cat /proc/sys/kernel/random/uuid) \
       gossip_key=$(consul keygen) \
       ttl=5m
+    ```
+
+    シークレットを読み出す場合は以下のコマンドを試してください。
+
+    ```
+    vault kv get kv/consul
     ```
 
     このシークレット(`kv/consul`)は後のチャレンジでConsulによって読み出されます。
@@ -566,7 +574,7 @@ challenges:
     ここでは、GCP上のセカンダリクラスタとしてGKEを立ち上げ、K8s上へConsulをデプロイします。
     そして、GKE上にサーバーが無事に立ち上がったか確認し、プライマリとの接続を行います。
 
-    この環境では、Consulは全てGKE上で動きます。Consulのヘ`helm chart`により、簡単にConsulサーバーやConsulクライアントをデプロイできます。
+    この環境では、Consulは全てGKE上で動きます。Consulの`helm chart`により、簡単にConsulサーバーやConsulクライアントをデプロイできます。
 
     K8sでConsulを実行する方法については、以下のリソースを参照してください。<br>
       * https://www.consul.io/docs/k8s
@@ -1419,6 +1427,14 @@ challenges:
 
     これで、マルチクラウド環境で全てのサービスへの接続が可能なことが分かりました。
   tabs:
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  - title: Web App
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8080
   - title: Shell
     type: terminal
     hostname: cloud-client
@@ -1444,14 +1460,6 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8500
-  - title: Lab Architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
-  - title: Web App
-    type: service
-    hostname: cloud-client
-    path: /
-    port: 8080
   difficulty: basic
   timelimit: 300
 - slug: 22-observe-application-deployment
@@ -1527,4 +1535,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "5637613552315348258"
+checksum: "2294131701954270608"

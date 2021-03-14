@@ -11,6 +11,7 @@ mkdir -p /etc/vault-agent.d/
 cat <<EOF> /etc/vault-agent.d/consul-ca-template.ctmpl
 {{ with secret "pki/cert/ca" }}{{ .Data.certificate }}{{ end }}
 EOF
+
 cat <<EOF> /etc/vault-agent.d/consul-acl-template.ctmpl
 acl = {
   enabled        = true
@@ -24,9 +25,11 @@ acl = {
 }
 encrypt = {{ with secret "kv/consul" }}"{{ .Data.data.gossip_key }}"{{ end }}
 EOF
+
 cat <<EOF> /etc/vault-agent.d/envoy-token-template.ctmpl
 {{ with secret "kv/consul" }}{{ .Data.data.master_token }}{{ end }}
 EOF
+
 cat <<EOF> /etc/vault-agent.d/vault.hcl
 pid_file = "/var/run/vault-agent-pidfile"
 auto_auth {
@@ -57,6 +60,7 @@ vault {
   address = "$${VAULT_ADDR}"
 }
 EOF
+
 cat <<EOF > /etc/systemd/system/vault-agent.service
 [Unit]
 Description=Envoy
@@ -70,6 +74,7 @@ StartLimitIntervalSec=0
 [Install]
 WantedBy=multi-user.target
 EOF
+
 sudo systemctl enable vault-agent.service
 sudo systemctl start vault-agent.service
 sleep 10
@@ -92,6 +97,7 @@ ports = {
 }
 retry_join = ["provider=azure tag_name=Env tag_value=consul-${env} subscription_id=${subscription_id}"]
 EOF
+
 cat <<EOF> /etc/consul.d/tls.hcl
 ca_file = "/opt/consul/tls/ca-cert.pem"
 verify_incoming = false
