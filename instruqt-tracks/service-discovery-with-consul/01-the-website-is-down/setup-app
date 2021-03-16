@@ -46,7 +46,7 @@ nohup sh -c "/usr/local/bin/consul agent -config-dir /consul/config &" && sleep 
 
 
 echo "Setting up Wordpress connection..."
-sleep 10 # wait for DB server to be up
+sleep 60 # wait for DB server to be up
 rm -rf /var/www/html/*
 /usr/local/bin/wp core download --version=5.6.2 --allow-root --path=/var/www/html
 cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php
