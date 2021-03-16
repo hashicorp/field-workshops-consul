@@ -44,8 +44,18 @@ EOF
 echo "Starting Consul in Client Mode..."
 nohup sh -c "/usr/local/bin/consul agent -config-dir /consul/config &" && sleep 4
 
-echo "Configuring user and theme..."
+
+echo "Setting up Wordpress connection..."
 sleep 10 # wait for DB server to be up
+rm -rf /var/www/html/*
+/usr/local/bin/wp core download --version=5.6.2 --allow-root --path=/var/www/html
+cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php
+perl -p -i -e "s/'localhost'/'Database'/" /var/www/html/wp-config.php
+perl -p -i -e "s/'username_here'/'root'/" /var/www/html/wp-config.php
+perl -p -i -e "s/'password_here'/'HashiCorp123'/" /var/www/html/wp-config.php
+perl -p -i -e "s/'database_name_here'/'wordpress'/" /var/www/html/wp-config.php
+
+echo "Configuring user and theme..."
 URL="https://app-80-${INSTRUQT_PARTICIPANT_ID}.env.play.instruqt.com"
 /usr/local/bin/wp core install --url="$URL" --title="Consul Service Discovery" --admin_user=consul --admin_password=consul --admin_email=consul@example.com --skip-email --allow-root --path=/var/www/html
 /usr/local/bin/wp theme activate twentyseventeen --allow-root --path=/var/www/html
