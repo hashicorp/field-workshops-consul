@@ -60,7 +60,7 @@ echo "Enabling secondary replication on Azure Vault..."
 export VAULT_ADDR=http://${AZURE_VAULT_IP}:8200
 export VAULT_TOKEN=$(cat /root/azure_vault_keys.json | jq -r .root_token)
 vault write sys/replication/performance/secondary/enable token="${AZURE_REPLICATION_TOKEN}" primary_api_addr="http://${AWS_VAULT_IP}:8200"
-sleep 30
+sleep 60
 
 #vault config
 export VAULT_ADDR=http://${AWS_VAULT_IP}:8200

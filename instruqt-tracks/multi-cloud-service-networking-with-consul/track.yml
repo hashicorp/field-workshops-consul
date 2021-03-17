@@ -208,6 +208,11 @@ challenges:
     ```
     /root/terraform/vault/reset_vault.sh
     /root/terraform/vault/setup_vault.sh
+    vault kv put kv/consul \
+      master_token=$(cat /proc/sys/kernel/random/uuid) \
+      replication_token=$(cat /proc/sys/kernel/random/uuid) \
+      gossip_key=$(consul keygen) \
+      ttl=5m
     ```
 
     You will tie these tokens to Consul policies in a later assignment.
