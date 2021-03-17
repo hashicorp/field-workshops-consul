@@ -208,6 +208,7 @@ challenges:
     ```
     /root/terraform/vault/reset_vault.sh
     /root/terraform/vault/setup_vault.sh
+    vault login -method=userpass username=admin password=admin
     vault kv put kv/consul \
       master_token=$(cat /proc/sys/kernel/random/uuid) \
       replication_token=$(cat /proc/sys/kernel/random/uuid) \
@@ -1485,4 +1486,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "17215606976214391717"
+checksum: "7759627694708961411"
