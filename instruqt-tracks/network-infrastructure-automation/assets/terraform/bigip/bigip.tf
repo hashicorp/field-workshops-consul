@@ -31,8 +31,8 @@ data "template_file" "vm_onboard" {
 
 resource "azurerm_marketplace_agreement" "f5" {
   publisher = "f5-networks"
-  offer     = "f5-big-ip-best"
-  plan      = "f5-bigip-virtual-edition-25m-best-hourly"
+  offer     = "f5-big-ip-good"
+  plan      = "f5-bigip-virtual-edition-25m-good-hourly"
 }
 
 # Create F5 BIGIP VMs
@@ -72,7 +72,7 @@ resource "azurerm_linux_virtual_machine" "f5bigip" {
     name                 = "bigip-disk"
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
-    disk_size_gb         = "80"
+    disk_size_gb         = "100"
   }
 
   custom_data = base64encode(data.template_file.vm_onboard.rendered)
