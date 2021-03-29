@@ -1,0 +1,19 @@
+version: "2"
+containers:
+- name: workstation
+  image: ubuntu
+  shell: /bin/bash
+  memory: 128
+virtualmachines:
+- name: k8s1
+  image: instruqt/k3s-v1-20-4
+  shell: /bin/bash
+  environment:
+    CONSUL_HTTP_ADDR: http://127.0.0.1:30085
+  machine_type: n1-standard-2
+- name: k8s2
+  image: instruqt/k3s-v1-20-4
+  shell: /bin/bash
+  environment:
+    CONSUL_HTTP_ADDR: http://127.0.0.1:30085
+  machine_type: n1-standard-2

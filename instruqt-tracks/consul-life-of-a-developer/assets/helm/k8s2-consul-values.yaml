@@ -1,0 +1,26 @@
+global:
+  datacenter: k8s2
+  acls:
+    manageSystemACLs: true
+server:
+  replicas: 1
+  bootstrapExpect: 1
+client:
+  enabled: true
+controller:
+  enabled: true
+syncCatalog:
+  enabled: true
+  toConsul: true
+  toK8S: false
+  default: false
+connectInject:
+  enabled: true
+  default: false
+ui:
+  enabled: false
+ingressGateways:
+  enabled: false
+meshGateway:
+  enabled: true
+  replicas: 1

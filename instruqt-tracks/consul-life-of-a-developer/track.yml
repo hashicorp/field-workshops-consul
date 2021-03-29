@@ -1,0 +1,96 @@
+slug: consul-life-of-a-developer
+id: aoub5e2nrioo
+type: track
+title: 'Consul: Life of a Developer'
+teaser: A short description of the track.
+description: |-
+  A long description of the track.
+
+  You can use any GitHub flavoured markdown.
+icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+tags: []
+owner: hashicorp
+developers:
+- lance@hashicorp.com
+private: false
+published: false
+challenges:
+- slug: 01-connect-your-runtimes-part-1
+  id: xogaq1wuisti
+  type: challenge
+  title: 'Connect your runtimes: Part 1'
+  teaser: A short description of the challenge.
+  assignment: |-
+    The assignment the participant needs to complete in order to proceed.
+
+    You can use any GitHub flavoured markdown.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: K8s1 - Dashboard Token
+    type: code
+    hostname: k8s1
+    path: /root/dashboard-token.txt
+  - title: K8s Dashboard
+    type: service
+    hostname: k8s1
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: k8s1
+    path: /ui/
+    port: 30085
+  - title: Helm Config
+    type: code
+    hostname: workstation
+    path: /root/helm
+  difficulty: basic
+  timelimit: 300
+- slug: 02-connect-your-runtimes-part-2
+  id: 7myytdfzgmp6
+  type: challenge
+  title: 'Connect your runtimes: Part 2'
+  teaser: A short description of the challenge.
+  assignment: |-
+    In this assignment we will provision Consul into the k8s1 cluster. This cluster will run your stateless application.
+    You can see the complete guide on Kubernetes multi-cluster federation here: https://www.consul.io/docs/k8s/installation/multi-cluster/kubernetes <br>
+
+    Start deploying to the stateless cluster with Helm. <br>
+
+    ```
+    kubectl config use-context k8s1
+    helm install -f /root/k8s1-consul-values.yaml hashicorp hashicorp/consul  --wait --debug
+    ```
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: k8s2
+  - title: K8s Dashboard Token
+    type: code
+    hostname: k8s2
+    path: /root/dashboard-token.txt
+  - title: K8s Dashboard
+    type: service
+    hostname: k8s2
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: k8s2
+    path: /ui/
+    port: 30085
+  - title: Helm Config
+    type: code
+    hostname: k8s2
+    path: /root/consul-values.yaml
+  difficulty: basic
+  timelimit: 1800
+checksum: "15754359572846166502"

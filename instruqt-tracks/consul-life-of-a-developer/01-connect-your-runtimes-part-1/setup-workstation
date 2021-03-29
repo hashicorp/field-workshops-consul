@@ -1,0 +1,45 @@
+#!/bin/bash
+
+#fix path
+echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
+
+#install kubectl
+apt update -y
+apt install -y apt-transport-https ca-certificates curl vim openssh-client
+curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+add-apt-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" |  tee /etc/apt/sources.list.d/kubernetes.list
+apt update -y
+apt install -y kubectl consul
+
+#disable host checks
+cat << EOF > ~/.ssh/config
+Host *
+    StrictHostKeyChecking no
+EOF
+
+#get the kube configs
+ssh k8s1 'cat ~/.kube/config' > /tmp/k8s1_kube_config.yaml
+ssh k8s2 'cat ~/.kube/config' > /tmp/k8s2_kube_config.yaml
+
+#name them - k8s1
+sed -i 's/default/k8s1/g' /tmp/k8s1_kube_config.yaml
+sed -i 's/127.0.0.1/k8s1/g' /tmp/k8s1_kube_config.yaml
+#name them - k8s2
+sed -i 's/default/k8s2/g' /tmp/k8s2_kube_config.yaml
+sed -i 's/127.0.0.1/k8s2/g' /tmp/k8s2_kube_config.yaml
+
+#merge them & set the context
+mkdir -p ~/.kube/
+KUBECONFIG=/tmp/k8s1_kube_config.yaml:/tmp/k8s2_kube_config.yaml kubectl config view --merge --flatten > ~/.kube/config
+kubectl config use-context k8s1
+
+#helm install
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+/usr/local/bin/helm repo add hashicorp https://helm.releases.hashicorp.com
+
+#assets
+git clone https://github.com/hashicorp/field-workshops-consul.git
+
+exit 0
