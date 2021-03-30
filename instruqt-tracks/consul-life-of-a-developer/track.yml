@@ -36,8 +36,11 @@ challenges:
     kubectl get pods
     ```
 
-    Check the Consul API. You can also see the Consul UI is now up. <br>
+    Check the Consul API. You can also see the Consul UI is now up.
+    This lab will use a local Nginx sever to make the embedded tabs work correct in the Instruqt environment <br>
+
     ```
+    service nginx restart
     curl localhost:8500/v1/status/leader
     ```
 
@@ -98,6 +101,13 @@ challenges:
     helm install -f /root/helm/k8s2-consul-values.yaml hashicorp hashicorp/consul  --wait --debug
     ```
 
+    Check that the Kubernetes clusters are now federated.
+
+    ```
+    consul members -wan
+    ```
+
+    In this new few assignments, you will deploy workloads to these clusters.
   notes:
   - type: text
     contents: Replace this text with your own text
@@ -125,4 +135,4 @@ challenges:
     path: /root/helm
   difficulty: basic
   timelimit: 1800
-checksum: "10372896002323021517"
+checksum: "3564089506794495606"
