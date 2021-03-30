@@ -46,8 +46,8 @@ ui:
       ports:
       - name: http
         protocol: TCP
-        port: 8500
-        targetPort: 8500
+        port: 8501
+        targetPort: 8501
         nodePort: 30085
 ingressGateways:
   enabled: true

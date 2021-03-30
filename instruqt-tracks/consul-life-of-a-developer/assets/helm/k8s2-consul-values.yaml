@@ -1,26 +1,34 @@
 global:
   datacenter: k8s2
+  tls:
+    enabled: true
+    caCert:
+      secretName: hashicorp-consul-federation
+      secretKey: caCert
+    caKey:
+      secretName: hashicorp-consul-federation
+      secretKey: caKey
   acls:
     manageSystemACLs: true
-server:
-  replicas: 1
-  bootstrapExpect: 1
-client:
+    replicationToken:
+      secretName: hashicorp-consul-federation
+      secretKey: replicationToken
+  federation:
+    enabled: true
+connectInject:
   enabled: true
 controller:
   enabled: true
-syncCatalog:
-  enabled: true
-  toConsul: true
-  toK8S: false
-  default: false
-connectInject:
-  enabled: true
-  default: false
-ui:
-  enabled: false
-ingressGateways:
-  enabled: false
 meshGateway:
   enabled: true
   replicas: 1
+server:
+  replicas: 1
+  bootstrapExpect: 1
+  extraVolumes:
+    - type: secret
+      name: hashicorp-consul-federation
+      items:
+        - key: serverConfigJSON
+          path: config.json
+      load: true
