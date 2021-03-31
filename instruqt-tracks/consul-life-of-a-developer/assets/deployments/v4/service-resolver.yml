@@ -1,0 +1,11 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceResolver
+metadata:
+  name: frontend
+spec:
+  defaultSubset: v3
+  subsets:
+    v3:
+      filter: "v3 in Service.Tags"
+    v4:
+      filter: "v4 in Service.Tags"

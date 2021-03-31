@@ -15,6 +15,18 @@ developers:
 private: false
 published: false
 challenges:
+- slug: 00-review-your-environment
+  id: 6tw2q7smpvyn
+  type: challenge
+  title: Review your Environment
+  teaser: test
+  assignment: test
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  difficulty: basic
+  timelimit: 500
 - slug: 01-connect-your-runtimes-part-1
   id: xogaq1wuisti
   type: challenge
@@ -36,11 +48,9 @@ challenges:
     kubectl get pods
     ```
 
-    Check the Consul API. You can also see the Consul UI is now up.
-    This lab will use a local Nginx sever to make the embedded tabs work correct in the Instruqt environment <br>
+    Check the Consul API. You can also see the Consul UI is now up. <br>
 
     ```
-    service nginx restart
     curl localhost:8500/v1/status/leader
     ```
 
@@ -135,4 +145,50 @@ challenges:
     path: /root/helm
   difficulty: basic
   timelimit: 1800
-checksum: "3564089506794495606"
+- slug: 03-deploy-your-application-part-1
+  id: db2no1mjypbf
+  type: challenge
+  title: 'Deploy Your Application: Part 1'
+  teaser: tes
+  assignment: test
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: K8s1 - Dashboard Token
+    type: code
+    hostname: k8s1
+    path: /root/dashboard-token.txt
+  - title: K8s1 - Dashboard
+    type: service
+    hostname: k8s1
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui/
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments
+  difficulty: basic
+  timelimit: 500
+- slug: 04-deploy-your-application-part-2
+  id: 5tex6qnmgudx
+  type: challenge
+  title: 'Deploy Your Application: Part 2'
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: 05-test-your-application
+  id: mbzfwov3rzcj
+  type: challenge
+  title: Test Your Application
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+checksum: "9304012209488987665"
