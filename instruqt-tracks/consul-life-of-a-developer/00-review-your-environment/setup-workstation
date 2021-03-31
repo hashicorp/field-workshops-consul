@@ -5,7 +5,7 @@ echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
 
 #install kubectl
 apt update -y
-apt install -y apt-transport-https ca-certificates curl vim openssh-client git
+apt install -y apt-transport-https ca-certificates curl vim openssh-client git jq
 curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
 add-apt-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg

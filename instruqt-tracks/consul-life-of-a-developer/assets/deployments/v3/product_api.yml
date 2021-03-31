@@ -35,7 +35,7 @@ spec:
         prometheus.io/scrape: "true"
         prometheus.io/port: "9901"
         consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/connect-service-upstreams: "product-db:5432"
+        consul.hashicorp.com/connect-service-upstreams: "product-db:5432:k8s2"
     spec:
       serviceAccountName: product-api
       volumes:

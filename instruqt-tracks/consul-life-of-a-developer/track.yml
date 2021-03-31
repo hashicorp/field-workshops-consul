@@ -149,8 +149,25 @@ challenges:
   id: db2no1mjypbf
   type: challenge
   title: 'Deploy Your Application: Part 1'
-  teaser: tes
-  assignment: test
+  teaser: test
+  assignment: |
+    In this assignment you will deploy the stateless components of your application to the K8s1 cluster.
+    You will deploy the `v3` version of this application. <br>
+
+    Start by applying the proxy defaults to the cluster. You will use this configuration later for the observability assignments. <br>
+
+    ```
+    kubectl config use-context k8s1
+    kubectl apply -f config/proxy-defaults.yml
+    ```
+
+    Now deploy the frontend, public API, and product API components.
+
+    ```
+    kubectl apply -f v3
+    ```
+
+    In the next assignment we will connect these components to the storage tier in the other K8s cluster.
   tabs:
   - title: Workstation
     type: terminal
@@ -180,7 +197,35 @@ challenges:
   type: challenge
   title: 'Deploy Your Application: Part 2'
   teaser: test
-  assignment: test
+  assignment: |
+    In this assignment you will deploy the stateful storage of your application to the K8s2 cluster. <br>
+
+    ```
+    kubectl config use-context k8s2
+    kubectl apply -f storage
+    ```
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: K8s2 - Dashboard Token
+    type: code
+    hostname: k8s2
+    path: /root/dashboard-token.txt
+  - title: K8s2 - Dashboard
+    type: service
+    hostname: k8s2
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui/
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments
   difficulty: basic
   timelimit: 500
 - slug: 05-test-your-application
@@ -191,4 +236,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 500
-checksum: "9304012209488987665"
+checksum: "1188287187951903639"

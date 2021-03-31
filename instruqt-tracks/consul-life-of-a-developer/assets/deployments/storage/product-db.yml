@@ -2,36 +2,36 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: postgres
+  name: product-db
 ---
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceDefaults
 metadata:
-  name: postgres
+  name: product-db
 spec:
   protocol: tcp
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres
+  name: product-db
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: postgres
-      app: postgres
+      service: product-db
+      app: product-db
   template:
     metadata:
       labels:
-        service: postgres
-        app: postgres
+        service: product-db
+        app: product-db
       annotations:
         consul.hashicorp.com/connect-inject: "true"
     spec:
-      serviceAccountName: postgres
+      serviceAccountName: product-db
       containers:
-        - name: postgres
+        - name: product-db
           image: hashicorpdemoapp/product-api-db:v0.0.11
           ports:
             - containerPort: 5432
