@@ -11,7 +11,7 @@ metadata:
 data:
   conf.json: |
     {
-    "db_connection": "host=127.0.0.1 port=5432 user=postgres password=password dbname=products sslmode=disable",
+    "db_connection": "host=127.0.0.1 port=5432 user=postgres password=postgres dbname=products sslmode=disable",
     "bind_address": ":9090",
     "metrics_address": ":9103"
     }

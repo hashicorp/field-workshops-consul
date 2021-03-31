@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set-workdir /root/deployments
+
+exit 0
