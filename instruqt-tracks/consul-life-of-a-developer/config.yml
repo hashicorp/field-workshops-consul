@@ -4,6 +4,7 @@ containers:
   image: ubuntu
   shell: /bin/bash
   ports:
+  - 8080
   - 8500
   memory: 1024
 virtualmachines:

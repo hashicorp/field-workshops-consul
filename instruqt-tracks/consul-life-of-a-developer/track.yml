@@ -15,10 +15,10 @@ developers:
 private: false
 published: false
 challenges:
-- slug: 00-review-your-environment
+- slug: 00-service-mesh-environment-review
   id: 6tw2q7smpvyn
   type: challenge
-  title: Review your Environment
+  title: Service Mesh - Environment Review
   teaser: test
   assignment: test
   tabs:
@@ -27,11 +27,11 @@ challenges:
     hostname: workstation
   difficulty: basic
   timelimit: 500
-- slug: 01-connect-your-runtimes-part-1
+- slug: 01-service-mesh-connect-your-runtimes
   id: xogaq1wuisti
   type: challenge
-  title: 'Connect your runtimes: Part 1'
-  teaser: A short description of the challenge.
+  title: Service Mesh - Connect Your Runtimes - Part 1
+  teaser: Connect Stateless K8s Cluster
   assignment: |-
     You can see the complete guide on Kubernetes multi-cluster federation here: https://www.consul.io/docs/k8s/installation/multi-cluster/kubernetes <br>
 
@@ -82,11 +82,11 @@ challenges:
     path: /root/helm
   difficulty: basic
   timelimit: 300
-- slug: 02-connect-your-runtimes-part-2
+- slug: 02-service-mesh-connect-your-runtimes
   id: 7myytdfzgmp6
   type: challenge
-  title: 'Connect your runtimes: Part 2'
-  teaser: A short description of the challenge.
+  title: Service Mesh - Connect Your Runtimes - Part 2
+  teaser: Connect Stateful K8s Cluster
   assignment: |-
     In this assignment you will finish the steps in this guide for the secondary cluster: https://www.consul.io/docs/k8s/installation/multi-cluster/kubernetes <br>
 
@@ -145,10 +145,10 @@ challenges:
     path: /root/helm
   difficulty: basic
   timelimit: 1800
-- slug: 03-deploy-your-application-part-1
+- slug: 03-service-mesh-deploy-your-application
   id: db2no1mjypbf
   type: challenge
-  title: 'Deploy Your Application: Part 1'
+  title: Service Mesh - Deploy Your Application - Part 1
   teaser: test
   assignment: |
     In this assignment you will deploy the stateless components of your application to the K8s1 cluster.
@@ -192,10 +192,10 @@ challenges:
     path: /root/deployments
   difficulty: basic
   timelimit: 500
-- slug: 04-deploy-your-application-part-2
+- slug: 04-service-mesh-deploy-your-application
   id: 5tex6qnmgudx
   type: challenge
-  title: 'Deploy Your Application: Part 2'
+  title: Service Mesh - Deploy Your Application -  Part 2
   teaser: test
   assignment: |
     In this assignment you will deploy the stateful storage of your application to the K8s2 cluster. <br>
@@ -228,12 +228,138 @@ challenges:
     path: /root/deployments
   difficulty: basic
   timelimit: 500
-- slug: 05-test-your-application
+- slug: 05-service-mesh-test-your-application
   id: mbzfwov3rzcj
   type: challenge
-  title: Test Your Application
+  title: Service Mesh - Test Your Application
+  teaser: test
+  assignment: |-
+    Your application should now be available.  We can quickly test the APIs by exposing the public API as a NodePort services.
+    NodePort services are uncommon in production, but suitable for dev and test. <br>
+
+    Expose the public API service.
+
+    ```
+    kubectl expose deployment public-api --type=NodePort --name=public-api-service
+    ```
+
+    Fetch the details of the service you just created.
+
+    ```
+    kubectl describe svc public-api-service
+    port=$(kubectl get svc public-api-service -o json | jq '.spec.ports[0].nodePort')
+    ```
+
+    Try the API <br>
+
+    ```
+    curl -v http://k8s1:${port}/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+    --compressed | jq
+    ```
+
+    You should have received a 200 status code from the app with the coffees in stock.
+    In the next few assignments you will be introduced to more advanced traffic management patterns.
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: K8s1 - Dashboard Token
+    type: code
+    hostname: k8s1
+    path: /root/dashboard-token.txt
+  - title: K8s1 - Dashboard
+    type: service
+    hostname: k8s1
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui/
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments
+  difficulty: basic
+  timelimit: 500
+- slug: 06-traffic-management-ingress
+  id: 5qnkobx3dujj
+  type: challenge
+  title: 'Traffic Management: Ingress'
+  teaser: test
+  assignment: |-
+    Review and apply the ingress config.
+    We have created a few different routes that are available through the ingress gateway.  <br>
+
+    ```
+    kubectl apply -f ingress
+    ```
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: K8s1 - Dashboard Token
+    type: code
+    hostname: k8s1
+    path: /root/dashboard-token.txt
+  - title: K8s1 - Dashboard
+    type: service
+    hostname: k8s1
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /web
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments
+  - title: App
+    type: service
+    hostname: workstation
+    path: /web
+    port: 8080
+  difficulty: basic
+  timelimit: 500
+- slug: 07-traffic-management-request-routing
+  id: olcwgzsryftu
+  type: challenge
+  title: 'Traffic Management: Request Routing'
   teaser: test
   assignment: test
   difficulty: basic
   timelimit: 500
-checksum: "1222561013194100268"
+- slug: 08-traffic-management-traffic-shifting
+  id: tmswarh6vq9w
+  type: challenge
+  title: 'Traffic Management: Traffic Shifting'
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: 09-observability-metrics
+  id: uxddr0p5hlph
+  type: challenge
+  title: 'Observability: Metrics'
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: 10-observability-tracing
+  id: olkpnjqs2q2r
+  type: challenge
+  title: 'Observability: Tracing'
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+checksum: "18280932609167635532"

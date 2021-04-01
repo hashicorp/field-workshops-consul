@@ -20,6 +20,8 @@ spec:
   sources:
     - name: frontend
       action: allow
+    - name: ingress-gateway
+      action: allow
 ---
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceIntentions
