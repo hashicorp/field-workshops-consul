@@ -14,6 +14,7 @@ developers:
 - lance@hashicorp.com
 private: false
 published: false
+show_timer: true
 challenges:
 - slug: 00-service-mesh-environment-review
   id: 6tw2q7smpvyn
@@ -407,7 +408,17 @@ challenges:
   type: challenge
   title: 'Traffic Management: Traffic Shifting'
   teaser: test
-  assignment: test
+  assignment: |-
+    Review the routes and apply the routing configuration.  <br>
+
+    ```
+    kubectl config use-context k8s1
+    kubectl apply -f v4
+    ```
+
+    Reload the App tab to see the application that is now served over the ingress gateway. <br>
+
+    Test the API over the Ingress Gateway. <br>
   tabs:
   - title: Workstation
     type: terminal
@@ -429,12 +440,13 @@ challenges:
   - title: K8s Deployment
     type: code
     hostname: workstation
-    path: /root/deployments/ingress
+    path: /root/deployments/v4
   - title: App
     type: service
     hostname: workstation
     path: /
     port: 8080
+    new_window: true
   difficulty: basic
   timelimit: 500
 - slug: 09-observability-metrics
@@ -453,4 +465,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 500
-checksum: "15517426852633357603"
+checksum: "17222924988102160089"
