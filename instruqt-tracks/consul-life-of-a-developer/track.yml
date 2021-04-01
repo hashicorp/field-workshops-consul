@@ -182,7 +182,7 @@ challenges:
   - title: Consul UI
     type: service
     hostname: workstation
-    path: /ui/
+    path: /ui/k8s2
     port: 8500
   - title: K8s Deployment
     type: code
@@ -203,6 +203,7 @@ challenges:
     Now deploy the frontend, public API, and product API components.
 
     ```
+    kubectl config use-context k8s1
     kubectl apply -f v3
     ```
 
@@ -243,6 +244,7 @@ challenges:
     Expose the public API service.
 
     ```
+    kubectl config use-context k8s1
     kubectl expose deployment public-api --type=NodePort --name=public-api-service
     ```
 
@@ -266,7 +268,8 @@ challenges:
     --compressed | jq
     ```
 
-    You should have received a 200 status code from the app with the coffees in stock.
+    You should have received a 200 status code from the app with the coffees in stock. <br>
+
     In the next few assignments you will be introduced to more advanced traffic management patterns.
   tabs:
   - title: Workstation
@@ -289,7 +292,7 @@ challenges:
   - title: K8s Deployment
     type: code
     hostname: workstation
-    path: /root/deployments
+    path: /root/deployments/ingress
   difficulty: basic
   timelimit: 500
 - slug: 06-traffic-management-ingress
@@ -299,15 +302,64 @@ challenges:
   teaser: test
   assignment: |-
     Review and apply the ingress config.
-    We have created a few different routes that are available through the ingress gateway.  <br>
 
     ```
-    kubectl apply -f ingress
+    kubectl config use-context k8s1
+    kubectl apply -f ingress/hashicups.yml
+    ```
+
+    Your ingress config is now in Consul. <br>
+
+    ```
+    consul config read -kind ingress-gateway -name hashicups-ingress-gateway | jq
+    ```
+
+    In the next assignment you will configure request routing for this ingress gateway.
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: K8s1 - Dashboard Token
+    type: code
+    hostname: k8s1
+    path: /root/dashboard-token.txt
+  - title: K8s1 - Dashboard
+    type: service
+    hostname: k8s1
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments/ingress
+  - title: App
+    type: service
+    hostname: workstation
+    path: /
+    port: 8080
+  difficulty: basic
+  timelimit: 500
+- slug: 07-traffic-management-request-routing
+  id: olcwgzsryftu
+  type: challenge
+  title: 'Traffic Management: Request Routing'
+  teaser: test
+  assignment: |-
+    Review the routes and apply the routing configuration.  <br>
+
+    ```
+    kubectl config use-context k8s1
+    kubectl apply -f ingress/service-router.yml
     ```
 
     Reload the App tab to see the application that is now served over the ingress gateway. <br>
 
-    You can also test the public API over the ingress gateway. <br>
+    Test the API over the Ingress Gateway. <br>
 
     ```
     kubectl describe svc hashicorp-consul-ingress-gateway
@@ -342,20 +394,12 @@ challenges:
   - title: K8s Deployment
     type: code
     hostname: workstation
-    path: /root/deployments
+    path: /root/deployments/ingress
   - title: App
     type: service
     hostname: workstation
     path: /
     port: 8080
-  difficulty: basic
-  timelimit: 500
-- slug: 07-traffic-management-request-routing
-  id: olcwgzsryftu
-  type: challenge
-  title: 'Traffic Management: Request Routing'
-  teaser: test
-  assignment: test
   difficulty: basic
   timelimit: 500
 - slug: 08-traffic-management-traffic-shifting
@@ -364,6 +408,33 @@ challenges:
   title: 'Traffic Management: Traffic Shifting'
   teaser: test
   assignment: test
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: K8s1 - Dashboard Token
+    type: code
+    hostname: k8s1
+    path: /root/dashboard-token.txt
+  - title: K8s1 - Dashboard
+    type: service
+    hostname: k8s1
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments/ingress
+  - title: App
+    type: service
+    hostname: workstation
+    path: /
+    port: 8080
   difficulty: basic
   timelimit: 500
 - slug: 09-observability-metrics
@@ -382,4 +453,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 500
-checksum: "1336622583363109745"
+checksum: "15517426852633357603"
