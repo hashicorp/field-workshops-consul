@@ -1,0 +1,17 @@
+#!/bin/bash
+
+cat << 'EOF' > /etc/nginx/conf.d/app.conf
+server {
+  listen 8080;
+  location / {
+    proxy_pass http://k8s1:30080;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+  }
+  access_log /var/log/nginx/app.log;
+}
+EOF
+/usr/sbin/service nginx restart
+
+exit 0

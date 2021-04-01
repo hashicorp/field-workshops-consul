@@ -145,14 +145,13 @@ challenges:
     path: /root/helm
   difficulty: basic
   timelimit: 1800
-- slug: 03-service-mesh-deploy-your-application
-  id: db2no1mjypbf
+- slug: 03-service-mesh-deploy-your-application-stateful
+  id: 5tex6qnmgudx
   type: challenge
-  title: Service Mesh - Deploy Your Application - Part 1
+  title: Service Mesh - Deploy Your Application -  Stateful
   teaser: test
   assignment: |
-    In this assignment you will deploy the stateless components of your application to the K8s1 cluster.
-    You will deploy the `v3` version of this application. <br>
+    In this assignment you will deploy the stateful storage of your application to the K8s2 cluster. <br>
 
     Start by applying the proxy defaults to the cluster. You will use this configuration later for the observability assignments. <br>
 
@@ -160,6 +159,46 @@ challenges:
     kubectl config use-context k8s1
     kubectl apply -f config/proxy-defaults.yml
     ```
+
+    Now deploy the stateful storage components.
+
+    ```
+    kubectl config use-context k8s2
+    kubectl apply -f storage
+    ```
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: K8s2 - Dashboard Token
+    type: code
+    hostname: k8s2
+    path: /root/dashboard-token.txt
+  - title: K8s2 - Dashboard
+    type: service
+    hostname: k8s2
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui/
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments
+  difficulty: basic
+  timelimit: 500
+- slug: 04-service-mesh-deploy-your-application-stateless
+  id: db2no1mjypbf
+  type: challenge
+  title: Service Mesh - Deploy Your Application - Stateless
+  teaser: test
+  assignment: |
+    In this assignment you will deploy the stateless components of your application to the K8s1 cluster.
+    You will deploy the `v3` version of this application. <br>
+
 
     Now deploy the frontend, public API, and product API components.
 
@@ -179,42 +218,6 @@ challenges:
   - title: K8s1 - Dashboard
     type: service
     hostname: k8s1
-    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
-    port: 8001
-  - title: Consul UI
-    type: service
-    hostname: workstation
-    path: /ui/
-    port: 8500
-  - title: K8s Deployment
-    type: code
-    hostname: workstation
-    path: /root/deployments
-  difficulty: basic
-  timelimit: 500
-- slug: 04-service-mesh-deploy-your-application
-  id: 5tex6qnmgudx
-  type: challenge
-  title: Service Mesh - Deploy Your Application -  Part 2
-  teaser: test
-  assignment: |
-    In this assignment you will deploy the stateful storage of your application to the K8s2 cluster. <br>
-
-    ```
-    kubectl config use-context k8s2
-    kubectl apply -f storage
-    ```
-  tabs:
-  - title: Workstation
-    type: terminal
-    hostname: workstation
-  - title: K8s2 - Dashboard Token
-    type: code
-    hostname: k8s2
-    path: /root/dashboard-token.txt
-  - title: K8s2 - Dashboard
-    type: service
-    hostname: k8s2
     path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
     port: 8001
   - title: Consul UI
@@ -253,7 +256,7 @@ challenges:
     Try the API <br>
 
     ```
-    curl -v http://k8s1:${port}/api \
+    curl -s -v http://k8s1:${port}/api \
     -H 'Accept-Encoding: gzip, deflate, br' \
     -H 'Content-Type: application/json' \
     -H 'Accept: application/json' \
@@ -301,6 +304,23 @@ challenges:
     ```
     kubectl apply -f ingress
     ```
+
+    Reload the App tab to see the application that is now served over the ingress gateway. <br>
+
+    You can also test the public API over the ingress gateway. <br>
+
+    ```
+    kubectl describe svc hashicorp-consul-ingress-gateway
+    port=$(kubectl get svc hashicorp-consul-ingress-gateway -o json | jq '.spec.ports[0].nodePort')
+    curl -s -v http://k8s1:${port}/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+    --compressed | jq
+    ```
   tabs:
   - title: Workstation
     type: terminal
@@ -317,7 +337,7 @@ challenges:
   - title: Consul UI
     type: service
     hostname: workstation
-    path: /web
+    path: /ui
     port: 8500
   - title: K8s Deployment
     type: code
@@ -326,7 +346,7 @@ challenges:
   - title: App
     type: service
     hostname: workstation
-    path: /web
+    path: /
     port: 8080
   difficulty: basic
   timelimit: 500
@@ -362,4 +382,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 500
-checksum: "18280932609167635532"
+checksum: "1336622583363109745"
