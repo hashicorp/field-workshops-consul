@@ -64,11 +64,9 @@ server {
 EOF
 /usr/sbin/service nginx restart
 
-#deploy vault
+#deploy vault & set up transit
 kubectl config use-context k8s1
 helm install vault hashicorp/vault -f /root/helm/vault-values.yaml
-
-#set up transit for payments app
 export VAULT_ADDR=http://k8s1:30020
 vault login root
 vault secrets enable transit

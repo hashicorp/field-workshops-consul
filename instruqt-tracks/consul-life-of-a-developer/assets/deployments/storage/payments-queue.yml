@@ -2,36 +2,36 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: payments-cache
+  name: payments-queue
 ---
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceDefaults
 metadata:
-  name: payments-cache
+  name: payments-queue
 spec:
   protocol: tcp
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: payments-cache
+  name: payments-queue
   labels:
-    app: payments-cache
+    app: payments-queue
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: payments-cache
+      app: payments-queue
   template:
     metadata:
       labels:
-        app: payments-cache
+        app: payments-queue
       annotations:
         consul.hashicorp.com/connect-inject: "true"
     spec:
-      serviceAccountName: payments-cache
+      serviceAccountName: payments-queue
       containers:
-      - name: payments-cache
+      - name: payments-queue
         image: "redis:latest"
         resources:
           requests:

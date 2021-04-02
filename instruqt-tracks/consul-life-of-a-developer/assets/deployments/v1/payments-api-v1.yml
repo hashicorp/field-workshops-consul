@@ -8,7 +8,7 @@ metadata:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: conf
+  name: payments-properties-conf-v1
 data:
   application.properties: |
     app.storage=redis
@@ -37,20 +37,20 @@ spec:
         prometheus.io/scrape: "true"
         prometheus.io/port: "9901"
         consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/connect-service-upstreams: "payments-queue:6379"
+        consul.hashicorp.com/connect-service-upstreams: "payments-queue:6379:k8s2"
         consul.hashicorp.com/service-meta-version: v1
         consul.hashicorp.com/service-tags: v1
     spec:
       serviceAccountName: payments-api
       volumes:
-        - name: config
+        - name: properties-conf
           configMap:
-            name: conf
+            name: payments-properties-conf-v1
       containers:
         - name: payments-api
           image: hashicorpdemoapp/payments:latest
           volumeMounts:
-            - name: config
+            - name: properties-conf
               mountPath: /config/application.properties
               subPath: application.properties
           ports:
