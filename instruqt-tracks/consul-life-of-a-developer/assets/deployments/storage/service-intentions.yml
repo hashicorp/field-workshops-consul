@@ -13,10 +13,10 @@ spec:
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceIntentions
 metadata:
-  name: payments-cache
+  name: payments-queue
 spec:
   destination:
-    name: payments-cache
+    name: payments-queue
   sources:
     - name: payments-api
       action: allow
