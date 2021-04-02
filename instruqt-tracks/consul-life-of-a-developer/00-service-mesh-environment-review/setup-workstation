@@ -12,7 +12,8 @@ add-apt-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_re
 curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
 echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" |  tee /etc/apt/sources.list.d/kubernetes.list
 apt update -y
-apt install -y kubectl consul
+apt install -y kubectl consul vault
+setcap cap_ipc_lock= /usr/bin/vault
 
 #disable host checks
 cat << EOF > ~/.ssh/config
@@ -62,4 +63,15 @@ server {
 }
 EOF
 /usr/sbin/service nginx restart
+
+#deploy vault
+kubectl config use-context k8s1
+helm install vault hashicorp/vault -f /root/helm/vault-values.yaml
+
+#set up transit for payments app
+export VAULT_ADDR=http://k8s1:30020
+vault login root
+vault secrets enable transit
+vault write -f transit/keys/payments
+
 exit 0

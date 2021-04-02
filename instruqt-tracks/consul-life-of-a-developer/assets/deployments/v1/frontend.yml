@@ -34,18 +34,18 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-v4
+  name: frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: frontend-v4
-      app: frontend-v4
+      service: frontend
+      app: frontend
   template:
     metadata:
       labels:
-        service: frontend-v4
-        app: frontend-v4
+        service: frontend
+        app: frontend
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "9901"

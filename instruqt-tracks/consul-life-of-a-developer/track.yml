@@ -40,7 +40,7 @@ challenges:
 
     ```
     kubectl config use-context k8s1
-    helm install -f /root/helm/k8s1-consul-values.yaml hashicorp hashicorp/consul  --wait --debug
+    helm install -f /root/helm/k8s1-consul-values.yaml consul hashicorp/consul  --wait --debug
     ```
 
     Check the pods. <br>
@@ -81,6 +81,11 @@ challenges:
     type: code
     hostname: workstation
     path: /root/helm
+  - title: Vault UI
+    type: service
+    hostname: k8s1
+    path: /
+    port: 30020
   difficulty: basic
   timelimit: 300
 - slug: 02-service-mesh-connect-your-runtimes
@@ -95,7 +100,7 @@ challenges:
 
     ```
     kubectl config use-context k8s1
-    kubectl get secret hashicorp-consul-federation -o yaml > consul-federation-secret.yaml
+    kubectl get secret consul-federation -o yaml > consul-federation-secret.yaml
     ```
 
     Switch the second k8s cluster.
@@ -201,11 +206,11 @@ challenges:
     You will deploy the `v3` version of this application. <br>
 
 
-    Now deploy the frontend, public API, and product API components.
+    Now deploy the frontend, public API, payments API, and product API components.
 
     ```
     kubectl config use-context k8s1
-    kubectl apply -f v3
+    kubectl apply -f v1
     ```
 
     In the next assignment we will connect these components to the storage tier in the other K8s cluster.
@@ -256,7 +261,7 @@ challenges:
     port=$(kubectl get svc public-api-service -o json | jq '.spec.ports[0].nodePort')
     ```
 
-    Try the API <br>
+    Try the product API. <br>
 
     ```
     curl -s -v http://k8s1:${port}/api \
@@ -269,7 +274,20 @@ challenges:
     --compressed | jq
     ```
 
-    You should have received a 200 status code from the app with the coffees in stock. <br>
+    Try the payment API. <br>
+
+    ```
+    curl -s -v http://k8s1:${port}/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+    --compressed | jq
+    ```
+
+    You should have received a 200 status code from the app API.  <br>
 
     In the next few assignments you will be introduced to more advanced traffic management patterns.
   tabs:
@@ -312,7 +330,7 @@ challenges:
     Your ingress config is now in Consul. <br>
 
     ```
-    consul config read -kind ingress-gateway -name hashicups-ingress-gateway | jq
+    consul config read -kind ingress-gateway -name ingress-gateway | jq
     ```
 
     In the next assignment you will configure request routing for this ingress gateway.
@@ -340,9 +358,9 @@ challenges:
     path: /root/deployments/ingress
   - title: App
     type: service
-    hostname: workstation
+    hostname: k8s1
     path: /
-    port: 8080
+    port: 30080
   difficulty: basic
   timelimit: 500
 - slug: 07-traffic-management-request-routing
@@ -360,11 +378,16 @@ challenges:
 
     Reload the App tab to see the application that is now served over the ingress gateway. <br>
 
-    Test the API over the Ingress Gateway. <br>
+    Get the gateway IP. <br>
 
     ```
-    kubectl describe svc hashicorp-consul-ingress-gateway
-    port=$(kubectl get svc hashicorp-consul-ingress-gateway -o json | jq '.spec.ports[0].nodePort')
+    kubectl describe svc consul-ingress-gateway
+    port=$(kubectl get svc consul-ingress-gateway -o json | jq '.spec.ports[0].nodePort')
+    ```
+
+    Test the product API. <br>
+
+    ```
     curl -s -v http://k8s1:${port}/api \
     -H 'Accept-Encoding: gzip, deflate, br' \
     -H 'Content-Type: application/json' \
@@ -372,6 +395,19 @@ challenges:
     -H 'Connection: keep-alive' \
     -H 'DNT: 1' \
     --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+    --compressed | jq
+    ```
+
+    Test the payment API. <br>
+
+    ```
+    curl -s -v http://k8s1:${port}/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
     --compressed | jq
     ```
   tabs:
@@ -398,9 +434,10 @@ challenges:
     path: /root/deployments/ingress
   - title: App
     type: service
-    hostname: workstation
+    hostname: k8s1
     path: /
-    port: 8080
+    port: 30080
+    new_window: true
   difficulty: basic
   timelimit: 500
 - slug: 08-traffic-management-traffic-shifting
@@ -413,7 +450,7 @@ challenges:
 
     ```
     kubectl config use-context k8s1
-    kubectl apply -f v4
+    kubectl apply -f v2
     ```
 
     Reload the App tab to see the application that is now served over the ingress gateway. <br>
@@ -423,15 +460,6 @@ challenges:
   - title: Workstation
     type: terminal
     hostname: workstation
-  - title: K8s1 - Dashboard Token
-    type: code
-    hostname: k8s1
-    path: /root/dashboard-token.txt
-  - title: K8s1 - Dashboard
-    type: service
-    hostname: k8s1
-    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
-    port: 8001
   - title: Consul UI
     type: service
     hostname: workstation
@@ -440,12 +468,18 @@ challenges:
   - title: K8s Deployment
     type: code
     hostname: workstation
-    path: /root/deployments/v4
-  - title: App
+    path: /root/deployments/v2
+  - title: App - V3
     type: service
-    hostname: workstation
-    path: /
-    port: 8080
+    hostname: k8s1
+    path: /?x-version=3
+    port: 30080
+    new_window: true
+  - title: App - V4
+    type: service
+    hostname: k8s1
+    path: /?x-version=4
+    port: 30080
     new_window: true
   difficulty: basic
   timelimit: 500
@@ -465,4 +499,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 500
-checksum: "17222924988102160089"
+checksum: "18234236230493421534"

@@ -8,7 +8,7 @@ metadata:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: conf
+  name: payments-properties-conf-v2
 data:
   application.properties: |
     app.storage=redis
@@ -18,41 +18,64 @@ data:
     logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter=DEBUG
     opentracing.jaeger.enable-b3-propagation=true
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payments-bootstrap-conf-v2
+data:
+  bootstrap.yaml: |
+    spring:
+      cloud:
+        vault:
+          enabled: true
+          fail-fast: true
+          authentication: TOKEN
+          token: root
+          host: vault
+          port: 8200
+          scheme: http
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: payments-api
+  name: payments-api-v2
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: payments-api
-      app: payments-api
+      service: payments-api-v2
+      app: payments-api-v2
   template:
     metadata:
       labels:
-        service: payments-api
-        app: payments-api
+        service: payments-api-v2
+        app: payments-api-v2
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "9901"
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service-upstreams: "payments-queue:6379"
-        consul.hashicorp.com/service-meta-version: v1
-        consul.hashicorp.com/service-tags: v1
+        consul.hashicorp.com/service-meta-version: v2
+        consul.hashicorp.com/service-tags: v2
     spec:
       serviceAccountName: payments-api
       volumes:
-        - name: config
+        - name: properties-config
           configMap:
-            name: conf
+            name: payments-properties-conf-v2
+        - name: bootstrap-config
+          configMap:
+            name: payments-bootstrap-conf-v2
       containers:
         - name: payments-api
           image: hashicorpdemoapp/payments:latest
           volumeMounts:
-            - name: config
+            - name: properties-config
               mountPath: /config/application.properties
               subPath: application.properties
+            - name: bootstrap-config
+              mountPath: /config/bootstrap.yaml
+              subPath: bootstrap.yaml
           ports:
             - containerPort: 8080
           env:
