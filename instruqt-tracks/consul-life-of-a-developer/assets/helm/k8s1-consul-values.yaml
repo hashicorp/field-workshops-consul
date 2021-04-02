@@ -1,4 +1,5 @@
 global:
+  name: consul
   datacenter: k8s1
   tls:
     enabled: true

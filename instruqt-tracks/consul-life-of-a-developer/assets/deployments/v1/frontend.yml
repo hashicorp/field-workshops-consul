@@ -14,14 +14,11 @@ data:
     server {
         listen       80;
         server_name  localhost;
-        #charset koi8-r;
-        #access_log  /var/log/nginx/host.access.log  main;
         location / {
             root   /usr/share/nginx/html;
             index  index.html index.htm;
+            try_files $uri $uri/ /index.html =404;
         }
-        # Proxy pass the api location to save CORS
-        # Use location exposed by Consul connect
         location /api {
             proxy_pass http://127.0.0.1:8080;
             proxy_http_version 1.1;
@@ -37,24 +34,23 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-v3
+  name: frontend-v4
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: frontend-v3
-      app: frontend-v3
+      service: frontend-v4
+      app: frontend-v4
   template:
     metadata:
       labels:
-        service: frontend-v3
-        app: frontend-v3
+        service: frontend-v4
+        app: frontend-v4
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "9901"
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service-upstreams: "public-api:8080"
-        consul.hashicorp.com/service-tags: "v3"
     spec:
       serviceAccountName: frontend
       volumes:
@@ -66,7 +62,7 @@ spec:
             path: default.conf
       containers:
         - name: frontend
-          image: hashicorpdemoapp/frontend:v0.0.3
+          image: hashicorpdemoapp/frontend:v0.0.4
           ports:
             - containerPort: 80
           volumeMounts:

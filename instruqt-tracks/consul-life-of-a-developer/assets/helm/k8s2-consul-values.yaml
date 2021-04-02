@@ -1,17 +1,18 @@
 global:
+  name: consul
   datacenter: k8s2
   tls:
     enabled: true
     caCert:
-      secretName: hashicorp-consul-federation
+      secretName: consul-federation
       secretKey: caCert
     caKey:
-      secretName: hashicorp-consul-federation
+      secretName: consul-federation
       secretKey: caKey
   acls:
     manageSystemACLs: true
     replicationToken:
-      secretName: hashicorp-consul-federation
+      secretName: consul-federation
       secretKey: replicationToken
   federation:
     enabled: true
@@ -36,7 +37,7 @@ server:
   bootstrapExpect: 1
   extraVolumes:
     - type: secret
-      name: hashicorp-consul-federation
+      name: consul-federation
       items:
         - key: serverConfigJSON
           path: config.json

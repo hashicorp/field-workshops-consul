@@ -38,6 +38,8 @@ spec:
         prometheus.io/port: "9901"
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service-upstreams: "payments-queue:6379"
+        consul.hashicorp.com/service-meta-version: v1
+        consul.hashicorp.com/service-tags: v1
     spec:
       serviceAccountName: payments-api
       volumes:
@@ -46,7 +48,7 @@ spec:
             name: conf
       containers:
         - name: payments-api
-          image: lanceplarsen/payments:dev
+          image: hashicorpdemoapp/payments:latest
           volumeMounts:
             - name: config
               mountPath: /config/application.properties

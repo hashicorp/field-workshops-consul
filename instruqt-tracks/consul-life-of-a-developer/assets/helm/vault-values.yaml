@@ -1,0 +1,9 @@
+server:
+  dev:
+    enabled: true
+    devRootToken: "root"
+ui:
+  enabled: true
+  serviceType: "NodePort"
+  serviceNodePort: 30020
+  externalPort: 8200
