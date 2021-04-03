@@ -88,8 +88,8 @@ kubectl get secret ${secret} -o json | jq -r '.data."ca.crt"' | base64 -d > /tmp
 
 #vault policies and roles
 /usr/bin/vault policy write payments-api - <<EOF
-path "transit/payments" {
-  capabilities = ["read"]
+path "transit/encrypt/payments" {
+  capabilities = ["update"]
 }
 EOF
 /usr/bin/vault write auth/kubernetes/role/payments-api \

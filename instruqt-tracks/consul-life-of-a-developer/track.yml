@@ -55,6 +55,12 @@ challenges:
     curl localhost:8500/v1/status/leader
     ```
 
+    Last, set up the proxy defaults for the mesh. <br>
+
+    ```
+    kubectl apply -f config/proxy-defaults.yml
+    ```
+
     In the next assignment you will federate with the other K8s clusters.
   notes:
   - type: text
@@ -159,13 +165,6 @@ challenges:
   assignment: |
     In this assignment you will deploy the stateful storage of your application to the K8s2 cluster. <br>
 
-    Start by applying the proxy defaults to the cluster. You will use this configuration later for the observability assignments. <br>
-
-    ```
-    kubectl config use-context k8s1
-    kubectl apply -f config/proxy-defaults.yml
-    ```
-
     Now deploy the stateful storage components.
 
     ```
@@ -211,8 +210,7 @@ challenges:
   title: Service Mesh - Deploy Your Application - Stateless
   teaser: test
   assignment: |
-    In this assignment you will deploy the stateless components of your application to the K8s1 cluster.
-    You will deploy the `v3` version of this application. <br>
+    In this assignment you will deploy the stateless components of your application to the K8s1 cluster. <br>
 
 
     Now deploy the frontend, public API, payments API, and product API components.
@@ -528,6 +526,12 @@ challenges:
     kubectl apply -f v2
     ```
 
+    Validate that the traffic shifting rules have been applied, and the weights are correct.
+
+    ```
+    kubectl exec $(kubectl get pod --selector=app=public-api -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
+    ```
+
     Query the payment API a few times.
     You will see a mix of unencrypted and encrypted records. <br>
 
@@ -569,6 +573,12 @@ challenges:
     EOF
     ```
 
+    Check that the v2 service is now 100% weighted. <br>
+
+    ```
+    kubectl exec $(kubectl get pod --selector=app=public-api -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
+    ```
+
     You will collect some metrics and traces from the new application in the new few exercises.
   tabs:
   - title: Workstation
@@ -589,6 +599,11 @@ challenges:
     path: /
     port: 8080
     new_window: true
+  - title: Vault UI
+    type: service
+    hostname: k8s1
+    path: /
+    port: 8200
   difficulty: basic
   timelimit: 500
 - slug: 09-observability-metrics
@@ -602,7 +617,7 @@ challenges:
     Apply the traffic simulator and observe the dashboards in the Consul UI. <br>
 
     ```
-    kubectl apply -f traffic.yml
+    kubectl apply -f observability/traffic.yml
     ```
 
     Wait a few moments and observe the traffic on the Consul dashboard.
@@ -623,12 +638,12 @@ challenges:
     type: service
     hostname: k8s1
     path: /
-    port: 30080
+    port: 8080
     new_window: true
   - title: Grafana - UI
     type: service
     hostname: k8s1
-    port: 30030
+    port: 3000
   - title: Grafana - Password
     type: code
     hostname: workstation
@@ -637,7 +652,7 @@ challenges:
     type: service
     hostname: k8s1
     path: /targets#job-kubernetes-pods
-    port: 30090
+    port: 9090
   difficulty: basic
   timelimit: 500
 - slug: 10-observability-tracing
@@ -705,7 +720,7 @@ challenges:
   - title: Grafana - UI
     type: service
     hostname: k8s1
-    port: 30030
+    port: 3000
   - title: Grafana - Password
     type: code
     hostname: workstation
@@ -714,12 +729,12 @@ challenges:
     type: service
     hostname: k8s1
     path: /targets#job-kubernetes-pods
-    port: 30090
+    port: 9090
   - title: Jaeger UI
     type: service
     hostname: k8s1
     path: /
-    port: 30086
+    port: 16686
   difficulty: basic
   timelimit: 500
-checksum: "2912194188371941075"
+checksum: "3077982185327680324"

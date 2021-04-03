@@ -29,11 +29,18 @@ data:
         vault:
           enabled: true
           fail-fast: true
-          authentication: TOKEN
-          token: root
           host: vault
           port: 8200
           scheme: http
+          authentication: KUBERNETES
+          kubernetes:
+            role: payments-api
+            kubernetes-path: kubernetes
+            service-account-token-file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          kv:
+            enabled: false
+          generic:
+            enabled: false
 ---
 apiVersion: apps/v1
 kind: Deployment
