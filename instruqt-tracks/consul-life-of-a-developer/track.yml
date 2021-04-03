@@ -36,7 +36,7 @@ challenges:
   assignment: |-
     You can see the complete guide on Kubernetes multi-cluster federation here: https://www.consul.io/docs/k8s/installation/multi-cluster/kubernetes <br>
 
-    Start deploying to the stateless cluster with Helm. <br>
+    Start deploying Consul to `k8s1` with Helm. This cluster that will run our stateless workloads.  <br>
 
     ```
     kubectl config use-context k8s1
@@ -230,12 +230,12 @@ challenges:
   - title: Consul UI
     type: service
     hostname: workstation
-    path: /ui/
+    path: /ui/k8s1
     port: 8500
   - title: K8s Deployment
     type: code
     hostname: workstation
-    path: /root/deployments
+    path: /root/deployments/v1
   difficulty: basic
   timelimit: 500
 - slug: 05-service-mesh-test-your-application
@@ -306,7 +306,7 @@ challenges:
   - title: Consul UI
     type: service
     hostname: workstation
-    path: /ui/
+    path: /ui/k8s1
     port: 8500
   - title: K8s Deployment
     type: code
@@ -350,17 +350,12 @@ challenges:
   - title: Consul UI
     type: service
     hostname: workstation
-    path: /ui
+    path: /ui/k8s1
     port: 8500
   - title: K8s Deployment
     type: code
     hostname: workstation
     path: /root/deployments/ingress
-  - title: App
-    type: service
-    hostname: k8s1
-    path: /
-    port: 30080
   difficulty: basic
   timelimit: 500
 - slug: 07-traffic-management-request-routing
@@ -410,6 +405,10 @@ challenges:
     --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
     --compressed | jq
     ```
+
+    The APIs are working correctly. You can also navigate to the frontend of this application using the App tab in the window. <br>
+
+    In the next few assignments we will use the traffic management capabilities of Consul to ship a new feature in this application.
   tabs:
   - title: Workstation
     type: terminal
@@ -426,7 +425,7 @@ challenges:
   - title: Consul UI
     type: service
     hostname: workstation
-    path: /ui
+    path: /ui/k8s1
     port: 8500
   - title: K8s Deployment
     type: code
@@ -477,8 +476,7 @@ challenges:
     --compressed | jq
     ```
 
-    If you are getting 200 responses, you can cut over the rest of the traffic to the encrypted solution.
-    Do that now.
+    If you are getting 200 responses, you can cut over the rest of the traffic to the encrypted solution. <br>
 
     ```
     cat <<EOF | kubectl apply -f -
@@ -494,6 +492,8 @@ challenges:
           serviceSubset: v2
     EOF
     ```
+
+    You will collect some metrics and traces from the new application in the new few exercises.
   tabs:
   - title: Workstation
     type: terminal
@@ -507,16 +507,10 @@ challenges:
     type: code
     hostname: workstation
     path: /root/deployments/v2
-  - title: App - V3
+  - title: App
     type: service
     hostname: k8s1
-    path: /?x-version=3
-    port: 30080
-    new_window: true
-  - title: App - V4
-    type: service
-    hostname: k8s1
-    path: /?x-version=4
+    path: /
     port: 30080
     new_window: true
   difficulty: basic
@@ -526,7 +520,48 @@ challenges:
   type: challenge
   title: 'Observability: Metrics'
   teaser: test
-  assignment: test
+  assignment: |-
+    In this assignment you will run a traffic simulation to create metrics to visualize on the Consul dashboard. <br>
+
+    Apply the traffic simulator and observe the dashboards in the Consul UI. <br>
+
+    ```
+    kubectl apply -f traffic.yml
+    ```
+
+    Wait a few moments and observe the traffic on the Consul dashboard.
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments/observability
+  - title: App
+    type: service
+    hostname: k8s1
+    path: /
+    port: 30080
+    new_window: true
+  - title: Grafana - UI
+    type: service
+    hostname: k8s1
+    port: 30030
+  - title: Grafana - Password
+    type: code
+    hostname: workstation
+    path: /tmp/grafana-pass.txt
+  - title: Prometheus - UI
+    type: service
+    hostname: k8s1
+    path: /targets#job-kubernetes-pods
+    port: 30090
   difficulty: basic
   timelimit: 500
 - slug: 10-observability-tracing
@@ -534,7 +569,81 @@ challenges:
   type: challenge
   title: 'Observability: Tracing'
   teaser: test
-  assignment: test
+  assignment: |-
+    In this assignment you will look at application traces across your APIs.
+    You will send a few API calls below.  <br>
+
+    Get the gateway IP. <br>
+
+    ```
+    kubectl describe svc consul-ingress-gateway
+    port=$(kubectl get svc consul-ingress-gateway -o json | jq '.spec.ports[0].nodePort')
+    ```
+
+    Test the product API. <br>
+
+    ```
+    curl -s -v http://k8s1:${port}/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+    --compressed | jq
+    ```
+
+    Test the payment API. <br>
+
+    ```
+    curl -s -v http://k8s1:${port}/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+    --compressed | jq
+    ```
+
+    Observe the trace data in Jaeger.
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments
+  - title: App
+    type: service
+    hostname: k8s1
+    path: /
+    port: 30080
+    new_window: true
+  - title: Grafana - UI
+    type: service
+    hostname: k8s1
+    port: 30030
+  - title: Grafana - Password
+    type: code
+    hostname: workstation
+    path: /tmp/grafana-pass.txt
+  - title: Prometheus - UI
+    type: service
+    hostname: k8s1
+    path: /targets#job-kubernetes-pods
+    port: 30090
+  - title: Jaeger UI
+    type: service
+    hostname: k8s1
+    path: /
+    port: 30086
   difficulty: basic
   timelimit: 500
-checksum: "15818850192094167303"
+checksum: "14667274817043705893"

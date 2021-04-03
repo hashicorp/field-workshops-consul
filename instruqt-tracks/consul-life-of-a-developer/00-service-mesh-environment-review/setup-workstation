@@ -66,10 +66,11 @@ EOF
 #deploy vault & set up transit
 /usr/sbin/setcap cap_ipc_lock= /usr/bin/vault
 kubectl config use-context k8s1
-helm install vault hashicorp/vault -f /root/helm/vault-values.yaml
+/usr/local/bin/helm install vault hashicorp/vault -f /root/helm/vault-values.yaml
+sleep 10
 export VAULT_ADDR=http://k8s1:30020
-vault login root
-vault secrets enable transit
-vault write -f transit/keys/payments
+/usr/bin/vault login root
+/usr/bin/vault secrets enable transit
+/usr/bin/vault write -f transit/keys/payments
 
 exit 0

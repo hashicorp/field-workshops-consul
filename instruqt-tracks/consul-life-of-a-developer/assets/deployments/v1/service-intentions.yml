@@ -9,6 +9,8 @@ spec:
   sources:
     - name: ingress-gateway
       action: allow
+    - name: traffic
+      action: allow
 ---
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceIntentions
