@@ -42,23 +42,21 @@ ui:
   enabled: true
   service:
     enabled: true
-    type: NodePort
+    type: LoadBalancer
     additionalSpec: |
       ports:
       - name: http
         protocol: TCP
-        port: 8501
+        port: 8443
         targetPort: 8501
-        nodePort: 30085
 ingressGateways:
   enabled: true
   defaults:
     replicas: 1
     service:
-      type: NodePort
+      type: LoadBalancer
       ports:
         - port: 8080
-          nodePort: 30080
 meshGateway:
   enabled: true
   replicas: 1

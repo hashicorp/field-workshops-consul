@@ -55,7 +55,7 @@ cat << EOF > /etc/nginx/conf.d/consul.conf
 server {
   listen 8500;
   location / {
-    proxy_pass https://k8s1:30085;
+    proxy_pass https://k8s1:8443;
     proxy_ssl_verify off;
   }
   access_log /var/log/nginx/consul.log;
@@ -63,14 +63,39 @@ server {
 EOF
 /usr/sbin/service nginx restart
 
-#deploy vault & set up transit
+#deploy vault
 /usr/sbin/setcap cap_ipc_lock= /usr/bin/vault
 kubectl config use-context k8s1
 /usr/local/bin/helm install vault hashicorp/vault -f /root/helm/vault-values.yaml
 sleep 10
-export VAULT_ADDR=http://k8s1:30020
+
+#vault login
+export VAULT_ADDR=http://k8s1:8200
 /usr/bin/vault login root
+
+#vault transit
 /usr/bin/vault secrets enable transit
 /usr/bin/vault write -f transit/keys/payments
+
+#vault k8s
+/usr/bin/vault auth enable kubernetes
+secret=$(kubectl get sa vault -o json | jq -r .secrets[0].name)
+kubectl get secret ${secret} -o json | jq -r '.data."ca.crt"' | base64 -d > /tmp/ca.pem
+/usr/bin/vault write auth/kubernetes/config \
+    token_reviewer_jwt="$(kubectl get secret ${secret} -o json | jq -r .data.token | base64 -d)" \
+    kubernetes_host="https://$(kubectl get svc kubernetes -o json | jq -r .spec.clusterIP):443" \
+    kubernetes_ca_cert=@/tmp/ca.pem
+
+#vault policies and roles
+/usr/bin/vault policy write payments-api - <<EOF
+path "transit/payments" {
+  capabilities = ["read"]
+}
+EOF
+/usr/bin/vault write auth/kubernetes/role/payments-api \
+    bound_service_account_names=payments-api \
+    bound_service_account_namespaces=default \
+    policies=payments-api \
+    ttl=24h
 
 exit 0

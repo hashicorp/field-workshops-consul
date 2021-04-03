@@ -4,6 +4,5 @@ server:
     devRootToken: "root"
 ui:
   enabled: true
-  serviceType: "NodePort"
-  serviceNodePort: 30020
+  serviceType: "LoadBalancer"
   externalPort: 8200
