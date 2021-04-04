@@ -38,6 +38,7 @@ syncCatalog:
 connectInject:
   enabled: true
   default: false
+  envoyExtraArgs: "-l debug"
 ui:
   enabled: true
   service:
