@@ -19,7 +19,9 @@ extraScrapeConfigs: |
     bearer_token: "$(kubectl get secret consul-bootstrap-acl-token -o json | jq -r .data.token | base64 -d)"
     params:
       format: ['prometheus']
-    scheme: http
+    scheme: https
+    tls_config:
+       insecure_skip_verify: true
     kubernetes_sd_configs:
     - role: pod
     relabel_configs:
@@ -30,7 +32,7 @@ extraScrapeConfigs: |
       regex: server
       action: keep
     - source_labels: [__meta_kubernetes_pod_container_port_number]
-      regex: 8500
+      regex: 8501
       action: keep
 EOF
 

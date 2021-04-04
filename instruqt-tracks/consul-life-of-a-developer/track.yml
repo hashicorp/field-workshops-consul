@@ -533,6 +533,7 @@ challenges:
     Validate that the traffic shifting rules have been applied, and the weights are correct.
 
     ```
+    kubectl exec $(kubectl get pod --selector=app=public-api -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters
     kubectl exec $(kubectl get pod --selector=app=public-api -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
     ```
 
@@ -544,13 +545,13 @@ challenges:
 
     ```
     kubectl describe svc consul-ingress-gateway
-    port=$(kubectl get svc consul-ingress-gateway -o json | jq '.spec.ports[0].nodePort')
+    ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
     ```
 
     Try the API. Run the command a few times to see the difference in the encrypted and non-encrypted values. <br>
 
     ```
-    curl -s -v http://k8s1:${port}/api \
+    curl -s -v http://${ip}:8080/api \
     -H 'Accept-Encoding: gzip, deflate, br' \
     -H 'Content-Type: application/json' \
     -H 'Accept: application/json' \
@@ -625,6 +626,15 @@ challenges:
     ```
 
     Wait a few moments and observe the traffic on the Consul dashboard.
+
+    Additionally, you can deploy the Grafana dashboard to monitor the health of the consul system.
+    To create the sample dashboard select the `+` in the left side navigation to `Import`. <br>
+
+    ```
+    https://grafana.com/grafana/dashboards/13396
+    ```
+
+    In the next assignment we will look at traces for this traffic.
   tabs:
   - title: Workstation
     type: terminal
@@ -672,13 +682,13 @@ challenges:
 
     ```
     kubectl describe svc consul-ingress-gateway
-    port=$(kubectl get svc consul-ingress-gateway -o json | jq '.spec.ports[0].nodePort')
+    ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
     ```
 
     Test the product API. <br>
 
     ```
-    curl -s -v http://k8s1:${port}/api \
+    curl -s -v http://${ip}:8080/api \
     -H 'Accept-Encoding: gzip, deflate, br' \
     -H 'Content-Type: application/json' \
     -H 'Accept: application/json' \
@@ -691,7 +701,7 @@ challenges:
     Test the payment API. <br>
 
     ```
-    curl -s -v http://k8s1:${port}/api \
+    curl -s -v http://${ip}:8080/api \
     -H 'Accept-Encoding: gzip, deflate, br' \
     -H 'Content-Type: application/json' \
     -H 'Accept: application/json' \
@@ -741,4 +751,4 @@ challenges:
     port: 16686
   difficulty: basic
   timelimit: 500
-checksum: "2973698543304628325"
+checksum: "8417493702613012398"
