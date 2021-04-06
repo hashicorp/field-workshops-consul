@@ -205,7 +205,7 @@ challenges:
   - title: K8s Deployment
     type: code
     hostname: workstation
-    path: /root/deployments
+    path: /root/deployments/storage
   difficulty: basic
   timelimit: 500
 - slug: 04-service-mesh-deploy-your-application-stateless
@@ -627,12 +627,11 @@ challenges:
 
     Wait a few moments and observe the traffic on the Consul dashboard.
 
-    Additionally, you can deploy the Grafana dashboard to monitor the health of the consul system.
+    Additionally, you can deploy the Grafana dashboards below to monitor the health of the consul system, as well as your workloads.
     To create the sample dashboard select the `+` in the left side navigation to `Import`. <br>
 
-    ```
-    https://grafana.com/grafana/dashboards/13396
-    ```
+    * https://grafana.com/grafana/dashboards/13396
+    * https://raw.githubusercontent.com/hashicorp/learn-consul-kubernetes/main/layer7-observability/grafana/hashicups-dashboard.json
 
     In the next assignment we will look at traces for this traffic.
   tabs:
@@ -751,4 +750,4 @@ challenges:
     port: 16686
   difficulty: basic
   timelimit: 500
-checksum: "17081516876248604878"
+checksum: "7356191226912432973"

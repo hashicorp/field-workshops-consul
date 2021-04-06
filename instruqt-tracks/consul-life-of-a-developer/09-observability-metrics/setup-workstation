@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#context
+kubectl config use-context k8s1
+
 #metrics
 cat <<-EOF > /root/prometheus-values.yaml
 server:
