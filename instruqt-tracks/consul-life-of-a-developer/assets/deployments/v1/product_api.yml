@@ -58,3 +58,11 @@ spec:
               value: /app/conf.json
             - name : JAEGER_ENDPOINT
               value: http://jaeger-collector:14268/api/traces
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9090
+            initialDelaySeconds: 15
+            timeoutSeconds: 1
+            periodSeconds: 10
+            failureThreshold: 30
