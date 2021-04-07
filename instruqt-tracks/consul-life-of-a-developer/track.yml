@@ -750,4 +750,20 @@ challenges:
     port: 16686
   difficulty: basic
   timelimit: 500
-checksum: "7356191226912432973"
+- slug: 11-security-tcp
+  id: bbfwscljmhzz
+  type: challenge
+  title: 'Security: TCP Traffic'
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+- slug: 12-security-http
+  id: 5ylmiomxpvyl
+  type: challenge
+  title: 'Security: HTTP Traffic'
+  teaser: test
+  assignment: test
+  difficulty: basic
+  timelimit: 500
+checksum: "12875944394390345115"

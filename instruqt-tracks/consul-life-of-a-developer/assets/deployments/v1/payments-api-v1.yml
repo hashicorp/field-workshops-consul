@@ -60,11 +60,11 @@ spec:
               value: ":8080"
             - name : JAEGER_ENDPOINT
               value: http://jaeger-collector:14268/api/traces
-          livenessProbe:
+          readinessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
-            initialDelaySeconds: 30
             timeoutSeconds: 1
             periodSeconds: 10
-            failureThreshold: 15
+            failureThreshold: 3
+            initialDelaySeconds: 30

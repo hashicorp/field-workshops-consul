@@ -23,7 +23,11 @@ spec:
     - name: frontend
       action: allow
     - name: ingress-gateway
-      action: allow
+      permissions:
+        - action: allow
+          http:
+            pathPrefix: /api
+            methods: ['GET','POST']
 ---
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceIntentions
