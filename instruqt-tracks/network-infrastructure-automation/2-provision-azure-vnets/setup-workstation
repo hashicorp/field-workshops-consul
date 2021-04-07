@@ -7,6 +7,8 @@ sleep 20
 echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
 source /root/.bashrc
 
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+
 #wait at least five minutes for Azure User to propagate
 az upgrade -y
 az account clear
