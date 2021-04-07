@@ -421,7 +421,7 @@ challenges:
     ```
     kubectl config use-context k8s2
     kubectl scale deployment.v1.apps/payments-queue --replicas=0
-    sleep 15
+    sleep 30
     ```
 
     Return to the other K8s cluster and check the health check again.
@@ -432,12 +432,15 @@ challenges:
     kubectl exec $(kubectl get pod --selector=app=payments-api-v1 -o name) -c payments-api -- curl -s 127.0.0.1:8080/actuator/health | jq
     ```
 
-    Let's check the status in Consul.
-    The check will be failing its k8s probe.
+    Let's check the status off the probe. <br>
 
     ```
-    kubectl describe $(kubectl get pod --selector=app=payments-api-v1 -o name)
-    curl -s http://127.0.0.1:8500/v1/health/service/payments-api | jq
+    kubectl get $(kubectl get pod --selector=app=payments-api-v1 -o name) -o json | jq .status.conditions
+    ```
+
+    Now, Check the status in Consul. <br>
+
+    ```
     curl -s http://127.0.0.1:8500/v1/health/checks/payments-api | jq
     ```
 
@@ -463,6 +466,12 @@ challenges:
     ```
     kubectl config use-context k8s1
     kubectl exec $(kubectl get pod --selector=app=payments-api-v1 -o name) -c payments-api -- curl -s 127.0.0.1:8080/actuator/health | jq
+    ```
+
+    Check the probe again. <br>
+
+    ```
+    kubectl get $(kubectl get pod --selector=app=payments-api-v1 -o name) -o json | jq .status.conditions
     ```
 
     Now, check the health check again in Consul.
@@ -897,4 +906,4 @@ challenges:
   assignment: test
   difficulty: basic
   timelimit: 500
-checksum: "15289345368484305204"
+checksum: "5121821005937304341"
