@@ -26,6 +26,9 @@ challenges:
   - title: Workstation
     type: terminal
     hostname: workstation
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 01-service-mesh-connect-your-runtimes
@@ -101,7 +104,7 @@ challenges:
 - slug: 02-service-mesh-connect-your-runtimes
   id: 7myytdfzgmp6
   type: challenge
-  title: Service Mesh - Connect Your Runtimes - Part 2
+  title: Service Mesh - Connect Your Runtimes - Part 2s
   teaser: Connect Stateful K8s Cluster
   assignment: |-
     In this assignment you will finish the steps in this guide for the secondary cluster: https://www.consul.io/docs/k8s/installation/multi-cluster/kubernetes <br>
@@ -502,7 +505,6 @@ challenges:
 
     ```
     curl -s http://127.0.0.1:8500/v1/catalog/service/payments-api | jq '[.. |."ServiceAddress"? | select(. != null)]'
-    curl -s http://127.0.0.1:8500/v1/health/checks/payments-api | jq
     kubectl exec $(kubectl get pod --selector=app=public-api -o name) -c public-api -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api
     ```
 
@@ -519,7 +521,7 @@ challenges:
   - title: K8s Deployment
     type: code
     hostname: workstation
-    path: /root/deployments/v1/payments-api-v1.yml
+    path: /root/deployments
   difficulty: basic
   timelimit: 500
 - slug: 06-traffic-management-ingress
@@ -724,6 +726,15 @@ challenges:
     kubectl exec $(kubectl get pod --selector=app=public-api -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
     ```
 
+    Now that each record will be encrypted, validate in the redis cache that the value in the queue is indeed ciphertexts.
+
+    ```
+    kubectl config use-context k8s1
+    id=$(curl -s http://${ip}:8080/api -H 'Accept-Encoding: gzip, deflate, br' -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Connection: keep-alive' -H 'DNT: 1' --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' --compressed | jq  -r .data.pay.id)
+    kubectl config use-context k8s2
+    kubectl exec $(kubectl get pod --selector=app=payments-queue -o name) -- redis-cli HGET "payment:${id}" "cc.number"
+    ```
+
     You will collect some metrics and traces from the new application in the new few exercises.
   tabs:
   - title: Workstation
@@ -895,7 +906,84 @@ challenges:
   type: challenge
   title: 'Security: TCP Traffic'
   teaser: test
-  assignment: test
+  assignment: |-
+    Intentions are deny by default in a secure configuration.
+    Test that in this challenge. <br>
+
+    Clear the intentions for the app.
+
+    ```
+    kubectl delete -f v1/service-intentions.yml
+    ```
+
+    In one terminal, start tailing the rbac logs. <br>
+
+    ```
+    kubectl logs -l app=payments-api-v2 -c envoy-sidecar -f --since=5s | grep rbac
+    ```
+
+    Get the gateway IP. <br>
+
+    ```
+    kubectl describe svc consul-ingress-gateway
+    ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
+    ```
+
+    Send the payment API. <br>
+
+    ```
+    curl -s -v http://${ip}:8080/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+    --compressed | jq
+    ```
+
+    You will see that RBAC denied the API call in the tail output. <br>
+
+    Add the intentions back <br>
+
+    ```
+    kubectl apply -f v1/service-intentions.yml
+    ```
+
+    Try the API again to fix the connectivity.
+
+    ```
+    curl -s -v http://${ip}:8080/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+    --compressed | jq
+    ```
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments
+  - title: App
+    type: service
+    hostname: k8s1
+    path: /
+    port: 30080
+    new_window: true
   difficulty: basic
   timelimit: 500
 - slug: 12-security-http
@@ -903,7 +991,59 @@ challenges:
   type: challenge
   title: 'Security: HTTP Traffic'
   teaser: test
-  assignment: test
+  assignment: |-
+    In one terminal, start tailing the rbac logs for the public API. <br>
+
+    ```
+    kubectl logs -l app=public-api -c envoy-sidecar -f --since=5s | grep rbac
+    ```
+
+    Get the gateway IP. <br>
+
+    ```
+    ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
+    ```
+
+    Try a valid path. <br>
+
+    ```
+    curl -s -v http://${ip}:8080/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+    --compressed | jq
+    ```
+
+    Try a bad path.
+
+    ```
+    curl -s -v http://${ip}:8080/api/bad
+    ```
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments
+  - title: App
+    type: service
+    hostname: k8s1
+    path: /
+    port: 30080
+    new_window: true
   difficulty: basic
   timelimit: 500
-checksum: "5121821005937304341"
+checksum: "1374280958168093973"

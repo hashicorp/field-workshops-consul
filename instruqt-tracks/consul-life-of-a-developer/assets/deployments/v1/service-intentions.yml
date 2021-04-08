@@ -26,7 +26,7 @@ spec:
       permissions:
         - action: allow
           http:
-            pathPrefix: /api
+            pathExact: /api
             methods: ['GET','POST']
 ---
 apiVersion: consul.hashicorp.com/v1alpha1

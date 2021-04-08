@@ -24,7 +24,7 @@ roleRef:
   name: jaeger-operator
   apiGroup: rbac.authorization.k8s.io
 EOF
-sleep 30
+sleep 120
 
 #jaeger instance
 kubectl apply -f - <<EOF
@@ -33,6 +33,7 @@ kind: Jaeger
 metadata:
   name: jaeger
 EOF
+sleep 30
 
 cat <<EOF | kubectl apply -f -
 ---
