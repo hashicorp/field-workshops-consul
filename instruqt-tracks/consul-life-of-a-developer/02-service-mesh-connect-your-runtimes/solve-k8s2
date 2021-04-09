@@ -1,6 +1,0 @@
-#!/bib/bash
-
-helm install -f /root/consul-values.yaml hashicorp hashicorp/consul  --wait --debug
-sleep 10
-
-exit 0

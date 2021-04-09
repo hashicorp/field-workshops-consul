@@ -1,5 +1,0 @@
-#!/bin/bash
-
-helm install -f /root/k8s1-consul-values.yaml hashicorp hashicorp/consul  --wait --debug
-
-exit 0

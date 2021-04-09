@@ -162,7 +162,7 @@ challenges:
   id: 5tex6qnmgudx
   type: challenge
   title: Service Mesh - Deploy Your Application -  Stateful
-  teaser: test
+  teaser: Deploy Application Storage
   assignment: |
     In this assignment you will deploy the stateful storage of your application to the K8s2 cluster. <br>
 
@@ -209,7 +209,7 @@ challenges:
   id: db2no1mjypbf
   type: challenge
   title: Service Mesh - Deploy Your Application - Stateless
-  teaser: test
+  teaser: Deploy reactive and API components
   assignment: |
     In this assignment you will deploy the stateless components of your application to the K8s1 cluster. <br>
 
@@ -259,7 +259,7 @@ challenges:
   id: mbzfwov3rzcj
   type: challenge
   title: Service Mesh - Test Your Application
-  teaser: test
+  teaser: Test your deployment
   assignment: |-
     Your application should now be available.  We can quickly test the APIs by exposing the public API as a NodePort services.
     NodePort services are uncommon in production, but suitable for dev and test. <br>
@@ -383,7 +383,7 @@ challenges:
   id: 9f9aymz7s6xa
   type: challenge
   title: 'Service Mesh: Service Discovery'
-  teaser: test
+  teaser: Scale up & Scale Down
   assignment: |
     Service Discovery is a important component of Service Mesh, and K8s is one of many platforms Consul supports native service discovery.
     Understadning of the low level data plane is not required, but it can be helpful to get a deeper understanding of the mesh at work!
@@ -522,7 +522,7 @@ challenges:
   id: 5qnkobx3dujj
   type: challenge
   title: 'Traffic Management: Ingress'
-  teaser: test
+  teaser: Bring traffic into your mesh
   assignment: |-
     Review and apply the ingress config.
 
@@ -566,7 +566,7 @@ challenges:
   id: olcwgzsryftu
   type: challenge
   title: 'Traffic Management: Request Routing'
-  teaser: test
+  teaser: Apply advanced routing patterns
   assignment: |-
     Review the routes and apply the routing configuration.  <br>
 
@@ -657,7 +657,7 @@ challenges:
   id: tmswarh6vq9w
   type: challenge
   title: 'Traffic Management: Traffic Shifting'
-  teaser: test
+  teaser: Test multiple versions of your application
   assignment: |-
     Review the routes and apply the routing configuration.  <br>
 
@@ -760,7 +760,7 @@ challenges:
   id: uxddr0p5hlph
   type: challenge
   title: 'Observability: Metrics'
-  teaser: test
+  teaser: Collect Application Metrics
   assignment: |-
     In this assignment you will run a traffic simulation to create metrics to visualize on the Consul dashboard. <br>
 
@@ -817,7 +817,7 @@ challenges:
   id: olkpnjqs2q2r
   type: challenge
   title: 'Observability: Tracing'
-  teaser: test
+  teaser: Inspect trace information
   assignment: |-
     In this assignment you will look at application traces across your APIs.
     You will send a few API calls below.  <br>
@@ -899,7 +899,7 @@ challenges:
   id: bbfwscljmhzz
   type: challenge
   title: 'Security: TCP Traffic'
-  teaser: test
+  teaser: Apply Layer 4 Intentions
   assignment: |-
     Intentions are deny by default in a secure configuration.
     Test that in this challenge. <br>
@@ -984,7 +984,7 @@ challenges:
   id: 5ylmiomxpvyl
   type: challenge
   title: 'Security: HTTP Traffic'
-  teaser: test
+  teaser: Apply Layer 7 Intentions
   assignment: |-
     In one terminal, start tailing the rbac logs for the public API. <br>
 
@@ -1040,4 +1040,4 @@ challenges:
     new_window: true
   difficulty: basic
   timelimit: 500
-checksum: "13920957613335210736"
+checksum: "2081082551505779988"

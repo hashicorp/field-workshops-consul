@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#check leader
+leader=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8500/v1/status/leader)
+if [ "$leader" != "200" ]; then
+  fail-message "Your Consul cluster is does not have a leader."
+  exit 1
+fi
+
+#check config
+if [ "$(consul config read -kind proxy-defaults -name global | jq -r '.Config.protocol')" != "http" ]; then
+  fail-message "Default protocol is not http"
+  exit 1
+fi
+
+exit 0
