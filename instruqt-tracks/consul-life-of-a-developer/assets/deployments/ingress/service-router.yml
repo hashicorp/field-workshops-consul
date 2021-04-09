@@ -6,11 +6,11 @@ spec:
   routes:
     - match:
         http:
-          pathPrefix: '/'
-      destination:
-        service: frontend
-    - match:
-        http:
           pathPrefix: '/api'
       destination:
         service: public-api
+    - match:
+        http:
+          pathPrefix: '/'
+      destination:
+        service: frontend
