@@ -9,8 +9,8 @@ tags: []
 owner: hashicorp
 developers:
 - lance@hashicorp.com
-private: false
-published: false
+private: true
+published: true
 show_timer: true
 challenges:
 - slug: 00-service-mesh-environment-review
@@ -1082,4 +1082,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
-checksum: "18128497619398155668"
+checksum: "5963475758037223572"
