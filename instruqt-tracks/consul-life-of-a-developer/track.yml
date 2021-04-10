@@ -19,9 +19,9 @@ challenges:
   title: Service Mesh - Environment Review
   teaser: Learn about HashiCups
   assignment: |-
-    In this assignment, take a few moments to review the lab environment and the overall architecture for HashiCups. <br>
+    In this assignment, take a few moments to review the lab and the overall architecture for HashiCups. <br>
 
-    You can see the repository for the demo application here: https://github.com/hashicorp-demoapp
+    You can see the repository for the HashiCups demo application here: https://github.com/hashicorp-demoapp
   tabs:
   - title: Workstation
     type: terminal
@@ -39,7 +39,7 @@ challenges:
   assignment: |-
     You can see the complete guide on Kubernetes multi-cluster federation here: https://www.consul.io/docs/k8s/installation/multi-cluster/kubernetes <br>
 
-    Start deploying Consul to `k8s1` with Helm. This cluster that will run our stateless workloads.  <br>
+    Start deploying Consul to k8s1 with Helm. This cluster that will run our stateless workloads.  <br>
 
     ```
     kubectl config use-context k8s1
@@ -52,11 +52,13 @@ challenges:
     kubectl get pods
     ```
 
-    Check the Consul API. You can also see the Consul UI is now up. <br>
+    Check the Consul API. <br>
 
     ```
     curl localhost:8500/v1/status/leader
     ```
+
+    You can also see the Consul UI is now up. <br>
 
     Last, set up the proxy defaults for the mesh. <br>
 
@@ -96,6 +98,9 @@ challenges:
     type: code
     hostname: workstation
     path: /root/deployments
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 300
 - slug: 02-service-mesh-connect-your-runtimes
@@ -156,6 +161,9 @@ challenges:
     type: code
     hostname: workstation
     path: /root/helm
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 1800
 - slug: 03-service-mesh-deploy-your-application-stateful
@@ -180,7 +188,7 @@ challenges:
     kubectl wait pod --selector=app=product-db  --for=condition=Ready
     ```
 
-    In the next assignment we will connect workloads on the other K8s cluster to the deployed storage tier.
+    In the next assignment you will connect workloads on the other K8s cluster to the deployed storage tier.
   tabs:
   - title: Workstation
     type: terminal
@@ -203,6 +211,9 @@ challenges:
     type: code
     hostname: workstation
     path: /root/deployments/storage
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 04-service-mesh-deploy-your-application-stateless
@@ -230,7 +241,7 @@ challenges:
     kubectl wait pod --for=condition=Ready --selector=app=payments-api-v1
     ```
 
-    In the next assignment we will test the application, and the connectivity other K8s cluster.
+    In the next assignment you will test the application, and the connectivity other K8s cluster.
   tabs:
   - title: Workstation
     type: terminal
@@ -253,6 +264,9 @@ challenges:
     type: code
     hostname: workstation
     path: /root/deployments/v1
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 05-service-mesh-test-your-application
@@ -261,7 +275,7 @@ challenges:
   title: Service Mesh - Test Your Application
   teaser: Test your deployment
   assignment: |-
-    Your application should now be available.  We can quickly test the APIs by exposing the public API as a NodePort services.
+    Your application should now be available. You can quickly test the APIs by exposing the public API as a NodePort services.
     NodePort services are uncommon in production, but suitable for dev and test. <br>
 
     First, let's look at the differences for upstream services located in the same k8s1 cluster, and services in a different cluster. <br>
@@ -274,25 +288,25 @@ challenges:
     The address will be for a sidecar pod. <br>
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=public-api -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep product
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep product
     ```
 
     External cluster: Payments API <br>
     The address will be for the local mesh gateway running in the cluster. <br>
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=payments-api-v1 -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep payments-queue
+    kubectl exec deploy/payments-api-v1 -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep payments-queue
     ```
 
     The gateway will inspect the SNI headers and forward it along to the correct destination.
     Inspect the SNI value for this service now. <br>
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=payments-api-v1 -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."dynamic_active_clusters"? | select(. != null)[1]]'
+    kubectl exec deploy/payments-api-v1 -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."dynamic_active_clusters"? | select(. != null)[1]]'
     ```
 
 
-    Now that we understand the internals of the cross cluster routing, let's expose the application so we can make sure it works. <br>
+    Now that you understand the internals of the cross cluster routing, let's expose the application so you can make sure it works. <br>
 
     ```
     kubectl expose deployment public-api --type=NodePort --name=public-api-service
@@ -345,13 +359,13 @@ challenges:
     Check the payment queue. <br>
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=payments-queue -o name) -- redis-cli KEYS '*'
+    kubectl exec statefulset/payments-queue -- redis-cli KEYS '*'
     ```
 
     Check the database. <br>
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=product-db -o name) -- env PGPASSWORD=postgres psql -U postgres -d products -c 'SELECT * FROM coffees' -a
+    kubectl exec statefulset/product-db -- env PGPASSWORD=postgres psql -U postgres -d products -c 'SELECT * FROM coffees' -a
     ```
 
     In the next few assignments you will be introduced to more advanced traffic management patterns.
@@ -377,6 +391,9 @@ challenges:
     type: code
     hostname: workstation
     path: /root/deployments/v1
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 06-service-mesh-service-discovery
@@ -395,19 +412,19 @@ challenges:
 
     ```
     kubectl config use-context k8s1
-    kubectl exec $(kubectl get pod --selector=app=payments-api-v1 -o name) -c payments-api -- apk add curl
+    kubectl exec deploy/payments-api-v1 -c payments-api -- apk add curl
     ```
 
     First let's look at the health check for our payments API. It will return a 200. <br>
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=payments-api-v1 -o name) -c payments-api -- curl -s 127.0.0.1:8080/actuator/health | jq
+    kubectl exec deploy/payments-api-v1 -c payments-api -- curl -s 127.0.0.1:8080/actuator/health | jq
     ```
 
     Check the dataplane for this instance of the payments api. You will inspect the Public API that connects to this service.
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=public-api -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api
     ```
 
     You will simulate an issue with the Redis component and see how this change is propagated through the mesh.
@@ -422,17 +439,17 @@ challenges:
     ```
 
     Return to the other K8s cluster and check the health check again.
-    The status will be `DOWN`, with the REDIS component showing refused connection. <br>
+    The status will be DOWN, with the REDIS component showing refused connection. <br>
 
     ```
     kubectl config use-context k8s1
-    kubectl exec $(kubectl get pod --selector=app=payments-api-v1 -o name) -c payments-api -- curl -s 127.0.0.1:8080/actuator/health | jq
+    kubectl exec deploy/payments-api-v1 -c payments-api -- curl -s 127.0.0.1:8080/actuator/health | jq
     ```
 
     Let's check the status off the probe. <br>
 
     ```
-    kubectl get $(kubectl get pod --selector=app=payments-api-v1 -o name) -o json | jq .status.conditions
+    kubectl get pod --selector=app=payments-api-v1 -o json | jq .items[0].status.conditions
     ```
 
     Now, Check the status in Consul. <br>
@@ -447,7 +464,7 @@ challenges:
 
     ```
     kubectl config use-context k8s1
-    kubectl exec $(kubectl get pod --selector=app=public-api -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api
     ```
 
     Let's bring the queue services back, and add an additional instance of our payment service.
@@ -462,13 +479,13 @@ challenges:
 
     ```
     kubectl config use-context k8s1
-    kubectl exec $(kubectl get pod --selector=app=payments-api-v1 -o name) -c payments-api -- curl -s 127.0.0.1:8080/actuator/health | jq
+    kubectl exec deploy/payments-api-v1 -c payments-api -- curl -s 127.0.0.1:8080/actuator/health | jq
     ```
 
     Check the probe again. <br>
 
     ```
-    kubectl get $(kubectl get pod --selector=app=payments-api-v1 -o name) -o json | jq .status.conditions
+    kubectl get pod --selector=app=payments-api-v1 -o json | jq .items[0].status.conditions
     ```
 
     Now, check the health check again in Consul.
@@ -483,7 +500,7 @@ challenges:
 
     ```
     kubectl config use-context k8s1
-    kubectl exec $(kubectl get pod --selector=app=public-api -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api
     ```
 
     Last, let's add an additional instance of the payments API and see how quickly our public API propagates that update. <br>
@@ -499,7 +516,7 @@ challenges:
 
     ```
     curl -s http://127.0.0.1:8500/v1/catalog/service/payments-api | jq '[.. |."ServiceAddress"? | select(. != null)]'
-    kubectl exec $(kubectl get pod --selector=app=public-api -o name) -c public-api -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api
+    kubectl exec deploy/public-api -c public-api -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api
     ```
 
     You will introduce more advanced traffic management in the next few assignments.
@@ -516,6 +533,9 @@ challenges:
     type: code
     hostname: workstation
     path: /root/deployments
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 07-traffic-management-ingress
@@ -560,6 +580,9 @@ challenges:
     type: code
     hostname: workstation
     path: /root/deployments/ingress
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 08-traffic-management-request-routing
@@ -578,13 +601,13 @@ challenges:
     Reload the App tab to see the application that is now served over the ingress gateway. <br>
 
     ```
-    kubectl exec $(kubectl get pod --selector=ingress-gateway-name=consul-ingress-gateway -o name) -c ingress-gateway -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."dynamic_route_configs"? | select(. != null)[0]]'
+    kubectl exec deploy/consul-ingress-gateway -c ingress-gateway -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."dynamic_route_configs"? | select(. != null)[0]]'
     ```
 
     You can also inspect the clusters. <br>
 
     ```
-    kubectl exec $(kubectl get pod --selector=ingress-gateway-name=consul-ingress-gateway -o name) -c ingress-gateway -- wget -qO- 127.0.0.1:19000/clusters
+    kubectl exec deploy/consul-ingress-gateway -c ingress-gateway -- wget -qO- 127.0.0.1:19000/clusters
     ```
 
     Get the gateway IP. <br>
@@ -622,7 +645,7 @@ challenges:
 
     The APIs are working correctly. You can also navigate to the frontend of this application using the App tab in the window. <br>
 
-    In the next few assignments we will use the traffic management capabilities of Consul to ship a new feature in this application.
+    In the next few assignments you will use the traffic management capabilities of Consul to ship a new feature in this application.
   tabs:
   - title: Workstation
     type: terminal
@@ -651,6 +674,9 @@ challenges:
     path: /
     port: 8080
     new_window: true
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 09-traffic-management-traffic-shifting
@@ -664,13 +690,14 @@ challenges:
     ```
     kubectl config use-context k8s1
     kubectl apply -f v2
+    kubectl wait pod --for=condition=Ready --selector=app=payments-api-v2
     ```
 
     Validate that the traffic shifting rules have been applied, and the weights are correct.
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=public-api -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters
-    kubectl exec $(kubectl get pod --selector=app=public-api -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
     ```
 
     Query the payment API a few times.
@@ -717,7 +744,7 @@ challenges:
     Check that the v2 service is now 100% weighted. <br>
 
     ```
-    kubectl exec $(kubectl get pod --selector=app=public-api -o name) -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
     ```
 
     Now that each record will be encrypted, validate in the redis cache that the value in the queue is indeed ciphertexts.
@@ -726,7 +753,7 @@ challenges:
     kubectl config use-context k8s1
     id=$(curl -s http://${ip}:8080/api -H 'Accept-Encoding: gzip, deflate, br' -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Connection: keep-alive' -H 'DNT: 1' --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' --compressed | jq  -r .data.pay.id)
     kubectl config use-context k8s2
-    kubectl exec $(kubectl get pod --selector=app=payments-queue -o name) -- redis-cli HGET "payment:${id}" "cc.number"
+    kubectl exec statefulset/payments-queue -- redis-cli HGET "payment:${id}" "cc.number"
     ```
 
     You will collect some metrics and traces from the new application in the new few exercises.
@@ -754,6 +781,9 @@ challenges:
     hostname: k8s1
     path: /
     port: 8200
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 10-observability-metrics
@@ -778,7 +808,7 @@ challenges:
     * https://grafana.com/grafana/dashboards/13396
     * https://raw.githubusercontent.com/hashicorp/learn-consul-kubernetes/main/layer7-observability/grafana/hashicups-dashboard.json
 
-    In the next assignment we will look at traces for this traffic.
+    In the next assignment you will look at traces for this traffic.
   tabs:
   - title: Workstation
     type: terminal
@@ -811,6 +841,9 @@ challenges:
     hostname: k8s1
     path: /targets#job-kubernetes-pods
     port: 9090
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 11-observability-tracing
@@ -893,6 +926,9 @@ challenges:
     hostname: k8s1
     path: /
     port: 16686
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 12-security-tcp
@@ -978,6 +1014,9 @@ challenges:
     path: /
     port: 30080
     new_window: true
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 13-security-http
@@ -1038,6 +1077,9 @@ challenges:
     path: /
     port: 30080
     new_window: true
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
-checksum: "8257201828954819200"
+checksum: "17244187273136372147"

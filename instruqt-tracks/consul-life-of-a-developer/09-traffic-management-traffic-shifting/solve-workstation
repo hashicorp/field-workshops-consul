@@ -2,6 +2,7 @@
 
 kubectl config use-context k8s1
 kubectl apply -f v2
+kubectl wait pod --for=condition=Ready --selector=app=payments-api-v2
 cat <<EOF | kubectl apply -f -
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceSplitter
