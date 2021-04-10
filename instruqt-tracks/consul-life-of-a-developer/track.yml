@@ -1,0 +1,1085 @@
+slug: consul-life-of-a-developer
+id: aoub5e2nrioo
+type: track
+title: 'Consul: Life of a Developer'
+teaser: Build, Test, and Deploy Applications with HashiCorp Consul.
+description: Ship a new version of the HashiCups App on container runtimes.
+icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+tags: []
+owner: hashicorp
+developers:
+- lance@hashicorp.com
+private: false
+published: false
+show_timer: true
+challenges:
+- slug: 00-service-mesh-environment-review
+  id: 6tw2q7smpvyn
+  type: challenge
+  title: Service Mesh - Environment Review
+  teaser: Learn about HashiCups
+  assignment: |-
+    In this assignment, take a few moments to review the lab and the overall architecture for HashiCups. <br>
+
+    You can see the repository for the HashiCups demo application here: https://github.com/hashicorp-demoapp
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 500
+- slug: 01-service-mesh-connect-your-runtimes
+  id: xogaq1wuisti
+  type: challenge
+  title: Service Mesh - Connect Your Runtimes - Part 1
+  teaser: Connect Stateless K8s Cluster
+  assignment: |-
+    You can see the complete guide on Kubernetes multi-cluster federation here: https://www.consul.io/docs/k8s/installation/multi-cluster/kubernetes <br>
+
+    Start deploying Consul to k8s1 with Helm. This cluster that will run our stateless workloads.  <br>
+
+    ```
+    kubectl config use-context k8s1
+    helm install -f /root/helm/k8s1-consul-values.yaml consul hashicorp/consul  --wait --debug
+    ```
+
+    Check the pods. <br>
+
+    ```
+    kubectl get pods
+    ```
+
+    Check the Consul API. <br>
+
+    ```
+    curl localhost:8500/v1/status/leader
+    ```
+
+    You can also see the Consul UI is now up. <br>
+
+    Last, set up the proxy defaults for the mesh. <br>
+
+    ```
+    kubectl apply -f deployments/config/proxy-defaults.yml
+    ```
+
+    In the next assignment you will federate with the other K8s clusters.
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: K8s1 - Dashboard Token
+    type: code
+    hostname: k8s1
+    path: /root/dashboard-token.txt
+  - title: K8s1 - Dashboard
+    type: service
+    hostname: k8s1
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui/
+    port: 8500
+  - title: Helm Config
+    type: code
+    hostname: workstation
+    path: /root/helm
+  - title: Vault UI
+    type: service
+    hostname: k8s1
+    path: /
+    port: 8200
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 300
+- slug: 02-service-mesh-connect-your-runtimes
+  id: 7myytdfzgmp6
+  type: challenge
+  title: Service Mesh - Connect Your Runtimes - Part 2s
+  teaser: Connect Stateful K8s Cluster
+  assignment: |-
+    In this assignment you will finish the steps in this guide for the secondary cluster: https://www.consul.io/docs/k8s/installation/multi-cluster/kubernetes <br>
+
+    First, create the federation secret. The helm chart created this for you on the primary cluster. Use the below command to extract it.
+
+    ```
+    kubectl config use-context k8s1
+    kubectl get secret consul-federation -o yaml > consul-federation-secret.yaml
+    ```
+
+    Switch the second k8s cluster.
+
+    ```
+    kubectl config use-context k8s2
+    kubectl apply -f consul-federation-secret.yaml
+    ```
+
+    Deploy Consul to k8s2 cluster.
+
+    ```
+    kubectl config use-context k8s2
+    helm install -f /root/helm/k8s2-consul-values.yaml hashicorp hashicorp/consul  --wait --debug
+    ```
+
+    Check that the Kubernetes clusters are now federated.
+
+    ```
+    consul members -wan
+    ```
+
+    In this new few assignments, you will deploy workloads to these clusters.
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: K8s2 - Dashboard Token
+    type: code
+    hostname: k8s2
+    path: /root/dashboard-token.txt
+  - title: K8s2- Dashboard
+    type: service
+    hostname: k8s2
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui/
+    port: 8500
+  - title: Helm Config
+    type: code
+    hostname: workstation
+    path: /root/helm
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 1800
+- slug: 03-service-mesh-deploy-your-application-stateful
+  id: 5tex6qnmgudx
+  type: challenge
+  title: Service Mesh - Deploy Your Application -  Stateful
+  teaser: Deploy Application Storage
+  assignment: |
+    In this assignment you will deploy the stateful storage of your application to the K8s2 cluster. <br>
+
+    Now deploy the stateful storage components.
+
+    ```
+    kubectl config use-context k8s2
+    kubectl apply -f storage
+    ```
+
+    Wait for the storage pods to be ready.
+
+    ```
+    kubectl wait pod --selector=app=payments-queue  --for=condition=Ready
+    kubectl wait pod --selector=app=product-db  --for=condition=Ready
+    ```
+
+    In the next assignment you will connect workloads on the other K8s cluster to the deployed storage tier.
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: K8s2 - Dashboard Token
+    type: code
+    hostname: k8s2
+    path: /root/dashboard-token.txt
+  - title: K8s2 - Dashboard
+    type: service
+    hostname: k8s2
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui/k8s2
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments/storage
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 500
+- slug: 04-service-mesh-deploy-your-application-stateless
+  id: db2no1mjypbf
+  type: challenge
+  title: Service Mesh - Deploy Your Application - Stateless
+  teaser: Deploy reactive and API components
+  assignment: |
+    In this assignment you will deploy the stateless components of your application to the K8s1 cluster. <br>
+
+
+    Now deploy the frontend, public API, payments API, and product API components.
+
+    ```
+    kubectl config use-context k8s1
+    kubectl apply -f v1
+    ```
+
+    Wait for the app tier to be ready.
+
+    ```
+    kubectl wait pod --for=condition=Ready --selector=app=frontend
+    kubectl wait pod --for=condition=Ready --selector=app=public-api
+    kubectl wait pod --for=condition=Ready --selector=app=product-api
+    kubectl wait pod --for=condition=Ready --selector=app=payments-api-v1
+    ```
+
+    In the next assignment you will test the application, and the connectivity other K8s cluster.
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: K8s1 - Dashboard Token
+    type: code
+    hostname: k8s1
+    path: /root/dashboard-token.txt
+  - title: K8s1 - Dashboard
+    type: service
+    hostname: k8s1
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui/k8s1
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments/v1
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 500
+- slug: 05-service-mesh-test-your-application
+  id: mbzfwov3rzcj
+  type: challenge
+  title: Service Mesh - Test Your Application
+  teaser: Test your deployment
+  assignment: |-
+    Your application should now be available. You can quickly test the APIs by exposing the public API as a NodePort services.
+    NodePort services are uncommon in production, but suitable for dev and test. <br>
+
+    First, let's look at the differences for upstream services located in the same k8s1 cluster, and services in a different cluster. <br>
+
+    ```
+    kubectl config use-context k8s1
+    ```
+
+    Same cluster: Public API <br>
+    The address will be for a sidecar pod. <br>
+
+    ```
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep product
+    ```
+
+    External cluster: Payments API <br>
+    The address will be for the local mesh gateway running in the cluster. <br>
+
+    ```
+    kubectl exec deploy/payments-api-v1 -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep payments-queue
+    ```
+
+    The gateway will inspect the SNI headers and forward it along to the correct destination.
+    Inspect the SNI value for this service now. <br>
+
+    ```
+    kubectl exec deploy/payments-api-v1 -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."dynamic_active_clusters"? | select(. != null)[1]]'
+    ```
+
+
+    Now that you understand the internals of the cross cluster routing, let's expose the application so you can make sure it works. <br>
+
+    ```
+    kubectl expose deployment public-api --type=NodePort --name=public-api-service
+    ```
+
+    Fetch the details of the service you just created.
+
+    ```
+    kubectl describe svc public-api-service
+    port=$(kubectl get svc public-api-service -o json | jq '.spec.ports[0].nodePort')
+    ```
+
+    Try the product API. <br>
+
+    ```
+    curl -s -v http://k8s1:${port}/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+    --compressed | jq
+    ```
+
+    Try the payment API. <br>
+
+    ```
+    curl -s -v http://k8s1:${port}/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+    --compressed | jq
+    ```
+
+    You should have received a 200 status code from the app API.  <br>
+
+    Optionally, you can review the data directly in the storage tier.
+    There will be at least one payment in the queue after running the above APIs.
+
+    Switch to the other K8s cluster. <br>
+
+    ```
+    kubectl config use-context k8s2
+    ```
+
+    Check the payment queue. <br>
+
+    ```
+    kubectl exec statefulset/payments-queue -- redis-cli KEYS '*'
+    ```
+
+    Check the database. <br>
+
+    ```
+    kubectl exec statefulset/product-db -- env PGPASSWORD=postgres psql -U postgres -d products -c 'SELECT * FROM coffees' -a
+    ```
+
+    In the next few assignments you will be introduced to more advanced traffic management patterns.
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: K8s1 - Dashboard Token
+    type: code
+    hostname: k8s1
+    path: /root/dashboard-token.txt
+  - title: K8s1 - Dashboard
+    type: service
+    hostname: k8s1
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui/k8s1
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments/v1
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 500
+- slug: 06-service-mesh-service-discovery
+  id: 9f9aymz7s6xa
+  type: challenge
+  title: 'Service Mesh: Service Discovery'
+  teaser: Scale up & Scale Down
+  assignment: |
+    Service Discovery is a important component of Service Mesh, and K8s is one of many platforms Consul supports native service discovery.
+    Understadning of the low level data plane is not required, but it can be helpful to get a deeper understanding of the mesh at work!
+
+    When running on K8s, Consul can consume K8s probes to determine if an instance is healthy or not to receive traffic.
+    You will test this workflow below. <br>
+
+    Before you start, let's add curl to the container. <br>
+
+    ```
+    kubectl config use-context k8s1
+    kubectl exec deploy/payments-api-v1 -c payments-api -- apk add curl
+    ```
+
+    First let's look at the health check for our payments API. It will return a 200. <br>
+
+    ```
+    kubectl exec deploy/payments-api-v1 -c payments-api -- curl -s 127.0.0.1:8080/actuator/health | jq
+    ```
+
+    Check the dataplane for this instance of the payments api. You will inspect the Public API that connects to this service.
+
+    ```
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api
+    ```
+
+    You will simulate an issue with the Redis component and see how this change is propagated through the mesh.
+    Scale the Redis component to zero on the stateless cluster.
+    You will wait 15 seconds for the three consecutive health checks to fail in the probe. <br>
+
+
+    ```
+    kubectl config use-context k8s2
+    kubectl scale statefulset payments-queue --replicas=0
+    sleep 30
+    ```
+
+    Return to the other K8s cluster and check the health check again.
+    The status will be DOWN, with the REDIS component showing refused connection. <br>
+
+    ```
+    kubectl config use-context k8s1
+    kubectl exec deploy/payments-api-v1 -c payments-api -- curl -s 127.0.0.1:8080/actuator/health | jq
+    ```
+
+    Let's check the status off the probe. <br>
+
+    ```
+    kubectl get pod --selector=app=payments-api-v1 -o json | jq .items[0].status.conditions
+    ```
+
+    Now, Check the status in Consul. <br>
+
+    ```
+    curl -s http://127.0.0.1:8500/v1/health/checks/payments-api | jq
+    ```
+
+    This will remove this instance from the data plane. You will see this reflected in Envoy's health flag.
+    The data plane keeps track of how many in total nodes there (healthy vs unhealthy) so it has an understadning of the proportion between the two.
+    The flag will prevent this instance from receiving traffic, and the value will be `/failed_eds_health` <br>
+
+    ```
+    kubectl config use-context k8s1
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api
+    ```
+
+    Let's bring the queue services back, and add an additional instance of our payment service.
+
+    ```
+    kubectl config use-context k8s2
+    kubectl scale statefulset payments-queue --replicas=1
+    sleep 30
+    ```
+
+    Check the health check again for the payments API.
+
+    ```
+    kubectl config use-context k8s1
+    kubectl exec deploy/payments-api-v1 -c payments-api -- curl -s 127.0.0.1:8080/actuator/health | jq
+    ```
+
+    Check the probe again. <br>
+
+    ```
+    kubectl get pod --selector=app=payments-api-v1 -o json | jq .items[0].status.conditions
+    ```
+
+    Now, check the health check again in Consul.
+    The status will be passing. <br>
+
+    ```
+    curl -s http://127.0.0.1:8500/v1/health/checks/payments-api | jq
+    ```
+
+    The dataplane will be updated to reflect this change.
+    The `health_flags` will not be `healthy`. <br>
+
+    ```
+    kubectl config use-context k8s1
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api
+    ```
+
+    Last, let's add an additional instance of the payments API and see how quickly our public API propagates that update. <br>
+
+    ```
+    kubectl config use-context k8s1
+    kubectl scale deployment.v1.apps/payments-api-v1 --replicas=2
+    sleep 30
+    ```
+
+    Check that the Consul control plane has this change, and that it gets to our dataplane.
+    Flags for these services are set to `healthy`. <br>
+
+    ```
+    curl -s http://127.0.0.1:8500/v1/catalog/service/payments-api | jq '[.. |."ServiceAddress"? | select(. != null)]'
+    kubectl exec deploy/public-api -c public-api -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api
+    ```
+
+    You will introduce more advanced traffic management in the next few assignments.
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 500
+- slug: 07-traffic-management-ingress
+  id: 5qnkobx3dujj
+  type: challenge
+  title: 'Traffic Management: Ingress'
+  teaser: Bring traffic into your mesh
+  assignment: |-
+    Review and apply the ingress config.
+
+    ```
+    kubectl config use-context k8s1
+    kubectl apply -f ingress/hashicups.yml
+    ```
+
+    Your ingress config is now in Consul. <br>
+
+    ```
+    consul config read -kind ingress-gateway -name ingress-gateway | jq
+    ```
+
+    In the next assignment you will configure request routing for this ingress gateway.
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: K8s1 - Dashboard Token
+    type: code
+    hostname: k8s1
+    path: /root/dashboard-token.txt
+  - title: K8s1 - Dashboard
+    type: service
+    hostname: k8s1
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui/k8s1
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments/ingress
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 500
+- slug: 08-traffic-management-request-routing
+  id: olcwgzsryftu
+  type: challenge
+  title: 'Traffic Management: Request Routing'
+  teaser: Apply advanced routing patterns
+  assignment: |-
+    Review the routes and apply the routing configuration.  <br>
+
+    ```
+    kubectl config use-context k8s1
+    kubectl apply -f ingress/service-router.yml
+    ```
+
+    Reload the App tab to see the application that is now served over the ingress gateway. <br>
+
+    ```
+    kubectl exec deploy/consul-ingress-gateway -c ingress-gateway -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."dynamic_route_configs"? | select(. != null)[0]]'
+    ```
+
+    You can also inspect the clusters. <br>
+
+    ```
+    kubectl exec deploy/consul-ingress-gateway -c ingress-gateway -- wget -qO- 127.0.0.1:19000/clusters
+    ```
+
+    Get the gateway IP. <br>
+
+    ```
+    kubectl describe svc consul-ingress-gateway
+    ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
+    ```
+
+    Test the product API. <br>
+
+    ```
+    curl -s -v http://${ip}:8080/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+    --compressed | jq
+    ```
+
+    Test the payment API. <br>
+
+    ```
+    curl -s -v http://${ip}:8080/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+    --compressed | jq
+    ```
+
+    The APIs are working correctly. You can also navigate to the frontend of this application using the App tab in the window. <br>
+
+    In the next few assignments you will use the traffic management capabilities of Consul to ship a new feature in this application.
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: K8s1 - Dashboard Token
+    type: code
+    hostname: k8s1
+    path: /root/dashboard-token.txt
+  - title: K8s1 - Dashboard
+    type: service
+    hostname: k8s1
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui/k8s1
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments/ingress
+  - title: App
+    type: service
+    hostname: k8s1
+    path: /
+    port: 8080
+    new_window: true
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 500
+- slug: 09-traffic-management-traffic-shifting
+  id: tmswarh6vq9w
+  type: challenge
+  title: 'Traffic Management: Traffic Shifting'
+  teaser: Test multiple versions of your application
+  assignment: |-
+    Review the routes and apply the routing configuration.  <br>
+
+    ```
+    kubectl config use-context k8s1
+    kubectl apply -f v2
+    kubectl wait pod --for=condition=Ready --selector=app=payments-api-v2
+    ```
+
+    Validate that the traffic shifting rules have been applied, and the weights are correct.
+
+    ```
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
+    ```
+
+    Query the payment API a few times.
+    You will see a mix of unencrypted and encrypted records. <br>
+
+
+    Get the endpoint. <br>
+
+    ```
+    kubectl describe svc consul-ingress-gateway
+    ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
+    ```
+
+    Try the API. Run the command a few times to see the difference in the encrypted and non-encrypted values. <br>
+
+    ```
+    curl -s -v http://${ip}:8080/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+    --compressed | jq
+    ```
+
+    If you are getting 200 responses, you can cut over the rest of the traffic to the encrypted solution. <br>
+
+    ```
+    cat <<EOF | kubectl apply -f -
+    apiVersion: consul.hashicorp.com/v1alpha1
+    kind: ServiceSplitter
+    metadata:
+      name: payments-api
+    spec:
+      splits:
+        - weight: 0
+          serviceSubset: v1
+        - weight: 100
+          serviceSubset: v2
+    EOF
+    ```
+
+    Check that the v2 service is now 100% weighted. <br>
+
+    ```
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."routes"? | select(. != null)][-1]'
+    ```
+
+    Now that each record will be encrypted, validate in the redis cache that the value in the queue is indeed ciphertexts.
+
+    ```
+    kubectl config use-context k8s1
+    id=$(curl -s http://${ip}:8080/api -H 'Accept-Encoding: gzip, deflate, br' -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Connection: keep-alive' -H 'DNT: 1' --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' --compressed | jq  -r .data.pay.id)
+    kubectl config use-context k8s2
+    kubectl exec statefulset/payments-queue -- redis-cli HGET "payment:${id}" "cc.number"
+    ```
+
+    You will collect some metrics and traces from the new application in the new few exercises.
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments
+  - title: App
+    type: service
+    hostname: k8s1
+    path: /
+    port: 8080
+    new_window: true
+  - title: Vault UI
+    type: service
+    hostname: k8s1
+    path: /
+    port: 8200
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 500
+- slug: 10-observability-metrics
+  id: uxddr0p5hlph
+  type: challenge
+  title: 'Observability: Metrics'
+  teaser: Collect Application Metrics
+  assignment: |-
+    In this assignment you will run a traffic simulation to create metrics to visualize on the Consul dashboard. <br>
+
+    Apply the traffic simulator and observe the dashboards in the Consul UI. <br>
+
+    ```
+    kubectl apply -f observability/traffic.yml
+    ```
+
+    Wait a few moments and observe the traffic on the Consul dashboard.
+
+    Additionally, you can deploy the Grafana dashboards below to monitor the health of the consul system, as well as your workloads.
+    To create the sample dashboard select the `+` in the left side navigation to `Import`. <br>
+
+    * https://grafana.com/grafana/dashboards/13396
+    * https://raw.githubusercontent.com/hashicorp/learn-consul-kubernetes/main/layer7-observability/grafana/hashicups-dashboard.json
+
+    In the next assignment you will look at traces for this traffic.
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments/observability
+  - title: App
+    type: service
+    hostname: k8s1
+    path: /
+    port: 8080
+    new_window: true
+  - title: Grafana - UI
+    type: service
+    hostname: k8s1
+    port: 3000
+  - title: Grafana - Password
+    type: code
+    hostname: workstation
+    path: /tmp/grafana-pass.txt
+  - title: Prometheus - UI
+    type: service
+    hostname: k8s1
+    path: /targets#job-kubernetes-pods
+    port: 9090
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 500
+- slug: 11-observability-tracing
+  id: olkpnjqs2q2r
+  type: challenge
+  title: 'Observability: Tracing'
+  teaser: Inspect trace information
+  assignment: |-
+    In this assignment you will look at application traces across your APIs.
+    You will send a few API calls below.  <br>
+
+    Get the gateway IP. <br>
+
+    ```
+    kubectl describe svc consul-ingress-gateway
+    ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
+    ```
+
+    Test the product API. <br>
+
+    ```
+    curl -s -v http://${ip}:8080/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+    --compressed | jq
+    ```
+
+    Test the payment API. <br>
+
+    ```
+    curl -s -v http://${ip}:8080/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+    --compressed | jq
+    ```
+
+    Observe the trace data in Jaeger.
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments
+  - title: App
+    type: service
+    hostname: k8s1
+    path: /
+    port: 30080
+    new_window: true
+  - title: Grafana - UI
+    type: service
+    hostname: k8s1
+    port: 3000
+  - title: Grafana - Password
+    type: code
+    hostname: workstation
+    path: /tmp/grafana-pass.txt
+  - title: Prometheus - UI
+    type: service
+    hostname: k8s1
+    path: /targets#job-kubernetes-pods
+    port: 9090
+  - title: Jaeger UI
+    type: service
+    hostname: k8s1
+    path: /
+    port: 16686
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 500
+- slug: 12-security-tcp
+  id: bbfwscljmhzz
+  type: challenge
+  title: 'Security: TCP Traffic'
+  teaser: Apply Layer 4 Intentions
+  assignment: |-
+    Intentions are deny by default in a secure configuration.
+    Test that in this challenge. <br>
+
+    Clear the intentions for the app.
+
+    ```
+    kubectl delete -f v1/service-intentions.yml
+    ```
+
+    In one terminal, start tailing the rbac logs. <br>
+
+    ```
+    kubectl logs -l app=payments-api-v2 -c envoy-sidecar -f --since=5s | grep rbac
+    ```
+
+    Get the gateway IP. <br>
+
+    ```
+    kubectl describe svc consul-ingress-gateway
+    ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
+    ```
+
+    Send the payment API. <br>
+
+    ```
+    curl -s -v http://${ip}:8080/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+    --compressed | jq
+    ```
+
+    You will see that RBAC denied the API call in the tail output. <br>
+
+    Add the intentions back <br>
+
+    ```
+    kubectl apply -f v1/service-intentions.yml
+    ```
+
+    Try the API again to fix the connectivity.
+
+    ```
+    curl -s -v http://${ip}:8080/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+    --compressed | jq
+    ```
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments
+  - title: App
+    type: service
+    hostname: k8s1
+    path: /
+    port: 30080
+    new_window: true
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 500
+- slug: 13-security-http
+  id: 5ylmiomxpvyl
+  type: challenge
+  title: 'Security: HTTP Traffic'
+  teaser: Apply Layer 7 Intentions
+  assignment: |-
+    In one terminal, start tailing the rbac logs for the public API. <br>
+
+    ```
+    kubectl logs -l app=public-api -c envoy-sidecar -f --since=5s | grep rbac
+    ```
+
+    Get the gateway IP. <br>
+
+    ```
+    ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
+    ```
+
+    Try a valid path. <br>
+
+    ```
+    curl -s -v http://${ip}:8080/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+    --compressed | jq
+    ```
+
+    Try a bad path.
+
+    ```
+    curl -s -v http://${ip}:8080/api/bad
+    ```
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments
+  - title: App
+    type: service
+    hostname: k8s1
+    path: /
+    port: 30080
+    new_window: true
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 500
+checksum: "18128497619398155668"

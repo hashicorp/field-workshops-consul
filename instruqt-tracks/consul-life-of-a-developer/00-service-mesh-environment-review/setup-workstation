@@ -1,0 +1,101 @@
+#!/bin/bash
+
+#fix path
+echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
+
+#install kubectl
+export DEBIAN_FRONTEND=noninteractive
+apt update -y
+apt install -y apt-transport-https ca-certificates curl vim openssh-client git jq gnupg2 lsb-release software-properties-common
+curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+add-apt-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" |  tee /etc/apt/sources.list.d/kubernetes.list
+apt update -y
+apt install -y kubectl consul vault
+
+#disable host checks
+cat << EOF > ~/.ssh/config
+Host *
+    StrictHostKeyChecking no
+EOF
+
+#get the kube configs
+ssh k8s1 'cat ~/.kube/config' > /tmp/k8s1_kube_config.yaml
+ssh k8s2 'cat ~/.kube/config' > /tmp/k8s2_kube_config.yaml
+
+#name them - k8s1
+sed -i 's/default/k8s1/g' /tmp/k8s1_kube_config.yaml
+sed -i 's/127.0.0.1/k8s1/g' /tmp/k8s1_kube_config.yaml
+#name them - k8s2
+sed -i 's/default/k8s2/g' /tmp/k8s2_kube_config.yaml
+sed -i 's/127.0.0.1/k8s2/g' /tmp/k8s2_kube_config.yaml
+
+#merge them & set the context
+mkdir -p ~/.kube/
+KUBECONFIG=/tmp/k8s1_kube_config.yaml:/tmp/k8s2_kube_config.yaml kubectl config view --merge --flatten > ~/.kube/config
+kubectl config use-context k8s1
+
+#helm install
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+/usr/local/bin/helm repo add hashicorp https://helm.releases.hashicorp.com
+
+#assets
+git clone https://github.com/hashicorp/field-workshops-consul.git
+cp -r field-workshops-consul/instruqt-tracks/consul-life-of-a-developer/assets/config /root/
+cp -r field-workshops-consul/instruqt-tracks/consul-life-of-a-developer/assets/deployments /root/
+cp -r field-workshops-consul/instruqt-tracks/consul-life-of-a-developer/assets/helm /root/
+rm -rf /root/field-workshops-consul
+
+#nginx
+export DEBIAN_FRONTEND=noninteractive
+apt update -y
+apt install -y nginx
+cat << EOF > /etc/nginx/conf.d/consul.conf
+server {
+  listen 8500;
+  location / {
+    proxy_pass https://k8s1:8443;
+    proxy_ssl_verify off;
+  }
+  access_log /var/log/nginx/consul.log;
+}
+EOF
+/usr/sbin/service nginx restart
+
+#deploy vault
+/usr/sbin/setcap cap_ipc_lock= /usr/bin/vault
+kubectl config use-context k8s1
+/usr/local/bin/helm install vault hashicorp/vault -f /root/helm/vault-values.yaml
+sleep 10
+
+#vault login
+export VAULT_ADDR=http://k8s1:8200
+/usr/bin/vault login root
+
+#vault transit
+/usr/bin/vault secrets enable transit
+/usr/bin/vault write -f transit/keys/payments
+
+#vault k8s
+/usr/bin/vault auth enable kubernetes
+secret=$(kubectl get sa vault -o json | jq -r .secrets[0].name)
+kubectl get secret ${secret} -o json | jq -r '.data."ca.crt"' | base64 -d > /tmp/ca.pem
+/usr/bin/vault write auth/kubernetes/config \
+    token_reviewer_jwt="$(kubectl get secret ${secret} -o json | jq -r .data.token | base64 -d)" \
+    kubernetes_host="https://$(kubectl get svc kubernetes -o json | jq -r .spec.clusterIP):443" \
+    kubernetes_ca_cert=@/tmp/ca.pem
+
+#vault policies and roles
+/usr/bin/vault policy write payments-api - <<EOF
+path "transit/encrypt/payments" {
+  capabilities = ["update"]
+}
+EOF
+/usr/bin/vault write auth/kubernetes/role/payments-api \
+    bound_service_account_names=payments-api \
+    bound_service_account_namespaces=default \
+    policies=payments-api \
+    ttl=24h
+
+exit 0

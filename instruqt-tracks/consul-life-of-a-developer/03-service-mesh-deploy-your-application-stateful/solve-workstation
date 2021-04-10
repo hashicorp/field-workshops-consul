@@ -1,0 +1,8 @@
+#!/bin/bash
+
+kubectl config use-context k8s2
+kubectl apply -f storage
+kubectl wait pod --selector=app=payments-queue  --for=condition=Ready
+kubectl wait pod --selector=app=product-db  --for=condition=Ready
+
+exit 0

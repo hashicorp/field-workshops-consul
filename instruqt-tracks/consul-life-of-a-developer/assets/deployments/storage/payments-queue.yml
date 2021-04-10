@@ -1,0 +1,58 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: payments-queue
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: payments-queue
+spec:
+  protocol: tcp
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: payments-queue
+  labels:
+    app: payments-queue
+spec:
+  serviceName: redis-cluster
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payments-queue
+  template:
+    metadata:
+      labels:
+        app: payments-queue
+      annotations:
+        consul.hashicorp.com/connect-inject: "true"
+    spec:
+      serviceAccountName: payments-queue
+      containers:
+      - name: payments-queue
+        image: "redis:latest"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+        - name: data
+          mountPath: /data
+          readOnly: false
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+      labels:
+        name: redis-cluster
+      annotations:
+        volume.alpha.kubernetes.io/storage-class: local-path
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 100Mi

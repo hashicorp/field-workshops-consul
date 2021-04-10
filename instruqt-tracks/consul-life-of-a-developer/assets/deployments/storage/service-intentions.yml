@@ -1,0 +1,22 @@
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: product-db
+spec:
+  destination:
+    name: product-db
+  sources:
+    - name: product-api
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: payments-queue
+spec:
+  destination:
+    name: payments-queue
+  sources:
+    - name: payments-api
+      action: allow

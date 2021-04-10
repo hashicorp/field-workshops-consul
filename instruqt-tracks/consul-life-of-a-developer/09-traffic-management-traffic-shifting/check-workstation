@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#context
+kubectl config use-context k8s1
+
+#check config
+if [ "$(consul config read -kind service-splitter -name payments-api  | jq -r '.Splits[1].Weight')" != "100" ]; then
+  fail-message "Traffic not 100% weighted to v2."
+  exit 1
+fi
+
+#check the gateway
+ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
+if [ -z "$ip" ]; then
+  fail-message "Ingress Gateway IP not set."
+  exit 1
+fi
+
+#check payment
+payment=$(curl -s -o /dev/null -w "%{http_code}" http://${ip}:8080/api \
+-H 'Accept-Encoding: gzip, deflate, br' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-H 'Connection: keep-alive' \
+-H 'DNT: 1' \
+--data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+--compressed)
+if [ "$payment" != "200" ]; then
+  fail-message "Payment API did not return a 200."
+  exit 1
+fi
+
+
+exit 0

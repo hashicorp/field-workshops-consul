@@ -1,0 +1,10 @@
+#!/bin/bash
+
+kubectl config use-context k8s1
+kubectl apply -f v1
+kubectl wait pod --for=condition=Ready --selector=app=frontend
+kubectl wait pod --for=condition=Ready --selector=app=public-api
+kubectl wait pod --for=condition=Ready --selector=app=product-api
+kubectl wait pod --for=condition=Ready --selector=app=payments-api-v1
+
+exit 0

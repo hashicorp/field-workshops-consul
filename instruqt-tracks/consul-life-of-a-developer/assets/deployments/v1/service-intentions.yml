@@ -1,0 +1,52 @@
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: frontend
+spec:
+  destination:
+    name: frontend
+  sources:
+    - name: ingress-gateway
+      action: allow
+    - name: traffic
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: public-api
+spec:
+  destination:
+    name: public-api
+  sources:
+    - name: frontend
+      action: allow
+    - name: ingress-gateway
+      permissions:
+        - action: allow
+          http:
+            pathExact: /api
+            methods: ['GET','POST']
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: product-api
+spec:
+  destination:
+    name: product-api
+  sources:
+    - name: public-api
+      action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: payments-api
+spec:
+  destination:
+    name: payments-api
+  sources:
+    - name: public-api
+      action: allow
