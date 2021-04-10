@@ -176,8 +176,8 @@ challenges:
     Wait for the storage pods to be ready.
 
     ```
-    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=payments-queue -o name)
-    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=product-db -o name)
+    kubectl wait pod --selector=app=payments-queue  --for=condition=Ready
+    kubectl wait pod --selector=app=product-db  --for=condition=Ready
     ```
 
     In the next assignment we will connect workloads on the other K8s cluster to the deployed storage tier.
@@ -224,10 +224,10 @@ challenges:
     Wait for the app tier to be ready.
 
     ```
-    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=frontend -o name)
-    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=public-api -o name)
-    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=product-api -o name)
-    kubectl wait --for=condition=Ready $(kubectl get pod --selector=app=payments-api-v1 -o name)
+    kubectl wait pod --for=condition=Ready --selector=app=frontend
+    kubectl wait pod --for=condition=Ready --selector=app=public-api
+    kubectl wait pod --for=condition=Ready --selector=app=product-api
+    kubectl wait pod --for=condition=Ready --selector=app=payments-api-v1
     ```
 
     In the next assignment we will test the application, and the connectivity other K8s cluster.
@@ -1040,4 +1040,4 @@ challenges:
     new_window: true
   difficulty: basic
   timelimit: 500
-checksum: "2081082551505779988"
+checksum: "8257201828954819200"
