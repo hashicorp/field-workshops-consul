@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#context
+kubectl config use-context k8s1
+kubectl apply -f observability/traffic.yml
+
+exit 0
