@@ -28,7 +28,7 @@ challenges:
     hostname: workstation
   - title: Lab Architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 01-service-mesh-connect-your-runtimes
@@ -100,7 +100,7 @@ challenges:
     path: /root/deployments
   - title: Lab Architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 300
 - slug: 02-service-mesh-connect-your-runtimes
@@ -163,7 +163,7 @@ challenges:
     path: /root/helm
   - title: Lab Architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 1800
 - slug: 03-service-mesh-deploy-your-application-stateful
@@ -213,7 +213,7 @@ challenges:
     path: /root/deployments/storage
   - title: Lab Architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 04-service-mesh-deploy-your-application-stateless
@@ -266,7 +266,7 @@ challenges:
     path: /root/deployments/v1
   - title: Lab Architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 05-service-mesh-test-your-application
@@ -393,7 +393,7 @@ challenges:
     path: /root/deployments/v1
   - title: Lab Architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 06-service-mesh-service-discovery
@@ -535,7 +535,7 @@ challenges:
     path: /root/deployments
   - title: Lab Architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 07-traffic-management-ingress
@@ -582,7 +582,7 @@ challenges:
     path: /root/deployments/ingress
   - title: Lab Architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 08-traffic-management-request-routing
@@ -676,7 +676,7 @@ challenges:
     new_window: true
   - title: Lab Architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 09-traffic-management-traffic-shifting
@@ -783,7 +783,7 @@ challenges:
     port: 8200
   - title: Lab Architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 10-observability-metrics
@@ -843,7 +843,7 @@ challenges:
     port: 9090
   - title: Lab Architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 11-observability-tracing
@@ -928,7 +928,7 @@ challenges:
     port: 16686
   - title: Lab Architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 12-security-tcp
@@ -1016,7 +1016,7 @@ challenges:
     new_window: true
   - title: Lab Architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
 - slug: 13-security-http
@@ -1079,7 +1079,7 @@ challenges:
     new_window: true
   - title: Lab Architecture
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/track-life-of-a-developer/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
-checksum: "17244187273136372147"
+checksum: "18128497619398155668"
