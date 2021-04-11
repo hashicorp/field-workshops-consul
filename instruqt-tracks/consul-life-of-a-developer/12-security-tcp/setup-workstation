@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#kill the load test
+kubectl config use-context k8s1
+kubectl delete -f /root/deployments/observability/traffic.yml
+
+exit 0
