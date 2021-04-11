@@ -10,12 +10,12 @@ data:
     import { sleep } from 'k6';
 
     export const options = {
-      vus: 10,
+      vus: 50,
       duration: '30m',
     };
 
     export default function () {
-    sleep(Math.random() * 5);
+    sleep(Math.random() * 2);
       var query = `
       query {
         coffees {

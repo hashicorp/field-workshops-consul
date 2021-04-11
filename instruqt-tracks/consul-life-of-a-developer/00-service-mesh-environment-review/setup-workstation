@@ -63,11 +63,11 @@ server {
 EOF
 /usr/sbin/service nginx restart
 
-#deploy vault
+#deploy vault & wait for load balancer
 /usr/sbin/setcap cap_ipc_lock= /usr/bin/vault
 kubectl config use-context k8s1
 /usr/local/bin/helm install vault hashicorp/vault -f /root/helm/vault-values.yaml
-sleep 10
+sleep 60
 
 #vault login
 export VAULT_ADDR=http://k8s1:8200
