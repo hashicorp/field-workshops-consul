@@ -1,39 +1,124 @@
 ---
 apiVersion: v1
-kind: ServiceAccount
+kind: ConfigMap
 metadata:
-  name: traffic
+  name: products-load-generator
+  namespace: default
+data:
+  load_test.js: |
+    import http from 'k6/http';
+    import { sleep } from 'k6';
+
+    export const options = {
+      vus: 10,
+      duration: '30m',
+    };
+
+    export default function () {
+    sleep(Math.random() * 5);
+      var query = `
+      query {
+        coffees {
+          id
+          name
+          price
+        }
+      }`;
+      var url = 'http://consul-ingress-gateway:8080/api';
+      var payload = JSON.stringify({
+        query: query
+      });
+      var params = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      http.post(url, payload, params);
+    }
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payments-load-generator
+  namespace: default
+data:
+  load_test.js: |
+    import http from 'k6/http';
+    import { sleep } from 'k6';
+
+    export const options = {
+      vus: 10,
+      duration: '30m',
+    };
+
+    export default function () {
+    sleep(Math.random() * 5);
+      var query = `
+      mutation {
+        pay(
+          details: {
+            name: "John"
+            type: "MasterCard"
+            number: "1111-2222-3333-4444"
+            expiry: "01/22"
+            cv2: 555
+            amount: 8
+          }
+        ) {
+          id
+          card_plaintext
+          card_ciphertext
+        }
+      }`;
+      var url = 'http://consul-ingress-gateway:8080/api';
+      var payload = JSON.stringify({
+        query: query
+      });
+      var params = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      http.post(url, payload, params);
+    }
+
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: traffic
+  name: load-generator-deployment
   labels:
-    app: traffic
+    app: load-generator-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: traffic
+      app: load-generator
   template:
     metadata:
       labels:
-        app: traffic
-      annotations:
-        prometheus.io/scrape: "false"
-        consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/connect-service-upstreams: "frontend:80"
+        app: load-generator
     spec:
-      serviceAccountName: traffic
+      volumes:
+      - name: products-config-volume
+        configMap:
+          name: products-load-generator
+      - name: payments-config-volume
+        configMap:
+          name: payments-load-generator
       containers:
-      - name: traffic
-        image: hashicorpdemoapp/traffic-simulation:v0.0.2
-        env:
-        - name: BASE_URI
-          value: http://localhost
-        - name: DURATION
-          value: "24h"
-        - name: SHOW_PROGRESS
-          value: "false"
-        - name: USERS
-          value: "3"
+      - name: products-load-generator
+        image: loadimpact/k6
+        command: ["k6", "run", "/etc/config/load_test.js"]
+        volumeMounts:
+        - name: products-config-volume
+          mountPath: /etc/config
+      - name: payments-load-generator
+        image: loadimpact/k6
+        command: ["k6", "run", "/etc/config/load_test.js"]
+        volumeMounts:
+        - name: payments-config-volume
+          mountPath: /etc/config
