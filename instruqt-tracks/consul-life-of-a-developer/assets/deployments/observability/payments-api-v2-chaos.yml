@@ -1,0 +1,186 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: payments-api
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payments-properties-conf-v2-chaos-latency
+data:
+  application.properties: |
+    app.storage=redis
+    app.encryption.enabled=true
+    spring.profiles.active=chaos-monkey
+    chaos.monkey.enabled=true
+    chaos.monkey.watcher.restController=true
+    chaos.monkey.assaults.latencyActive=true
+    chaos.monkey.assaults.level=5
+    chaos.monkey.assaults.latencyRangeStart=2000
+    chaos.monkey.assaults.latencyRangeEnd=3000
+    spring.main.allow-bean-definition-overriding=true
+    opentracing.jaeger.http-sender.url=http://jaeger-collector:14268/api/traces
+    opentracing.jaeger.include-jaeger-env-tags=true
+    logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter=DEBUG
+    opentracing.jaeger.enable-b3-propagation=true
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payments-properties-conf-v2-chaos-exception
+data:
+  application.properties: |
+    app.storage=redis
+    app.encryption.enabled=true
+    spring.profiles.active=chaos-monkey
+    chaos.monkey.enabled=true
+    chaos.monkey.watcher.restController=true
+    chaos.monkey.assaults.exceptionsActive=true
+    chaos.monkey.assaults.level=5
+    spring.main.allow-bean-definition-overriding=true
+    opentracing.jaeger.http-sender.url=http://jaeger-collector:14268/api/traces
+    opentracing.jaeger.include-jaeger-env-tags=true
+    logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter=DEBUG
+    opentracing.jaeger.enable-b3-propagation=true
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payments-bootstrap-conf-v2
+data:
+  bootstrap.yaml: |
+    spring:
+      cloud:
+        vault:
+          enabled: true
+          fail-fast: true
+          host: vault
+          port: 8200
+          scheme: http
+          authentication: KUBERNETES
+          kubernetes:
+            role: payments-api
+            kubernetes-path: kubernetes
+            service-account-token-file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          kv:
+            enabled: false
+          generic:
+            enabled: false
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-api-v2-chaos-exception
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: payments-api-v2
+      app: payments-api-v2
+  template:
+    metadata:
+      labels:
+        service: payments-api-v2
+        app: payments-api-v2
+        chaos: exception
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9901"
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/connect-service-upstreams: "payments-queue:6379:k8s2"
+        consul.hashicorp.com/service-meta-version: v2
+        consul.hashicorp.com/service-tags: v2,chaos,exception
+    spec:
+      serviceAccountName: payments-api
+      volumes:
+        - name: properties-config
+          configMap:
+            name: payments-properties-conf-v2-chaos-exception
+        - name: bootstrap-config
+          configMap:
+            name: payments-bootstrap-conf-v2
+      containers:
+        - name: payments-api
+          image: hashicorpdemoapp/payments:v0.0.11
+          volumeMounts:
+            - name: properties-config
+              mountPath: /config/application.properties
+              subPath: application.properties
+            - name: bootstrap-config
+              mountPath: /config/bootstrap.yaml
+              subPath: bootstrap.yaml
+          ports:
+            - containerPort: 8080
+          env:
+            - name: BIND_ADDRESS
+              value: ":8080"
+            - name : JAEGER_ENDPOINT
+              value: http://jaeger-collector:14268/api/traces
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            timeoutSeconds: 1
+            periodSeconds: 5
+            failureThreshold: 3
+            initialDelaySeconds: 30
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-api-v2-chaos-latency
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: payments-api-v2
+      app: payments-api-v2
+  template:
+    metadata:
+      labels:
+        service: payments-api-v2
+        app: payments-api-v2
+        chaos: latency
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9901"
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/connect-service-upstreams: "payments-queue:6379:k8s2"
+        consul.hashicorp.com/service-meta-version: v2
+        consul.hashicorp.com/service-tags: v2,chaos,latency
+    spec:
+      serviceAccountName: payments-api
+      volumes:
+        - name: properties-config
+          configMap:
+            name: payments-properties-conf-v2-chaos-latency
+        - name: bootstrap-config
+          configMap:
+            name: payments-bootstrap-conf-v2
+      containers:
+        - name: payments-api
+          image: hashicorpdemoapp/payments:v0.0.11
+          volumeMounts:
+            - name: properties-config
+              mountPath: /config/application.properties
+              subPath: application.properties
+            - name: bootstrap-config
+              mountPath: /config/bootstrap.yaml
+              subPath: bootstrap.yaml
+          ports:
+            - containerPort: 8080
+          env:
+            - name: BIND_ADDRESS
+              value: ":8080"
+            - name : JAEGER_ENDPOINT
+              value: http://jaeger-collector:14268/api/traces
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            timeoutSeconds: 1
+            periodSeconds: 5
+            failureThreshold: 3
+            initialDelaySeconds: 30

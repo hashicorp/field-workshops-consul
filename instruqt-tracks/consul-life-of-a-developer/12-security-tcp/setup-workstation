@@ -4,4 +4,10 @@
 kubectl config use-context k8s1
 kubectl delete -f /root/deployments/observability/traffic.yml
 
+#move back to all healthy services
+kubectl scale deployment.v1.apps/payments-api-v2-chaos-latency --replicas=0
+kubectl scale deployment.v1.apps/payments-api-v2-chaos-exception --replicas=0
+sleep 10
+kubectl wait pod --for=condition=Ready --selector=app=payments-api-v2 --timeout=90s
+
 exit 0

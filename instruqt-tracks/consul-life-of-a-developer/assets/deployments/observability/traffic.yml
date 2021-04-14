@@ -49,7 +49,7 @@ data:
     import { sleep } from 'k6';
 
     export const options = {
-      vus: 10,
+      vus: 25,
       duration: '30m',
     };
 
