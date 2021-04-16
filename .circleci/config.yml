@@ -2,12 +2,28 @@ version: 2
 jobs:
   validate:
     docker:
-      - image: instruqt/cli:latest
+      - image: docker.mirror.hashicorp.services/ubuntu:bionic
     steps:
       - checkout
       - run:
           name: Run Instruqt Validate
           command: |
+            VERSION=$INSTRUQT_VERSION
+            apt -y update
+            apt -y install wget unzip
+            wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
+            cd /tmp
+            unzip instruqt.zip
+            cp instruqt /usr/local/bin/instruqt
+            chmod +x /usr/local/bin/instruqt
+            echo "yes" | instruqt version
+            RETVAL=$?
+            if [[ $RETVAL -ne 0 ]]; then
+              echo "Instruqt is not installed correctly."
+              exit 1
+            else
+              echo "Instruqt is installed and updated to most recent version."
+            fi
             echo "Running instruqt track validate..."
             for dir in $(ls -d /root/project/instruqt-tracks/*); do
               cd $dir && instruqt track validate
