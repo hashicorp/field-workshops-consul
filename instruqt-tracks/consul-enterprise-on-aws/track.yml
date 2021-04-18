@@ -1,8 +1,8 @@
 slug: consul-enterprise-on-aws
 id: stkflr7xh9ud
 type: track
-title: Consul on AWS
-teaser: Consul as a Shared Service on AWS with Consul Enterprise
+title: 'DEPRECATED: Consul on AWS'
+teaser: 'See link for new track: https://play.instruqt.com/hashicorp/tracks/multi-cloud-service-networking-with-consul'
 description: In this track you will set up a Consul shared service on AWS, and connect
   applications across multiple platforms.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
@@ -1431,4 +1431,4 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "17280678417464520003"
+checksum: "8785023972842365072"

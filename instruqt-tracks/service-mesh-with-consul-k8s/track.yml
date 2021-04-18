@@ -1,9 +1,8 @@
 slug: service-mesh-with-consul-k8s
 id: ygz7z7sj3nyn
 type: track
-title: Service mesh with Consul K8s
-teaser: Unleash the full power of Consul's service mesh on the world's most popular
-  container orchestrator.
+title: 'DEPRECATED: Service mesh with Consul K8s'
+teaser: 'See link for new track: https://play.instruqt.com/hashicorp/tracks/consul-life-of-a-developer'
 description: |-
   In this track you will use Consul Connect's first-class support on K8s
   for service mesh.
@@ -787,4 +786,4 @@ challenges:
     path: /root/dashboard-token.txt
   difficulty: basic
   timelimit: 5400
-checksum: "1043998483807709954"
+checksum: "14518901622021488032"
