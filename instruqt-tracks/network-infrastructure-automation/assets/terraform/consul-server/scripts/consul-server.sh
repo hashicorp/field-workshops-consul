@@ -3,6 +3,37 @@
 #metadata
 local_ipv4=$(curl -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/privateIpAddress?api-version=2017-08-01&format=text")
 
+#utils
+sudo apt-get install -y unzip
+
+#Download Consul
+CONSUL_VERSION="1.9.4+ent"
+curl --silent --remote-name https://releases.hashicorp.com/consul/$${CONSUL_VERSION}/consul_$${CONSUL_VERSION}_linux_amd64.zip
+
+#Install Consul
+unzip consul_$${CONSUL_VERSION}_linux_amd64.zip
+unzip consul-template_$${CONSUL_TEMPLATE_VERSION}_linux_amd64.zip
+sudo chown root:root consul
+sudo chown root:root consul consul-template
+sudo mv consul* /usr/local/bin/
+consul -autocomplete-install
+complete -C /usr/local/bin/consul consul
+
+#Create Consul User
+sudo useradd --system --home /etc/consul.d --shell /bin/false consul
+sudo mkdir --parents /opt/consul
+sudo chown --recursive consul:consul /opt/consul
+
+
+#Download Vault
+VAULT_VERSION="1.7.0+ent"
+curl --silent --remote-name https://releases.hashicorp.com/vault/$${VAULT_VERSION}/vault_$${VAULT_VERSION}_linux_amd64.zip
+
+#Install Vault
+
+
+#Create Vault User
+
 #vault
 az login --identity
 export VAULT_ADDR="http://$(az vm show -g $(curl -s -H Metadata:true "http://169.254.169.254/metadata/instance?api-version=2017-08-01" | jq -r '.compute | .resourceGroupName') -n vault-server-vm -d | jq -r .publicIps):8200"
@@ -73,6 +104,7 @@ template {
 }
 vault {
   address = "$${VAULT_ADDR}"
+  token   = "$${VAULT_TOKEN}"
 }
 EOF
 cat <<EOF > /etc/systemd/system/vault-agent.service

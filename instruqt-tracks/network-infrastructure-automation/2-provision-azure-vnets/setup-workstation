@@ -34,7 +34,7 @@ echo ">>----------------------------<<"
 #install consul
 cd /tmp
 echo "installing consul..."
-curl -O https://releases.hashicorp.com/consul/1.9.3+ent/consul_1.9.3+ent_linux_amd64.zip
+curl -O https://releases.hashicorp.com/consul/1.9.4+ent/consul_1.9.4+ent_linux_amd64.zip
 unzip *.zip
 mv consul /usr/local/bin/consul
 rm -f *.zip
@@ -60,7 +60,9 @@ cd /root
 
 #get assets
 echo "cloning assets..."
-git clone https://github.com/hashicorp/field-workshops-consul.git
+# //FIXME git clone https://github.com/hashicorp/field-workshops-consul.git
+# // Use this dev branch
+git clone -b n8-hcs2ent https://github.com/hashicorp/field-workshops-consul.git
 cp -r field-workshops-consul/instruqt-tracks/network-infrastructure-automation/assets/terraform /root/terraform
 rm -rf field-workshops-consul
 

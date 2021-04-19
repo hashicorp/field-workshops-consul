@@ -8,7 +8,7 @@ sudo apt-get install -y unzip nginx
 
 #Download Consul
 CONSUL_TEMPLATE_VERSION="0.22.0"
-CONSUL_VERSION="1.8.0+ent"
+CONSUL_VERSION="1.9.4+ent"
 curl --silent --remote-name https://releases.hashicorp.com/consul/$${CONSUL_VERSION}/consul_$${CONSUL_VERSION}_linux_amd64.zip
 curl --silent --remote-name https://releases.hashicorp.com/consul-template/$${CONSUL_TEMPLATE_VERSION}/consul-template_$${CONSUL_TEMPLATE_VERSION}_linux_amd64.zip
 

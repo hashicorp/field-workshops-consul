@@ -15,15 +15,6 @@ if [ "${status}" != "Succeeded" ] ; then
   exit 1
 fi
 
-# this is broken for now
-#echo "Checking HCS cluster"
-#status=$(az hcs list -g ${rg} | jq -r '.[0].provisioningState')
-#echo $status
-#if [ "${status}" != "Succeeded" ] ; then
-#  fail-message "HCS cluster is not provisioned. Wait a few moments and try again. Current state is: ${status}"
-#  exit 1
-#fi
-
 #F5 BIG-IP
 f5_url=$(terraform output -state /root/terraform/bigip/terraform.tfstate -json | jq -r .mgmt_url.value)
 echo "F5 Management URL is: $f5_url"
@@ -53,8 +44,9 @@ if [ "${vault_api}" != "200" ]; then
   exit 1
 fi
 
-#hcs
-consul_lb=$(terraform output -state /root/terraform/hcs/terraform.tfstate consul_url)
+# //FIXME: There is no consul_lb 
+#consul-server
+consul_lb=$(terraform output -state /root/terraform/consul-server/terraform.tfstate consul_url)
 echo "Consul Load balancer is: $consul_lb"
 if [ -z "${consul_lb}" ]; then
   fail-message "Consul is not provisioned yet"

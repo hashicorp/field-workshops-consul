@@ -1,8 +1,8 @@
-slug: network-infrastructure-automation
-id: zd9iqr8wyub0
+slug: nia-ga
+id: quh4sm1ixhsx
 version: 0.0.1
 type: track
-title: Network Infrastructure Automation
+title: Network Infrastructure Automation - Update
 teaser: Automate the provisioning and ongoing management of network infrastructure.
 description: In this workshop you'll learn how to automate the provisioning and management
   of traditional network infrastructure using Terraform, Consul, and Consul Terraform
@@ -22,7 +22,7 @@ show_timer: true
 skipping_enabled: true
 challenges:
 - slug: 1-review-lab-objectives
-  id: rihjzbfzsm9m
+  id: 0biestu3rkdu
   type: challenge
   title: Review Lab Objectives
   teaser: Before we begin, lets quickly review the architecture.
@@ -65,7 +65,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 2-provision-azure-vnets
-  id: y1cns7c1xooc
+  id: s6nsmp6nlcam
   type: challenge
   title: Provision Azure VNETs
   teaser: Deploy basic network infrastructure using Terraform
@@ -120,7 +120,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 3-provision-core-services
-  id: 8g5r3gchzqun
+  id: kavkht76xtoo
   type: challenge
   title: Provision Core Services
   teaser: Provision Vault and HCS using Terraform
@@ -164,6 +164,10 @@ challenges:
     type: code
     hostname: workstation
     path: /root/terraform/vault
+  - title: Consul Server Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/consul-server
   - title: HCS Terraform Code
     type: code
     hostname: workstation
@@ -179,7 +183,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 4-provision-network-infra
-  id: fbyphtsxladi
+  id: ttk1syiamonk
   type: challenge
   title: Provision F5 BIG-IP & Palo Alto Firewall
   teaser: Provision an F5 BIG-IP VE & Palo Alto Firewall using Terraform
@@ -243,7 +247,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 5-configure-palo-alto-firewall
-  id: fyfegnx6ag8o
+  id: ixieiijsv5qf
   type: challenge
   title: Configure Palo Alto Firewall
   teaser: Provision a Palo Alto VM-Series Firewall using Terraform.
@@ -303,7 +307,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 6-validate-hcs
-  id: z5sy2diwt2hl
+  id: plv64vsqahej
   type: challenge
   title: Validate HCS
   teaser: Verify Vault, HCS, and Consul are operational
@@ -413,7 +417,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 7-deploy-app-environments
-  id: k0reagnnfzuc
+  id: wx3czpfka3ny
   type: challenge
   title: Deploy App environments
   teaser: Deploy a 2-tier VM based application to the cloud.
@@ -479,7 +483,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 8-install-consul-terraform-sync
-  id: jskeddctb13s
+  id: lflnliuvlphg
   type: challenge
   title: Deploy 'Consul Terraform Sync'
   teaser: Now we are going install Consul Terraform Sync and bring dynamic service
@@ -572,7 +576,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 9-scale-the-application
-  id: tjlwihpjo0s9
+  id: zxxrajvchwpf
   type: challenge
   title: Scale the application
   teaser: Let Consul take care of routine adds/moves/changes of services instances.
@@ -659,4 +663,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-checksum: "2107784906300423202"
+checksum: "12554239080464374028"
