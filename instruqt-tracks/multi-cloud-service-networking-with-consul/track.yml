@@ -45,6 +45,15 @@ challenges:
     terraform apply -auto-approve
     ```
 
+    If you get an error on your Packer images, you can rebuild either image below from the packer directory:
+
+    ```
+    cd /root/packer/
+    ```
+
+    * AWS - `packer build -force -only=amazon-ebs-ubuntu-bionic hashistack.json`
+    * AZURE - `packer build -force -only=azure-ubuntu-bionic hashistack.json`
+
     In the next few challenges we will centralize secrets across environments.
   notes:
   - type: text
@@ -1486,4 +1495,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "5763270999033847726"
+checksum: "8427446335592322411"

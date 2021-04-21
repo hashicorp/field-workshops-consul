@@ -2,14 +2,14 @@
 
 #check images
 echo "Checking Packer Azure VM"
-azure_vm=$(az image list -g packer | jq length)
-if [ "${azure_vm}" != "1" ]; then
+azure_vm=$(az image list -g packer | jq -r .[0].tags.name)
+if [ "${azure_vm}" != "Hashistack" ]; then
   fail-message "Could not get Packer Azure VM. Rebuild w/Packer."
   exit 1
 fi
 echo "Checking Packer AWS AMI"
-aws_ami=$(aws ec2 describe-images --owners self | jq length)
-if [ "${aws_ami}" != "1" ]; then
+aws_ami=$(aws ec2 describe-images --owners self | jq -r .Images[0].Description)
+if [ "${aws_ami}" != "Hashistack - Ubuntu" ]; then
   fail-message "Could not get Packer AWS AMI. Rebuild w/Packer."
   exit 1
 fi
