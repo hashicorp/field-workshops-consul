@@ -10,6 +10,7 @@ kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-operato
 kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/role_binding.yaml
 kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/operator.yaml
 kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/cluster_role.yaml
+sleep 15
 kubectl apply -f - <<EOF
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -24,7 +25,8 @@ roleRef:
   name: jaeger-operator
   apiGroup: rbac.authorization.k8s.io
 EOF
-sleep 120
+sleep 180
+kubectl wait pod --for=condition=Ready --selector=name=jaeger-operator --timeout=120s
 
 #jaeger instance
 kubectl apply -f - <<EOF
@@ -32,9 +34,16 @@ apiVersion: jaegertracing.io/v1
 kind: Jaeger
 metadata:
   name: jaeger
+spec:
+  strategy: allInOne
+  allInOne:
+    image: jaegertracing/all-in-one:latest
+    options:
+      collector.zipkin.host-port: 9411
 EOF
-sleep 30
+kubectl wait pod --for=condition=Ready --selector=app=jaeger --timeout=300s
 
+#jaeger lb
 cat <<EOF | kubectl apply -f -
 ---
 apiVersion: v1
@@ -51,5 +60,7 @@ spec:
     port: 16686
     targetPort: 16686
 EOF
+sleep 15
+
 
 exit 0
