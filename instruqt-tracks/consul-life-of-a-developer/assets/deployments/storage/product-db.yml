@@ -33,7 +33,7 @@ spec:
       serviceAccountName: product-db
       containers:
         - name: product-db
-          image: hashicorpdemoapp/product-api-db:v0.0.11
+          image: hashicorpdemoapp/product-api-db:v0.0.15
           ports:
             - containerPort: 5432
           env:
