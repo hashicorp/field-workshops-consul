@@ -20,7 +20,7 @@ module "shared-svcs-network" {
   vnet_name           = "shared-svcs-vnet"
   resource_group_name = azurerm_resource_group.instruqt.name
   address_space       = "10.2.0.0/16"
-  subnet_prefixes     = ["10.2.0.0/24", "10.2.1.0/24" "10.2.2.0/24"]
+  subnet_prefixes     = ["10.2.0.0/24", "10.2.1.0/24", "10.2.2.0/24"]
   subnet_names        = ["Bastion", "Vault", "Consul"]
 
   tags = {
