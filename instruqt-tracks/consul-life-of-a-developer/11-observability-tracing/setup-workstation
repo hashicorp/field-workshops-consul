@@ -25,7 +25,7 @@ roleRef:
   name: jaeger-operator
   apiGroup: rbac.authorization.k8s.io
 EOF
-sleep 180
+sleep 60
 kubectl wait pod --for=condition=Ready --selector=name=jaeger-operator --timeout=120s
 
 #jaeger instance
@@ -41,7 +41,7 @@ spec:
     options:
       collector.zipkin.host-port: 9411
 EOF
-kubectl wait pod --for=condition=Ready --selector=app=jaeger --timeout=300s
+kubectl wait pod --for=condition=Ready --selector=app=jaeger --timeout=180s
 
 #jaeger lb
 cat <<EOF | kubectl apply -f -
