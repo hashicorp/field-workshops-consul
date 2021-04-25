@@ -63,7 +63,7 @@ echo "cloning assets..."
 # //FIXME git clone https://github.com/hashicorp/field-workshops-consul.git
 # // Use this dev branch
 git clone -b n8-hcs2ent https://github.com/hashicorp/field-workshops-consul.git
-cp -r field-workshops-consul/instruqt-tracks/network-infrastructure-automation/assets/terraform /root/terraform
+cp -r field-workshops-consul/tree/raj-hcs2ent/instruqt-tracks/network-infrastructure-automation/assets/terraform /root/terraform
 rm -rf field-workshops-consul
 
 #ssh agent
