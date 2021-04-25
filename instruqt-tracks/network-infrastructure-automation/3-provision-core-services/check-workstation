@@ -15,7 +15,7 @@ fi
 echo "Checking Consul Server..."
 status=$(az vm show -g "${rg}" --name consul-server-vm | jq -r '.provisioningState')
 if [ "${status}" != "Creating" ] && [ "${status}" != "Updating" ] && [ "${status}" != "Succeeded" ] ; then
-  fail-message "Vault is not provisioning/provisioned. Wait a few moments and try again. Current state is: ${status}"
+  fail-message "Consul is not provisioning/provisioned. Wait a few moments and try again. Current state is: ${status}"
   exit 1
 fi
 
