@@ -19,7 +19,7 @@ resource "azurerm_network_interface" "consulserver-nic" {
 
     ip_configuration {
         name                          = "consulserverNicConfiguration"
-        subnet_id                     = data.terraform_remote_state.vnet.outputs.mgmt_subnet
+        subnet_id                     = data.terraform_remote_state.vnet.outputs.shared_svcs_subnets[2]
         private_ip_address_allocation = "Dynamic"
     }
 
