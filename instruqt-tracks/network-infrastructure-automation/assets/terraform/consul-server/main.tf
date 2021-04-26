@@ -5,7 +5,6 @@ provider "azurerm" {
 
 data "terraform_remote_state" "vnet" {
   backend = "local"
-
   config = {
     path = "../vnet/terraform.tfstate"
   }
@@ -53,7 +52,6 @@ resource "azurerm_virtual_machine" "consul-server-vm" {
   os_profile {
     computer_name = "consul-server-vm"
     admin_username       = "azure-user"
-    custom_data          = base64encode(templatefile("./scripts/consul-server.sh", { ca_cert = var.ca_cert }))
   }
 
   os_profile_linux_config {

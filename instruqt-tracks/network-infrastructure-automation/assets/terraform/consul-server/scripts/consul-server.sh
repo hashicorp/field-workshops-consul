@@ -18,29 +18,17 @@ sudo apt-add-repository "deb [arch=amd64] https://packages.microsoft.com/repos/a
 sudo apt update -y
 sudo apt install consul-enterprise=1.9.4+ent unzip -y
 
-cat <<EOF>> /etc/consul.d/consul.hcl
+cat <<-EOF > /consul/config/server.json
 {
-datacenter = "dc1"
-data_dir = "/opt/consul"
-encrypt = "qDOPBEr+/oUVeOFQOnVypxwDaHzLrD+lvjo5vCEBbZ0="
-ca_file = "/etc/consul.d/consul-agent-ca.pem"
-cert_file = "/etc/consul.d/dc1-server-consul-0.pem"
-key_file = "/etc/consul.d/dc1-server-consul-0-key.pem"
-verify_incoming = true
-verify_outgoing = true
-verify_server_hostname = true
-}
-EOF
-
-cat <<EOF>> /etc/consul.d/server.hcl
-{
-  server = true
-  bootstrap_expect = 1
-  client_addr = "0.0.0.0"
-  ui = true
-  connect {
-    enabled = true
-  }
+  "datacenter": "dc1",
+  "bind_addr": "0.0.0.0",
+  "client_addr": "0.0.0.0",
+  "data_dir": "/etc/consul.d",
+  "log_level": "INFO",
+  "node_name": "ConsulServer",
+  "server": true,
+  "ui": true,
+  "bootstrap_expect": 1,
 }
 EOF
 
