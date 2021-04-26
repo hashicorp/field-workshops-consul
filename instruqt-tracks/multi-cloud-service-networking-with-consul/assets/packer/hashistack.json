@@ -27,7 +27,7 @@
         "most_recent": true
       },
       "ssh_username": "ubuntu",
-      "ssh_timeout": "5m",
+      "ssh_timeout": "10m",
       "ami_virtualization_type": "hvm",
       "ami_name": "hashistack-{{isotime \"2006-01-02\"}}",
       "ami_description": "Hashistack - Ubuntu",
