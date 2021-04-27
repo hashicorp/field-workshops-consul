@@ -5,15 +5,25 @@ provider "azurerm" {
 
 data "terraform_remote_state" "vnet" {
   backend = "local"
+
   config = {
     path = "../vnet/terraform.tfstate"
   }
 }
 
+
+resource "azurerm_public_ip" "consul" {
+  name                = "consul-ip"
+  location            = data.terraform_remote_state.vnet.outputs.resource_group_location
+  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
 # Create network interface
 resource "azurerm_network_interface" "consulserver-nic" {
     name                      = "consulserverNIC"
-    location                  = "eastus"
+    location                  = data.terraform_remote_state.vnet.outputs.resource_group_location
     resource_group_name       = data.terraform_remote_state.vnet.outputs.resource_group_name
 
     ip_configuration {
@@ -26,6 +36,51 @@ resource "azurerm_network_interface" "consulserver-nic" {
         environment = "Instruqt"
     }
 }
+
+resource "azurerm_lb" "consul" {
+  name                = "consul-lb"
+  location            = data.terraform_remote_state.vnet.outputs.resource_group_location
+  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
+
+  sku = "Standard"
+
+  frontend_ip_configuration {
+    name                 = "consulserverNicconfiguration"
+    public_ip_address_id = azurerm_public_ip.consul.id
+  }
+}
+
+resource "azurerm_lb_backend_address_pool" "consul" {
+  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
+  loadbalancer_id     = azurerm_lb.consul.id
+  name                = "BackEndAddressPool"
+}
+
+resource "azurerm_network_interface_backend_address_pool_association" "consul" {
+  network_interface_id    = azurerm_network_interface.consul.id
+  ip_configuration_name   = "configuration"
+  backend_address_pool_id = azurerm_lb_backend_address_pool.consul.id
+}
+
+resource "azurerm_lb_probe" "consul" {
+  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
+  loadbalancer_id     = azurerm_lb.consul.id
+  name                = "consul-http"
+  port                = 8500
+}
+
+resource "azurerm_lb_rule" "consul" {
+  resource_group_name            = data.terraform_remote_state.vnet.outputs.resource_group_name
+  loadbalancer_id                = azurerm_lb.consul.id
+  name                           = "consul"
+  protocol                       = "Tcp"
+  frontend_port                  = 80
+  backend_port                   = 8500
+  frontend_ip_configuration_name = "consulserverNicconfiguration"
+  probe_id                       = azurerm_lb_probe.consul.id
+  backend_address_pool_id        = azurerm_lb_backend_address_pool.consul.id
+}
+
 
 resource "azurerm_virtual_machine" "consul-server-vm" {
   name = "consul-server-vm"
@@ -52,7 +107,7 @@ resource "azurerm_virtual_machine" "consul-server-vm" {
   os_profile {
     computer_name = "consul-server-vm"
     admin_username       = "azure-user"
-    custom_data          = base64encode(templatefile("./scripts/consul-server.sh"))
+    custom_data          = base64encode(templatefile("./scripts/consul-server.sh", {}))
   }
 
   os_profile_linux_config {
