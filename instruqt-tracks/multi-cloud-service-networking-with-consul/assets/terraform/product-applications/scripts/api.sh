@@ -170,7 +170,7 @@ sudo systemctl start envoy.service
 sleep 5
 
 #install the application
-wget https://github.com/hashicorp-demoapp/product-api-go/releases/download/v0.0.13/product-api -O /product-api
+wget https://github.com/hashicorp-demoapp/product-api-go/releases/download/v0.0.15/product-api -O /product-api
 chmod +x /product-api
 cat <<EOF > /conf.json
 {
