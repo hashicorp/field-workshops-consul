@@ -41,7 +41,8 @@ spec:
     options:
       collector.zipkin.host-port: 9411
 EOF
-kubectl wait pod --for=condition=Ready --selector=app=jaeger --timeout=180s
+sleep 60
+kubectl wait pod --for=condition=Ready --selector=app=jaeger --timeout=120s
 
 #jaeger lb
 cat <<EOF | kubectl apply -f -
