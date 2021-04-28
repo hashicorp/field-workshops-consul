@@ -107,7 +107,7 @@ resource "azurerm_virtual_machine" "consul-server-vm" {
   os_profile {
     computer_name = "consul-server-vm"
     admin_username       = "azure-user"
-    custom_data          = base64encode(templatefile("./scripts/consul-server.sh", {}))
+    custom_data          = file("./scripts/consul-server.sh")
   }
 
   os_profile_linux_config {
