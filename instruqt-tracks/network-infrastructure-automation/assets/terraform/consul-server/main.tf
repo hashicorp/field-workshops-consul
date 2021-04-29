@@ -21,7 +21,7 @@ resource "azurerm_public_ip" "consul" {
 }
 
 # Create network interface
-resource "azurerm_network_interface" "consulserver-nic" {
+resource "azurerm_network_interface" "consul" {
     name                      = "consulserverNIC"
     location                  = data.terraform_remote_state.vnet.outputs.resource_group_location
     resource_group_name       = data.terraform_remote_state.vnet.outputs.resource_group_name
@@ -58,7 +58,7 @@ resource "azurerm_lb_backend_address_pool" "consul" {
 
 resource "azurerm_network_interface_backend_address_pool_association" "consul" {
   network_interface_id    = azurerm_network_interface.consul.id
-  ip_configuration_name   = "configuration"
+  ip_configuration_name   = "consulserverNicConfiguration"
   backend_address_pool_id = azurerm_lb_backend_address_pool.consul.id
 }
 
@@ -87,7 +87,7 @@ resource "azurerm_virtual_machine" "consul-server-vm" {
 
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location
   resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
-  network_interface_ids = [azurerm_network_interface.consulserver-nic.id]
+  network_interface_ids = [azurerm_network_interface.consul.id]
   vm_size               = "Standard_D1_v2"
 
   storage_image_reference {
@@ -119,4 +119,9 @@ resource "azurerm_virtual_machine" "consul-server-vm" {
 
   }
 
+}
+
+resource "azurerm_network_interface_security_group_association" "consul" {
+  network_interface_id      = azurerm_network_interface.consul.id
+  network_security_group_id = azurerm_network_security_group.cts-sg.id
 }
