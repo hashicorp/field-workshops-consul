@@ -38,7 +38,7 @@ resource "azurerm_virtual_machine_scale_set" "web_vmss" {
   os_profile {
     computer_name_prefix = "web-vm-"
     admin_username       = "azure-user"
-    custom_data          = base64encode(templatefile("./templates/web_server.sh", { endpoint = var.endpoint, consulconfig = var.consulconfig, ca_cert = var.ca_cert, consul_token = var.consul_token, bigip_mgmt_addr = var.bigip_mgmt_addr, vip_internal_address = var.vip_internal_address }))
+    custom_data          = base64encode(templatefile("./templates/web_server.sh", { bigip_mgmt_addr = var.bigip_mgmt_addr, vip_internal_address = var.vip_internal_address }))
   }
 
   os_profile_linux_config {
