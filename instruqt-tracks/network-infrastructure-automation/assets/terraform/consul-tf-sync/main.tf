@@ -53,7 +53,7 @@ resource "azurerm_virtual_machine" "consul-terraform-sync" {
   os_profile {
     computer_name = "consul-terraform-sync"
     admin_username       = "azure-user"
-    custom_data          = base64encode(templatefile("./scripts/consul-tf-sync.sh", { endpoint = var.endpoint, consulconfig = var.consulconfig, ca_cert = var.ca_cert, consul_token = var.consul_token, bigip_mgmt_addr = var.bigip_mgmt_addr, bigip_admin_user = var.bigip_admin_user, bigip_admin_passwd = var.bigip_admin_passwd, panos_mgmt_addr = var.panos_mgmt_addr, panos_username = var.panos_username, panos_password = var.panos_password }))
+    custom_data          = base64encode(templatefile("./scripts/consul-tf-sync.sh", { bigip_mgmt_addr = var.bigip_mgmt_addr, bigip_admin_user = var.bigip_admin_user, bigip_admin_passwd = var.bigip_admin_passwd, panos_mgmt_addr = var.panos_mgmt_addr, panos_username = var.panos_username, panos_password = var.panos_password }))
   }
 
   os_profile_linux_config {

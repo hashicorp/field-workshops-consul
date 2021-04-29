@@ -16,7 +16,7 @@ sudo mv consul /usr/local/bin/
 sudo mkdir --parents /etc/consul.d
 sudo chown --recursive consul:consul /etc/consul.d
 sudo mkdir --parents /opt/consul
-sudo chown --recursive consul:consul /opt/consul 
+sudo chown --recursive consul:consul /opt/consul
 
 consul -autocomplete-install
 complete -C /usr/local/bin/consul consul
@@ -74,27 +74,14 @@ LimitNOFILE=65536
 WantedBy=multi-user.target
 EOF
 
-cat << EOF > /etc/consul.d/ca.pem
-${ca_cert}
-EOF
 
-cat << EOF > /etc/consul.d/hcs.json
-${consulconfig}
-EOF
-
+consul_server_ip=$(terraform output -state /root/terraform/consul-server/terraform.tfstate consul_server_ip)
 cat << EOF > /etc/consul.d/zz_override.hcl
 data_dir = "/opt/consul"
 ui = true
-ca_file = "/etc/consul.d/ca.pem"
-acl = {
-  tokens = {
-    default = "${consul_token}"
-  }
-  enabled = true
-  default_policy = "deny"
-  enable_token_persistence = true
-}
+retry_join = ["$consul_server_ip"]
 EOF
+
 
 cat << EOF > /etc/consul-tf-sync.d/consul-tf-sync.hcl
 # Global Config Options
@@ -107,10 +94,9 @@ buffer_period {
 # Consul Config Options
 consul {
   address = "localhost:8500"
-  token = "${consul_token}"
 }
 
-# Terraform Driver Options 
+# Terraform Driver Options
 driver "terraform" {
   log = true
   path = "/opt/consul-tf-sync.d/"
@@ -176,7 +162,6 @@ buffer_period {
 # Consul Config Options
 consul {
   address = "localhost:8500"
-  token = "${consul_token}"
 }
 
 vault {
@@ -184,7 +169,7 @@ vault {
   token   = "$${VAULT_TOKEN}"
 }
 
-# Terraform Driver Options 
+# Terraform Driver Options
 driver "terraform" {
   log = true
   path = "/opt/consul-tf-sync.d/"
