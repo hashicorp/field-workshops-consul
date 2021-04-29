@@ -48,27 +48,14 @@ sudo touch /etc/consul.d/consul.hcl
 sudo chown --recursive consul:consul /etc/consul.d
 sudo chmod 640 /etc/consul.d/consul.hcl
 
-cat << EOF > /etc/consul.d/ca.pem
-${ca_cert}
-EOF
 
-cat << EOF > /etc/consul.d/hcs.json
-${consulconfig}
-EOF
-
+consul_server_ip=$(terraform output -state /root/terraform/consul-server/terraform.tfstate consul_server_ip)
 cat << EOF > /etc/consul.d/zz_override.hcl
 data_dir = "/opt/consul"
 ui = true
-ca_file = "/etc/consul.d/ca.pem"
-acl = {
-  tokens = {
-    default = "${consul_token}"
-  }
-  enabled = true
-  default_policy = "deny"
-  enable_token_persistence = true
-}
+retry_join = ["$consul_server_ip"]
 EOF
+
 
 cat << EOF > /etc/consul.d/app.json
 {
@@ -105,7 +92,7 @@ version: "3.7"
 services:
   app:
     image: nicholasjackson/fake-service:v0.7.8
-    ports: 
+    ports:
       - 9091:9091
     environment:
       LISTEN_ADDR: 0.0.0.0:9091

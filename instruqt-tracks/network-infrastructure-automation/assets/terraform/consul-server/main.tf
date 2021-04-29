@@ -62,17 +62,17 @@ resource "azurerm_network_interface_backend_address_pool_association" "consul" {
   backend_address_pool_id = azurerm_lb_backend_address_pool.consul.id
 }
 
-resource "azurerm_lb_probe" "consul" {
+resource "azurerm_lb_probe" "consul-ssh" {
   resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
   loadbalancer_id     = azurerm_lb.consul.id
   name                = "consul-ssh"
   port                = 22
 }
 
-resource "azurerm_lb_rule" "consul" {
+resource "azurerm_lb_rule" "consul-ssh" {
   resource_group_name            = data.terraform_remote_state.vnet.outputs.resource_group_name
   loadbalancer_id                = azurerm_lb.consul.id
-  name                           = "consul"
+  name                           = "consul-ssh"
   protocol                       = "Tcp"
   frontend_port                  = 22
   backend_port                   = 22

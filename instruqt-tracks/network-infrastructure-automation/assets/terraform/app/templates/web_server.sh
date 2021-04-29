@@ -78,26 +78,11 @@ sudo chown --recursive consul:consul /etc/consul-template
 sudo chmod 640 /etc/consul.d/consul.hcl
 sudo chmod 640 /etc/consul-template/consul-template-config.hcl
 
-cat << EOF > /etc/consul.d/ca.pem
-${ca_cert}
-EOF
-
-cat << EOF > /etc/consul.d/hcs.json
-${consulconfig}
-EOF
-
+consul_server_ip=$(terraform output -state /root/terraform/consul-server/terraform.tfstate consul_server_ip)
 cat << EOF > /etc/consul.d/zz_override.hcl
 data_dir = "/opt/consul"
 ui = true
-ca_file = "/etc/consul.d/ca.pem"
-acl = {
-  tokens = {
-    default = "${consul_token}"
-  }
-  enabled = true
-  default_policy = "deny"
-  enable_token_persistence = true
-}
+retry_join = ["$consul_server_ip"]
 EOF
 
 
@@ -146,7 +131,7 @@ upstream app {
 server {
     listen       9091;
     server_name  localhost;
-    
+
     location / {
        proxy_pass http://app;
     }
@@ -180,7 +165,7 @@ services:
     network_mode: "host"
     environment:
       LISTEN_ADDR: 0.0.0.0:9090
-      NAME: web 
+      NAME: web
       MESSAGE: "Hello, Web!"
       SERVER_TYPE: "http"
       UPSTREAM_URIS: "http://localhost:9091"
