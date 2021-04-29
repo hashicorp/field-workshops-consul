@@ -1,8 +1,2 @@
 #!/bin/bash
-
-if [ -f /tmp/skip-check ]; then
-    rm /tmp/skip-check
-    exit 0
-fi
-
 exit 0
