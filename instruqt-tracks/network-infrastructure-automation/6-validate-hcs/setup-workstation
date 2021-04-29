@@ -17,13 +17,13 @@ server {
   access_log /var/log/nginx/vault.log;
 }
 EOF
-consul_lb=$(terraform output -state /root/terraform/hcs/terraform.tfstate consul_url)
+consul_lb=$(terraform output -state /root/terraform/consul-server/terraform.tfstate consul_external_ip)
 echo "export CONSUL_HTTP_ADDR=${consul_lb}" >> ~/.bashrc
 cat << EOF > /etc/nginx/conf.d/consul.conf
 server {
   listen 8500;
   location / {
-    proxy_pass ${consul_lb};
+    proxy_pass http://${consul_lb}:80;
     proxy_set_header X-Real-IP \$remote_addr;
     proxy_redirect off;
   }
