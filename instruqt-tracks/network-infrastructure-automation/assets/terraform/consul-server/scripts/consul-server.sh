@@ -19,18 +19,16 @@ sudo apt update -y
 sudo apt install consul-enterprise=1.9.4+ent unzip -y
 rm -rf /etc/consul.d/*
 
-cat <<-EOF > /etc/consul.d/server.hcl
-{
-  datacenter = "dc1",
-  bind_addr = "0.0.0.0",
-  client_addr = "0.0.0.0",
-  data_dir = "/etc/consul.d",
-  log_level = "INFO",
-  node_name = "ConsulServer",
-  server = true,
-  ui = true,
-  bootstrap_expect = 1,
-}
+cat <<-EOF > /etc/consul.d/consul.hcl
+datacenter = "dc1",
+bind_addr = "0.0.0.0",
+client_addr = "0.0.0.0",
+data_dir = "/etc/consul.d",
+log_level = "INFO",
+node_name = "ConsulServer",
+server = true,
+ui = true,
+bootstrap_expect = 1,
 EOF
 
 chown -R consul:consul /opt/consul/

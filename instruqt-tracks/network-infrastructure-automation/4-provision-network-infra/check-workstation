@@ -44,9 +44,9 @@ if [ "${vault_api}" != "200" ]; then
   exit 1
 fi
 
-# //FIXME: There is no consul_lb 
+# //FIXME: There is no consul_lb
 #consul-server
-consul_lb=$(terraform output -state /root/terraform/consul-server/terraform.tfstate consul_url)
+consul_lb=$(terraform output -state /root/terraform/consul-server/terraform.tfstate consul_external_ip)
 echo "Consul Load balancer is: $consul_lb"
 if [ -z "${consul_lb}" ]; then
   fail-message "Consul is not provisioned yet"

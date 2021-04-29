@@ -17,7 +17,7 @@ resource "azurerm_network_security_group" "cts-sg" {
 
   security_rule {
     name                       = "HTTPS-8500"
-    priority                   = 1001
+    priority                   = 1002
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -29,7 +29,7 @@ resource "azurerm_network_security_group" "cts-sg" {
 
   security_rule {
     name                       = "RPC"
-    priority                   = 1002
+    priority                   = 1003
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -41,7 +41,7 @@ resource "azurerm_network_security_group" "cts-sg" {
 
   security_rule {
     name                       = "Serf"
-    priority                   = 1003
+    priority                   = 1004
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -53,7 +53,7 @@ resource "azurerm_network_security_group" "cts-sg" {
 
   security_rule {
     name                       = "SSH"
-    priority                   = 1004
+    priority                   = 1005
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -65,7 +65,7 @@ resource "azurerm_network_security_group" "cts-sg" {
 
   security_rule {
     name                       = "app"
-    priority                   = 1005
+    priority                   = 1006
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
