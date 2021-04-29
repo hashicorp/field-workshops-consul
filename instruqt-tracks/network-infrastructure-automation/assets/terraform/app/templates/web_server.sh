@@ -82,7 +82,7 @@ consul_server_ip=$(terraform output -state /root/terraform/consul-server/terrafo
 cat << EOF > /etc/consul.d/zz_override.hcl
 data_dir = "/opt/consul"
 ui = true
-retry_join = ["$consul_server_ip"]
+retry_join = ["${consul_server_ip}"]
 EOF
 
 
