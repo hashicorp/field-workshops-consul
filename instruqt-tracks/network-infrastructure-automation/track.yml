@@ -147,7 +147,7 @@ challenges:
      ```
      cd /root/terraform/consul-server
      terraform plan
-     nohup terraform apply -auto-approve > /root/terraform/consul-server/terraform.out &
+     terraform apply -auto-approve
      ```
   notes:
   - type: text
@@ -591,4 +591,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-checksum: "9351703108819185410"
+checksum: "17483495448421616414"
