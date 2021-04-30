@@ -149,8 +149,6 @@ challenges:
      terraform plan
      nohup terraform apply -auto-approve > /root/terraform/consul-server/terraform.out &
      ```
-
-
   notes:
   - type: text
     contents: |
@@ -212,8 +210,6 @@ challenges:
     Once the Terraform apply is complete, the BIG-IP is accessible using the IP address provided in the Terraform output.
 
     **NOTE:** You will need to open the BIG-IP URL in a separate browser tab. If you are using chrome, you may be presented with a certificate error. To bypass this error, type "thisisunsafe" into the Chrome window.
-
-
   notes:
   - type: text
     contents: |
@@ -320,7 +316,6 @@ challenges:
     echo $CONSUL_HTTP_ADDR
     echo $VAULT_ADDR
     ```
-
   notes:
   - type: text
     contents: |
@@ -596,4 +591,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-checksum: "2036879744335208811"
+checksum: "9351703108819185410"
