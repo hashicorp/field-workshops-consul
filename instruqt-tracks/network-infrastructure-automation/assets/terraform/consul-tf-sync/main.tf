@@ -66,3 +66,8 @@ resource "azurerm_virtual_machine" "consul-terraform-sync" {
   }
 
 }
+
+resource "azurerm_network_interface_security_group_association" "cts" {
+  network_interface_id      = azurerm_network_interface.cts-nic.id
+  network_security_group_id = azurerm_network_security_group.cts-sg.id
+}
