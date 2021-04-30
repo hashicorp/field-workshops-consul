@@ -38,6 +38,7 @@ cat << EOF > /root/terraform/app/terraform.tfvars
 ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
 bigip_mgmt_addr = "${bigip_mgmt_addr}"
 vip_internal_address = "${vip_internal_address}"
+consul_server_ip = "${consul_server_ip}"
 EOF
 
 

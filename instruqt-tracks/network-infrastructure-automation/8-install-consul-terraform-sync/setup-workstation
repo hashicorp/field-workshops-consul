@@ -34,6 +34,7 @@ bigip_admin_passwd = "${bigip_admin_passwd}"
 panos_mgmt_addr = "${panos_mgmt_addr}"
 panos_username = "${panos_username}"
 panos_password = "${panos_password}"
+consul_server_ip = "${consul_server_ip}"
 EOF
 
 exit 0
