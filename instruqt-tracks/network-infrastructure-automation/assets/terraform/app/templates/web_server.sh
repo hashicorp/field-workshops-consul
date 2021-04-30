@@ -78,7 +78,6 @@ sudo chown --recursive consul:consul /etc/consul-template
 sudo chmod 640 /etc/consul.d/consul.hcl
 sudo chmod 640 /etc/consul-template/consul-template-config.hcl
 
-consul_server_ip=$(terraform output -state /root/terraform/consul-server/terraform.tfstate consul_server_ip)
 cat << EOF > /etc/consul.d/zz_override.hcl
 data_dir = "/opt/consul"
 ui = true

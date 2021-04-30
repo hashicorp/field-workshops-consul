@@ -37,8 +37,8 @@ resource "azurerm_virtual_machine_scale_set" "app_vmss" {
   os_profile {
     computer_name_prefix = "app-vm-"
     admin_username       = "azure-user"
-    custom_data          = file("./templates/app_server.sh")
-  }
+    custom_data          = base64encode(templatefile("./templates/app_server.sh", { consul_server_ip = var.consul_server_ip }))
+      }
 
   os_profile_linux_config {
     disable_password_authentication = true
