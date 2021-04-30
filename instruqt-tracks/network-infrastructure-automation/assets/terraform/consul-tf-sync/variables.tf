@@ -14,3 +14,4 @@ variable "panos_mgmt_addr" {}
 variable "panos_username" {}
 variable "panos_password" {}
 variable "vip_internal_address" {}
+variable "consul_server_ip" {}

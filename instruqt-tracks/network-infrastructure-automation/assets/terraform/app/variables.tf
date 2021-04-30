@@ -9,3 +9,4 @@ variable "web_count" {
 }
 variable "bigip_mgmt_addr" {}
 variable "vip_internal_address" {}
+variable "consul_server_ip" {}
