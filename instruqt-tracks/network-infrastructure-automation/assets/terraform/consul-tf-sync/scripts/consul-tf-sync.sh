@@ -22,8 +22,8 @@ consul -autocomplete-install
 complete -C /usr/local/bin/consul consul
 
 #Install Consul-Terraform-Sync
-curl --silent --remote-name https://releases.hashicorp.com/consul-terraform-sync/0.1.0/consul-terraform-sync_0.1.0_linux_amd64.zip
-unzip consul-terraform-sync_0.1.0_linux_amd64.zip
+curl --silent --remote-name https://releases.hashicorp.com/consul-terraform-sync/0.1.2/consul-terraform-sync_0.1.2_linux_amd64.zip
+unzip consul-terraform-sync_0.1.2_linux_amd64.zip
 
 sudo chown root:root consul-terraform-sync
 sudo mv consul-terraform-sync /usr/local/bin/
