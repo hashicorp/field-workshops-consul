@@ -9,7 +9,7 @@ export VAULT_TOKEN=$(vault write -field=token auth/azure/login -field=token role
 
 #Install Consul
 curl --silent --remote-name https://releases.hashicorp.com/consul/1.9.4+ent/consul_1.9.4+ent_linux_amd64.zip
-unzip consul_1.8.0+ent_linux_amd64.zip
+unzip consul_1.9.4+ent_linux_amd64.zip
 sudo useradd --system --home /etc/consul.d --shell /bin/false consul
 sudo chown root:root consul
 sudo mv consul /usr/local/bin/
