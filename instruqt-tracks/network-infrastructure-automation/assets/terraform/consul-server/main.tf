@@ -142,5 +142,5 @@ resource "azurerm_virtual_machine" "consul-server-vm" {
 
 resource "azurerm_network_interface_security_group_association" "consul" {
   network_interface_id      = azurerm_network_interface.consul.id
-  network_security_group_id = azurerm_network_security_group.cts-sg.id
+  network_security_group_id = azurerm_network_security_group.consul-sg.id
 }
