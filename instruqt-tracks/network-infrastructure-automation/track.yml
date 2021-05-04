@@ -165,10 +165,6 @@ challenges:
     type: code
     hostname: workstation
     path: /root/terraform/consul-server
-  - title: Consul Terraform Code
-    type: code
-    hostname: workstation
-    path: /root/terraform/consul-server
   - title: Shell
     type: terminal
     hostname: workstation
