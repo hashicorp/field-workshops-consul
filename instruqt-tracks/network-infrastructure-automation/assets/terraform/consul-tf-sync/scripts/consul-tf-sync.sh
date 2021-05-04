@@ -65,7 +65,7 @@ After=network-online.target
 [Service]
 User=consul
 Group=consul
-ExecStart=/usr/local/bin/consul-terraform-sync -config-file=/etc/consul-tf-sync.d/consul-tf-sync.hcl
+ExecStart=/usr/local/bin/consul-terraform-sync -config-file=/etc/consul-tf-sync.d/consul-tf-sync-secure.hcl
 KillMode=process
 Restart=always
 LimitNOFILE=65536
