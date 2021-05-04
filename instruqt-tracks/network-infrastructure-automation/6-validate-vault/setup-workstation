@@ -35,8 +35,8 @@ EOF
 #inital vault
 export VAULT_ADDR=http://${vault_lb}
 vault login root
-vault kv put secret/pan $(terraform output -state=/root/terraform/panw-vm/terraform.tfstate pa_password)
-vault kv put secret/f5 $(terraform output -state=/root/terraform/bigip/terraform.tfstate f5_password)
+vault kv put secret/pan password=$(terraform output -state=/root/terraform/panw-vm/terraform.tfstate pa_password)
+vault kv put secret/f5 password=$(terraform output -state=/root/terraform/bigip/terraform.tfstate f5_password)
 vault auth enable userpass
 vault write auth/userpass/users/operations password=Password1 policies=ops token_ttl=8h
 vault write auth/userpass/users/backend password=Password1 policies=backend token_ttl=30m
