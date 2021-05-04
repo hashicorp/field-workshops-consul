@@ -80,75 +80,6 @@ ui = true
 retry_join = ["${consul_server_ip}"]
 EOF
 
-
-cat << EOF > /etc/consul-tf-sync.d/consul-tf-sync.hcl
-# Global Config Options
-log_level = "info"
-buffer_period {
-  min = "5s"
-  max = "20s"
-}
-
-# Consul Config Options
-consul {
-  address = "localhost:8500"
-}
-
-# Terraform Driver Options
-driver "terraform" {
-  log = true
-  path = "/opt/consul-tf-sync.d/"
-  working_dir = "/opt/consul-tf-sync.d/"
-  required_providers {
-    bigip = {
-      source = "F5Networks/bigip"
-    },
-    panos = {
-      source = "PaloAltoNetworks/panos"
-    }
-  }
-}
-
-## Network Infrastructure Options
-
-# BIG-IP Workflow Options
-terraform_provider "bigip" {
-  address = "${bigip_mgmt_addr}:8443"
-  username = "${bigip_admin_user}"
-  password = "${bigip_admin_passwd}"
-}
-
-# Palo Alto Workflow Options
-terraform_provider "panos" {
-  alias = "panos1"
-  hostname = "${panos_mgmt_addr}"
-#  api_key  = "<api_key>"
-  username = "${panos_username}"
-  password = "${panos_password}"
-}
-
-## Consul Terraform Sync Task Definitions
-
-# Load-balancer operations task
-task {
-  name = "F5-BIG-IP-Load-Balanced-Web-Service"
-  description = "Automate F5 BIG-IP Pool Member Ops for Web Service"
-  source = "f5devcentral/app-consul-sync-nia/bigip"
-  providers = ["bigip"]
-  services = ["web"]
-}
-
-# Firewall operations task
-task {
-  name = "DAG_Web_App"
-  description = "Automate population of dynamic address group"
-  source = "PaloAltoNetworks/ag-dag-nia/panos"
-  providers = ["panos.panos1"]
-  services = ["web"]
-  variable_files = ["/etc/consul-tf-sync.d/panos.tfvars"]
-}
-EOF
-
 cat << EOF > /etc/consul-tf-sync.d/consul-tf-sync-secure.hcl
 # Global Config Options
 log_level = "info"
@@ -188,7 +119,7 @@ driver "terraform" {
 terraform_provider "bigip" {
   address = "${bigip_mgmt_addr}:8443"
   username = "${bigip_admin_user}"  # {{ with secret }}
-  password = "${bigip_admin_passwd}"  # {{ with secret }}
+  password = {{ with secret "kv/f5" }}"{{ .Data.data.password }}"{{ end }}
 }
 
 # Palo Alto Workflow Options
@@ -197,7 +128,7 @@ terraform_provider "panos" {
   hostname = "${panos_mgmt_addr}"
 #  api_key  = "<api_key>"
   username = "${panos_username}"  # {{ with secret }}
-  password = "${panos_password}"  # {{ with secret }}
+  password = {{ with secret "kv/pan" }}"{{ .Data.data.password }}"{{ end }}
 }
 
 ## Consul Terraform Sync Task Definitions
