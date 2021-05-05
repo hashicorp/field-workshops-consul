@@ -256,7 +256,7 @@ challenges:
     terraform apply -auto-approve
     ```
 
-    Now we must instruct the firewall to `commit` this change using the following command: (Ignore the error in commit error at the end)
+    Now we must instruct the firewall to `commit` this change using the following command: (Ignore the error in commit at the end)
     ```
     /root/terraform/panos_commit/panos-commit -config /root/terraform/panos_commit/panos-commit.json -force
     ```
@@ -587,4 +587,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-checksum: "16310722023281689421"
+checksum: "9427114963913803178"
