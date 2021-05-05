@@ -448,7 +448,7 @@ challenges:
 
     Take a look at the `consul-terraform-sync` configuration:
     ```
-    cat /etc/consul-tf-sync.d/consul-tf-sync.hcl
+    cat /etc/consul-tf-sync.d/consul-tf-sync-secure.hcl
     ```
 
     Review the terraform-consul-sync service status with the following command
