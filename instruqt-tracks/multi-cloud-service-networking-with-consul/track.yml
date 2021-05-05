@@ -86,8 +86,6 @@ challenges:
     ```
     terraform plan
     terraform apply -auto-approve
-    #run this cmd again due to TF Azure Bug
-    terraform apply -auto-approve
     ```
 
     You can monitor the init scripts with the below commands. <br>

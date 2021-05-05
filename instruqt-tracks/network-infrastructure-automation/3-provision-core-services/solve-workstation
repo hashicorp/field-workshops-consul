@@ -7,7 +7,7 @@ echo ">> Core Services: Deploying Vault <<"
 echo ">>--------------------------------<<"
 
 cd /root/terraform/vault
-nohup terraform apply -refresh=false -auto-approve > /root/terraform/vault/terraform.out &
+terraform apply -refresh=false -auto-approve > /root/terraform/vault/terraform.out
 sleep 10
 
 echo ""
