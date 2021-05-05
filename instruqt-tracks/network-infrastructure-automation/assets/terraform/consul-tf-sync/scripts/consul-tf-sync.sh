@@ -94,8 +94,8 @@ consul {
 }
 
 vault {
-  address = "$${VAULT_ADDR}"
-  token   = "$${VAULT_TOKEN}"
+  address = "${VAULT_ADDR}"
+  token   = "${VAULT_TOKEN}"
 }
 
 # Terraform Driver Options
@@ -119,7 +119,7 @@ driver "terraform" {
 terraform_provider "bigip" {
   address = "${bigip_mgmt_addr}:8443"
   username = "${bigip_admin_user}"
-  password = "{{ with secret "kv/f5" }}"{{ .Data.data.password }}"{{ end }}"
+  password = "{{ with secret \"secret/f5\" }}{{ .Data.data.password }}{{ end }}"
 }
 
 # Palo Alto Workflow Options
@@ -128,7 +128,7 @@ terraform_provider "panos" {
   hostname = "${panos_mgmt_addr}"
 #  api_key  = "<api_key>"
   username = "${panos_username}"
-  password = "{{ with secret "kv/pan" }}"{{ .Data.data.password }}"{{ end }}"
+  password = "{{ with secret \"secret/pan\" }}{{ .Data.data.password }}{{ end }}"
 }
 
 ## Consul Terraform Sync Task Definitions
