@@ -526,7 +526,7 @@ challenges:
     ```
     consul members
     consul catalog services
-    
+
     ```
 
     Review all of the web instances:
@@ -596,4 +596,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-checksum: "13406026888499315279"
+checksum: "15008386994416887413"
