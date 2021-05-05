@@ -78,6 +78,7 @@ challenges:
     ```
     terraform plan
     terraform apply -auto-approve
+
     ```
 
     Their CIDR blocks are listed below:
@@ -138,6 +139,7 @@ challenges:
      cd /root/terraform/vault
      terraform plan
      terraform apply -auto-approve
+
     ```
 
     ## Consul
@@ -148,6 +150,7 @@ challenges:
      cd /root/terraform/consul-server
      terraform plan
      terraform apply -auto-approve
+
      ```
   notes:
   - type: text
@@ -188,6 +191,7 @@ challenges:
     cd /root/terraform/panw-vm
     terraform plan
     nohup terraform apply -auto-approve > /root/terraform/panw-vm/terraform.out &
+
     ```
 
     NOTE: The Palo Alto Firewall will continue to provision in the background allowing you to continue to the next step.
@@ -199,6 +203,7 @@ challenges:
     cd /root/terraform/bigip
     terraform plan
     terraform apply -auto-approve
+
     ```
 
     This can take several minutes to complete. While you wait, feel free to look over the `Palo Alto Terraform Code` and `F5 BIG-IP Terraform Code` tabs to see review the Terraform code.
@@ -254,6 +259,7 @@ challenges:
      ```
     terraform plan
     terraform apply -auto-approve
+
     ```
 
     Now we must instruct the firewall to `commit` this change using the following command: (Ignore the error in commit at the end)
@@ -359,6 +365,7 @@ challenges:
     ```
     terraform plan
     nohup terraform apply -auto-approve > deploy_app.log 2>&1 &
+
     ```
 
     By registering nodes and services in Consul, other services can easily discover their health status and network location.
@@ -438,6 +445,7 @@ challenges:
     cd /root/terraform/consul-tf-sync/
     terraform plan
     terraform apply -auto-approve
+
     ```
 
     When completed, connect to the CTS image:
@@ -518,6 +526,7 @@ challenges:
     ```
     consul members
     consul catalog services
+    
     ```
 
     Review all of the web instances:
