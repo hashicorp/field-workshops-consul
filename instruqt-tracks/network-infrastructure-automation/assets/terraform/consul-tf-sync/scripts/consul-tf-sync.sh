@@ -4,8 +4,11 @@
 sudo apt-get install unzip
 
 export VAULT_ADDR="http://$(az vm show -g $(curl -s -H Metadata:true "http://169.254.169.254/metadata/instance?api-version=2017-08-01" | jq -r '.compute | .resourceGroupName') -n vault-server-vm -d | jq -r .publicIps):8200"
-export VAULT_TOKEN=$(vault write -field=token auth/azure/login -field=token role="consul" \
-     jwt="$(curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fmanagement.azure.com%2F' -H Metadata:true | jq -r '.access_token')")
+export VAULT_TOKEN=$vault_token
+
+#Install Vault
+apt-get update -y
+snap install vault
 
 #Install Consul
 curl --silent --remote-name https://releases.hashicorp.com/consul/1.9.4+ent/consul_1.9.4+ent_linux_amd64.zip
@@ -94,8 +97,8 @@ consul {
 }
 
 vault {
-  address = "${VAULT_ADDR}"
-  token   = "${VAULT_TOKEN}"
+  address = "${vault_addr}"
+  token   = "${vault_token}"
 }
 
 # Terraform Driver Options
