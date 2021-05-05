@@ -118,8 +118,8 @@ driver "terraform" {
 # BIG-IP Workflow Options
 terraform_provider "bigip" {
   address = "${bigip_mgmt_addr}:8443"
-  username = "${bigip_admin_user}"  # {{ with secret }}
-  password = {{ with secret "kv/f5" }}"{{ .Data.data.password }}"{{ end }}
+  username = "${bigip_admin_user}"
+  password = "{{ with secret "kv/f5" }}"{{ .Data.data.password }}"{{ end }}"
 }
 
 # Palo Alto Workflow Options
@@ -127,8 +127,8 @@ terraform_provider "panos" {
   alias = "panos1"
   hostname = "${panos_mgmt_addr}"
 #  api_key  = "<api_key>"
-  username = "${panos_username}"  # {{ with secret }}
-  password = {{ with secret "kv/pan" }}"{{ .Data.data.password }}"{{ end }}
+  username = "${panos_username}"
+  password = "{{ with secret "kv/pan" }}"{{ .Data.data.password }}"{{ end }}"
 }
 
 ## Consul Terraform Sync Task Definitions
