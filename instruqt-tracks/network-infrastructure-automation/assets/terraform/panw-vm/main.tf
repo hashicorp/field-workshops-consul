@@ -35,7 +35,7 @@ resource "random_password" "pafwpassword" {
   min_numeric      = 1
   min_special      = 1
   special          = true
-  override_special = "_%@"
+  override_special = "_%!"
 }
 
 resource "azurerm_storage_account" "PAN_FW_STG_AC" {
@@ -43,7 +43,7 @@ resource "azurerm_storage_account" "PAN_FW_STG_AC" {
   location                 = data.terraform_remote_state.vnet.outputs.resource_group_location
   resource_group_name      = data.terraform_remote_state.vnet.outputs.resource_group_name
   account_replication_type = "LRS"
-  account_tier             = "Standard" 
+  account_tier             = "Standard"
 }
 
 resource "azurerm_public_ip" "PublicIP_0" {

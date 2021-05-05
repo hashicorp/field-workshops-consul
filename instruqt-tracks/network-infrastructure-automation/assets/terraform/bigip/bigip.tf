@@ -10,7 +10,7 @@ resource "random_password" "bigippassword" {
   min_numeric      = 1
   min_special      = 1
   special          = true
-  override_special = "_%@"
+  override_special = "_%!"
 }
 
 data "template_file" "vm_onboard" {
