@@ -4,7 +4,7 @@ type: track
 title: 'Consul: Life of a Developer'
 teaser: Build, Test, and Deploy Applications with HashiCorp Consul.
 description: Ship a new version of the HashiCups App on container runtimes.
-icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags: []
 owner: hashicorp
 developers:
@@ -1061,4 +1061,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
-checksum: "15970186206215370720"
+checksum: "17619636884015950579"
