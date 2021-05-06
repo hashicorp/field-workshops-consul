@@ -3,7 +3,7 @@
 #Utils
 sudo apt-get install unzip
 
-export VAULT_ADDR="http://$vault_addr"
+export VAULT_ADDR="http://${vault_addr}"
 export VAULT_TOKEN=$vault_token
 
 #Install Vault
