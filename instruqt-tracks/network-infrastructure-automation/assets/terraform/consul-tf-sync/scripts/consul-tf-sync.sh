@@ -3,7 +3,7 @@
 #Utils
 sudo apt-get install unzip
 
-export VAULT_ADDR="http://$(az vm show -g $(curl -s -H Metadata:true "http://169.254.169.254/metadata/instance?api-version=2017-08-01" | jq -r '.compute | .resourceGroupName') -n vault-server-vm -d | jq -r .publicIps):8200"
+export VAULT_ADDR="http://$vault_addr"
 export VAULT_TOKEN=$vault_token
 
 #Install Vault
@@ -97,8 +97,8 @@ consul {
 }
 
 vault {
-  address = "http://${vault_addr}"
-  token   = "${vault_token}"
+  address = "$${VAULT_ADDR}"
+  token   = "$${VAULT_TOKEN}"
 }
 
 # Terraform Driver Options
