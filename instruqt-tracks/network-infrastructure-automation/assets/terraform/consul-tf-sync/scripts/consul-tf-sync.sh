@@ -98,7 +98,7 @@ consul {
 
 vault {
   address = "$${VAULT_ADDR}"
-  token   = "$${VAULT_TOKEN}"
+  token   = "${vault_token}"
 }
 
 # Terraform Driver Options
