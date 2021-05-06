@@ -56,6 +56,8 @@ resource "azurerm_key_vault_access_policy" "vault" {
 }
 
 resource "azurerm_key_vault_key" "vault" {
+  depends_on   = [azurerm_key_vault_access_policy.instruqt]
+
   name         = "vault-key-${data.terraform_remote_state.infra.outputs.env}"
   key_vault_id = azurerm_key_vault.vault.id
   key_type     = "RSA"
