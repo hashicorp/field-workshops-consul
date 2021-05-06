@@ -97,7 +97,7 @@ consul {
 }
 
 vault {
-  address = http://"${vault_addr}"
+  address = "http://${vault_addr}"
   token   = "${vault_token}"
 }
 
