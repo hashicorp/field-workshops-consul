@@ -35,8 +35,8 @@ acl = {
   enable_token_persistence = true
   enable_token_replication = true
   tokens {
-    agent  = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
-    replication = {{ with secret "kv/consul" }}"{{ .Data.data.replication_token }}"{{ end }}
+    agent  = {{ with secret "consul/creds/replication" }}"{{ .Data.token }}"{{ end }}
+    replication = {{ with secret "consul/creds/replication" }}"{{ .Data.token }}"{{ end }}
   }
 }
 encrypt = {{ with secret "kv/consul" }}"{{ .Data.data.gossip_key }}"{{ end }}
