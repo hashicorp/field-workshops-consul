@@ -62,10 +62,10 @@ echo 'path "consul/creds/backend-developer"
 echo 'path "secret/*" {
   capabilities = ["list"]
 }
-path "secret/pan" {
+path "secret/data/pan" {
   capabilities = ["create", "read", "update", "delete"]
 }
-path "secret/f5" {
+path "secret/data/f5" {
   capabilities = ["create", "read", "update", "delete"]
 }' | vault policy write nia -
 
