@@ -15,11 +15,19 @@ vault write consul/roles/operator policies=operator ttl=30m
 
 #create the replication policy & token
 consul acl policy create -name replication -rules @/root/policies/consul/replication.hcl
-consul acl token create -policy-name replication -secret=$(vault kv get -field replication_token kv/consul)
+#consul acl token create -policy-name replication -secret=$(vault kv get -field replication_token kv/consul)
+vault write consul/roles/replication policies=replication
+
+#create the mgw policy & vault role
+consul acl policy create -name mesh-gateway -rules @/root/policies/consul/mesh-gateway.hcl
+vault write consul/roles/mgw policies=mesh-gateway
+
+#create the vault policy for Vault SD registration
+consul acl policy create -name vault -rules @/root/policies/consul/vault.hcl
+vault write consul/roles/vault policies=vault
 
 #mesh defaults
 consul config write proxy-defaults.hcl
-
 
 #cat << EOF > /root/terraform/aws-consul-primary/ca.json
 #{

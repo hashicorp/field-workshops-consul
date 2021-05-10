@@ -25,7 +25,7 @@ cat <<EOF | kubectl apply -f -
     "caCert": "$(vault read -field certificate pki/cert/ca | base64 -w 0)",
     "caKey": "$(vault kv get -field private_key kv/pki | base64 -w 0)",
     "gossipEncryptionKey": "$(vault kv get -field gossip_key kv/consul | base64 -w 0)",
-    "replicationToken": "$(vault kv get -field replication_token kv/consul | base64 -w 0)",
+    "replicationToken": "$(vault read -field token consul/creds/replication | base64 -w 0)",
     "serverConfigJSON": "$(echo $server_json | base64 -w 0)"
     },
     "metadata": {

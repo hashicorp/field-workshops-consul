@@ -5,7 +5,7 @@ vault login -method=userpass username=admin password=admin
 export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
 
 #check the replication token
-CONSUL_HTTP_TOKEN=$(vault kv get -field replication_token kv/consul) consul acl token read -self
+vault read consul/creds/replication
 if [ $? -ne 0 ]
 then
   fail-message "Error checking relication token"
@@ -33,6 +33,15 @@ if [ "$(consul config read -kind proxy-defaults -name global | jq -r '.Config.pr
 fi
 if [ "$(consul config read -kind proxy-defaults -name global | jq -r '.MeshGateway.Mode')" != "local" ]; then
   fail-message "MGW mode is not local"
+  exit 1
+fi
+
+#check the mgw is using the new token
+vault login -method=userpass username=admin password=admin
+export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+mgw_api=$(curl -v -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" $CONSUL_HTTP_ADDR/v1/health/service/mesh-gateway?passing=true)
+if [ "$(echo "${mgw_api}" | jq '. | length')" != "1" ]; then
+  fail-message "AWS MGW not healthy"
   exit 1
 fi
 exit 0
