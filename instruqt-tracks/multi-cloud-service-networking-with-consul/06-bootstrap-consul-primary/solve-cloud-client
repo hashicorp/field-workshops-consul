@@ -1,4 +1,4 @@
-#!/bin/bash
+it d#!/bin/bash
 
 #aws
 vault login -method=userpass username=admin password=admin
@@ -43,6 +43,6 @@ consul config write proxy-defaults.hcl
 #EOF
 #onsul connect ca set-config -config-file ca.json
 
-sleep 15
+sleep 120
 
 exit 0
