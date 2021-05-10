@@ -301,23 +301,25 @@ challenges:
 - slug: 6-validate-vault
   id: lpr5ynqurocm
   type: challenge
-  title: Validate Vault
+  title: Validate Vault & Consul
   teaser: Verify Vault, and Consul are operational
   assignment: |
     Consul and Vault should now be provisioned and accessible from the corresponding tabs.
 
 
-    In the `Shell` tab run the following commands.
+    In the `Shell` tab run the following commands, use the token and try to access secret/f5 and secret/palo. Access is denied due to escalated privilege requirements.
     ```
     vault login -method=userpass username=operations password=Password1
     ```
+    Login to the Consul UI and explore to see what services are available if any.
 
-    Retrieve the ip address of Consul and Vault
+    Retrieve the ip address of Consul and Vault (external access)
 
     ```
     echo $CONSUL_HTTP_ADDR
     echo $VAULT_ADDR
     ```
+    Consul is not configured with any authentication mechanisms in this Lab. Consul authentication can be activated with Vault (Not in scope of this lab)
   notes:
   - type: text
     contents: |
