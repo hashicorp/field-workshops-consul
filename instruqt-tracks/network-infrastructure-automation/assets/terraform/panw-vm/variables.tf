@@ -60,10 +60,6 @@ variable "adminUsername" {
   default = "paloalto"
 }
 
-variable "adminPassword" {
-  default = "Pal0Alt0@123"
-}
-
 variable "web-vm-name" {
   default = "webserver-vm"
 }
