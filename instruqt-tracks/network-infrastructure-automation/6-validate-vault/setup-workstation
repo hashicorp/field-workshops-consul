@@ -63,10 +63,10 @@ echo 'path "secret/*" {
   capabilities = ["list"]
 }
 path "secret/pan" {
-  capabilities = ["read"]
+  capabilities = ["create", "read", "update", "delete"]
 }
 path "secret/f5" {
-  capabilities = ["read"]
+  capabilities = ["create", "read", "update", "delete"]
 }' | vault policy write nia -
 
 unset VAULT_TOKEN
