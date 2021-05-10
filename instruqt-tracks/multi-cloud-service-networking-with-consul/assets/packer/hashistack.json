@@ -64,7 +64,13 @@
   "provisioners": [
     {
       "type": "shell",
-      "script": "scripts/setup.sh"
+      "script": "scripts/aws.sh",
+      "only": ["amazon-ebs-ubuntu-bionic"]
+    },
+    {
+      "type": "shell",
+      "script": "scripts/azure.sh",
+      "only": ["azure-ubuntu-bionic"]
     },
     {
       "type": "shell",
