@@ -8,11 +8,27 @@ export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
 vault read consul/creds/replication
 if [ $? -ne 0 ]
 then
-  fail-message "Error checking relication token"
+  fail-message "Error checking Consul relication acl token"
   exit 1
 fi
 
-#check on demand creds
+#check the mgw token
+vault read consul/creds/mgw
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking Consul mgw acl token"
+  exit 1
+fi
+
+#check the vault token
+vault read consul/creds/vault
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking Consul vault acl token"
+  exit 1
+fi
+
+#check operator creds
 vault read consul/creds/operator
 if [ $? -ne 0 ]
 then

@@ -3,6 +3,22 @@
 #creds
 vault login -method=userpass username=admin password=admin
 
+#check the esm token
+vault read consul/creds/aws-tgw
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking Consul AWS TGW acl token"
+  exit 1
+fi
+
+#check the esm token
+vault read consul/creds/azure-tgw
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking Consul Azure TGW acl token"
+  exit 1
+fi
+
 #aws
 aws_tgw=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/aws-us-east-1-terminating-gateway?dc=aws-us-east-1&passing=true")
 if [ "$(echo "${aws_tgw}" | jq '. | length')" != "1" ]; then
