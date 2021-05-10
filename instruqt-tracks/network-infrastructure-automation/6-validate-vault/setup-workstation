@@ -40,6 +40,7 @@ vault kv put secret/f5 password=$(terraform output -state=/root/terraform/bigip/
 vault auth enable userpass
 vault write auth/userpass/users/operations password=Password1 policies=ops token_ttl=8h
 vault write auth/userpass/users/backend password=Password1 policies=backend token_ttl=30m
+vault write auth/userpass/users/nia password=Password1 policies=nia token_ttl=30m
 vault secrets enable consul
 
 echo 'path "secret/*" {
@@ -57,6 +58,16 @@ echo 'path "consul/creds/backend-developer"
 {
   capabilities = ["read"]
 }' | vault policy write backend -
+
+echo 'path "secret/*" {
+  capabilities = ["list"]
+}
+path "secret/pan" {
+  capabilities = ["read"]
+}
+path "secret/f5" {
+  capabilities = ["read"]
+}' | vault policy write nia -
 
 unset VAULT_TOKEN
 

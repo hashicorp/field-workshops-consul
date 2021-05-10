@@ -311,6 +311,10 @@ challenges:
     ```
     vault login -method=userpass username=operations password=Password1
     ```
+    Now, let's try this again with a user with escalated privilges
+    ```
+    vault login -method=userpass username=nia password=Password1
+    ```
     Login to the Consul UI and explore to see what services are available if any.
 
     Retrieve the ip address of Consul and Vault (external access)
@@ -319,7 +323,7 @@ challenges:
     echo $CONSUL_HTTP_ADDR
     echo $VAULT_ADDR
     ```
-    Consul is not configured with any authentication mechanisms in this Lab. Consul authentication can be activated with Vault (Not in scope of this lab)
+    Consul is not configured with any authentication mechanisms in this Lab. Consul authentication can be activated with ACLs and Vault (Not in scope of this lab)
   notes:
   - type: text
     contents: |
@@ -598,4 +602,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-checksum: "7167644398207003708"
+checksum: "13504386573106438206"
