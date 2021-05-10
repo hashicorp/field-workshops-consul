@@ -19,13 +19,13 @@ acl = {
   down_policy    = "extend-cache"
   enable_token_persistence = true
   tokens {
-    agent  = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
+    agent  = {{ with secret "consul/creds/mgw" }}"{{ .Data.token }}"{{ end }}
   }
 }
 encrypt = {{ with secret "kv/consul" }}"{{ .Data.data.gossip_key }}"{{ end }}
 EOF
 cat <<EOF> /etc/vault-agent.d/envoy-token-template.ctmpl
-{{ with secret "kv/consul" }}{{ .Data.data.master_token }}{{ end }}
+{{ with secret "consul/creds/mgw" }}{{ .Data.token }}{{ end }}
 EOF
 cat <<EOF> /etc/vault-agent.d/vault.hcl
 pid_file = "/var/run/vault-agent-pidfile"
@@ -41,12 +41,12 @@ auto_auth {
 template {
   source      = "/etc/vault-agent.d/consul-ca-template.ctmpl"
   destination = "/opt/consul/tls/ca-cert.pem"
-  command     = "sudo service consul reload"
+  command     = "sudo service consul restart"
 }
 template {
   source      = "/etc/vault-agent.d/consul-acl-template.ctmpl"
   destination = "/etc/consul.d/acl.hcl"
-  command     = "sudo service consul reload"
+  command     = "sudo service consul restart"
 }
 template {
   source      = "/etc/vault-agent.d/envoy-token-template.ctmpl"

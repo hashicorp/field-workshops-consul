@@ -3,6 +3,14 @@
 #creds
 vault login -method=userpass username=admin password=admin
 
+#check the esm token
+vault read consul/creds/esm
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking Consul ESM acl token"
+  exit 1
+fi
+
 #aws
 aws_esm=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/consul-esm?dc=aws-us-east-1&passing=true")
 if [ "$(echo "${aws_esm}" | jq '. | length')" != "1" ]; then

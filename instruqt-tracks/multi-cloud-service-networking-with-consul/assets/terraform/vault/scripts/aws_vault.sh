@@ -126,8 +126,7 @@ acl {
   down_policy   = "extend-cache"
   enable_token_persistence = true
   tokens {
-    agent  = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
-    default  = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
+    agent  = {{ with secret "consul/creds/vault" }}"{{ .Data.token }}"{{ end }}
   }
 }
 encrypt = {{ with secret "kv/consul" }}"{{ .Data.data.gossip_key }}"{{ end }}
@@ -135,8 +134,8 @@ EOF
 
 cat <<EOF> /etc/vault-agent.d/vault-template.ctmpl
 service_registration "consul" {
-  address = "localhost:8500"{{ with secret "kv/consul" }}
-  token   = "{{ .Data.data.master_token }}"{{ end }}
+  address = "localhost:8500"{{ with secret "consul/creds/vault" }}
+  token   = "{{ .Data.token }}"{{ end }}
 }
 EOF
 

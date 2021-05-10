@@ -1,5 +1,14 @@
 #!/bin/bash
 
+#creds
+vault login -method=userpass username=admin password=admin
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+
+#create the consul & vault polict
+consul acl policy create -name consul-esm -rules @/root/policies/consul/consul-esm.hcl
+vault write consul/roles/esm policies=consul-esm
+
+#tf
 terraform apply -auto-approve 2>&1 | tee terraform.out
 sleep 120
 
