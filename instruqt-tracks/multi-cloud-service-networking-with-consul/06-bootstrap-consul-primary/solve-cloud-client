@@ -1,4 +1,4 @@
-it d#!/bin/bash
+#!/bin/bash
 
 #aws
 vault login -method=userpass username=admin password=admin

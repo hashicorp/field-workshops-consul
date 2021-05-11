@@ -200,16 +200,13 @@ sudo systemctl start consul.service
 sleep 10
 
 #envoy
-curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
-getenvoy fetch standard:1.16.0
-cp /root/.getenvoy/builds/standard/*/linux_glibc/bin/envoy /usr/local/bin/envoy
 cat <<EOF > /etc/systemd/system/envoy-jaeger.service
 [Unit]
 Description=Envoy
 After=network-online.target
 Wants=consul.service
 [Service]
-ExecStart=/usr/bin/consul connect envoy -sidecar-for jaeger-http-collector -envoy-binary /usr/local/bin/envoy -token-file /etc/envoy/consul.token -- -l debug
+ExecStart=/usr/bin/consul connect envoy -sidecar-for jaeger-http-collector -envoy-binary /usr/bin/envoy -token-file /etc/envoy/consul.token -- -l debug
 Restart=always
 RestartSec=5
 StartLimitIntervalSec=0
@@ -224,7 +221,7 @@ Description=Envoy
 After=network-online.target
 Wants=consul.service
 [Service]
-ExecStart=/usr/bin/consul connect envoy -sidecar-for zipkin-http-collector -envoy-binary /usr/local/bin/envoy -token-file /etc/envoy/consul.token -admin-bind 127.0.0.1:19001 -- -l debug
+ExecStart=/usr/bin/consul connect envoy -sidecar-for zipkin-http-collector -envoy-binary /usr/bin/envoy -token-file /etc/envoy/consul.token -admin-bind 127.0.0.1:19001 -- -l debug
 Restart=always
 RestartSec=5
 StartLimitIntervalSec=0
@@ -239,7 +236,7 @@ Description=Envoy
 After=network-online.target
 Wants=consul.service
 [Service]
-ExecStart=/usr/bin/consul connect envoy -sidecar-for cassandra -envoy-binary /usr/local/bin/envoy -token-file /etc/envoy/consul.token -admin-bind 127.0.0.1:19003 -- -l debug
+ExecStart=/usr/bin/consul connect envoy -sidecar-for cassandra -envoy-binary /usr/bin/envoy -token-file /etc/envoy/consul.token -admin-bind 127.0.0.1:19003 -- -l debug
 Restart=always
 RestartSec=5
 StartLimitIntervalSec=0

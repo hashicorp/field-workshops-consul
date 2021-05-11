@@ -31,7 +31,7 @@ az group create -l westus2 -n packer
 apt update -y
 apt install software-properties-common -y
 curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
-apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main test"
+apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 apt update -y
 apt install terraform=0.13.5 packer=1.7.0 consul-enterprise=1.9.4+ent vault-enterprise=1.7.1+ent nomad-enterprise=1.0.4+ent libcap-dev jq redis-server -y
 
@@ -45,6 +45,7 @@ cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with
 cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/packer .
 cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/apps .
 cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/policies .
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/helm .
 rm -rf field-workshops-consul
 
 #fix path

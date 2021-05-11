@@ -149,16 +149,13 @@ sudo systemctl start consul.service
 sleep 10
 
 #install envoy
-curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
-getenvoy fetch standard:1.16.0
-cp /root/.getenvoy/builds/standard/*/linux_glibc/bin/envoy /usr/local/bin/envoy
 cat <<EOF > /etc/systemd/system/envoy.service
 [Unit]
 Description=Envoy
 After=network-online.target
 Wants=consul.service
 [Service]
-ExecStart=/usr/bin/consul connect envoy -namespace product -sidecar-for product-api -envoy-binary /usr/local/bin/envoy -token-file /etc/envoy/consul.token -- -l debug
+ExecStart=/usr/bin/consul connect envoy -namespace product -sidecar-for product-api -envoy-binary /usr/bin/envoy -token-file /etc/envoy/consul.token -- -l debug
 Restart=always
 RestartSec=5
 StartLimitIntervalSec=0
