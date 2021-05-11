@@ -86,7 +86,7 @@ cat <<EOF> /etc/nomad.d/client.hcl
 client {
   enabled = true
   meta {
-      "connect.sidecar_image" = "envoyproxy/envoy:v1.16.3"
+      "connect.sidecar_image" = "envoyproxy/envoy:v1.16.2"
   }
 }
 EOF
