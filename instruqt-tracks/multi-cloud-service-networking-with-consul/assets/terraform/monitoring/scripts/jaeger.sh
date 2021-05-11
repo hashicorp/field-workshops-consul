@@ -200,9 +200,6 @@ sudo systemctl start consul.service
 sleep 10
 
 #envoy
-curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
-getenvoy fetch standard:1.16.0
-cp /root/.getenvoy/builds/standard/*/linux_glibc/bin/envoy /usr/local/bin/envoy
 cat <<EOF > /etc/systemd/system/envoy-jaeger.service
 [Unit]
 Description=Envoy
