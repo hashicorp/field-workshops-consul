@@ -206,7 +206,7 @@ Description=Envoy
 After=network-online.target
 Wants=consul.service
 [Service]
-ExecStart=/usr/bin/consul connect envoy -sidecar-for jaeger-http-collector -envoy-binary /usr/local/bin/envoy -token-file /etc/envoy/consul.token -- -l debug
+ExecStart=/usr/bin/consul connect envoy -sidecar-for jaeger-http-collector -envoy-binary /usr/bin/envoy -token-file /etc/envoy/consul.token -- -l debug
 Restart=always
 RestartSec=5
 StartLimitIntervalSec=0
@@ -221,7 +221,7 @@ Description=Envoy
 After=network-online.target
 Wants=consul.service
 [Service]
-ExecStart=/usr/bin/consul connect envoy -sidecar-for zipkin-http-collector -envoy-binary /usr/local/bin/envoy -token-file /etc/envoy/consul.token -admin-bind 127.0.0.1:19001 -- -l debug
+ExecStart=/usr/bin/consul connect envoy -sidecar-for zipkin-http-collector -envoy-binary /usr/bin/envoy -token-file /etc/envoy/consul.token -admin-bind 127.0.0.1:19001 -- -l debug
 Restart=always
 RestartSec=5
 StartLimitIntervalSec=0
@@ -236,7 +236,7 @@ Description=Envoy
 After=network-online.target
 Wants=consul.service
 [Service]
-ExecStart=/usr/bin/consul connect envoy -sidecar-for cassandra -envoy-binary /usr/local/bin/envoy -token-file /etc/envoy/consul.token -admin-bind 127.0.0.1:19003 -- -l debug
+ExecStart=/usr/bin/consul connect envoy -sidecar-for cassandra -envoy-binary /usr/bin/envoy -token-file /etc/envoy/consul.token -admin-bind 127.0.0.1:19003 -- -l debug
 Restart=always
 RestartSec=5
 StartLimitIntervalSec=0

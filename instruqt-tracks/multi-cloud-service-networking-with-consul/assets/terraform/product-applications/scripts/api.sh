@@ -155,7 +155,7 @@ Description=Envoy
 After=network-online.target
 Wants=consul.service
 [Service]
-ExecStart=/usr/bin/consul connect envoy -namespace product -sidecar-for product-api -envoy-binary /usr/local/bin/envoy -token-file /etc/envoy/consul.token -- -l debug
+ExecStart=/usr/bin/consul connect envoy -namespace product -sidecar-for product-api -envoy-binary /usr/bin/envoy -token-file /etc/envoy/consul.token -- -l debug
 Restart=always
 RestartSec=5
 StartLimitIntervalSec=0
