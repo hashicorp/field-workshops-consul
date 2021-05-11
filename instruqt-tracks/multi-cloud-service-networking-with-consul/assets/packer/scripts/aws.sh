@@ -13,7 +13,7 @@ sudo apt install awscli consul-enterprise=1.9.4+ent vault-enterprise=1.7.1+ent n
 
 #envoy
 curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
-getenvoy fetch standard:1.16.3
-cp /root/.getenvoy/builds/standard/*/linux_glibc/bin/envoy /usr/local/bin/envoy
+sudo getenvoy fetch standard:1.16.3
+sudo cp /root/.getenvoy/builds/standard/*/linux_glibc/bin/envoy /usr/local/bin/envoy
 
 exit 0
