@@ -16,10 +16,6 @@ cat << EOF > /root/terraform/vault/terraform.tfvars
 ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
 EOF
 
-# cd /root/terraform/hcs
-# terraform init
-# terraform import azurerm_marketplace_agreement.hcs_marketplace_agreement "/subscriptions/${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SUBSCRIPTION_ID}/providers/Microsoft.MarketplaceOrdering/agreements/hashicorp-4665790/offers/hcs-production/plans/on-demand-v2"
-
 cd /root/terraform/consul-server
 terraform init
 
