@@ -1,52 +1,15 @@
 #!/bin/bash
 
-#Get IP
-#local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
+#packages
+sudo apt update -y
+curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+apt update -y
+apt install consul=1.9.4 unzip nginx -y
 
-#Utils
-sudo apt-get install -y unzip nginx
-
-#Download Consul
+#cts
 CONSUL_TEMPLATE_VERSION="0.22.0"
-CONSUL_VERSION="1.9.4+ent"
-curl --silent --remote-name https://releases.hashicorp.com/consul/$${CONSUL_VERSION}/consul_$${CONSUL_VERSION}_linux_amd64.zip
 curl --silent --remote-name https://releases.hashicorp.com/consul-template/$${CONSUL_TEMPLATE_VERSION}/consul-template_$${CONSUL_TEMPLATE_VERSION}_linux_amd64.zip
-
-#Install Consul
-unzip consul_$${CONSUL_VERSION}_linux_amd64.zip
-unzip consul-template_$${CONSUL_TEMPLATE_VERSION}_linux_amd64.zip
-sudo chown root:root consul
-sudo chown root:root consul consul-template
-sudo mv consul* /usr/local/bin/
-consul -autocomplete-install
-complete -C /usr/local/bin/consul consul
-
-#Create Consul User
-sudo useradd --system --home /etc/consul.d --shell /bin/false consul
-sudo mkdir --parents /opt/consul
-sudo chown --recursive consul:consul /opt/consul
-
-#Create Systemd Config
-sudo cat << EOF > /etc/systemd/system/consul.service
-[Unit]
-Description="HashiCorp Consul - A service mesh solution"
-Documentation=https://www.consul.io/
-Requires=network-online.target
-After=network-online.target
-
-[Service]
-User=consul
-Group=consul
-ExecStart=/usr/local/bin/consul agent -bind '{{ GetInterfaceIP "eth0" }}' -config-dir=/etc/consul.d/
-ExecReload=/usr/local/bin/consul reload
-KillMode=process
-Restart=always
-LimitNOFILE=65536
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
 sudo cat << EOF > /etc/systemd/system/consul-template.service
 [Unit]
 Description="Template rendering, notifier, and supervisor for @hashicorp Consul and Vault data."
@@ -65,25 +28,17 @@ LimitNOFILE=65536
 WantedBy=multi-user.target
 EOF
 
-#Create config dirs
-sudo mkdir --parents /etc/consul.d
-sudo mkdir --parents /etc/nginx/conf.d
+#consul-template
 sudo mkdir --parents /etc/consul-template
-
-sudo touch /etc/consul.d/consul.hcl
 sudo touch /etc/consul-template/consul-template-config.hcl
-
-sudo chown --recursive consul:consul /etc/consul.d
-sudo chown --recursive consul:consul /etc/consul-template
-sudo chmod 640 /etc/consul.d/consul.hcl
 sudo chmod 640 /etc/consul-template/consul-template-config.hcl
 
-cat << EOF > /etc/consul.d/zz_override.hcl
+#config
+cat << EOF > /etc/consul.d/consul.hcl
 data_dir = "/opt/consul"
 ui = true
 retry_join = ["${consul_server_ip}"]
 EOF
-
 
 cat << EOF > /etc/consul.d/nginx.json
 {
@@ -109,18 +64,6 @@ cat << EOF > /etc/consul.d/nginx.json
 }
 EOF
 
-#Enable the service
-sudo systemctl enable consul
-sudo systemctl enable nginx
-
-sudo service nginx start
-sudo service consul start
-sudo service consul status
-
-
-
-
-# create consul template for nginx config
 cat << EOF > /etc/nginx/conf.d/load-balancer.conf.ctmpl
 upstream app {
 {{ range service "app" }}
@@ -137,7 +80,6 @@ server {
 }
 EOF
 
-# create consul-template Config
 cat << EOF > /etc/consul-template/consul-template-config.hcl
 template {
 source      = "/etc/nginx/conf.d/load-balancer.conf.ctmpl"
@@ -146,6 +88,12 @@ command = "service nginx reload"
 }
 EOF
 
+#Enable the services
+sudo systemctl enable consul
+sudo systemctl enable nginx
+sudo service nginx start
+sudo service consul start
+sudo service consul status
 sudo systemctl enable consul-template
 sudo service consul-template start
 sudo service consul-template status
