@@ -1,61 +1,33 @@
 #!/bin/bash
 
-#Utils
-sudo apt-get install unzip
 
+#vault env
 export VAULT_ADDR="http://${vault_addr}"
 export VAULT_TOKEN=$vault_token
 
-#Install Vault
-apt-get update -y
-snap install vault
+#packages
+sudo apt update -y
+curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+apt update -y
+apt install consul=1.9.4 vault=1.7.1 unzip -y
 
-#Install Consul
-curl --silent --remote-name https://releases.hashicorp.com/consul/1.9.4+ent/consul_1.9.4+ent_linux_amd64.zip
-unzip consul_1.9.4+ent_linux_amd64.zip
-sudo useradd --system --home /etc/consul.d --shell /bin/false consul
-sudo chown root:root consul
-sudo mv consul /usr/local/bin/
-sudo mkdir --parents /etc/consul.d
-sudo chown --recursive consul:consul /etc/consul.d
-sudo mkdir --parents /opt/consul
-sudo chown --recursive consul:consul /opt/consul
-
-consul -autocomplete-install
-complete -C /usr/local/bin/consul consul
+#consul config
+cat << EOF > /etc/consul.d/consul.hcl
+data_dir = "/opt/consul"
+ui = true
+retry_join = ["${consul_server_ip}"]
+EOF
 
 #Install Consul-Terraform-Sync
 curl --silent --remote-name https://releases.hashicorp.com/consul-terraform-sync/0.1.2/consul-terraform-sync_0.1.2_linux_amd64.zip
 unzip consul-terraform-sync_0.1.2_linux_amd64.zip
-
 sudo chown root:root consul-terraform-sync
 sudo mv consul-terraform-sync /usr/local/bin/
 sudo mkdir --parents /etc/consul-tf-sync.d
 sudo chown --recursive consul:consul /etc/consul-tf-sync.d
 sudo mkdir --parents /opt/consul-tf-sync.d
 sudo chown --recursive consul:consul /opt/consul-tf-sync.d
-
-
-#Create Systemd Config for Consul
-sudo cat << EOF > /etc/systemd/system/consul.service
-[Unit]
-Description="HashiCorp Consul - A service mesh solution"
-Documentation=https://www.consul.io/
-Requires=network-online.target
-After=network-online.target
-
-[Service]
-User=consul
-Group=consul
-ExecStart=/usr/local/bin/consul agent  -bind '{{ GetInterfaceIP "eth0" }}' -config-dir=/etc/consul.d/
-ExecReload=/usr/local/bin/consul reload
-KillMode=process
-Restart=always
-LimitNOFILE=65536
-
-[Install]
-WantedBy=multi-user.target
-EOF
 
 #Create Systemd Config for Consul Terraform Sync
 sudo cat << EOF > /etc/systemd/system/consul-tf-sync.service
@@ -75,12 +47,6 @@ LimitNOFILE=65536
 
 [Install]
 WantedBy=multi-user.target
-EOF
-
-cat << EOF > /etc/consul.d/zz_override.hcl
-data_dir = "/opt/consul"
-ui = true
-retry_join = ["${consul_server_ip}"]
 EOF
 
 cat << EOF > /etc/consul-tf-sync.d/consul-tf-sync-secure.hcl
@@ -160,12 +126,10 @@ cat << EOF > /etc/consul-tf-sync.d/panos.tfvars
 dag_prefix = "cts-addr-grp-"
 EOF
 
-#Enable the service
+#Enable the services
 sudo systemctl enable consul
 sudo service consul start
 sudo service consul status
-
-#Enable the service
 sudo systemctl enable consul-tf-sync
 sudo service consul-tf-sync start
 sudo service consul-tf-sync status
