@@ -50,10 +50,6 @@ Use the following information to access the virtual appliances in this workshop.
 * Web Application FQDN = ${app_fqdn}
 * Web Application IP = ${app_ip}
 
-## Vault Access
-
-* Token: root
-
 EOF
 
 
