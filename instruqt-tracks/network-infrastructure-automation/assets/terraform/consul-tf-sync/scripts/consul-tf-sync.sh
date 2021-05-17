@@ -19,6 +19,22 @@ ui = true
 retry_join = ["${consul_server_ip}"]
 EOF
 
+cat << EOF > /etc/consul.d/cts.json
+{
+  "service": {
+    "name": "cts",
+    "port": 8558,
+    "check": {
+      "id": "8558",
+      "name": "CTS TCP on port 8558",
+      "tcp": "localhost:8558",
+      "interval": "5s",
+      "timeout": "3s"
+    }
+  }
+}
+EOF
+
 #Install Consul-Terraform-Sync
 curl --silent --remote-name https://releases.hashicorp.com/consul-terraform-sync/0.1.2/consul-terraform-sync_0.1.2_linux_amd64.zip
 unzip consul-terraform-sync_0.1.2_linux_amd64.zip
