@@ -11,4 +11,11 @@ if [ "${status}" != "Creating" ] && [ "${status}" != "Updating" ] && [ "${status
   exit 1
 fi
 
+#check the app works
+app=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080)
+if [ "${app}" != "200" ]; then
+  fail-message "App did not return a 200."
+  exit 1
+fi
+
 exit 0

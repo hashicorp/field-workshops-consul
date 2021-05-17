@@ -1,73 +1,17 @@
 #!/bin/bash
 
-#Get IP
-#local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
+#packages
+sudo apt update -y
+curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+apt update -y
+apt install consul=1.9.4 unzip -y
 
-#Utils
-sudo apt-get install unzip
-
-#Download Consul
-curl --silent --remote-name https://releases.hashicorp.com/consul/1.8.0+ent/consul_1.8.0+ent_linux_amd64.zip
-
-#Install Consul
-unzip consul_1.8.0+ent_linux_amd64.zip
-sudo chown root:root consul
-sudo mv consul /usr/local/bin/
-consul -autocomplete-install
-complete -C /usr/local/bin/consul consul
-
-#Create Consul User
-sudo useradd --system --home /etc/consul.d --shell /bin/false consul
-sudo mkdir --parents /opt/consul
-sudo chown --recursive consul:consul /opt/consul
-
-#Create Systemd Config
-sudo cat << EOF > /etc/systemd/system/consul.service
-[Unit]
-Description="HashiCorp Consul - A service mesh solution"
-Documentation=https://www.consul.io/
-Requires=network-online.target
-After=network-online.target
-
-[Service]
-User=consul
-Group=consul
-ExecStart=/usr/local/bin/consul agent  -bind '{{ GetInterfaceIP "eth0" }}' -config-dir=/etc/consul.d/
-ExecReload=/usr/local/bin/consul reload
-KillMode=process
-Restart=always
-LimitNOFILE=65536
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-#Create config dir
-sudo mkdir --parents /etc/consul.d
-sudo touch /etc/consul.d/consul.hcl
-sudo chown --recursive consul:consul /etc/consul.d
-sudo chmod 640 /etc/consul.d/consul.hcl
-
-cat << EOF > /etc/consul.d/ca.pem
-${ca_cert}
-EOF
-
-cat << EOF > /etc/consul.d/hcs.json
-${consulconfig}
-EOF
-
-cat << EOF > /etc/consul.d/zz_override.hcl
+#config
+cat << EOF > /etc/consul.d/consul.hcl
 data_dir = "/opt/consul"
 ui = true
-ca_file = "/etc/consul.d/ca.pem"
-acl = {
-  tokens = {
-    default = "${consul_token}"
-  }
-  enabled = true
-  default_policy = "deny"
-  enable_token_persistence = true
-}
+retry_join = ["${consul_server_ip}"]
 EOF
 
 cat << EOF > /etc/consul.d/app.json
@@ -98,14 +42,13 @@ sudo snap install docker
 sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-
 sleep 10
 cat << EOF > docker-compose.yml
 version: "3.7"
 services:
   app:
     image: nicholasjackson/fake-service:v0.7.8
-    ports: 
+    ports:
       - 9091:9091
     environment:
       LISTEN_ADDR: 0.0.0.0:9091

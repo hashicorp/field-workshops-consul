@@ -18,11 +18,3 @@ data "terraform_remote_state" "bigip" {
     path = "../bigip/terraform.tfstate"
   }
 }
-
-data "terraform_remote_state" "hcs" {
-  backend = "local"
-
-  config = {
-    path = "../hcs/terraform.tfstate"
-  }
-}

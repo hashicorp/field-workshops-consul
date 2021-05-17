@@ -30,11 +30,10 @@ echo ">>--------------------------------<<"
 echo ">> Network Infra: BIG-IP Deployed <<"
 echo ">>--------------------------------<<"
 
-#block HCS
-while [ -f /root/terraform/hcs/.terraform.tfstate.lock.info ]; do echo 'HCS still provisioning'; sleep 5;  done
-
 #block PANW FW
 while [ -f /root/terraform/panw-vm/.terraform.tfstate.lock.info ]; do echo 'PANW still provisioning'; sleep 5;  done
 
-sleep 30
+#wait for F5
+sleep 180
+
 exit 0

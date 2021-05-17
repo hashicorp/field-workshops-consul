@@ -7,4 +7,6 @@ echo ">>"
 
 terraform apply -var app_count=1 -var web_count=1 -auto-approve
 
+sleep 30
+
 exit 0

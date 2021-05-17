@@ -7,8 +7,7 @@ echo ">> Core Services: Deploying Vault <<"
 echo ">>--------------------------------<<"
 
 cd /root/terraform/vault
-nohup terraform apply -refresh=false -auto-approve > /root/terraform/vault/terraform.out &
-sleep 10
+terraform apply -refresh=false -auto-approve > /root/terraform/vault/terraform.out
 
 echo ""
 echo ""
@@ -18,18 +17,19 @@ echo ">>-------------------------------<<"
 
 echo ""
 echo ""
-echo ">>------------------------------<<"
-echo ">> Core Services: Deploying HCS <<"
-echo ">>------------------------------<<"
+echo ">>----------------------------------------<<"
+echo ">> Core Services: Deploying Consul Server <<"
+echo ">>----------------------------------------<<"
 
-cd /root/terraform/hcs
-terraform apply -refresh=false -auto-approve > /root/terraform/hcs/terraform.out
-sleep 120
+cd /root/terraform/consul-server
+terraform apply -refresh=false -auto-approve > /root/terraform/consul-server/terraform.out
 
 echo ""
 echo ""
-echo ">>------------------------------<<"
-echo ">> Core Services: HCS Deployed <<"
-echo ">>------------------------------<<"
+echo ">>---------------------------------------<<"
+echo ">> Core Services: Consul Server Deployed <<"
+echo ">>---------------------------------------<<"
+
+sleep 60
 
 exit 0

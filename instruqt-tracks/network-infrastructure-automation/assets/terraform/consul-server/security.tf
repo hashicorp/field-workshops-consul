@@ -1,5 +1,5 @@
-resource "azurerm_network_security_group" "cts-sg" {
-  name                = "cts-security-group"
+resource "azurerm_network_security_group" "consul-sg" {
+  name                = "consul-security-group"
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location
   resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
 

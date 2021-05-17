@@ -8,6 +8,8 @@ containers:
   - 8080
   - 8200
   - 8500
+  - 443
+  - 8443
   memory: 2048
 azure_subscriptions:
 - name: consul

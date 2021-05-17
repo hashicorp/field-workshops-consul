@@ -53,7 +53,7 @@ resource "azurerm_virtual_machine" "consul-terraform-sync" {
   os_profile {
     computer_name = "consul-terraform-sync"
     admin_username       = "azure-user"
-    custom_data          = base64encode(templatefile("./scripts/consul-tf-sync.sh", { endpoint = var.endpoint, consulconfig = var.consulconfig, ca_cert = var.ca_cert, consul_token = var.consul_token, bigip_mgmt_addr = var.bigip_mgmt_addr, bigip_admin_user = var.bigip_admin_user, bigip_admin_passwd = var.bigip_admin_passwd, panos_mgmt_addr = var.panos_mgmt_addr, panos_username = var.panos_username, panos_password = var.panos_password }))
+    custom_data          = base64encode(templatefile("./scripts/consul-tf-sync.sh", { vault_token = var.vault_token, vault_addr = var.vault_addr, consul_server_ip = var.consul_server_ip, bigip_mgmt_addr = var.bigip_mgmt_addr, bigip_admin_user = var.bigip_admin_user, panos_mgmt_addr = var.panos_mgmt_addr, panos_username = var.panos_username }))
   }
 
   os_profile_linux_config {
@@ -65,4 +65,9 @@ resource "azurerm_virtual_machine" "consul-terraform-sync" {
 
   }
 
+}
+
+resource "azurerm_network_interface_security_group_association" "cts" {
+  network_interface_id      = azurerm_network_interface.cts-nic.id
+  network_security_group_id = azurerm_network_security_group.cts-sg.id
 }

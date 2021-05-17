@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo ""
+echo ">>"
+echo ">> Validating Consul and Vault"
+echo ">>"
+vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate vault_lb)
+VAULT_ADDR=http://${vault_lb}
+echo $CONSUL_HTTP_ADDR
+echo $VAULT_ADDR
+
+exit 0

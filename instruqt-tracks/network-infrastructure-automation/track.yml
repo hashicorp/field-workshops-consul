@@ -2,7 +2,7 @@ slug: network-infrastructure-automation
 id: zd9iqr8wyub0
 version: 0.0.1
 type: track
-title: Network Infrastructure Automation
+title: Network Infrastructure Automation - Update
 teaser: Automate the provisioning and ongoing management of network infrastructure.
 description: In this workshop you'll learn how to automate the provisioning and management
   of traditional network infrastructure using Terraform, Consul, and Consul Terraform
@@ -16,13 +16,14 @@ owner: hashicorp
 developers:
 - lance@hashicorp.com
 - npearce@hashicorp.com
+- raj@hashicorp.com
 private: true
 published: true
 show_timer: true
 skipping_enabled: true
 challenges:
 - slug: 1-review-lab-objectives
-  id: rihjzbfzsm9m
+  id: xuq4qb0mo9v1
   type: challenge
   title: Review Lab Objectives
   teaser: Before we begin, lets quickly review the architecture.
@@ -65,7 +66,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 2-provision-azure-vnets
-  id: y1cns7c1xooc
+  id: dwo2s5mw6ona
   type: challenge
   title: Provision Azure VNETs
   teaser: Deploy basic network infrastructure using Terraform
@@ -78,11 +79,11 @@ challenges:
     ```
     terraform plan
     terraform apply -auto-approve
+
     ```
 
     Their CIDR blocks are listed below:
     ```
-    hcs-vnet: 10.0.0.0/16
     shared-svcs-vnet: 10.2.0.0/16
     app-vnet: 10.3.0.0/16
     ```
@@ -120,12 +121,12 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 3-provision-core-services
-  id: 8g5r3gchzqun
+  id: dlsjgdoiu2ua
   type: challenge
   title: Provision Core Services
-  teaser: Provision Vault and HCS using Terraform
+  teaser: Provision Vault and Consul using Terraform
   assignment: |
-    With the VNETs provisioned, you are now ready to deploy HCS (Hashicorp Consul Service, aka. Consul-as-a-Service), Vault, and a Bastion Host used to access various services in future challenges.
+    With the VNETs provisioned, you are now ready to deploy Consul, Vault, and a Bastion Host used to access various services in future challenges.
 
     Terraform will be used to provision each resource.
 
@@ -136,22 +137,21 @@ challenges:
 
     When ready, switch to the `Shell` tab and run the following commands:
     ```
-     cd /root/terraform/vault
-     terraform plan
-     terraform apply -auto-approve
+    cd /root/terraform/vault
+    terraform plan
+    terraform apply -auto-approve
     ```
 
-    ## HCS
-    Let's provision HCS.<br>
+    ## Consul
+    Let's provision Consul server.<br>
     In the `Shell` tab run the following commands.
 
      ```
-     cd /root/terraform/hcs
+     cd /root/terraform/consul-server
      terraform plan
-     nohup terraform apply -auto-approve > /root/terraform/hcs/terraform.out &
-     ```
+     terraform apply -auto-approve
 
-    NOTE: HCS will continue to provision in the background while we move on to the next challenge.
+     ```
   notes:
   - type: text
     contents: |
@@ -164,10 +164,10 @@ challenges:
     type: code
     hostname: workstation
     path: /root/terraform/vault
-  - title: HCS Terraform Code
+  - title: Consul Server Code
     type: code
     hostname: workstation
-    path: /root/terraform/hcs
+    path: /root/terraform/consul-server
   - title: Shell
     type: terminal
     hostname: workstation
@@ -179,7 +179,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 4-provision-network-infra
-  id: fbyphtsxladi
+  id: qm7eoyy10e00
   type: challenge
   title: Provision F5 BIG-IP & Palo Alto Firewall
   teaser: Provision an F5 BIG-IP VE & Palo Alto Firewall using Terraform
@@ -191,6 +191,7 @@ challenges:
     cd /root/terraform/panw-vm
     terraform plan
     nohup terraform apply -auto-approve > /root/terraform/panw-vm/terraform.out &
+
     ```
 
     NOTE: The Palo Alto Firewall will continue to provision in the background allowing you to continue to the next step.
@@ -202,6 +203,7 @@ challenges:
     cd /root/terraform/bigip
     terraform plan
     terraform apply -auto-approve
+
     ```
 
     This can take several minutes to complete. While you wait, feel free to look over the `Palo Alto Terraform Code` and `F5 BIG-IP Terraform Code` tabs to see review the Terraform code.
@@ -209,13 +211,6 @@ challenges:
     Once the Terraform apply is complete, the BIG-IP is accessible using the IP address provided in the Terraform output.
 
     **NOTE:** You will need to open the BIG-IP URL in a separate browser tab. If you are using chrome, you may be presented with a certificate error. To bypass this error, type "thisisunsafe" into the Chrome window.
-
-    The HCS services may not be available quite yet, but is required before we can move on to the next challenge. You can monitor its progress with the following command:
-
-    Monitor HCS provisioning
-    ```
-    tail -f /root/terraform/hcs/terraform.out
-    ```
   notes:
   - type: text
     contents: |
@@ -243,7 +238,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 5-configure-palo-alto-firewall
-  id: fyfegnx6ag8o
+  id: 7vltkulroiy8
   type: challenge
   title: Configure Palo Alto Firewall
   teaser: Provision a Palo Alto VM-Series Firewall using Terraform.
@@ -264,11 +259,7 @@ challenges:
      ```
     terraform plan
     terraform apply -auto-approve
-    ```
 
-    Now we must instruct the firewall to `commit` this change using the following command:
-    ```
-    /root/terraform/panos_commit/panos-commit -config /root/terraform/panos_commit/panos-commit.json -force
     ```
 
     Once the apply has completed, Open up new browser tabs to access the Palo Alto and BIG-IP Virtual Machines using the details in the 'Access Info' tab.
@@ -302,92 +293,40 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 300
-- slug: 6-validate-hcs
-  id: z5sy2diwt2hl
+- slug: 6-validate-vault
+  id: l6orpveiedpr
   type: challenge
-  title: Validate HCS
-  teaser: Verify Vault, HCS, and Consul are operational
+  title: Validate Vault & Consul
+  teaser: Verify Vault, and Consul are operational
   assignment: |
-    Consul HCS and Vault should now be provisioned and accessible from the corresponding tabs.
+    Consul and Vault should now be provisioned and accessible from the corresponding tabs.
 
-    In this exercise we will gather the information required to connect to HCS and securely store this information in Vault.
 
-    In the `Shell` tab run the following commands.
+    In the `Shell` tab run the following commands, use the token and try to access secret/f5 and secret/palo. Access is denied due to escalated privilege requirements.
     ```
     vault login -method=userpass username=operations password=Password1
+    vault kv get secret/f5
+    vault kv get secret/pan
     ```
+    Now, let's try this again with a user with escalated privilges
+    ```
+    vault login -method=userpass username=nia password=Password1
+    vault kv get secret/f5
+    vault kv get secret/pan
+    ```
+    Login to the Consul UI and explore to see what services are available if any.
 
-    Retrieve the bootstrap token and gossip key from HCS and save it to your Vault instance:
+    Retrieve the ip address of Consul and Vault (external access)
 
     ```
     echo $CONSUL_HTTP_ADDR
     echo $VAULT_ADDR
-    bootstrap_token=$(az hcs create-token --resource-group $(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name) --name hcs | jq  -r .masterToken.secretId)
-    gossip_key=$(az resource show --ids "/subscriptions/$(az account show | jq -r .id)/resourceGroups/$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)/providers/Microsoft.Solutions/applications/hcs/customconsulClusters/hcs" --api-version 2018-09-01-preview | jq -r .properties.consulConfigFile | base64 -d | jq -r .encrypt)
-    vault kv put secret/consul master_token=${bootstrap_token} gossip_key=${gossip_key}
     ```
-
-    Now inspect the credentials:
-
-    ```
-    echo $VAULT_ADDR
-    vault kv get secret/consul
-    ```
-    Operators can use this master token to login and explore the Consul UI. However, master token usage should be highly restricted. So instead, let's configure Vault to [dynamically ](https://www.vaultproject.io/docs/secrets/consul/) issue Consul tokens for Operators, so we don't share or over-use the Consul master token.<br>
-
-    First, let's generate a new Consul token for Vault to use whenever Vault dynamically generates Consul Operator tokens in the future:
-    ```
-    export CONSUL_HTTP_TOKEN=$(vault kv get -field=master_token secret/consul)
-    vault_consul_mgmt_token=$(consul acl token create -policy-name=global-management -description "vault mgmt" | grep SecretID | cut -d ":" -f2 | xargs)
-
-    ```
-    Now configure the Vault secrets engine that dynamically creates additional Consul operator tokens:
-
-    ```
-    vault write consul/config/access address=${CONSUL_HTTP_ADDR} token=${vault_consul_mgmt_token}
-    vault read consul/config/access
-    ```
-
-    Finally, create a Consul policy for the Operations team and link it to the Vault Operations role:
-
-    ```
-    consul acl policy create -name "ops" -description "admin policy for ops" -rules 'acl = "write" operator = "write" namespace_prefix "" {acl = "write"}'
-    vault write consul/roles/ops policies=ops ttl=1h
-    ```
-
-    Use Vault to dynamically generate a new Consul Operator token:
-    ```
-    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
-    consul acl token read -self
-    ```
-
-    Our new Consul Operator token is used to set up a policy called "anonymous".
-    ```
-    echo '
-    node_prefix "" {
-      policy = "read"
-    }
-    service_prefix "" {
-      policy = "read"
-    }
-    session_prefix "" {
-      policy = "read"
-    }
-    agent_prefix "" {
-      policy = "read"
-    }
-    query_prefix "" {
-      policy = "read"
-    }
-    operator = "read"' | consul acl policy create -name anonymous -rules -
-    consul acl token update -id anonymous -policy-name anonymous
-    ```
-
-    You will use this "anonymous" role in a later assignment to configure access for Consul service consumers.
+    Consul is not configured with any authentication mechanisms in this Lab. Consul authentication can be activated with ACLs and Vault (Not in scope of this lab)
   notes:
   - type: text
     contents: |
-      Next we shall verify the core services are operating as expected and then configure HCS to use Vault secrets for its tokens.
+      Next we shall verify the core services are operating as expected.
   tabs:
   - title: Current lab setup
     type: website
@@ -413,7 +352,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 7-deploy-app-environments
-  id: k0reagnnfzuc
+  id: wvgbbfknw4fz
   type: challenge
   title: Deploy App environments
   teaser: Deploy a 2-tier VM based application to the cloud.
@@ -430,17 +369,13 @@ challenges:
 
     ```
     terraform plan
-    nohup terraform apply -auto-approve > deploy_app.log 2>&1 &
+    terraform apply -auto-approve
     ```
 
     By registering nodes and services in Consul, other services can easily discover their health status and network location.
 
     Since the new App and Web services auto-register themselves into Consul, you can now watch the progress of the App deployment by watching the `Consul` tab.
 
-    You could also watch the output of the app deployment log by executing the following command in the `Shell` tab:
-    ```
-    tail -f /root/terraform/app/deploy_app.log
-    ```
     You will explore the environment in more detail in the next challenge.
   notes:
   - type: text
@@ -479,7 +414,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 8-install-consul-terraform-sync
-  id: jskeddctb13s
+  id: 4pa4nyish9os
   type: challenge
   title: Deploy 'Consul Terraform Sync'
   teaser: Now we are going install Consul Terraform Sync and bring dynamic service
@@ -510,27 +445,28 @@ challenges:
     cd /root/terraform/consul-tf-sync/
     terraform plan
     terraform apply -auto-approve
+
     ```
 
-    When completed, connect to the CTS image:
+    When completed, you can connect to the CTS image:
+
     ```
-    consul_terraform_sync=$(curl -s $CONSUL_HTTP_ADDR/v1/catalog/node/consul-terraform-sync | jq -r '.Node.Address')
-    ssh -q -A -J azure-user@$bastion_ip azure-user@$consul_terraform_sync
+    ssh -q -A -J azure-user@$bastion_ip azure-user@$(curl -s $CONSUL_HTTP_ADDR/v1/catalog/node/consul-terraform-sync | jq -r '.Node.Address')
     ```
 
-    Take a look at the `consul-terraform-sync` configuration:
+    Take a look at the `consul-terraform-sync` configuration
     ```
-    cat /etc/consul-tf-sync.d/consul-tf-sync.hcl
+    cat /etc/consul-tf-sync.d/consul-tf-sync-secure.hcl
     ```
 
-    Review the terraform-consul-sync service status with the following command
+    Review the terraform-consul-sync service status with the following command.
     ```
     service consul-tf-sync status
     ```
 
     Look over the Palo Alto & BIG-IP configurations again, per the steps above. Note that their configurations have been updated!
 
-    Next, navigate to the `App` tab. The application is now available through the Firewall and is Load-balanced.
+    Next, navigate to the `App` tab. The application is now available through the Firewall and is Load-balanced. You may need to refresh the tab.
 
     Lastly, navigate back to the 'Current Lab Setup' tab and marvel at the beauty of Network Infrastructure Automation. You did this!
 
@@ -572,12 +508,18 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 9-scale-the-application
-  id: tjlwihpjo0s9
+  id: 7ffmbpmxzn1p
   type: challenge
   title: Scale the application
   teaser: Let Consul take care of routine adds/moves/changes of services instances.
   assignment: |-
-    "Now let's re-run the Terraform code for the application, with some new variables to scale the application out:
+    In this assignment we will watch CTS run as we scale up the application. Tail the CTS logs in one of the shells.
+
+    ```
+    ssh -q -A -J azure-user@$bastion_ip azure-user@$(curl -s $CONSUL_HTTP_ADDR/v1/catalog/node/consul-terraform-sync | jq -r '.Node.Address') journalctl -u consul-tf-sync -f
+    ```
+
+    Now let's re-run the Terraform code for the application in the other shell, with some new variables to scale the application out:
 
     ```
     terraform apply -var app_count=3 -var web_count=3 -auto-approve
@@ -590,6 +532,7 @@ challenges:
     ```
     consul members
     consul catalog services
+
     ```
 
     Review all of the web instances:
@@ -633,6 +576,9 @@ challenges:
   - title: Shell
     type: terminal
     hostname: workstation
+  - title: Shell
+    type: terminal
+    hostname: workstation
   - title: Access Info
     type: code
     hostname: workstation
@@ -659,4 +605,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-checksum: "2107784906300423202"
+checksum: "9275450750584281332"

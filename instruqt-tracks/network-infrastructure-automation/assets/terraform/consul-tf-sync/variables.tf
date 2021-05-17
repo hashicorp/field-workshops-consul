@@ -1,10 +1,6 @@
-variable "endpoint" {}
-variable "consulconfig" {}
-variable "ca_cert" {}
 variable "ssh_public_key" {
   description = "SSH key for the consul instances"
 }
-variable "consul_token" {}
 variable "app_count" {
   default = 1
 }
@@ -13,8 +9,9 @@ variable "web_count" {
 }
 variable "bigip_mgmt_addr" {}
 variable "bigip_admin_user" {}
-variable "bigip_admin_passwd" {}
+variable "vault_addr" {}
 variable "panos_mgmt_addr" {}
 variable "panos_username" {}
-variable "panos_password" {}
+variable "vault_token" {}
 variable "vip_internal_address" {}
+variable "consul_server_ip" {}

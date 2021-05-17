@@ -39,7 +39,7 @@ Use the following information to access the virtual appliances in this workshop.
 * Palo Alto Firewall Management Username: ${pa_username}
 * Palo Alto Firewall Management Password: ${pa_password}
 
-## F5 BIG-IP: 
+## F5 BIG-IP:
 
 * BIG-IP Management Address: ${bigip_mgmt_url}
 * BIG-IP Management Username: ${f5_username}
@@ -47,8 +47,9 @@ Use the following information to access the virtual appliances in this workshop.
 
 ## App Access
 
-Web Application FQDN = ${app_fqdn}
-Web Application IP = ${app_ip}
+* Web Application FQDN = ${app_fqdn}
+* Web Application IP = ${app_ip}
+
 EOF
 
 
@@ -63,7 +64,7 @@ cat << EOF > /root/terraform/panos_commit/panos-commit.json
     "hostname": "${firewall_ip}",
     "username": "${pa_username}",
     "password": "${pa_password}",
-    "sleep": 20
+    "sleep": 60
 }
 EOF
 
