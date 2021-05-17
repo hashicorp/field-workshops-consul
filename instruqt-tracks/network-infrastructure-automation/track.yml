@@ -1,5 +1,5 @@
-slug: raj-nia-ga
-id: xpsqf8txwytb
+slug: network-infrastructure-automation
+id: zd9iqr8wyub0
 version: 0.0.1
 type: track
 title: Network Infrastructure Automation - Update
@@ -23,7 +23,7 @@ show_timer: true
 skipping_enabled: true
 challenges:
 - slug: 1-review-lab-objectives
-  id: yxebl6snpd3o
+  id: xuq4qb0mo9v1
   type: challenge
   title: Review Lab Objectives
   teaser: Before we begin, lets quickly review the architecture.
@@ -66,7 +66,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 2-provision-azure-vnets
-  id: cnozq7gjfmci
+  id: dwo2s5mw6ona
   type: challenge
   title: Provision Azure VNETs
   teaser: Deploy basic network infrastructure using Terraform
@@ -121,7 +121,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 3-provision-core-services
-  id: tldzdwktbfgy
+  id: dlsjgdoiu2ua
   type: challenge
   title: Provision Core Services
   teaser: Provision Vault and Consul using Terraform
@@ -179,7 +179,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 4-provision-network-infra
-  id: zckpjujeiczv
+  id: qm7eoyy10e00
   type: challenge
   title: Provision F5 BIG-IP & Palo Alto Firewall
   teaser: Provision an F5 BIG-IP VE & Palo Alto Firewall using Terraform
@@ -238,7 +238,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 5-configure-palo-alto-firewall
-  id: mqhktdfvrx5f
+  id: 7vltkulroiy8
   type: challenge
   title: Configure Palo Alto Firewall
   teaser: Provision a Palo Alto VM-Series Firewall using Terraform.
@@ -294,7 +294,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 6-validate-vault
-  id: lpr5ynqurocm
+  id: l6orpveiedpr
   type: challenge
   title: Validate Vault & Consul
   teaser: Verify Vault, and Consul are operational
@@ -352,7 +352,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 7-deploy-app-environments
-  id: cqxtosyyagvf
+  id: wvgbbfknw4fz
   type: challenge
   title: Deploy App environments
   teaser: Deploy a 2-tier VM based application to the cloud.
@@ -414,7 +414,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 8-install-consul-terraform-sync
-  id: uksggixqc3yy
+  id: 4pa4nyish9os
   type: challenge
   title: Deploy 'Consul Terraform Sync'
   teaser: Now we are going install Consul Terraform Sync and bring dynamic service
@@ -508,7 +508,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 9-scale-the-application
-  id: pexgsho8syxz
+  id: 7ffmbpmxzn1p
   type: challenge
   title: Scale the application
   teaser: Let Consul take care of routine adds/moves/changes of services instances.
@@ -605,4 +605,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-checksum: "14088305426760058883"
+checksum: "9275450750584281332"

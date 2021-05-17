@@ -42,9 +42,7 @@ fi
 
 #get assets
 echo "cloning assets..."
-# //FIXME git clone https://github.com/hashicorp/field-workshops-consul.git
-# // Use this dev branch
-git clone -b raj-hcs2ent https://github.com/hashicorp/field-workshops-consul.git
+git clone https://github.com/hashicorp/field-workshops-consul.git
 cp -r field-workshops-consul/instruqt-tracks/network-infrastructure-automation/assets/terraform /root/terraform
 rm -rf field-workshops-consul
 
