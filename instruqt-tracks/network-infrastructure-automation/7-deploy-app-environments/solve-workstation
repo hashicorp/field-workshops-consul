@@ -8,6 +8,6 @@ echo ">>"
 cd /root/terraform/app
 terraform apply -auto-approve > /root/terraform/app/terraform.out
 
-sleep 120
+sleep 300
 
 exit 0

@@ -38,16 +38,4 @@ echo ">>"
 echo ">> Running panos-commit now"
 echo ">>"
 
-sleep 10
-
-nohup /root/terraform/panos_commit/panos-commit -config /root/terraform/panos_commit/panos-commit.json -force
-
-sleep 10 
-
-echo ""
-echo ">>"
-echo ">> 'panos-commit' complete..."
-echo ">>"
-echo ">>"
-
 exit 0

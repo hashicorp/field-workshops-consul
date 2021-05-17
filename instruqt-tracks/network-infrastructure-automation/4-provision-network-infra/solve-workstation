@@ -33,5 +33,7 @@ echo ">>--------------------------------<<"
 #block PANW FW
 while [ -f /root/terraform/panw-vm/.terraform.tfstate.lock.info ]; do echo 'PANW still provisioning'; sleep 5;  done
 
-sleep 30
+#wait for F5
+sleep 180
+
 exit 0

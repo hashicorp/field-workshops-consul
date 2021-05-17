@@ -20,6 +20,7 @@ developers:
 private: true
 published: true
 show_timer: true
+skipping_enabled: true
 challenges:
 - slug: 1-review-lab-objectives
   id: yxebl6snpd3o
@@ -136,10 +137,9 @@ challenges:
 
     When ready, switch to the `Shell` tab and run the following commands:
     ```
-     cd /root/terraform/vault
-     terraform plan
-     terraform apply -auto-approve
-
+    cd /root/terraform/vault
+    terraform plan
+    terraform apply -auto-approve
     ```
 
     ## Consul
@@ -262,11 +262,6 @@ challenges:
 
     ```
 
-    Now we must instruct the firewall to `commit` this change using the following command: (Ignore the error in commit at the end)
-    ```
-    /root/terraform/panos_commit/panos-commit -config /root/terraform/panos_commit/panos-commit.json -force
-    ```
-
     Once the apply has completed, Open up new browser tabs to access the Palo Alto and BIG-IP Virtual Machines using the details in the 'Access Info' tab.
 
     For CLI access to the Firewall execute:
@@ -310,10 +305,14 @@ challenges:
     In the `Shell` tab run the following commands, use the token and try to access secret/f5 and secret/palo. Access is denied due to escalated privilege requirements.
     ```
     vault login -method=userpass username=operations password=Password1
+    vault kv get secret/f5
+    vault kv get secret/pan
     ```
     Now, let's try this again with a user with escalated privilges
     ```
     vault login -method=userpass username=nia password=Password1
+    vault kv get secret/f5
+    vault kv get secret/pan
     ```
     Login to the Consul UI and explore to see what services are available if any.
 
@@ -370,18 +369,13 @@ challenges:
 
     ```
     terraform plan
-    nohup terraform apply -auto-approve > deploy_app.log 2>&1 &
-
+    terraform apply -auto-approve
     ```
 
     By registering nodes and services in Consul, other services can easily discover their health status and network location.
 
     Since the new App and Web services auto-register themselves into Consul, you can now watch the progress of the App deployment by watching the `Consul` tab.
 
-    You could also watch the output of the app deployment log by executing the following command in the `Shell` tab:
-    ```
-    tail -f /root/terraform/app/deploy_app.log
-    ```
     You will explore the environment in more detail in the next challenge.
   notes:
   - type: text
@@ -454,25 +448,25 @@ challenges:
 
     ```
 
-    When completed, connect to the CTS image:
+    When completed, you can connect to the CTS image:
+
     ```
-    consul_terraform_sync=$(curl -s $CONSUL_HTTP_ADDR/v1/catalog/node/consul-terraform-sync | jq -r '.Node.Address')
-    ssh -q -A -J azure-user@$bastion_ip azure-user@$consul_terraform_sync
+    ssh -q -A -J azure-user@$bastion_ip azure-user@$(curl -s $CONSUL_HTTP_ADDR/v1/catalog/node/consul-terraform-sync | jq -r '.Node.Address')
     ```
 
-    Take a look at the `consul-terraform-sync` configuration:
+    Take a look at the `consul-terraform-sync` configuration
     ```
     cat /etc/consul-tf-sync.d/consul-tf-sync-secure.hcl
     ```
 
-    Review the terraform-consul-sync service status with the following command
+    Review the terraform-consul-sync service status with the following command.
     ```
     service consul-tf-sync status
     ```
 
     Look over the Palo Alto & BIG-IP configurations again, per the steps above. Note that their configurations have been updated!
 
-    Next, navigate to the `App` tab. The application is now available through the Firewall and is Load-balanced.
+    Next, navigate to the `App` tab. The application is now available through the Firewall and is Load-balanced. You may need to refresh the tab.
 
     Lastly, navigate back to the 'Current Lab Setup' tab and marvel at the beauty of Network Infrastructure Automation. You did this!
 
@@ -519,7 +513,13 @@ challenges:
   title: Scale the application
   teaser: Let Consul take care of routine adds/moves/changes of services instances.
   assignment: |-
-    "Now let's re-run the Terraform code for the application, with some new variables to scale the application out:
+    In this assignment we will watch CTS run as we scale up the application. Tail the CTS logs in one of the shells.
+
+    ```
+    ssh -q -A -J azure-user@$bastion_ip azure-user@$(curl -s $CONSUL_HTTP_ADDR/v1/catalog/node/consul-terraform-sync | jq -r '.Node.Address') journalctl -u consul-tf-sync -f
+    ```
+
+    Now let's re-run the Terraform code for the application in the other shell, with some new variables to scale the application out:
 
     ```
     terraform apply -var app_count=3 -var web_count=3 -auto-approve
@@ -576,6 +576,9 @@ challenges:
   - title: Shell
     type: terminal
     hostname: workstation
+  - title: Shell
+    type: terminal
+    hostname: workstation
   - title: Access Info
     type: code
     hostname: workstation
@@ -602,4 +605,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-checksum: "2300029277557385086"
+checksum: "17132004086068220906"
