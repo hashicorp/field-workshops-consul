@@ -9,7 +9,9 @@ apt install consul=1.9.4 unzip nginx -y
 
 #cts
 CONSUL_TEMPLATE_VERSION="0.22.0"
-curl --silent --remote-name https://releases.hashicorp.com/consul-template/$${CONSUL_TEMPLATE_VERSION}/consul-template_$${CONSUL_TEMPLATE_VERSION}_linux_amd64.zip
+sudo curl --silent --remote-name https://releases.hashicorp.com/consul-template/$${CONSUL_TEMPLATE_VERSION}/consul-template_$${CONSUL_TEMPLATE_VERSION}_linux_amd64.zip
+sudo unzip consul-template_$${CONSUL_TEMPLATE_VERSION}_linux_amd64.zip
+sudo mv consul-template /usr/local/bin/consul-template
 sudo cat << EOF > /etc/systemd/system/consul-template.service
 [Unit]
 Description="Template rendering, notifier, and supervisor for @hashicorp Consul and Vault data."
@@ -19,8 +21,8 @@ After=network-online.target
 [Service]
 User=root
 Group=root
-ExecStart=/usr/local/bin/consul-template -config=/etc/consul-template/consul-template-config.hcl
-ExecReload=/usr/local/bin/consul reload
+ExecStart=/usr/local/bin/consul-template -log-level=debug -config=/etc/consul-template/consul-template-config.hcl
+ExecReload=/usr/bin/consul reload
 KillMode=process
 Restart=always
 LimitNOFILE=65536
