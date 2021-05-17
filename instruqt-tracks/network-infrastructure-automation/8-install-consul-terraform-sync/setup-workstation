@@ -14,7 +14,7 @@ terraform init
 
 ##creds
 vault login root
-vault_token=root
+vault_token=$(vault token create -field token -policy nia -period 8h -orphan)
 consul_server_ip=$(terraform output -state=/root/terraform/consul-server/terraform.tfstate consul_server_ip)
 vault_addr=$(terraform output -state=/root/terraform/vault/terraform.tfstate vault_lb)
 bigip_mgmt_addr=$(terraform output -state=/root/terraform/bigip/terraform.tfstate mgmt_ip)
