@@ -62,7 +62,7 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/1.NIA-Workshop-CTS.html
   - title: NIA - Traffic Flow
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/1.NIA-Workshop-CTS_Traffic.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/1.NIA-Workshop-NetOps_Traffic.html
   difficulty: basic
   timelimit: 300
 - slug: 2-provision-azure-vnets
@@ -605,4 +605,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-checksum: "9275450750584281332"
+checksum: "14753806541006265867"
