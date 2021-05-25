@@ -23,6 +23,20 @@ challenges:
   type: challenge
   title: "Get Into My Sidecar \U0001F697"
   teaser: Create a sidecar service definition for your application proxy
+  notes:
+  - type: text
+    contents: |-
+      Connect proxies are typically deployed as _sidecars_ to an instance
+      that they handle traffic for. They might be on the same bare metal server, virtual
+      machine, or Kubernetes daemonset. Connect has a pluggable proxy architecture,
+      with awesome first-class support for Envoy. We'll use Envoy as our proxy for
+      the entirety of this workshop. <br>
+
+      Visit the [Connect docs](https://www.consul.io/docs/connect/proxies.html) for more info on proxy integration. <br>
+
+      In this challenge, we'll set up a sidecar definition.
+  - type: image
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/docs/slides/multi-cloud/consul-oss/images/connect_sidecar.png
   assignment: |-
     In this challenge we'll add a sidecar service to our existing service definition. <br>
 
@@ -69,20 +83,6 @@ challenges:
     This is expected! <br>
 
     We will start a proxy and register it with Connect in our next challenge.
-  notes:
-  - type: text
-    contents: |-
-      Connect proxies are typically deployed as _sidecars_ to an instance
-      that they handle traffic for. They might be on the same bare metal server, virtual
-      machine, or Kubernetes daemonset. Connect has a pluggable proxy architecture,
-      with awesome first-class support for Envoy. We'll use Envoy as our proxy for
-      the entirety of this workshop. <br>
-
-      Visit the [Connect docs](https://www.consul.io/docs/connect/proxies.html) for more info on proxy integration. <br>
-
-      In this challenge, we'll set up a sidecar definition.
-  - type: image
-    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/docs/slides/multi-cloud/consul-oss/images/connect_sidecar.png
   tabs:
   - title: Consul UI
     type: service
@@ -94,7 +94,7 @@ challenges:
   - title: Database Service
     type: code
     hostname: database
-    path: /consul/config/database_service.json
+    path: /etc/consul.d/database_service.json
   difficulty: basic
   timelimit: 900
 - slug: 02-sidecar-proxies
@@ -102,6 +102,18 @@ challenges:
   type: challenge
   title: "Introducing the Envoy Proxy \U0001F5A7"
   teaser: Run your first Connect sidecar proxy with Envoy
+  notes:
+  - type: text
+    contents: |-
+      In the last challenge we set up a sidecar service definition for our
+      Envoy proxy. This is the first step in bringing our mesh to life. <br>
+
+      The sidecar definition tells Consul to expect a proxy registration for a service, Database, in this example. <br>
+
+      Now that Consul is aware that the Database service should run a proxy,
+      we can use the Consul agent to bootstrap the proxy and send it dynamic configuration. <br>
+
+      We'll take a deeper look at this configuration later.
   assignment: |-
     Now that we've registered a proxy service in Consul for our MySQL database,
     let's start the proxy server so the health check will pass. <br>
@@ -120,18 +132,6 @@ challenges:
     You can verify in the Consul UI or the with the Consul CLI that your proxy health check is now passing. <br>
 
     We can now use the proxy to establish communication between our application and the database!
-  notes:
-  - type: text
-    contents: |-
-      In the last challenge we set up a sidecar service definition for our
-      Envoy proxy. This is the first step in bringing our mesh to life. <br>
-
-      The sidecar definition tells Consul to expect a proxy registration for a service, Database, in this example. <br>
-
-      Now that Consul is aware that the Database service should run a proxy,
-      we can use the Consul agent to bootstrap the proxy and send it dynamic configuration. <br>
-
-      We'll take a deeper look at this configuration later.
   tabs:
   - title: Consul UI
     type: service
@@ -143,7 +143,7 @@ challenges:
   - title: Database Service
     type: code
     hostname: database
-    path: /consul/config/database_service.json
+    path: /etc/consul.d/database_service.json
   difficulty: basic
   timelimit: 900
 - slug: 03-sidecar-upstreams
@@ -151,6 +151,15 @@ challenges:
   type: challenge
   title: "Connect Upstream with Envoy \U0001F517"
   teaser: Add an upstream definition for our Envoy app proxy
+  notes:
+  - type: text
+    contents: |-
+      Connect provides service connectivity through upstream definitions.
+      These services could be a database, backend, or any service which another service relies on. <br>
+
+      In the previous challenges we set up a sidecar service definition without an upstream definition.  <br>
+
+      In this assignment we'll modify our sidecar service and add an upstream definition that will allow our application to connect to its database.
   assignment: |-
     We've brought back our application server for this assignment. <br>
 
@@ -208,15 +217,6 @@ challenges:
     ```
 
     We'll configure our application to use the listener in our next assignment.
-  notes:
-  - type: text
-    contents: |-
-      Connect provides service connectivity through upstream definitions.
-      These services could be a database, backend, or any service which another service relies on. <br>
-
-      In the previous challenges we set up a sidecar service definition without an upstream definition.  <br>
-
-      In this assignment we'll modify our sidecar service and add an upstream definition that will allow our application to connect to its database.
   tabs:
   - title: Consul UI
     type: service
@@ -228,7 +228,7 @@ challenges:
   - title: App Service
     type: code
     hostname: app
-    path: /consul/config/application_service.json
+    path: /etc/consul.d/application_service.json
   difficulty: basic
   timelimit: 900
 - slug: 04-enable-localhost-proxy
@@ -236,6 +236,9 @@ challenges:
   type: challenge
   title: "Enter the Meshtrix \U0001F469\U0001F3FB‍\U0001F4BB"
   teaser: Use Consul and Envoy to connect our application to a backend database
+  notes:
+  - type: text
+    contents: In this section will use Envoy to connect the application to the database.
   assignment: |-
     In the last assignment we created an Envoy listener for our database
     service through a Connect upstream definition. <br>
@@ -246,9 +249,6 @@ challenges:
 
     Go ahead and do this now. Check the `Website` tab.
     Our service mesh blog is back online!
-  notes:
-  - type: text
-    contents: In this section will use Envoy to connect the application to the database.
   tabs:
   - title: Consul UI
     type: service
@@ -273,22 +273,6 @@ challenges:
   title: "Open and Close the Gates \U0001F511\U0001F6AA"
   teaser: Use Consul intentions to allow or deny proxy traffic based on application
     service identity.
-  assignment: |-
-    Traffic is denied by default at the start of this assignment, so our application is now broken. <br>
-    Let's create an allow rule to bring back our application.
-    Copy the following command into the *app* tab. <br>
-
-    ```
-    consul intention create -allow wordpress mysql
-    ```
-
-    You can also manage Intentions in the `Intentions` tab of the Consul UI.
-    Click on the intention, and change it to `deny`.  What happens? <br>
-
-    Change it back to `allow` to restore service.
-    With connectivity from the database restored, your application should be serving traffic once again!!! <br>
-
-    We'll dive deeper into how this works in the next challenge.
   notes:
   - type: text
     contents: Intentions define access control for services via Consul Connect and
@@ -305,6 +289,22 @@ challenges:
       Instead, we can manage traffic in simple terms by what an application is or does. <br>
 
       Let's use intentions to restrict connectivity from our application to the database.
+  assignment: |-
+    Traffic is denied by default at the start of this assignment, so our application is now broken. <br>
+    Let's create an allow rule to bring back our application.
+    Copy the following command into the *app* tab. <br>
+
+    ```
+    consul intention create -allow wordpress mysql
+    ```
+
+    You can also manage Intentions in the `Intentions` tab of the Consul UI.
+    Click on the intention, and change it to `deny`.  What happens? <br>
+
+    Change it back to `allow` to restore service.
+    With connectivity from the database restored, your application should be serving traffic once again!!! <br>
+
+    We'll dive deeper into how this works in the next challenge.
   tabs:
   - title: Consul UI
     type: service
@@ -324,6 +324,16 @@ challenges:
   type: challenge
   title: Pop Open the Hood ⚙️
   teaser: Peek inside and learn some Envoy & Consul magic
+  notes:
+  - type: text
+    contents: |-
+      In this assignment, we'll take a deeper look at Envoy. We'll focus on three elements that make up the foundation of our mesh. <br>
+
+      * mTLS - How did Connect and Envoy provide end-to-end encryption between services?
+      * Service Discovery - How was Consul able to get service discovery information to the Envoy proxy for it's upstreams?
+      * Intentions - How were we able to allow or deny traffic based on service identity?
+
+      Let's investigate each of these with some easy to get info from Envoy.
   assignment: |-
     First, let's check out some of the certificate information from our Envoy proxy.
     You can see some basic cert info in the Envoy UI under `certs`.
@@ -361,16 +371,6 @@ challenges:
     ```
 
     That's it!!! Now you're an expert at troubleshooting Connect & Envoy!!!
-  notes:
-  - type: text
-    contents: |-
-      In this assignment, we'll take a deeper look at Envoy. We'll focus on three elements that make up the foundation of our mesh. <br>
-
-      * mTLS - How did Connect and Envoy provide end-to-end encryption between services?
-      * Service Discovery - How was Consul able to get service discovery information to the Envoy proxy for it's upstreams?
-      * Intentions - How were we able to allow or deny traffic based on service identity?
-
-      Let's investigate each of these with some easy to get info from Envoy.
   tabs:
   - title: App - Envoy
     type: service
@@ -397,4 +397,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 900
-checksum: "17806555842579913283"
+checksum: "10461241283376132580"

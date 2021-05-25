@@ -4,26 +4,24 @@
 echo "Fixing our path..."
 export PATH=/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 
-#Get Envoy for us
-curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
-getenvoy run standard:1.11.1 -- --version
-cp /root/.getenvoy/builds/standard/1.11.1/linux_glibc/bin/envoy /usr/local/bin/envoy
-envoy --version
+#Utils
+apt-get update -y && apt-get install -y curl unzip wget dnsutils netcat jq
 
-echo "Installing utilities..."
-apt -y update
-apt -y install unzip wget dnsutils
-apt -y install netcat
-apt -y install jq
-echo "Installing consul..."
-wget https://releases.hashicorp.com/consul/1.6.1/consul_1.6.1_linux_amd64.zip -O /tmp/consul.zip
-cd /usr/local/bin
-unzip /tmp/consul.zip
-chmod +x /usr/local/bin/consul
-mkdir -p /consul/config
-mkdir -p /consul/data
+#Envoy
+apt-get update -y
+apt-get install -y gnupg2 software-properties-common
+curl -sL 'https://getenvoy.io/gpg' |  apt-key add -
+apt-add-repository "deb [arch=amd64] https://dl.bintray.com/tetrate/getenvoy-deb $(lsb_release -cs) stable"
+apt-get update -y &&  apt-get install -y getenvoy-envoy=1.16.3.p0.gc4b7ab8-1p74.gbb8060d
 
-cat <<-EOF > /consul/config/client.json
+#consul
+rm -f /usr/local/bin/consul
+curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+apt-get update -y && apt-get install -y consul=1.9.4
+rm -f /etc/consul.d/consul.hcl
+
+cat <<-EOF > /etc/consul.d/client.json
 {
   "datacenter": "dc1",
   "bind_addr": "0.0.0.0",
@@ -50,7 +48,7 @@ cat <<-EOF > /consul/config/client.json
 }
 EOF
 
-cat <<-EOF > /consul/config/application_service.json
+cat <<-EOF > /etc/consul.d/application_service.json
 {
   "service": {
     "name": "wordpress",
@@ -79,16 +77,18 @@ cat <<-EOF > /bin/start_consul.sh
 #!/bin/sh
 echo "Starting HashiCorp Consul in client Mode..."
 sleep 1
-echo "CMD: nohup consul agent -config-dir=/consul/config > /consul.out &"
-nohup /usr/local/bin/consul agent -config-dir=/consul/config > /consul.out &
+echo "CMD: nohup consul agent -config-dir=/etc/consul.d > /consul.out &"
+nohup /usr/bin/consul agent -config-dir=/etc/consul.d > /consul.out &
 echo "Log output will appear in consul.out..."
 sleep 1
 echo "Consul client startup complete."
 EOF
-
 chmod +x /bin/start_consul.sh
+
+#start consul
 /bin/start_consul.sh
 
+#start envoy
 nohup consul connect envoy -sidecar-for wordpress -admin-bind=0.0.0.0:19000 > /envoy.out &
 
 #hack this

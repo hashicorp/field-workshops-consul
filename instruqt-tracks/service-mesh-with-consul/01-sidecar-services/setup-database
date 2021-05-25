@@ -1,19 +1,27 @@
 #!/bin/sh
 
-#Get Curl
+#Path
 echo "Fixing our path..."
 export PATH=/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
-apt-get update -y
-apt-get install -y curl
+#Curl
+apt-get update -y && apt-get install -y curl
 
 #Get enovy for us
-curl -L https://getenvoy.io/cli | bash -s -- -b /usr/local/bin
-getenvoy run standard:1.11.1 -- --version
-cp /root/.getenvoy/builds/standard/1.11.1/linux_glibc/bin/envoy /usr/local/bin/envoy
-envoy --version
+apt-get update -y
+apt-get install -y lsb-core software-properties-common
+curl -sL 'https://getenvoy.io/gpg' |  apt-key add -
+apt-add-repository "deb [arch=amd64] https://dl.bintray.com/tetrate/getenvoy-deb $(lsb_release -cs) stable"
+apt-get update -y &&  apt-get install -y getenvoy-envoy=1.16.3.p0.gc4b7ab8-1p74.gbb8060d
+
+#consul
+rm -f /usr/local/bin/consul
+curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+apt-get update -y && apt-get install -y consul=1.9.4
+rm -f /etc/consul.d/consul.hcl
 
 # Creating the Consul client config
-cat <<-EOF > /consul/config/client.json
+cat <<-EOF > /etc/consul.d/client.json
 {
   "datacenter": "dc1",
   "bind_addr": "0.0.0.0",
@@ -40,7 +48,7 @@ cat <<-EOF > /consul/config/client.json
 }
 EOF
 
-cat <<-EOF > /consul/config/database_service.json
+cat <<-EOF > /etc/consul.d/database_service.json
 {
   "service": {
     "name": "mysql",
@@ -68,8 +76,8 @@ cat <<-EOF > /bin/start_consul.sh
 #!/bin/sh
 echo "Starting HashiCorp Consul in client Mode..."
 sleep 1
-echo "CMD: nohup consul agent -config-dir=/consul/config > /consul.out &"
-nohup /usr/local/bin/consul agent -config-dir=/consul/config > /consul.out &
+echo "CMD: nohup consul agent -config-dir=/etc/consul.d > /consul.out &"
+nohup /usr/bin/consul agent -config-dir=/etc/consul.d > /consul.out &
 echo "Log output will appear in consul.out..."
 sleep 1
 echo "Consul client startup complete."

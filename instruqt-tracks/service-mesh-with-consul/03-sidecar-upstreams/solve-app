@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cat <<-EOF > /consul/config/application_service.json
+cat <<-EOF > /etc/consul.d/application_service.json
 {
   "service": {
     "name": "wordpress",
@@ -32,7 +32,7 @@ cat <<-EOF > /consul/config/application_service.json
 }
 EOF
 
-/usr/local/bin/consul reload
+/usr/bin/consul reload
 
 sleep 10
 

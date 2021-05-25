@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cat <<-EOF > /consul/config/database_service.json
+cat <<-EOF > /etc/consul.d/database_service.json
 {
   "service": {
     "name": "mysql",
@@ -21,7 +21,7 @@ cat <<-EOF > /consul/config/database_service.json
 }
 EOF
 
-/usr/local/bin/consul reload
+/usr/bin/consul reload
 
 sleep 10
 
