@@ -1,6 +1,8 @@
 global:
   name: consul
   datacenter: k8s1
+  image: 'hashicorp/consul-enterprise:1.10.0-ent-beta2'
+  imageK8S: 'hashicorp/consul-k8s:0.26.0-beta2'
   tls:
     enabled: true
   federation:
@@ -37,7 +39,9 @@ syncCatalog:
   default: false
 connectInject:
   enabled: true
-  default: false
+  default: true
+  transparentProxy:
+    defaultEnabled: true
   envoyExtraArgs: "-l debug"
 ui:
   enabled: true

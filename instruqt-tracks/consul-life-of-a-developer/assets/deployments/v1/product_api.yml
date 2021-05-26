@@ -1,5 +1,17 @@
 ---
 apiVersion: v1
+kind: Service
+metadata:
+  name: product-api
+spec:
+  selector:
+    app: product-api
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: product-api
@@ -11,8 +23,8 @@ metadata:
 data:
   conf.json: |
     {
-    "db_connection": "host=127.0.0.1 port=5432 user=postgres password=postgres dbname=products sslmode=disable",
-    "bind_address": ":9090",
+    "db_connection": "host=product-db port=5432 user=postgres password=postgres dbname=products sslmode=disable",
+    "bind_address": ":8080",
     "metrics_address": ":9103"
     }
 ---
@@ -35,7 +47,6 @@ spec:
         prometheus.io/scrape: "true"
         prometheus.io/port: "9901"
         consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/connect-service-upstreams: "product-db:5432:k8s2"
     spec:
       serviceAccountName: product-api
       volumes:
@@ -50,19 +61,11 @@ spec:
               mountPath: /app/conf.json
               subPath: conf.json
           ports:
-            - containerPort: 9090
+            - containerPort: 8080
           env:
             - name: BIND_ADDRESS
-              value: ":9090"
+              value: ":8080"
             - name: CONFIG_FILE
               value: /app/conf.json
             - name : JAEGER_ENDPOINT
               value: http://jaeger-collector:14268/api/traces
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 9090
-            initialDelaySeconds: 10
-            timeoutSeconds: 1
-            periodSeconds: 10
-            failureThreshold: 2

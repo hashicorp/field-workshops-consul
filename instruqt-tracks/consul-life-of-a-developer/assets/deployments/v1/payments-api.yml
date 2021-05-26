@@ -1,17 +1,28 @@
 ---
 apiVersion: v1
+kind: Service
+metadata:
+  name: payments-api
+spec:
+  selector:
+    app: payments-api
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: payments-api
-
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: payments-properties-conf-v1
+  name: payments-properties-conf
 data:
   application.properties: |
-    app.storage=redis
+    app.storage=disabled
     app.encryption.enabled=false
     opentracing.jaeger.http-sender.url=http://jaeger-collector:14268/api/traces
     opentracing.jaeger.include-jaeger-env-tags=true
@@ -21,23 +32,22 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: payments-api-v1
+  name: payments-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: payments-api-v1
-      app: payments-api-v1
+      service: payments-api
+      app: payments-api
   template:
     metadata:
       labels:
-        service: payments-api-v1
-        app: payments-api-v1
+        service: payments-api
+        app: payments-api
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "9901"
         consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/connect-service-upstreams: "payments-queue:6379:k8s2"
         consul.hashicorp.com/service-meta-version: v1
         consul.hashicorp.com/service-tags: v1
     spec:
@@ -45,7 +55,7 @@ spec:
       volumes:
         - name: properties-conf
           configMap:
-            name: payments-properties-conf-v1
+            name: payments-properties-conf
       containers:
         - name: payments-api
           image: hashicorpdemoapp/payments:latest
@@ -60,11 +70,3 @@ spec:
               value: ":8080"
             - name : JAEGER_ENDPOINT
               value: http://jaeger-collector:14268/api/traces
-          readinessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 8080
-            timeoutSeconds: 1
-            periodSeconds: 5
-            failureThreshold: 3
-            initialDelaySeconds: 30
