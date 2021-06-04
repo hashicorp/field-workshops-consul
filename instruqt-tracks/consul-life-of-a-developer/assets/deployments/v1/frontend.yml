@@ -59,8 +59,6 @@ spec:
         service: frontend
         app: frontend
       annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9901"
         consul.hashicorp.com/connect-inject: "true"
     spec:
       serviceAccountName: frontend

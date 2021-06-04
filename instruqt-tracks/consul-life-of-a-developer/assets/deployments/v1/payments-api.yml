@@ -45,11 +45,10 @@ spec:
         service: payments-api
         app: payments-api
       annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9901"
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/service-meta-version: v1
         consul.hashicorp.com/service-tags: v1
+        consul.hashicorp.com/service-metrics-path: "/actuator/prometheus"
     spec:
       serviceAccountName: payments-api
       volumes:
@@ -58,7 +57,7 @@ spec:
             name: payments-properties-conf
       containers:
         - name: payments-api
-          image: hashicorpdemoapp/payments:latest
+          image: lanceplarsen/payments:dev
           volumeMounts:
             - name: properties-conf
               mountPath: /config/application.properties
@@ -66,7 +65,5 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: BIND_ADDRESS
-              value: ":8080"
             - name : JAEGER_ENDPOINT
               value: http://jaeger-collector:14268/api/traces

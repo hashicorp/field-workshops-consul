@@ -32,9 +32,8 @@ spec:
         service: public-api
         app: public-api
       annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9901"
         consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/service-metrics-port: "9102"
     spec:
       serviceAccountName: public-api
       containers:
@@ -45,6 +44,8 @@ spec:
           env:
             - name: BIND_ADDRESS
               value: ":8080"
+            - name: METRICS_ADDRESS
+              value: ":9102"
             - name: PRODUCT_API_URI
               value: "http://product-api:8080"
             - name: PAYMENT_API_URI
