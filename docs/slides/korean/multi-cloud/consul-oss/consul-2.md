@@ -22,7 +22,7 @@ Service Discovery and Load Balancers
 
 * 서비스가 어디에 존재하는지 아는것이 중요함
 * 전통적인 Load Balancer로 접근하면
-   * 비쌈
+   * 비싸거나 유지보수 비용이 증가
    * 점점 유지보수가 어려워짐
    * 확장에 따라 부하가 증가함
    * 모든 백엔드 시스템의 상태를 확인할 수 있는 프로브가 필요함
@@ -48,7 +48,7 @@ name: Myriad-Use-Cases
 class: compact
 Solve Network Problems with Service Discovery
 -------------------------
-Consul을 사용하면 DNS 기반 서비스 카탈로그에 논리적인 서비스 쿼리를 구축 할 수 있습니다. 이렇게하면 기본 데이터 센터를 사용할 수 없을 때 투명한 장애 조치가 가능합니다.
+Consul을 사용하면 DNS 기반 서비스 카탈로그에 논리적인 서비스 쿼리를 구축 할 수 있습니다. 이렇게하면 기본 데이터 센터를 사용할 수 없을 때 가시적인 장애 조치 구성이 가능합니다.
 
 ```json
 {
@@ -71,12 +71,11 @@ name: Myriad-Use-Cases-Example
 Example
 -------------------------
 
-Consul 서비스 디스커버리 기능으로 해결할 수있는 다른 많은 실제 사용 사례가 있습니다. 이러한 시나리오 중 일부에는 정상 노드로의 트래픽 자동 라우팅, 블루/그린 배포, 서비스 잠금, 구성 관리 등이 포함됩니다. 이 HashiConf 강연에서 Consul의 실제 사용에 대해 자세히 알아보세요.:
+Consul 서비스 디스커버리 기능으로 해결할 수있는 다른 많은 실제 사용 사례가 있습니다. 이러한 시나리오 중 일부에는 정상 노드로의 트래픽 자동 라우팅, 블루/그린 배포, 서비스 잠금, 구성 관리 등이 포함됩니다. 이 HashiConf 강연에서 Consul의 실제 사용에 대해 확인해볼 수 있습니다.:
 
 .center[
 <a href="https://www.youtube.com/watch?v=XZZDVUCCilM" target=_blank>Consul Infrastructure Recipes - the story of Taco Hub 🌮</a>
 ]
-
 
 ???
 When you have some time, this is a great talk from HashiConf which dives into a number different Consul use cases and give you some bit-size recipes.
@@ -123,7 +122,7 @@ The power of this is that all of this can be defined in a simple service definit
 ---
 name: Consul-Service-Definition
 class: compact
-Consul Service Definition
+Consul Service 구성 정의의 예
 -------------------------
 
 ```hcl
