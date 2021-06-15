@@ -31,61 +31,6 @@ gcloud beta compute addresses create internal-10-1-0-12 \
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 helm repo add hashicorp https://helm.releases.hashicorp.com
 
-cat <<EOF>  /root/terraform/gcp-consul-secondary/consul-values.yaml
-global:
-  name: consul
-  datacenter: gcp-us-central-1
-  image: 'hashicorp/consul-enterprise:1.9.0-ent'
-  tls:
-    enabled: true
-    caCert:
-      secretName: consul-federation
-      secretKey: caCert
-    caKey:
-      secretName: consul-federation
-      secretKey: caKey
-    serverAdditionalIPSANs:
-      - 10.1.0.10
-    enableAutoEncrypt: true
-  gossipEncryption:
-    secretName: consul-federation
-    secretKey: gossipEncryptionKey
-  acls:
-    manageSystemACLs: true
-    replicationToken:
-      secretName: consul-federation
-      secretKey: replicationToken
-  federation:
-    enabled: true
-ui:
-  enabled: true
-  service:
-    enabled: true
-    type: LoadBalancer
-server:
-  replicas: 1
-  bootstrapExpect: 1
-  extraVolumes:
-    - type: secret
-      name: consul-federation
-      items:
-        - key: serverConfigJSON
-          path: config.json
-      load: true
-client:
-  enabled: true
-meshGateway:
-  enabled: true
-  replicas: 1
-syncCatalog:
-  enabled: true
-  default: false
-  toConsul: true
-  toK8S: false
-connectInject:
-  enabled: true
-EOF
-
 cat <<EOF>  /root/terraform/gcp-consul-secondary/consul-join.yaml
 apiVersion: v1
 kind: Service

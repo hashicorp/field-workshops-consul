@@ -1,5 +1,5 @@
-slug: multi-cloud-service-networking-with-consul
-id: iklbsgjpisau
+slug: raj-multi-cloud-service-networking-with-consul
+id: iklbsgrxisau
 type: track
 title: Multi Cloud Service Networking with Consul
 teaser: Deploy a multi-cloud service mesh solution with Consul
@@ -14,9 +14,9 @@ tags:
 - nomad
 owner: hashicorp
 developers:
-- lance@hashicorp.com
-- thomas@hashicorp.com
-- cpu@hashicorp.com
+- null
+- null
+- null
 private: true
 published: true
 show_timer: true
@@ -27,6 +27,11 @@ challenges:
   type: challenge
   title: Provision Cloud Infrastructure
   teaser: Create cloud VPCs
+  notes:
+  - type: text
+    contents: |
+      You are being provisioned on-demand cloud infrastructure. <br>
+      Please be patient as this can take up to ~15 minutes.
   assignment: |
     The terraform code will provision cloud infrastructure in AWS, GPC, and Azure. <br>
 
@@ -55,11 +60,6 @@ challenges:
     * AZURE - `packer build -force -only=azure-ubuntu-bionic hashistack.json`
 
     In the next few challenges we will centralize secrets across environments.
-  notes:
-  - type: text
-    contents: |
-      You are being provisioned on-demand cloud infrastructure. <br>
-      Please be patient as this can take up to ~15 minutes.
   tabs:
   - title: Shell
     type: terminal
@@ -1536,4 +1536,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "17234839525201661139"
+checksum: "10949935061109895857"

@@ -6,7 +6,6 @@ vault login -method=userpass username=admin password=admin
 #seed vault with consul bootstrap secrets
 vault kv put kv/consul \
   master_token=$(cat /proc/sys/kernel/random/uuid) \
-  replication_token=$(cat /proc/sys/kernel/random/uuid) \
   gossip_key=$(consul keygen) \
   ttl=5m
 
