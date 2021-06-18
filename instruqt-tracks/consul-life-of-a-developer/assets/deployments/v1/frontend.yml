@@ -51,12 +51,10 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      service: frontend
       app: frontend
   template:
     metadata:
       labels:
-        service: frontend
         app: frontend
       annotations:
         consul.hashicorp.com/connect-inject: "true"

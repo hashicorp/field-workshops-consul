@@ -24,12 +24,10 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      service: public-api
       app: public-api
   template:
     metadata:
       labels:
-        service: public-api
         app: public-api
       annotations:
         consul.hashicorp.com/connect-inject: "true"

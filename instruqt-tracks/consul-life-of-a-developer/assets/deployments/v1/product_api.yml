@@ -23,7 +23,7 @@ metadata:
 data:
   conf.json: |
     {
-    "db_connection": "host=product-db port=5432 user=postgres password=postgres dbname=products sslmode=disable",
+    "db_connection": "host=127.0.0.1 port=5432 user=postgres password=postgres dbname=products sslmode=disable",
     "bind_address": ":8080",
     "metrics_address": ":9102"
     }
@@ -36,16 +36,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      service: product-api
       app: product-api
   template:
     metadata:
       labels:
-        service: product-api
         app: product-api
       annotations:
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/service-metrics-port: "9102"
+        consul.hashicorp.com/connect-service-upstreams: "product-db:5432:k8s2"
     spec:
       serviceAccountName: product-api
       volumes:
