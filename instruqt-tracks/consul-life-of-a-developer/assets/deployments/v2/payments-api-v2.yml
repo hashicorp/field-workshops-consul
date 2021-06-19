@@ -1,5 +1,22 @@
 ---
 apiVersion: v1
+kind: Service
+metadata:
+  name: payments-api
+spec:
+  selector:
+    app: payments-api
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: payments-api
+---
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: payments-properties-conf-v2
@@ -58,6 +75,7 @@ spec:
         consul.hashicorp.com/connect-service-upstreams: "payments-queue:6379:k8s2"
         consul.hashicorp.com/service-meta-version: v2
         consul.hashicorp.com/service-tags: v2
+        consul.hashicorp.com/service-metrics-path: "/actuator/prometheus"
     spec:
       serviceAccountName: payments-api
       volumes:
@@ -69,7 +87,7 @@ spec:
             name: payments-bootstrap-conf-v2
       containers:
         - name: payments-api
-          image: hashicorpdemoapp/payments:latest
+          image: hashicorpdemoapp/payments:v0.0.12
           volumeMounts:
             - name: properties-config
               mountPath: /config/application.properties
