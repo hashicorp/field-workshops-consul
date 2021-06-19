@@ -252,7 +252,7 @@ challenges:
     kubectl wait pod --for=condition=Ready --selector=app=frontend
     kubectl wait pod --for=condition=Ready --selector=app=public-api
     kubectl wait pod --for=condition=Ready --selector=app=product-api
-    kubectl wait pod --for=condition=Ready --selector=app=payments-api,version=v1
+    kubectl wait pod --for=condition=Ready --selector=app=payments-api,version=v1 --timeout 90s
     ```
 
     In the next assignment you will test the application, and the connectivity other K8s cluster.
@@ -1079,4 +1079,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
-checksum: "9662220904060752154"
+checksum: "9352823977179509928"
