@@ -11,6 +11,7 @@ developers:
 - lance@hashicorp.com
 private: true
 published: true
+maintenance: true
 show_timer: true
 skipping_enabled: true
 challenges:
@@ -20,9 +21,20 @@ challenges:
   title: Service Mesh - Environment Review
   teaser: Learn about HashiCups
   assignment: |-
-    In this assignment, take a few moments to review the lab and the overall architecture for HashiCups. <br>
+    In this assignment, take a few moments to review the lab and the overall architecture for HashiCups.
+    You can see the repository for the HashiCups demo application here: https://github.com/hashicorp-demoapp. <br>
 
-    You can see the repository for the HashiCups demo application here: https://github.com/hashicorp-demoapp
+
+    You can also view the services already running in your primary Kube cluster.
+
+    ```
+    kubectl config use-context k8s1
+    kubectl get deployments
+    kubectl get pods
+    kubectl get svc
+    ```
+
+    In the next few assignments you will deploy Consul.
   tabs:
   - title: Workstation
     type: terminal
@@ -44,7 +56,7 @@ challenges:
 
     ```
     kubectl config use-context k8s1
-    helm install -f /root/helm/k8s1-consul-values.yaml consul hashicorp/consul  --wait --debug
+    helm install -f /root/helm/k8s1-consul-values.yaml consul hashicorp/consul  --wait --debug --version "0.32.0-beta3"
     ```
 
     Check the pods. <br>
@@ -61,10 +73,11 @@ challenges:
 
     You can also see the Consul UI is now up. <br>
 
-    Last, set up the proxy defaults for the mesh. <br>
+    Last, set up the proxy, and mesh defaults for the mesh. <br>
 
     ```
     kubectl apply -f deployments/config/proxy-defaults.yml
+    kubectl apply -f deployments/config/mesh.yml
     ```
 
     In the next assignment you will federate with the other K8s clusters.
@@ -130,7 +143,7 @@ challenges:
 
     ```
     kubectl config use-context k8s2
-    helm install -f /root/helm/k8s2-consul-values.yaml hashicorp hashicorp/consul  --wait --debug
+    helm install -f /root/helm/k8s2-consul-values.yaml hashicorp hashicorp/consul  --wait --debug --version "0.32.0-beta3"
     ```
 
     Check that the Kubernetes clusters are now federated.
@@ -239,7 +252,7 @@ challenges:
     kubectl wait pod --for=condition=Ready --selector=app=frontend
     kubectl wait pod --for=condition=Ready --selector=app=public-api
     kubectl wait pod --for=condition=Ready --selector=app=product-api
-    kubectl wait pod --for=condition=Ready --selector=app=payments-api-v1
+    kubectl wait pod --for=condition=Ready --selector=app=payments-api,version=v1
     ```
 
     In the next assignment you will test the application, and the connectivity other K8s cluster.
@@ -450,7 +463,7 @@ challenges:
     Let's check the status off the probe. <br>
 
     ```
-    kubectl get pod --selector=app=payments-api-v1 -o json | jq .items[0].status.conditions
+    kubectl get pod --selector=app=payments-api,version=v1 -o json | jq .items[0].status.conditions
     ```
 
     Now, Check the status in Consul. <br>
@@ -691,7 +704,7 @@ challenges:
     ```
     kubectl config use-context k8s1
     kubectl apply -f v2
-    kubectl wait pod --for=condition=Ready --selector=app=payments-api-v2
+    kubectl wait pod --for=condition=Ready --selector=app=payments-api,version=v2 --timeout=90s
     ```
 
     Validate that the traffic shifting rules have been applied, and the weights are correct.
@@ -802,8 +815,8 @@ challenges:
     kubectl scale deployment.v1.apps/payments-api-v1 --replicas=0
     kubectl apply -f observability/payments-api-v2-chaos.yml
     sleep 10
-    kubectl wait pod --for=condition=Ready --selector=app=payments-api-v2 --selector=chaos=latency --timeout=90s
-    kubectl wait pod --for=condition=Ready --selector=app=payments-api-v2 --selector=chaos=exception --timeout=90s
+    kubectl wait pod --for=condition=Ready --selector=app=payments-api,version=v2,chaos=latency --timeout=90s
+    kubectl wait pod --for=condition=Ready --selector=app=payments-api,version=v2,chaos=exception --timeout=90s
     ```
 
     Apply the traffic simulator and observe the dashboards in the Consul UI. <br>
@@ -928,7 +941,7 @@ challenges:
     In one terminal, start tailing the rbac logs. <br>
 
     ```
-    kubectl logs -l app=payments-api-v2 -c envoy-sidecar -f --since=5s | grep rbac
+    kubectl logs -l app=payments-api,version=v2 -c envoy-sidecar -f --since=5s | grep rbac
     ```
 
     Get the gateway IP. <br>
@@ -1061,4 +1074,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
-checksum: "17619636884015950579"
+checksum: "14906611461998679303"
