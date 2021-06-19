@@ -5,15 +5,13 @@
 #context
 kubectl config use-context k8s1
 
-#get the nodeport
-port=$(kubectl get svc public-api-service -o json | jq '.spec.ports[0].nodePort')
-if [ -z "$port" ]; then
-  fail-message "NodePort not set."
-  exit 1
-fi
+#get the ingress gateway
+kubectl describe svc consul-ingress-gateway
+ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
+
 
 #check product
-product=$(curl -s -o /dev/null -w "%{http_code}" http://k8s1:${port}/api \
+product=$(curl -s -o /dev/null -w "%{http_code}" http://${ip}:8080/api \
 -H 'Accept-Encoding: gzip, deflate, br' \
 -H 'Content-Type: application/json' \
 -H 'Accept: application/json' \
@@ -27,7 +25,7 @@ if [ "$product" != "200" ]; then
 fi
 
 #check payment
-payment=$(curl -s -o /dev/null -w "%{http_code}" http://k8s1:${port}/api \
+payment=$(curl -s -o /dev/null -w "%{http_code}" http://${ip}:8080/api \
 -H 'Accept-Encoding: gzip, deflate, br' \
 -H 'Content-Type: application/json' \
 -H 'Accept: application/json' \
@@ -50,9 +48,9 @@ fi
 
 #2 payments api pods
 kubectl config use-context k8s1
-payments=$(kubectl get pod --selector=app=payments-api-v1 | tail -n +2 | wc -l)
+payments=$(kubectl get pod --selector=app=payments-api,version=v1 | tail -n +2 | wc -l)
 if [ "$payments" != "2" ]; then
-  fail-message "Expecting 2 payment queue pod."
+  fail-message "Expecting 2 payments api pod."
   exit 1
 fi
 

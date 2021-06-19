@@ -283,7 +283,148 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
-- slug: 05-service-mesh-test-your-application
+- slug: 05-traffic-management-ingress
+  id: 5qnkobx3dujj
+  type: challenge
+  title: 'Traffic Management: Ingress'
+  teaser: Bring traffic into your mesh
+  assignment: |-
+    Review and apply the ingress config.
+
+    ```
+    kubectl config use-context k8s1
+    kubectl apply -f ingress/hashicups.yml
+    ```
+
+    Your ingress config is now in Consul. <br>
+
+    ```
+    consul config read -kind ingress-gateway -name ingress-gateway | jq
+    ```
+
+    In the next assignment you will configure request routing for this ingress gateway.
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: K8s1 - Dashboard Token
+    type: code
+    hostname: k8s1
+    path: /root/dashboard-token.txt
+  - title: K8s1 - Dashboard
+    type: service
+    hostname: k8s1
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui/k8s1
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments/ingress
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 500
+- slug: 06-traffic-management-request-routing
+  id: olcwgzsryftu
+  type: challenge
+  title: 'Traffic Management: Request Routing'
+  teaser: Apply advanced routing patterns
+  assignment: |-
+    Review the routes and apply the routing configuration.  <br>
+
+    ```
+    kubectl config use-context k8s1
+    kubectl apply -f ingress/service-router.yml
+    ```
+
+    Reload the App tab to see the application that is now served over the ingress gateway. <br>
+
+    ```
+    kubectl exec deploy/consul-ingress-gateway -c ingress-gateway -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."dynamic_route_configs"? | select(. != null)[0]]'
+    ```
+
+    You can also inspect the clusters. <br>
+
+    ```
+    kubectl exec deploy/consul-ingress-gateway -c ingress-gateway -- wget -qO- 127.0.0.1:19000/clusters
+    ```
+
+    Get the gateway IP. <br>
+
+    ```
+    kubectl describe svc consul-ingress-gateway
+    ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
+    ```
+
+    Test the product API. <br>
+
+    ```
+    curl -s -v http://${ip}:8080/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+    --compressed | jq
+    ```
+
+    Test the payment API. <br>
+
+    ```
+    curl -s -v http://${ip}:8080/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+    --compressed | jq
+    ```
+
+    The APIs are working correctly. You can also navigate to the frontend of this application using the App tab in the window. <br>
+
+    In the next few assignments you will use the traffic management capabilities of Consul to ship a new feature in this application.
+  tabs:
+  - title: Workstation
+    type: terminal
+    hostname: workstation
+  - title: K8s1 - Dashboard Token
+    type: code
+    hostname: k8s1
+    path: /root/dashboard-token.txt
+  - title: K8s1 - Dashboard
+    type: service
+    hostname: k8s1
+    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+    port: 8001
+  - title: Consul UI
+    type: service
+    hostname: workstation
+    path: /ui/k8s1
+    port: 8500
+  - title: K8s Deployment
+    type: code
+    hostname: workstation
+    path: /root/deployments/ingress
+  - title: App
+    type: service
+    hostname: k8s1
+    path: /
+    port: 8080
+    new_window: true
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 500
+- slug: 07-service-mesh-test-your-application
   id: mbzfwov3rzcj
   type: challenge
   title: Service Mesh - Test Your Application
@@ -316,27 +457,20 @@ challenges:
     Inspect the SNI value for this service now. <br>
 
     ```
-    kubectl exec deploy/payments-api-v1 -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."dynamic_active_clusters"? | select(. != null)[1]]'
+    kubectl exec deploy/payments-api-v1 -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."dynamic_active_clusters"? | select(. != null)[2]]'
     ```
 
-
-    Now that you understand the internals of the cross cluster routing, let's expose the application so you can make sure it works. <br>
-
-    ```
-    kubectl expose deployment public-api --type=NodePort --name=public-api-service
-    ```
-
-    Fetch the details of the service you just created.
+    Now that you understand the internals of the cross cluster routing, let's test the application so you can make sure it works. <br>
 
     ```
-    kubectl describe svc public-api-service
-    port=$(kubectl get svc public-api-service -o json | jq '.spec.ports[0].nodePort')
+    kubectl describe svc consul-ingress-gateway
+    ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
     ```
 
     Try the product API. <br>
 
     ```
-    curl -s -v http://k8s1:${port}/api \
+    curl -s -v http://${ip}:8080/api \
     -H 'Accept-Encoding: gzip, deflate, br' \
     -H 'Content-Type: application/json' \
     -H 'Accept: application/json' \
@@ -349,7 +483,7 @@ challenges:
     Try the payment API. <br>
 
     ```
-    curl -s -v http://k8s1:${port}/api \
+    curl -s -v http://${ip}:8080/api \
     -H 'Accept-Encoding: gzip, deflate, br' \
     -H 'Content-Type: application/json' \
     -H 'Accept: application/json' \
@@ -384,6 +518,12 @@ challenges:
 
     In the next few assignments you will be introduced to more advanced traffic management patterns.
   tabs:
+  - title: App
+    type: service
+    hostname: k8s1
+    path: /
+    port: 8080
+    new_window: true
   - title: Workstation
     type: terminal
     hostname: workstation
@@ -410,7 +550,7 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
-- slug: 06-service-mesh-service-discovery
+- slug: 08-service-mesh-service-discovery
   id: 9f9aymz7s6xa
   type: challenge
   title: 'Service Mesh: Service Discovery'
@@ -535,6 +675,12 @@ challenges:
 
     You will introduce more advanced traffic management in the next few assignments.
   tabs:
+  - title: App
+    type: service
+    hostname: k8s1
+    path: /
+    port: 8080
+    new_window: true
   - title: Workstation
     type: terminal
     hostname: workstation
@@ -547,147 +693,6 @@ challenges:
     type: code
     hostname: workstation
     path: /root/deployments
-  - title: Lab Architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
-  difficulty: basic
-  timelimit: 500
-- slug: 07-traffic-management-ingress
-  id: 5qnkobx3dujj
-  type: challenge
-  title: 'Traffic Management: Ingress'
-  teaser: Bring traffic into your mesh
-  assignment: |-
-    Review and apply the ingress config.
-
-    ```
-    kubectl config use-context k8s1
-    kubectl apply -f ingress/hashicups.yml
-    ```
-
-    Your ingress config is now in Consul. <br>
-
-    ```
-    consul config read -kind ingress-gateway -name ingress-gateway | jq
-    ```
-
-    In the next assignment you will configure request routing for this ingress gateway.
-  tabs:
-  - title: Workstation
-    type: terminal
-    hostname: workstation
-  - title: K8s1 - Dashboard Token
-    type: code
-    hostname: k8s1
-    path: /root/dashboard-token.txt
-  - title: K8s1 - Dashboard
-    type: service
-    hostname: k8s1
-    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
-    port: 8001
-  - title: Consul UI
-    type: service
-    hostname: workstation
-    path: /ui/k8s1
-    port: 8500
-  - title: K8s Deployment
-    type: code
-    hostname: workstation
-    path: /root/deployments/ingress
-  - title: Lab Architecture
-    type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
-  difficulty: basic
-  timelimit: 500
-- slug: 08-traffic-management-request-routing
-  id: olcwgzsryftu
-  type: challenge
-  title: 'Traffic Management: Request Routing'
-  teaser: Apply advanced routing patterns
-  assignment: |-
-    Review the routes and apply the routing configuration.  <br>
-
-    ```
-    kubectl config use-context k8s1
-    kubectl apply -f ingress/service-router.yml
-    ```
-
-    Reload the App tab to see the application that is now served over the ingress gateway. <br>
-
-    ```
-    kubectl exec deploy/consul-ingress-gateway -c ingress-gateway -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."dynamic_route_configs"? | select(. != null)[0]]'
-    ```
-
-    You can also inspect the clusters. <br>
-
-    ```
-    kubectl exec deploy/consul-ingress-gateway -c ingress-gateway -- wget -qO- 127.0.0.1:19000/clusters
-    ```
-
-    Get the gateway IP. <br>
-
-    ```
-    kubectl describe svc consul-ingress-gateway
-    ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
-    ```
-
-    Test the product API. <br>
-
-    ```
-    curl -s -v http://${ip}:8080/api \
-    -H 'Accept-Encoding: gzip, deflate, br' \
-    -H 'Content-Type: application/json' \
-    -H 'Accept: application/json' \
-    -H 'Connection: keep-alive' \
-    -H 'DNT: 1' \
-    --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
-    --compressed | jq
-    ```
-
-    Test the payment API. <br>
-
-    ```
-    curl -s -v http://${ip}:8080/api \
-    -H 'Accept-Encoding: gzip, deflate, br' \
-    -H 'Content-Type: application/json' \
-    -H 'Accept: application/json' \
-    -H 'Connection: keep-alive' \
-    -H 'DNT: 1' \
-    --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
-    --compressed | jq
-    ```
-
-    The APIs are working correctly. You can also navigate to the frontend of this application using the App tab in the window. <br>
-
-    In the next few assignments you will use the traffic management capabilities of Consul to ship a new feature in this application.
-  tabs:
-  - title: Workstation
-    type: terminal
-    hostname: workstation
-  - title: K8s1 - Dashboard Token
-    type: code
-    hostname: k8s1
-    path: /root/dashboard-token.txt
-  - title: K8s1 - Dashboard
-    type: service
-    hostname: k8s1
-    path: /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
-    port: 8001
-  - title: Consul UI
-    type: service
-    hostname: workstation
-    path: /ui/k8s1
-    port: 8500
-  - title: K8s Deployment
-    type: code
-    hostname: workstation
-    path: /root/deployments/ingress
-  - title: App
-    type: service
-    hostname: k8s1
-    path: /
-    port: 8080
-    new_window: true
   - title: Lab Architecture
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
@@ -1074,4 +1079,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
-checksum: "14906611461998679303"
+checksum: "9662220904060752154"

@@ -1,9 +1,0 @@
-#!/bin/bash
-
-#check config
-if [ "$(consul config read -kind ingress-gateway -name ingress-gateway  | jq -r '.Listeners[0].Services[0].Name')" != "hashicups" ]; then
-  fail-message "Ingress Gateway not configured for Hashicups"
-  exit 1
-fi
-
-exit 0

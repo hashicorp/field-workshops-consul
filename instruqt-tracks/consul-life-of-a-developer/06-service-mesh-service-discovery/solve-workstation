@@ -1,9 +1,0 @@
-#!/bin/bash
-
-kubectl config use-context k8s2
-kubectl scale statefulset payments-queue --replicas=1
-kubectl config use-context k8s1
-kubectl scale deployment.v1.apps/payments-api-v1 --replicas=2
-sleep 60
-
-exit 0

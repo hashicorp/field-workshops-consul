@@ -1,7 +1,0 @@
-#!/bin/bash
-
-kubectl config use-context k8s1
-kubectl apply -f ingress/service-router.yml
-sleep 5
-
-exit 0
