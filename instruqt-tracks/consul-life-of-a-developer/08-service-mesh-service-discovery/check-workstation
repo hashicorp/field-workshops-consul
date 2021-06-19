@@ -1,0 +1,59 @@
+#!/bin/bash
+
+#run this check again to make sure the app is not broken.
+
+#context
+kubectl config use-context k8s1
+
+#get the nodeport
+port=$(kubectl get svc public-api-service -o json | jq '.spec.ports[0].nodePort')
+if [ -z "$port" ]; then
+  fail-message "NodePort not set."
+  exit 1
+fi
+
+#check product
+product=$(curl -s -o /dev/null -w "%{http_code}" http://k8s1:${port}/api \
+-H 'Accept-Encoding: gzip, deflate, br' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-H 'Connection: keep-alive' \
+-H 'DNT: 1' \
+--data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+--compressed)
+if [ "$product" != "200" ]; then
+  fail-message "Product API did not return a 200."
+  exit 1
+fi
+
+#check payment
+payment=$(curl -s -o /dev/null -w "%{http_code}" http://k8s1:${port}/api \
+-H 'Accept-Encoding: gzip, deflate, br' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-H 'Connection: keep-alive' \
+-H 'DNT: 1' \
+--data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+--compressed)
+if [ "$payment" != "200" ]; then
+  fail-message "Payment API did not return a 200."
+  exit 1
+fi
+
+#1 payments queue pods
+kubectl config use-context k8s2
+queue=$(kubectl get pod --selector=app=payments-queue | tail -n +2 | wc -l)
+if [ "$queue" != "1" ]; then
+  fail-message "Expecting 1 payment queue pod."
+  exit 1
+fi
+
+#2 payments api pods
+kubectl config use-context k8s1
+payments=$(kubectl get pod --selector=app=payments-api-v1 | tail -n +2 | wc -l)
+if [ "$payments" != "2" ]; then
+  fail-message "Expecting 2 payment queue pod."
+  exit 1
+fi
+
+exit 0
