@@ -124,11 +124,6 @@ spec:
               subPath: bootstrap.yaml
           ports:
             - containerPort: 8080
-          env:
-            - name: BIND_ADDRESS
-              value: ":8080"
-            - name : JAEGER_ENDPOINT
-              value: http://jaeger-collector:14268/api/traces
           readinessProbe:
             httpGet:
               path: /actuator/health
@@ -182,11 +177,6 @@ spec:
               subPath: bootstrap.yaml
           ports:
             - containerPort: 8080
-          env:
-            - name: BIND_ADDRESS
-              value: ":8080"
-            - name : JAEGER_ENDPOINT
-              value: http://jaeger-collector:14268/api/traces
           readinessProbe:
             httpGet:
               path: /actuator/health

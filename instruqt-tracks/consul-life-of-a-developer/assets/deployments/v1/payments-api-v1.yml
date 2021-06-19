@@ -19,10 +19,10 @@ metadata:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: payments-properties-conf
+  name: payments-properties-conf-v1
 data:
   application.properties: |
-    app.storage=enabled
+    app.storage=redis
     app.encryption.enabled=false
     opentracing.jaeger.http-sender.url=http://jaeger-collector:14268/api/traces
     opentracing.jaeger.include-jaeger-env-tags=true
@@ -55,7 +55,7 @@ spec:
       volumes:
         - name: properties-conf
           configMap:
-            name: payments-properties-conf
+            name: payments-properties-conf-v1
       containers:
         - name: payments-api
           image: hashicorpdemoapp/payments:v0.0.12
@@ -65,9 +65,6 @@ spec:
               subPath: application.properties
           ports:
             - containerPort: 8080
-          env:
-            - name : JAEGER_ENDPOINT
-              value: http://jaeger-collector:14268/api/traces
           readinessProbe:
             httpGet:
               path: /actuator/health
