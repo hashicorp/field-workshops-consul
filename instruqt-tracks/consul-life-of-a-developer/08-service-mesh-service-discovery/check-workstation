@@ -9,7 +9,6 @@ kubectl config use-context k8s1
 kubectl describe svc consul-ingress-gateway
 ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
 
-
 #check product
 product=$(curl -s -o /dev/null -w "%{http_code}" http://${ip}:8080/api \
 -H 'Accept-Encoding: gzip, deflate, br' \

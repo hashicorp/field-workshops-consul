@@ -354,42 +354,7 @@ challenges:
     kubectl exec deploy/consul-ingress-gateway -c ingress-gateway -- wget -qO- 127.0.0.1:19000/clusters
     ```
 
-    Get the gateway IP. <br>
-
-    ```
-    kubectl describe svc consul-ingress-gateway
-    ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
-    ```
-
-    Test the product API. <br>
-
-    ```
-    curl -s -v http://${ip}:8080/api \
-    -H 'Accept-Encoding: gzip, deflate, br' \
-    -H 'Content-Type: application/json' \
-    -H 'Accept: application/json' \
-    -H 'Connection: keep-alive' \
-    -H 'DNT: 1' \
-    --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
-    --compressed | jq
-    ```
-
-    Test the payment API. <br>
-
-    ```
-    curl -s -v http://${ip}:8080/api \
-    -H 'Accept-Encoding: gzip, deflate, br' \
-    -H 'Content-Type: application/json' \
-    -H 'Accept: application/json' \
-    -H 'Connection: keep-alive' \
-    -H 'DNT: 1' \
-    --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
-    --compressed | jq
-    ```
-
-    The APIs are working correctly. You can also navigate to the frontend of this application using the App tab in the window. <br>
-
-    In the next few assignments you will use the traffic management capabilities of Consul to ship a new feature in this application.
+    In the next few assignments you will test HashiCups and use the traffic management capabilities of Consul to ship a new feature in this application.
   tabs:
   - title: Workstation
     type: terminal
@@ -782,7 +747,7 @@ challenges:
   - title: Consul UI
     type: service
     hostname: workstation
-    path: /ui
+    path: /ui/k8s1/services/payments-api/routing
     port: 8500
   - title: K8s Deployment
     type: code
@@ -1085,4 +1050,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
-checksum: "9033849039978344582"
+checksum: "8262512863686722777"

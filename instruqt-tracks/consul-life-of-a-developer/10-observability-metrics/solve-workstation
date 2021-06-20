@@ -8,7 +8,7 @@ kubectl scale deployment.v1.apps/payments-api-v1 --replicas=0
 kubectl apply -f observability/payments-api-v2-chaos.yml
 sleep 10
 kubectl wait pod --for=condition=Ready --selector=app=payments-api,version=v2,chaos=latency --timeout=90s
-kubectl wait pod --for=condition=Ready --selector=app=payments-api-v2,version=v2,chaos=exception --timeout=90s
+kubectl wait pod --for=condition=Ready --selector=app=payments-api,version=v2,chaos=exception --timeout=90s
 
 #traffic
 kubectl apply -f observability/traffic.yml

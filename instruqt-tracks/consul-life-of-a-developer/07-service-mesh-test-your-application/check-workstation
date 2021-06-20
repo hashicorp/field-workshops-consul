@@ -3,6 +3,13 @@
 #context
 kubectl config use-context k8s1
 
+#check the gateway
+ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
+if [ -z "$ip" ]; then
+  fail-message "Ingress Gateway IP not set."
+  exit 1
+fi
+
 #get the ingress gateway
 kubectl describe svc consul-ingress-gateway
 ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')

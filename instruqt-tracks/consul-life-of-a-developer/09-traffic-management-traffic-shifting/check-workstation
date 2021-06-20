@@ -9,12 +9,9 @@ if [ "$(consul config read -kind service-splitter -name payments-api  | jq -r '.
   exit 1
 fi
 
-#check the gateway
+#get the ingress gateway
+kubectl describe svc consul-ingress-gateway
 ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
-if [ -z "$ip" ]; then
-  fail-message "Ingress Gateway IP not set."
-  exit 1
-fi
 
 #check payment
 payment=$(curl -s -o /dev/null -w "%{http_code}" http://${ip}:8080/api \
