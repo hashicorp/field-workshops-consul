@@ -5,7 +5,7 @@ kubectl get secret consul-federation -o yaml > consul-federation-secret.yaml
 kubectl config use-context k8s2
 kubectl apply -f consul-federation-secret.yaml
 kubectl config use-context k8s2
-helm install -f /root/helm/k8s2-consul-values.yaml hashicorp hashicorp/consul  --wait --debug
+helm install -f /root/helm/k8s2-consul-values.yaml hashicorp hashicorp/consul  --wait --debug --version "0.32.0-beta3"
 sleep 15
 
 exit 0
