@@ -11,7 +11,6 @@ developers:
 - lance@hashicorp.com
 private: true
 published: true
-maintenance: true
 show_timer: true
 skipping_enabled: true
 challenges:
@@ -25,7 +24,7 @@ challenges:
     You can see the repository for the HashiCups demo application here: https://github.com/hashicorp-demoapp. <br>
 
 
-    You can also view the services already running in your primary Kube cluster.
+    You can also view the services already running in your primary Kube cluster. Prometheus will deploy in a future assignment.
 
     ```
     kubectl config use-context k8s1
@@ -77,7 +76,7 @@ challenges:
 
     ```
     kubectl apply -f deployments/config/proxy-defaults.yml
-    kubectl apply -f deployments/config/mesh.yml
+    #kubectl apply -f deployments/config/mesh.yml
     ```
 
     In the next assignment you will federate with the other K8s clusters.
@@ -813,6 +812,13 @@ challenges:
   assignment: |-
     In this assignment you will run a traffic simulation to create metrics to visualize on the Consul dashboard. <br>
 
+    Check that Prometheus is deployed.
+
+    ```
+    kubectl get pods --selector app=prometheus
+    kubectl get svc --selector app=prometheus
+    ```
+
     Redeploy the v2 application with chaos monkey enabled so we can create some errors and latency in the payments tier.
     You can scale the v1 deployment at this time as they are no longer needed. <br>
 
@@ -937,16 +943,16 @@ challenges:
     Intentions are deny by default in a secure configuration.
     Test that in this challenge. <br>
 
-    Clear the intentions for the app.
-
-    ```
-    kubectl delete -f v1/service-intentions.yml
-    ```
-
     In one terminal, start tailing the rbac logs. <br>
 
     ```
     kubectl logs -l app=payments-api,version=v2 -c envoy-sidecar -f --since=5s | grep rbac
+    ```
+
+    Clear the intentions for the app.
+
+    ```
+    kubectl delete -f v1/service-intentions.yml
     ```
 
     Get the gateway IP. <br>
@@ -1079,4 +1085,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
-checksum: "9352823977179509928"
+checksum: "3920438398217040103"

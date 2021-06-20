@@ -41,7 +41,7 @@ curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bas
 /usr/local/bin/helm repo add hashicorp https://helm.releases.hashicorp.com
 
 #assets
-git clone -b t-proxy-beta-2-testing https://github.com/hashicorp/field-workshops-consul.git
+git clone https://github.com/hashicorp/field-workshops-consul.git
 cp -r field-workshops-consul/instruqt-tracks/consul-life-of-a-developer/assets/deployments /root/
 cp -r field-workshops-consul/instruqt-tracks/consul-life-of-a-developer/assets/helm /root/
 rm -rf /root/field-workshops-consul
