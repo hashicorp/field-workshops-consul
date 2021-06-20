@@ -31,6 +31,9 @@ data:
             index  index.html index.htm;
             try_files $uri $uri/ /index.html =404;
         }
+        location /basic_status {
+            stub_status;
+        }
         location /api {
             proxy_pass http://public-api:8080;
             proxy_http_version 1.1;
@@ -58,6 +61,7 @@ spec:
         app: frontend
       annotations:
         consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/service-metrics-port: "9113"
     spec:
       serviceAccountName: frontend
       volumes:
@@ -76,3 +80,10 @@ spec:
             - name: config
               mountPath: /etc/nginx/conf.d
               readOnly: true
+        - name: nginx-prometheus-exporter
+          image: nginx/nginx-prometheus-exporter:0.9.0
+          args:
+            - -nginx.scrape-uri=http://127.0.0.1:80/basic_status
+          resources: {}
+          ports:
+            - containerPort: 9113
