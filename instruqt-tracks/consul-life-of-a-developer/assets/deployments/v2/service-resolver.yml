@@ -6,6 +6,6 @@ spec:
   defaultSubset: v1
   subsets:
     v1:
-      filter: "v1 in Service.Tags"
+      filter: "Service.Meta.version == v1"
     v2:
-      filter: "v2 in Service.Tags"
+      filter: "Service.Meta.version == v2"

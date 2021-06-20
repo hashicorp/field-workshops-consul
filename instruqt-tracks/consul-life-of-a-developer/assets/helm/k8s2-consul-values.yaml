@@ -1,6 +1,7 @@
 global:
   name: consul
   datacenter: k8s2
+  image: 'hashicorp/consul:1.10.0-rc2'
   tls:
     enabled: true
     caCert:
@@ -18,6 +19,10 @@ global:
     enabled: true
 connectInject:
   enabled: true
+  default: true
+  transparentProxy:
+    defaultEnabled: true
+  envoyExtraArgs: "-l debug"
 controller:
   enabled: true
 meshGateway:

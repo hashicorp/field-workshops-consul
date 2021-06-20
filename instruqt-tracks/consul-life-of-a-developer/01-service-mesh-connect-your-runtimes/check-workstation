@@ -13,4 +13,6 @@ if [ "$(consul config read -kind proxy-defaults -name global | jq -r '.Config.pr
   exit 1
 fi
 
+#check mesh - todo
+
 exit 0

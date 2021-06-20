@@ -21,7 +21,7 @@ then
   fail-message "Product API pod not deployed."
   exit 1
 fi
-kubectl wait pod --for=condition=Ready --selector=app=payments-api-v1
+kubectl wait pod --for=condition=Ready --selector=app=payments-api,version=v1
 if [ $? -ne 0 ]
 then
   fail-message "Payment API V1 pod not deployed."

@@ -1,6 +1,7 @@
 global:
   name: consul
   datacenter: k8s1
+  image: 'hashicorp/consul:1.10.0-rc2'
   tls:
     enabled: true
   federation:
@@ -9,6 +10,9 @@ global:
   acls:
     manageSystemACLs: true
     createReplicationToken: true
+  metrics:
+    enabled: true
+    enableGatewayMetrics: true
 server:
   replicas: 1
   bootstrapExpect: 1
@@ -17,17 +21,17 @@ server:
       "telemetry": {
         "prometheus_retention_time": "8h",
         "disable_hostname": true
-      },
-      "ui_config": {
-        "enabled": true,
-        "metrics_provider": "prometheus",
-        "metrics_proxy": {
-          "base_url": "http://prometheus-server"
-        }
       }
     }
 client:
   enabled: true
+  extraConfig: |
+    {
+      "telemetry": {
+        "prometheus_retention_time": "1m",
+        "disable_hostname": true
+      }
+    }
 controller:
   enabled: true
 syncCatalog:
@@ -39,6 +43,11 @@ connectInject:
   enabled: true
   default: false
   envoyExtraArgs: "-l debug"
+  metrics:
+    defaultEnabled: true
+    defaultEnableMerging: true
+  transparentProxy:
+    defaultEnabled: true
 ui:
   enabled: true
   service:
@@ -50,6 +59,10 @@ ui:
         protocol: TCP
         port: 8443
         targetPort: 8501
+  metrics:
+    enabled: true
+    provider: "prometheus"
+    baseURL: http://prometheus-server
 ingressGateways:
   enabled: true
   defaults:

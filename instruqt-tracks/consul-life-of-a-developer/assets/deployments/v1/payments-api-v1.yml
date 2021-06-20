@@ -1,9 +1,20 @@
 ---
 apiVersion: v1
+kind: Service
+metadata:
+  name: payments-api
+spec:
+  selector:
+    app: payments-api
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: payments-api
-
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -26,20 +37,19 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      service: payments-api-v1
-      app: payments-api-v1
+      app: payments-api
+      version: v1
   template:
     metadata:
       labels:
-        service: payments-api-v1
-        app: payments-api-v1
+        app: payments-api
+        version: v1
       annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9901"
         consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/connect-service-upstreams: "payments-queue:6379:k8s2"
         consul.hashicorp.com/service-meta-version: v1
         consul.hashicorp.com/service-tags: v1
+        consul.hashicorp.com/service-metrics-path: "/actuator/prometheus"
+        consul.hashicorp.com/connect-service-upstreams: "payments-queue:6379:k8s2"
     spec:
       serviceAccountName: payments-api
       volumes:
@@ -48,18 +58,13 @@ spec:
             name: payments-properties-conf-v1
       containers:
         - name: payments-api
-          image: hashicorpdemoapp/payments:latest
+          image: hashicorpdemoapp/payments:v0.0.12
           volumeMounts:
             - name: properties-conf
               mountPath: /config/application.properties
               subPath: application.properties
           ports:
             - containerPort: 8080
-          env:
-            - name: BIND_ADDRESS
-              value: ":8080"
-            - name : JAEGER_ENDPOINT
-              value: http://jaeger-collector:14268/api/traces
           readinessProbe:
             httpGet:
               path: /actuator/health

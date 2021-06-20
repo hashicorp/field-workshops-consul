@@ -3,7 +3,7 @@
 #context
 kubectl config use-context k8s1
 
-#metrics
+#prometheus
 cat <<-EOF > /root/prometheus-values.yaml
 server:
   persistentVolume:
@@ -32,28 +32,12 @@ extraScrapeConfigs: |
       regex: consul
       action: keep
     - source_labels: [__meta_kubernetes_pod_label_component]
-      regex: server
+      regex: server|client
       action: keep
     - source_labels: [__meta_kubernetes_pod_container_port_number]
       regex: 8501
       action: keep
 EOF
-
-cat <<-EOF > /root/grafana-values.yaml
-persistence:
-  enabled: false
-datasources:
-  datasources.yaml:
-    apiVersion: 1
-    datasources:
-      - name: Prometheus
-        type: prometheus
-        url: http://prometheus-server
-        access: proxy
-        isDefault: true
-EOF
-
-#Set up the UI for prometheus
 cat <<EOF | kubectl apply -f -
 ---
 apiVersion: v1
@@ -70,31 +54,7 @@ spec:
     port: 9090
     targetPort: 9090
 EOF
-
-#Set up the UI for grafana
-cat <<EOF | kubectl apply -f -
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: grafana-service
-spec:
-  type: LoadBalancer
-  selector:
-    app.kubernetes.io/name: grafana
-  ports:
-  - name: http
-    protocol: TCP
-    port: 3000
-    targetPort: 3000
-EOF
-
-#helm deploy
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm install prometheus prometheus-community/prometheus -f /root/prometheus-values.yaml --wait --debug
-helm repo add grafana https://grafana.github.io/helm-charts
-helm install grafana grafana/grafana -f /root/grafana-values.yaml --wait --debug
-sleep 15
-kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode > /tmp/grafana-pass.txt
 
 exit 0
