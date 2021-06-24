@@ -4,6 +4,7 @@ global:
   image: 'hashicorp/consul:1.10.0'
   tls:
     enabled: true
+    enableAutoEncrypt: true
     caCert:
       secretName: consul-federation
       secretKey: caCert
