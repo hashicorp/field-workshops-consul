@@ -55,7 +55,7 @@ challenges:
 
     ```
     kubectl config use-context k8s1
-    helm install -f /root/helm/k8s1-consul-values.yaml consul hashicorp/consul  --wait --debug --version "0.32.0-beta3"
+    helm install -f /root/helm/k8s1-consul-values.yaml consul hashicorp/consul  --wait --debug
     ```
 
     Check the pods. <br>
@@ -76,7 +76,7 @@ challenges:
 
     ```
     kubectl apply -f deployments/config/proxy-defaults.yml
-    #kubectl apply -f deployments/config/mesh.yml
+    kubectl apply -f deployments/config/mesh.yml
     ```
 
     In the next assignment you will federate with the other K8s clusters.
@@ -142,7 +142,7 @@ challenges:
 
     ```
     kubectl config use-context k8s2
-    helm install -f /root/helm/k8s2-consul-values.yaml hashicorp hashicorp/consul  --wait --debug --version "0.32.0-beta3"
+    helm install -f /root/helm/k8s2-consul-values.yaml hashicorp hashicorp/consul  --wait --debug
     ```
 
     Check that the Kubernetes clusters are now federated.
@@ -298,6 +298,7 @@ challenges:
     Your ingress config is now in Consul. <br>
 
     ```
+    kubectl describe ingressgateway ingress-gateway
     consul config read -kind ingress-gateway -name ingress-gateway | jq
     ```
 
@@ -603,7 +604,7 @@ challenges:
     Check the probe again. <br>
 
     ```
-    kubectl get pod --selector=app=payments-api-v1 -o json | jq .items[0].status.conditions
+    kubectl get pod --selector=app=payments-api,version=v1 -o json | jq .items[0].status.conditions
     ```
 
     Now, check the health check again in Consul.
@@ -673,6 +674,7 @@ challenges:
     ```
     kubectl config use-context k8s1
     kubectl apply -f v2
+    sleep 5
     kubectl wait pod --for=condition=Ready --selector=app=payments-api,version=v2 --timeout=90s
     ```
 
@@ -908,16 +910,22 @@ challenges:
     Intentions are deny by default in a secure configuration.
     Test that in this challenge. <br>
 
-    In one terminal, start tailing the rbac logs. <br>
+    Check the rbac filter. <br>
 
     ```
-    kubectl logs -l app=payments-api,version=v2 -c envoy-sidecar -f --since=5s | grep rbac
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."http_filters"? | select(. != null)[0]]'
     ```
 
     Clear the intentions for the app.
 
     ```
     kubectl delete -f v1/service-intentions.yml
+    ```
+
+    Check the rbac filter. <br>
+
+    ```
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."http_filters"? | select(. != null)[0]]'
     ```
 
     Get the gateway IP. <br>
@@ -940,12 +948,18 @@ challenges:
     --compressed | jq
     ```
 
-    You will see that RBAC denied the API call in the tail output. <br>
+    You will see an error. <br>
 
     Add the intentions back <br>
 
     ```
     kubectl apply -f v1/service-intentions.yml
+    ```
+
+    Check the filter.
+
+    ```
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."http_filters"? | select(. != null)[0]]'
     ```
 
     Try the API again to fix the connectivity.
@@ -1050,4 +1064,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
-checksum: "8262512863686722777"
+checksum: "11576542789460882726"

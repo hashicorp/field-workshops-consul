@@ -8,7 +8,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt update -y
 apt install -y apt-transport-https ca-certificates curl vim openssh-client git jq gnupg2 lsb-release software-properties-common
 curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
-add-apt-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main test"
+add-apt-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
 echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" |  tee /etc/apt/sources.list.d/kubernetes.list
 apt update -y
