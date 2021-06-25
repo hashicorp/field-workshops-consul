@@ -20,7 +20,7 @@ fi
 
 #azure
 azure_esm=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/consul-esm?dc=azure-west-us-2&passing=true")
-if [ "$(echo "${azure_esm}" | jq '. | length')" != "1" ]; then
+if [ "$(echo "${azure_esm}" | jq '. | length')" != "1" ] || [ "$(echo "${azure_esm}" | jq '. | length')" != "2" ]; then
   fail-message "AZURE ESM is not healthy"
   exit 1
 fi
