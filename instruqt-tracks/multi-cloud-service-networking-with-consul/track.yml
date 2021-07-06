@@ -3,8 +3,7 @@ id: iklbsgjpisau
 type: track
 title: Multi Cloud Service Networking with Consul
 teaser: Deploy a multi-cloud service mesh solution with Consul
-description: Run a shared Consul service across multiple clouds and enable self-service
-  for application teams.
+description: Run a shared Consul service across multiple clouds and enable self-service for application teams.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags:
 - consul
@@ -1544,4 +1543,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "6778593071184693028"
+checksum: "14942704399616029091"

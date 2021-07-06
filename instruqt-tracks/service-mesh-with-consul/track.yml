@@ -2,9 +2,7 @@ slug: service-mesh-with-consul
 id: bok4pw0xdfdr
 type: track
 title: Service Mesh with Consul
-teaser: Evolve from service discovery to service mesh. No more mapping IP addresses
-  and ports across load balancers and firewalls. Consul Connect ensures secure connections
-  between services wherever they run.
+teaser: Evolve from service discovery to service mesh. No more mapping IP addresses and ports across load balancers and firewalls. Consul Connect ensures secure connections between services wherever they run.
 description: |-
   This track will build on what you learned in the service discovery track and take our application from service discovery to service mesh.
   We'll dive into mesh fundamentals and use an Envoy proxy to connect our application to its database.
@@ -15,6 +13,7 @@ developers:
 - lance@hashicorp.com
 private: true
 published: true
+maintenance: true
 show_timer: true
 skipping_enabled: true
 challenges:
@@ -271,14 +270,10 @@ challenges:
   id: d3mqrfaegmle
   type: challenge
   title: "Open and Close the Gates \U0001F511\U0001F6AA"
-  teaser: Use Consul intentions to allow or deny proxy traffic based on application
-    service identity.
+  teaser: Use Consul intentions to allow or deny proxy traffic based on application service identity.
   notes:
   - type: text
-    contents: Intentions define access control for services via Consul Connect and
-      are used to control which services may establish connections. You can manage
-      Intentions via the API, CLI, or UI. Intentions are enforced by the proxy on
-      inbound connections.
+    contents: Intentions define access control for services via Consul Connect and are used to control which services may establish connections. You can manage Intentions via the API, CLI, or UI. Intentions are enforced by the proxy on inbound connections.
   - type: text
     contents: |-
       After verifying the TLS client certificate,
@@ -397,4 +392,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 900
-checksum: "10461241283376132580"
+checksum: "11965534933157105620"

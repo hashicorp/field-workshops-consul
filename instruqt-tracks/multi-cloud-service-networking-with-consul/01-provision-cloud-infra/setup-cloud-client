@@ -28,12 +28,12 @@ aws ec2 create-default-vpc
 az group create -l westus2 -n packer
 
 #cloud client packages
-apt update -y
-apt install software-properties-common -y
-curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
-apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-apt update -y
-apt install terraform=0.13.5 packer=1.7.0 consul-enterprise=1.9.4+ent vault-enterprise=1.7.1+ent nomad-enterprise=1.0.4+ent libcap-dev jq redis-server -y
+#apt update -y
+#apt install software-properties-common -y
+#curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+#apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+#apt update -y
+#apt install terraform=0.13.5 packer=1.7.0 consul-enterprise=1.9.4+ent vault-enterprise=1.7.1+ent nomad-enterprise=1.0.4+ent libcap-dev jq redis-server -y
 
 #tf creds
 echo 'export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)' >> /root/.bashrc

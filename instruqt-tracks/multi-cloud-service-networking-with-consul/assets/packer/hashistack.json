@@ -65,12 +65,39 @@
     {
       "type": "shell",
       "script": "scripts/aws.sh",
-      "only": ["amazon-ebs-ubuntu-bionic"]
+      "only": [
+        "amazon-ebs-ubuntu-bionic"
+      ]
     },
     {
       "type": "shell",
       "script": "scripts/azure.sh",
-      "only": ["azure-ubuntu-bionic"]
+      "only": [
+        "azure-ubuntu-bionic"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "/etc/consul.hclic",
+      "destination": "/tmp/consul.hclic"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo mv /tmp/consul.hclic /etc/consul.d/consul.hclic"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "/usr/local/bin/envoy",
+      "destination": "/tmp/envoy"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo mv /tmp/envoy /usr/bin/envoy",
+        "envoy --version"
+      ]
     },
     {
       "type": "shell",
