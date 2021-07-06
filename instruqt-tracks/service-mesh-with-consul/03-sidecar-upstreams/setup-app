@@ -5,14 +5,16 @@ echo "Fixing our path..."
 export PATH=/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 
 #Utils
-apt-get update -y && apt-get install -y curl unzip wget dnsutils netcat jq
+apt-get update -y && apt-get install -y curl unzip wget dnsutils netcat jq xz-utils lsb-release software-properties-common gnupg2
 
-#Envoy
-apt-get update -y
-apt-get install -y gnupg2 software-properties-common
-curl -sL 'https://getenvoy.io/gpg' |  apt-key add -
-apt-add-repository "deb [arch=amd64] https://dl.bintray.com/tetrate/getenvoy-deb $(lsb_release -cs) stable"
-apt-get update -y &&  apt-get install -y getenvoy-envoy=1.16.3.p0.gc4b7ab8-1p74.gbb8060d
+# ENVOY - ALTERNATIVE INSTALLATION METHOD
+ENVOY_VERSION="1.16.3"
+wget https://archive.tetratelabs.io/envoy/download/v${ENVOY_VERSION}/envoy-v${ENVOY_VERSION}-linux-amd64.tar.xz
+tar -xf envoy-v${ENVOY_VERSION}-linux-amd64.tar.xz
+chmod +x envoy-v${ENVOY_VERSION}-linux-amd64/bin/envoy
+mv envoy-v${ENVOY_VERSION}-linux-amd64/bin/envoy /usr/bin/envoy
+rm -rf envoy-v${ENVOY_VERSION}-linux-amd64.tar.xz envoy-v${ENVOY_VERSION}-linux-amd64
+envoy --version
 
 #consul
 rm -f /usr/local/bin/consul

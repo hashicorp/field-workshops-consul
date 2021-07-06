@@ -13,7 +13,6 @@ developers:
 - lance@hashicorp.com
 private: true
 published: true
-maintenance: true
 show_timer: true
 skipping_enabled: true
 challenges:
@@ -392,4 +391,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 900
-checksum: "11965534933157105620"
+checksum: "17190935794102222429"
