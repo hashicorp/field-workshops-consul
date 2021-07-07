@@ -19,7 +19,6 @@ acl = {
   enable_token_persistence = true
   tokens {
     agent  = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
-    default  = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
   }
 }
 encrypt = {{ with secret "kv/consul" }}"{{ .Data.data.gossip_key }}"{{ end }}
@@ -52,6 +51,31 @@ template {
   source      = "/etc/vault-agent.d/envoy-token-template.ctmpl"
   destination = "/etc/envoy/consul.token"
   command     = "sudo service envoy restart"
+}
+template {
+  source      = "/etc/vault-agent.d/jaeger-http-collector-template.ctmpl"
+  destination = "/etc/consul.d/jaeger-http-collector.json"
+  command     = "sudo service consul reload"
+}
+template {
+  source      = "/etc/vault-agent.d/zipkin-http-template.ctmpl"
+  destination = "/etc/consul.d/zipkin-http.json"
+  command     = "sudo service consul reload"
+}
+template {
+  source      = "/etc/vault-agent.d/cassandra-template.ctmpl"
+  destination = "/etc/consul.d/cassandra.json"
+  command     = "sudo service consul reload"
+}
+template {
+  source      = "/etc/vault-agent.d/prometheus-template.ctmpl"
+  destination = "/etc/consul.d/prometheus.json"
+  command     = "sudo service consul reload"
+}
+template {
+  source      = "/etc/vault-agent.d/jaeger-template.ctmpl"
+  destination = "/etc/consul.d/jaeger-ui.json"
+  command     = "sudo service consul reload"
 }
 vault {
   address = "$${VAULT_ADDR}"
@@ -100,10 +124,11 @@ auto_encrypt = {
   tls = true
 }
 EOF
-cat <<-EOF > /etc/consul.d/jaeger-ui.json
+cat <<-EOF > /etc/vault-agent.d/jaeger-template.ctmpl
 {
   "service": {
     "name": "jaeger-ui",
+    "token": {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }},
     "port": 16686,
     "tags": [
       "monitoring"
@@ -118,10 +143,11 @@ cat <<-EOF > /etc/consul.d/jaeger-ui.json
   }
 }
 EOF
-cat <<-EOF > /etc/consul.d/jaeger-http-collector.json
+cat <<-EOF > /etc/vault-agent.d/jaeger-http-collector-template.ctmpl
 {
   "service": {
     "name": "jaeger-http-collector",
+    "token": {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }},
     "port": 14268,
     "tags": [
       "monitoring"
@@ -137,10 +163,11 @@ cat <<-EOF > /etc/consul.d/jaeger-http-collector.json
   }
 }
 EOF
-cat <<-EOF > /etc/consul.d/zipkin-http-collector.json
+cat <<-EOF > /etc/vault-agent.d/zipkin-http-template.ctmpl
 {
   "service": {
     "name": "zipkin-http-collector",
+    "token": {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }},
     "port": 9411,
     "tags": [
       "monitoring"
@@ -156,10 +183,11 @@ cat <<-EOF > /etc/consul.d/zipkin-http-collector.json
   }
 }
 EOF
-cat <<-EOF > /etc/consul.d/cassandra.json
+cat <<-EOF > /etc/vault-agent.d/cassandra-template.ctmpl
 {
   "service": {
     "name": "cassandra",
+    "token": {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }},
     "port": 9042,
     "tags": [
       "monitoring"
@@ -175,10 +203,11 @@ cat <<-EOF > /etc/consul.d/cassandra.json
   }
 }
 EOF
-cat <<-EOF > /etc/consul.d/prometheus.json
+cat <<-EOF > /etc/vault-agent.d/prometheus-template.ctmpl
 {
   "service": {
     "name": "prometheus",
+    "token": {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }},
     "port": 9090,
     "tags": [
       "monitoring"
@@ -294,12 +323,6 @@ services:
         container_name: prometheus
 EOF
 /usr/local/bin/docker-compose up -d
-
-#license
-sudo crontab -l > consul
-sudo echo "*/28 * * * * sudo service consul restart" >> consul
-sudo crontab consul
-sudo rm consul
 
 #make sure the config was picked up
 sudo service consul restart

@@ -34,7 +34,7 @@ sleep 15
 
 #create some traces
 kubectl config use-context graphql
-endpoint=$(kubectl get svc public-api-service -o json | jq -r .status.loadBalancer.ingress[0].ip)
+endpoint=$(kubectl get svc consul-graphql-graphql-ingress-gateway -o json | jq -r .status.loadBalancer.ingress[0].ip)
 #product api
 curl -s -v http://${endpoint}:8080/api \
   -H 'Accept-Encoding: gzip, deflate, br' \

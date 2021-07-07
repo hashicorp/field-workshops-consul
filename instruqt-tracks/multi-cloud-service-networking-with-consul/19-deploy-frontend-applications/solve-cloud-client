@@ -1,10 +1,10 @@
 #!/bin/bash
 
 kubectl config use-context graphql
-kubectl apply -f public-api.yaml
+kubectl apply -f k8s/public-api
 
 kubectl config use-context react
-kubectl apply -f web.yaml
+kubectl apply -f k8s/web
 
 sleep 60
 

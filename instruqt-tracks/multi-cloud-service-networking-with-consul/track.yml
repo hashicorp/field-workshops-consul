@@ -1,7 +1,7 @@
-slug: multi-cloud-service-networking-with-consul
-id: iklbsgjpisau
+slug: multi-cloud-ent-test
+id: kfmfhapk88yz
 type: track
-title: Multi Cloud Service Networking with Consul
+title: multi-cloud-ent-test
 teaser: Deploy a multi-cloud service mesh solution with Consul
 description: Run a shared Consul service across multiple clouds and enable self-service for application teams.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
@@ -14,15 +14,12 @@ tags:
 owner: hashicorp
 developers:
 - lance@hashicorp.com
-- thomas@hashicorp.com
-- cpu@hashicorp.com
 private: true
-published: true
+published: false
 show_timer: true
-skipping_enabled: true
 challenges:
 - slug: 01-provision-cloud-infra
-  id: eej5x5cxdiig
+  id: insuaye2zksw
   type: challenge
   title: Provision Cloud Infrastructure
   teaser: Create cloud VPCs
@@ -82,7 +79,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 02-provision-vault
-  id: 1i5vvulo0zlr
+  id: yshhfmzu4r3j
   type: challenge
   title: Provision Vault Infrastructure
   teaser: Set up Vault Infrastructure and Enable Replication
@@ -122,7 +119,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 03-provision-identities
-  id: lbmzbwxbo9gc
+  id: 00ikid9spcmv
   type: challenge
   title: Provision Service & Workload Identities
   teaser: Create workload identities for secure introduction
@@ -158,7 +155,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 04-centralize-secrets-in-vault
-  id: noyutzmuimix
+  id: 17xofk93yytd
   type: challenge
   title: Centralize Secrets in Vault
   teaser: Create trust and seed bootstrap credentials.
@@ -249,7 +246,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 05-provision-aws-consul-primary
-  id: yvfuoi5cz8ll
+  id: kp9gsm9j6mb2
   type: challenge
   title: Provision AWS Consul Primary Datacenter
   teaser: Run Consul in AWS
@@ -309,7 +306,7 @@ challenges:
   difficulty: basic
   timelimit: 14400
 - slug: 06-bootstrap-consul-primary
-  id: ibjsiehore0f
+  id: tiniblpj3g9f
   type: challenge
   title: Bootstrap Consul Primary Datacenter
   teaser: Set up Consul for multi-datacenter
@@ -421,7 +418,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 07-create-namespaces-and-policies
-  id: o7l9tufsx0pf
+  id: odummyyrsrk0
   type: challenge
   title: Create Namespaces & Policies
   teaser: Configure multi-tenancy
@@ -479,7 +476,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 08-provision-azure-consul-secondary-datacenter
-  id: wj17mzqxqwwf
+  id: c6gw4csx0fmn
   type: challenge
   title: Provision Azure Consul Secondary Datacenter
   teaser: Run Consul in Azure
@@ -552,7 +549,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 09-provision-gcp-consul-secondary-datacenter
-  id: v3j5eilrkji2
+  id: ztexj85jiljv
   type: challenge
   title: Provision GCP Consul Secondary Datacenter
   teaser: Run Consul in GKE
@@ -609,17 +606,14 @@ challenges:
     Next, deploy the Consul servers. You can review the configuration in the code editor.
 
     ```
-    kubectl apply -f /root/terraform/gcp-consul-secondary/consul-join.yaml
-    helm install hashicorp hashicorp/consul -f /root/helm/gke-consul-values.yaml --debug --wait --version 0.31.1
+    kubectl create secret generic consul-ent-license --from-literal="key=$(cat /etc/consul.hclic)"
+    helm install hashicorp hashicorp/consul -f /root/helm/gke-consul-values.yaml --debug --wait --version 0.32.1
     ```
 
-    Connect to the Consul API and check the leader and replication status.
+    Check that all three clusters are federated.
 
     ```
-    kubectl get svc consul-ui -o json | jq -r .status.loadBalancer.ingress[0].ip
-    consul_api=$(kubectl get svc consul-ui -o json | jq -r .status.loadBalancer.ingress[0].ip)
-    curl -k -s https://{$consul_api}/v1/status/leader
-    curl -k -s https://{$consul_api}/v1/acl/replication | jq
+    consul members -wan
     ```
 
     In the next assignment you will connect Consul secondary components to the server clusters in AWS & Azure.
@@ -656,7 +650,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 10-provision-consul-esms
-  id: vyrpfhgu6dtl
+  id: qmgb1f0uopif
   type: challenge
   title: Provision Consul ESMs
   teaser: Create health checks for external services
@@ -733,7 +727,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 11-provision-cache-services
-  id: ifdxb3b4xeox
+  id: d6l2k5fxnisd
   type: challenge
   title: Provision Cache Services
   teaser: Deploy managed Cache instances
@@ -788,7 +782,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 12-provision-database-services
-  id: fcrcwre4rgvy
+  id: own5drqd6kbf
   type: challenge
   title: Provision Database Services
   teaser: Deploy managed DB instances
@@ -842,7 +836,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 13-provision-consul-terminating-gateways
-  id: fzmzvxw4yrbv
+  id: wsoickgvhxda
   type: challenge
   title: Provision Consul Terminating Gateways
   teaser: Configure egress traffic for external services
@@ -915,7 +909,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 14-provision-nomad-scheduler-services
-  id: 2bhfenznbq26
+  id: 7ujxihxidyfd
   type: challenge
   title: Provision Nomad Scheduler Services
   teaser: Deploy Nomad workload infrastructure
@@ -983,7 +977,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 15-provision-k8s-scheduler-services
-  id: czoxbhi28zz4
+  id: p0vyfbshexyq
   type: challenge
   title: Provision K8s Scheduler Services
   teaser: Deploy K8s workload infrastructure
@@ -1016,7 +1010,7 @@ challenges:
     kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
     kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
     kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
-    helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f /root/helm/react-consul-values.yaml --debug --wait --timeout 10m --version 0.31.1
+    helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f /root/helm/react-consul-values.yaml --debug --wait --timeout 10m --version 0.32.1
     helm list -a
     ```
 
@@ -1030,27 +1024,8 @@ challenges:
     kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
     kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
     kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
-    helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_graphql_endpoint)" -f /root/helm/graphql-consul-values.yaml --debug --wait --timeout 10m --version 0.31.1
+    helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_graphql_endpoint)" -f /root/helm/graphql-consul-values.yaml --debug --wait --timeout 10m --version 0.32.1
     helm list -a
-    ```
-
-    If you get a helm error you can rerun the deployments with the upgrade command:
-
-
-    ```
-    #react
-    vault login -method=userpass username=admin password=admin
-    kubectl config use-context react
-    kubectl delete secret bootstrap-token
-    kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
-    helm upgrade consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f react-values.yaml --debug --wait --timeout 10m --version 0.31.1
-
-    #graphql
-    vault login -method=userpass username=admin password=admin
-    kubectl config use-context graphql
-    kubectl delete secret bootstrap-token
-    kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
-    helm upgrade consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_graphql_endpoint)" -f graphql-values.yaml --debug --wait --timeout 10m --version 0.31.1
     ```
 
     The K8s nodes are now registered in the Consul catalog.
@@ -1093,7 +1068,7 @@ challenges:
   difficulty: basic
   timelimit: 500
 - slug: 16-configure-intentions
-  id: xwvogflavyey
+  id: tokoi3q0ilbo
   type: challenge
   title: Configure Intentions
   teaser: Allow selective mTLS between workloads
@@ -1119,13 +1094,7 @@ challenges:
     consul intention create -allow 'frontend/public-api' 'product/product-api'
     ```
 
-    As a frontend developer allow intentions between services
-
-    ```
-    vault login -method=userpass username=frontend-developer password=frontend
-    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/frontend-developer)
-    consul intention create -allow 'frontend/web' 'frontend/public-api'
-    ```
+    As a frontend developer, you will manage intentions with CRDs in a later exercise.
 
     In later assignments you will use these clusters to run frontend application workloads.
   tabs:
@@ -1157,7 +1126,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 17-deploy-payments-applications
-  id: m1xx8rucidse
+  id: kx1zn1yn73oi
   type: challenge
   title: Deploy Payments Tier
   teaser: Run Payments workloads
@@ -1206,7 +1175,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 18-deploy-product-applications
-  id: jmzuys1pidmc
+  id: oiyllzn3f6bx
   type: challenge
   title: Deploy Product Tier
   teaser: Run Product workloads
@@ -1260,7 +1229,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 19-deploy-frontend-applications
-  id: ssdpxmpbtvjw
+  id: nxanx4gklthd
   type: challenge
   title: Deploy Frontend Tier
   teaser: Run Frontend workloads
@@ -1274,14 +1243,14 @@ challenges:
 
     ```
     kubectl config use-context graphql
-    kubectl apply -f public-api.yaml
+    kubectl apply -f k8s/public-api
     ```
 
     Deploy the React Frontend. <br>
 
     ```
     kubectl config use-context react
-    kubectl apply -f web.yaml
+    kubectl apply -f k8s/web
     ```
 
     Frontend services are now available.
@@ -1320,7 +1289,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 20-review-application-deployment
-  id: urzpkkqnpl1n
+  id: pdmrshnxsfcw
   type: challenge
   title: Review Application Deployment
   teaser: Validate workload configuration
@@ -1376,7 +1345,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 21-test-application-deployment
-  id: hsvzlsztityh
+  id: emth3fu1nozv
   type: challenge
   title: Test Application Deployment
   teaser: Put it all together
@@ -1387,7 +1356,7 @@ challenges:
 
     ```
     kubectl config use-context react
-    echo "http://$(kubectl get svc web-service -o json | jq -r .status.loadBalancer.ingress[0].ip)"
+    echo "http://$(kubectl get svc consul-react-react-ingress-gateway -o json | jq -r .status.loadBalancer.ingress[0].ip)"
     ```
 
     Monitor the cache for incoming payments in one window. <br>
@@ -1402,7 +1371,7 @@ challenges:
 
     ```
     kubectl config use-context graphql
-    endpoint=$(kubectl get svc public-api-service -o json | jq -r .status.loadBalancer.ingress[0].ip)
+    endpoint=$(kubectl get svc consul-graphql-graphql-ingress-gateway -o json | jq -r .status.loadBalancer.ingress[0].ip)
     ```
 
     Try the Product API. <br>
@@ -1471,7 +1440,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 22-observe-application-deployment
-  id: cvcgo0hq0xlo
+  id: q3qrs6ofkrss
   type: challenge
   title: Observe Application Deployment
   teaser: Collect metrics and traces across clouds.
@@ -1482,7 +1451,7 @@ challenges:
 
     ```
     kubectl config use-context graphql
-    endpoint=$(kubectl get svc public-api-service -o json | jq -r .status.loadBalancer.ingress[0].ip)
+    endpoint=$(kubectl get svc consul-graphql-graphql-ingress-gateway -o json | jq -r .status.loadBalancer.ingress[0].ip)
     curl -s -v http://${endpoint}:8080/api \
       -H 'Accept-Encoding: gzip, deflate, br' \
       -H 'Content-Type: application/json' \
@@ -1543,4 +1512,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "14942704399616029091"
+checksum: "10027335116807196093"

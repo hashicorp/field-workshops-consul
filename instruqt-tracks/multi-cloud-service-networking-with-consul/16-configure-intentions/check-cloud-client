@@ -39,11 +39,11 @@ then
 fi
 
 #frontend
-consul intention check 'frontend/web' 'frontend/public-api'
-if [ $? -ne 0 ]
-then
-  fail-message "Error checking 'frontend/web' > 'frontend/public-api' intention."
-  exit 1
-fi
+#consul intention check 'frontend/web' 'frontend/public-api'
+#if [ $? -ne 0 ]
+#then
+#  fail-message "Error checking 'frontend/web' > 'frontend/public-api' intention."
+#  exit 1
+#fi
 
 exit 0
