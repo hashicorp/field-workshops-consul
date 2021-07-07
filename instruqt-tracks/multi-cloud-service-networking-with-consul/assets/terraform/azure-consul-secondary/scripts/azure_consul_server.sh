@@ -107,6 +107,7 @@ cat <<EOF> /etc/consul.d/server.json
   "node_name": "consul-server-0",
   "ui": true,
   "primary_gateways" : ["${primary_wan_gateway}"],
+  "license_path": "/etc/consul.d/consul.hclic",
   "connect": {
     "enable_mesh_gateway_wan_federation": true,
     "enabled": true,

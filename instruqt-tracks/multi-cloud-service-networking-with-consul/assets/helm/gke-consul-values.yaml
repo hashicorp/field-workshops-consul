@@ -1,7 +1,7 @@
 global:
   name: consul
   datacenter: gcp-us-central-1
-  image: 'hashicorp/consul-enterprise:1.9.4-ent'
+  image: 'hashicorp/consul-enterprise:1.10.0-ent'
   tls:
     enabled: true
     caCert:
@@ -10,8 +10,6 @@ global:
     caKey:
       secretName: consul-federation
       secretKey: caKey
-    serverAdditionalIPSANs:
-      - 10.1.0.10
     enableAutoEncrypt: true
   gossipEncryption:
     secretName: consul-federation
@@ -26,8 +24,13 @@ global:
 ui:
   enabled: true
   service:
-    enabled: true
-    type: LoadBalancer
+    type: NodePort
+    additionalSpec: |
+       ports:
+        - name: https
+          port: 443
+          targetPort: 8501
+          nodePort: 30851
 server:
   replicas: 1
   bootstrapExpect: 1
@@ -38,7 +41,17 @@ server:
         - key: serverConfigJSON
           path: config.json
       load: true
+  exposeGossipAndRPCPorts: true
+  ports:
+    serflan:
+      port: 9301
+  enterpriseLicense:
+      secretName: 'consul-ent-license'
+      secretKey: 'key'
 client:
+  enabled: true
+  exposeGossipPorts: true
+controller:
   enabled: true
 meshGateway:
   enabled: true

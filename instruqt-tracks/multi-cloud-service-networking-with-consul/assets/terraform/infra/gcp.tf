@@ -39,3 +39,24 @@ resource "google_compute_network_peering" "app-to-shared" {
   network      = module.gcp-vpc-app.network.network.id
   peer_network = module.gcp-vpc-shared-svcs.network.network.id
 }
+
+resource "google_compute_firewall" "shared-consul" {
+  name    = "shared-allow-consul"
+  network = module.gcp-vpc-shared-svcs.network_name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["8300", "8301", "9301", "8302", "8502", "8443", "20000", "30851"]
+  }
+
+  allow {
+    protocol = "udp"
+    ports    = ["8301", "8302", "9301"]
+  }
+
+  allow {
+    protocol = "icmp"
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+}

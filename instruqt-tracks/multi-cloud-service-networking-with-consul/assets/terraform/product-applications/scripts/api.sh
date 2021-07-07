@@ -20,10 +20,50 @@ acl = {
   enable_token_replication = true
   tokens {
     agent  = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
-    default  = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
   }
 }
 encrypt = {{ with secret "kv/consul" }}"{{ .Data.data.gossip_key }}"{{ end }}
+EOF
+cat <<EOF> /etc/vault-agent.d/product-api-template.ctmpl
+service {
+  name = "product-api"
+  id = "product-api"
+  token = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
+  namespace = "product"
+  port = 9090
+  check = {
+    http = "http://localhost:9090/health"
+    interval = "5s"
+    method = "GET"
+    name = "http health check"
+    timeout = "2s"
+  }
+  connect {
+    sidecar_service {
+      proxy {
+        upstreams = [
+          {
+            destination_name = "postgres"
+            destination_namespace = "default"
+            local_bind_port  = 5432
+          },
+          {
+            destination_name = "jaeger-http-collector"
+            destination_namespace = "default"
+            datacenter = "aws-us-east-1"
+            local_bind_port  = 14268
+          },
+          {
+            destination_name = "zipkin-http-collector"
+            destination_namespace = "default"
+            datacenter = "aws-us-east-1"
+            local_bind_port  = 9411
+          }
+        ]
+      }
+    }
+  }
+}
 EOF
 cat <<EOF> /etc/vault-agent.d/envoy-token-template.ctmpl
 {{ with secret "kv/consul" }}{{ .Data.data.master_token }}{{ end }}
@@ -52,6 +92,11 @@ template {
 template {
   source      = "/etc/vault-agent.d/envoy-token-template.ctmpl"
   destination = "/etc/envoy/consul.token"
+  command     = "sudo service envoy restart"
+}
+template {
+  source      = "/etc/vault-agent.d/product-api-template.ctmpl"
+  destination = "/etc/consul.d/product-api.hcl"
   command     = "sudo service envoy restart"
 }
 vault {
@@ -102,46 +147,6 @@ auto_encrypt = {
   tls = true
 }
 EOF
-cat <<EOF > /etc/consul.d/product-api.hcl
-service {
-  name = "product-api"
-  id = "product-api"
-  namespace = "product"
-  port = 9090
-  check = {
-    http = "http://localhost:9090/health"
-    interval = "5s"
-    method = "GET"
-    name = "http health check"
-    timeout = "2s"
-  }
-  connect {
-    sidecar_service {
-      proxy {
-        upstreams = [
-          {
-            destination_name = "postgres"
-            destination_namespace = "default"
-            local_bind_port  = 5432
-          },
-          {
-            destination_name = "jaeger-http-collector"
-            destination_namespace = "default"
-            datacenter = "aws-us-east-1"
-            local_bind_port  = 14268
-          },
-          {
-            destination_name = "zipkin-http-collector"
-            destination_namespace = "default"
-            datacenter = "aws-us-east-1"
-            local_bind_port  = 9411
-          }
-        ]
-      }
-    }
-  }
-}
-EOF
 chown -R consul:consul /opt/consul/
 chown -R consul:consul /etc/consul.d/
 sudo systemctl enable consul.service
@@ -190,12 +195,6 @@ EOF
 sudo systemctl enable product-api.service
 sudo systemctl start product-api.service
 sleep 5
-
-#license
-sudo crontab -l > consul
-sudo echo "*/28 * * * * sudo service consul restart" >> consul
-sudo crontab consul
-sudo rm consul
 
 #make sure the config was picked up
 sudo service consul restart

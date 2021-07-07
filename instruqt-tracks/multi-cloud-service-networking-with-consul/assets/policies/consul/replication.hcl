@@ -10,3 +10,10 @@ service_prefix "" {
   policy = "read"
   intentions = "read"
 }
+namespace_prefix "" {
+  acl = "write"
+  service_prefix "" {
+    policy = "read"
+    intentions = "read"
+  }
+}

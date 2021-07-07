@@ -1,0 +1,13 @@
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: web
+spec:
+  destination:
+    name: web
+    namespace: frontend
+  sources:
+    - name: react-ingress-gateway
+      namespace: frontend
+      action: allow

@@ -1,7 +1,7 @@
 global:
   enabled: false
   name: consul-react
-  image: 'hashicorp/consul-enterprise:1.9.4-ent'
+  image: 'hashicorp/consul-enterprise:1.10.0-ent'
   datacenter: gcp-us-central-1
   acls:
       manageSystemACLs: true
@@ -21,11 +21,15 @@ global:
 client:
   enabled: true
   join:
-    - "10.1.0.10"
+    - "provider=gce zone_pattern=us-central1-a tag_value=consul-server"
 externalServers:
   enabled: true
   hosts:
-    - '10.1.0.10'
+    - "provider=gce zone_pattern=us-central1-a tag_value=consul-server"
+  tlsServerName: server.gcp-us-central-1.consul
+  httpsPort: 30851
+controller:
+  enabled: true
 syncCatalog:
   enabled: true
   default: false
@@ -43,5 +47,9 @@ ingressGateways:
   gateways:
     - name: react-ingress-gateway
       replicas: 1
+      consulNamespace: "frontend"
       service:
         type: LoadBalancer
+        ports:
+          - port: 80
+          - port: 443
