@@ -2,4 +2,7 @@
 
 set-workdir /root/apps
 
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+
 exit 0

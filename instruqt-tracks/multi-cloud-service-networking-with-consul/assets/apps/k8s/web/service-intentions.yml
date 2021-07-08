@@ -8,6 +8,6 @@ spec:
     name: web
     namespace: frontend
   sources:
-    - name: react-ingress-gateway
+    - name: ingress-nginx-controller
       namespace: frontend
       action: allow

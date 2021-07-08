@@ -1,18 +1,12 @@
 #!/bin/sh
 
 kubectl config use-context react
-endpoint=$(kubectl get svc consul-react-react-ingress-gateway -o json | jq -r .status.loadBalancer.ingress[0].ip)
+endpoint=$(kubectl get svc nginx-ingress-controller -o json | jq -r .status.loadBalancer.ingress[0].ip)
 cat << EOF > /etc/nginx/conf.d/app.conf
 server {
   listen 8080;
   location / {
     proxy_pass http://${endpoint};
-    proxy_set_header X-Real-IP \$remote_addr;
-    proxy_redirect off;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade \$http_upgrade;
-    proxy_set_header Connection "Upgrade";
-    proxy_set_header Host \$host;
   }
   access_log /var/log/nginx/app.log;
 }

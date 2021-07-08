@@ -1,11 +1,15 @@
-apiVersion: consul.hashicorp.com/v1alpha1
-kind: IngressGateway
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: react-ingress-gateway
+  name: web-ingress
 spec:
-  listeners:
-    - port: 80
-      protocol: http
-      services:
-        - name: web
-          hosts: ["*"]
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: web
+            port:
+              number: 80

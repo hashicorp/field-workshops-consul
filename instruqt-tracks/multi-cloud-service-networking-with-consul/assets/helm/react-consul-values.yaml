@@ -43,13 +43,4 @@ connectInject:
   consulNamespaces:
     consulDestinationNamespace: "frontend"
 ingressGateways:
-  enabled: true
-  gateways:
-    - name: react-ingress-gateway
-      replicas: 1
-      consulNamespace: "frontend"
-      service:
-        type: LoadBalancer
-        ports:
-          - port: 80
-          - port: 443
+  enabled: false

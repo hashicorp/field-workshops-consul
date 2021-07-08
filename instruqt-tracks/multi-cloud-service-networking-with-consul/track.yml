@@ -1239,17 +1239,19 @@ challenges:
     Review the k8s deployment specs in the code editor. <br>
 
 
-    Deploy the Public APIs. <br>
+    Deploy the Public APIs. This API will be exposed via a Consul ingress gateway. <br>
 
     ```
     kubectl config use-context graphql
     kubectl apply -f k8s/public-api
     ```
 
-    Deploy the React Frontend. <br>
+    Deploy the React Frontend. This frontend will be exposed via an ingress controller with a Connect transparent proxy. <br>
 
     ```
     kubectl config use-context react
+    helm install nginx-ingress -f /root/helm/nginx-ingress.yml ingress-nginx/ingress-nginx  --debug --wait
+    sleep 10
     kubectl apply -f k8s/web
     ```
 
@@ -1269,6 +1271,10 @@ challenges:
     hostname: cloud-client
     path: /
     port: 80
+  - title: Helm
+    type: code
+    hostname: cloud-client
+    path: /root/helm
   - title: Apps
     type: code
     hostname: cloud-client
@@ -1356,7 +1362,7 @@ challenges:
 
     ```
     kubectl config use-context react
-    echo "http://$(kubectl get svc consul-react-react-ingress-gateway -o json | jq -r .status.loadBalancer.ingress[0].ip)"
+    echo "http://$(kubectl get svc nginx-ingress-controller -o json | jq -r .status.loadBalancer.ingress[0].ip)"
     ```
 
     Monitor the cache for incoming payments in one window. <br>
@@ -1512,4 +1518,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "10027335116807196093"
+checksum: "6693896899533749448"
