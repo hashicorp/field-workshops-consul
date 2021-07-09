@@ -36,9 +36,12 @@ syncCatalog:
   toConsul: true
   toK8S: false
   k8sTag: k8s-react
+  consulNamespaces:
+    consulDestinationNamespace: "frontend"
 connectInject:
   enabled: true
   default: true
+  envoyExtraArgs: "-l debug"
   k8sAllowNamespaces: ["default"]
   consulNamespaces:
     consulDestinationNamespace: "frontend"

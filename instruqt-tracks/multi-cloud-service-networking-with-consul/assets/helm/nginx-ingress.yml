@@ -16,5 +16,9 @@ controller:
       podAnnotations:
         consul.hashicorp.com/connect-inject: "false"
   replicaCount: 1
+  service:
+    annotations:
+      consul.hashicorp.com/service-sync: "true"
+      consul.hashicorp.com/service-name: "ingress-nginx-controller-svc"
 serviceAccount:
   name: ingress-nginx-controller
