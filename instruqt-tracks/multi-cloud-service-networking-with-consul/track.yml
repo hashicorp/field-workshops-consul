@@ -1,7 +1,7 @@
-slug: multi-cloud-ent-test
-id: kfmfhapk88yz
+slug: multi-cloud-service-networking-with-consul
+id: iklbsgjpisau
 type: track
-title: multi-cloud-ent-test
+title: Multi Cloud Service Networking with Consul
 teaser: Deploy a multi-cloud service mesh solution with Consul
 description: Run a shared Consul service across multiple clouds and enable self-service for application teams.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
@@ -19,7 +19,7 @@ published: false
 show_timer: true
 challenges:
 - slug: 01-provision-cloud-infra
-  id: insuaye2zksw
+  id: bmfubswpxeni
   type: challenge
   title: Provision Cloud Infrastructure
   teaser: Create cloud VPCs
@@ -79,7 +79,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 02-provision-vault
-  id: yshhfmzu4r3j
+  id: wicxiidlfod9
   type: challenge
   title: Provision Vault Infrastructure
   teaser: Set up Vault Infrastructure and Enable Replication
@@ -119,7 +119,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 03-provision-identities
-  id: 00ikid9spcmv
+  id: jmavdzjkybyw
   type: challenge
   title: Provision Service & Workload Identities
   teaser: Create workload identities for secure introduction
@@ -155,7 +155,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 04-centralize-secrets-in-vault
-  id: 17xofk93yytd
+  id: vsfysnyjg9od
   type: challenge
   title: Centralize Secrets in Vault
   teaser: Create trust and seed bootstrap credentials.
@@ -246,7 +246,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 05-provision-aws-consul-primary
-  id: kp9gsm9j6mb2
+  id: bt6k0zty1tyv
   type: challenge
   title: Provision AWS Consul Primary Datacenter
   teaser: Run Consul in AWS
@@ -306,7 +306,7 @@ challenges:
   difficulty: basic
   timelimit: 14400
 - slug: 06-bootstrap-consul-primary
-  id: tiniblpj3g9f
+  id: nu6xyinepsdt
   type: challenge
   title: Bootstrap Consul Primary Datacenter
   teaser: Set up Consul for multi-datacenter
@@ -418,7 +418,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 07-create-namespaces-and-policies
-  id: odummyyrsrk0
+  id: kybktk3g50me
   type: challenge
   title: Create Namespaces & Policies
   teaser: Configure multi-tenancy
@@ -476,7 +476,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 08-provision-azure-consul-secondary-datacenter
-  id: c6gw4csx0fmn
+  id: htsppowub1zn
   type: challenge
   title: Provision Azure Consul Secondary Datacenter
   teaser: Run Consul in Azure
@@ -549,7 +549,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 09-provision-gcp-consul-secondary-datacenter
-  id: ztexj85jiljv
+  id: hm95rulre8ei
   type: challenge
   title: Provision GCP Consul Secondary Datacenter
   teaser: Run Consul in GKE
@@ -650,7 +650,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 10-provision-consul-esms
-  id: qmgb1f0uopif
+  id: jftjytsuegl5
   type: challenge
   title: Provision Consul ESMs
   teaser: Create health checks for external services
@@ -727,7 +727,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 11-provision-cache-services
-  id: d6l2k5fxnisd
+  id: tdwcriazb1xk
   type: challenge
   title: Provision Cache Services
   teaser: Deploy managed Cache instances
@@ -782,7 +782,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 12-provision-database-services
-  id: own5drqd6kbf
+  id: rwxcrn3y0fa7
   type: challenge
   title: Provision Database Services
   teaser: Deploy managed DB instances
@@ -836,7 +836,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 13-provision-consul-terminating-gateways
-  id: wsoickgvhxda
+  id: onikoufhplbd
   type: challenge
   title: Provision Consul Terminating Gateways
   teaser: Configure egress traffic for external services
@@ -909,7 +909,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 14-provision-nomad-scheduler-services
-  id: 7ujxihxidyfd
+  id: bwq0s9w3zhx3
   type: challenge
   title: Provision Nomad Scheduler Services
   teaser: Deploy Nomad workload infrastructure
@@ -977,7 +977,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 15-provision-k8s-scheduler-services
-  id: p0vyfbshexyq
+  id: jxpwtqcessex
   type: challenge
   title: Provision K8s Scheduler Services
   teaser: Deploy K8s workload infrastructure
@@ -1068,7 +1068,7 @@ challenges:
   difficulty: basic
   timelimit: 500
 - slug: 16-configure-intentions
-  id: tokoi3q0ilbo
+  id: 1pfkcfoq8ysz
   type: challenge
   title: Configure Intentions
   teaser: Allow selective mTLS between workloads
@@ -1126,7 +1126,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 17-deploy-payments-applications
-  id: kx1zn1yn73oi
+  id: cruyignfbudn
   type: challenge
   title: Deploy Payments Tier
   teaser: Run Payments workloads
@@ -1175,7 +1175,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 18-deploy-product-applications
-  id: oiyllzn3f6bx
+  id: eav10xzem4qs
   type: challenge
   title: Deploy Product Tier
   teaser: Run Product workloads
@@ -1229,7 +1229,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 19-deploy-frontend-applications
-  id: nxanx4gklthd
+  id: z76koxyd2ptx
   type: challenge
   title: Deploy Frontend Tier
   teaser: Run Frontend workloads
@@ -1295,7 +1295,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 20-review-application-deployment
-  id: pdmrshnxsfcw
+  id: yfp4xyirkhja
   type: challenge
   title: Review Application Deployment
   teaser: Validate workload configuration
@@ -1351,7 +1351,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 21-test-application-deployment
-  id: emth3fu1nozv
+  id: nhbawzeqgdha
   type: challenge
   title: Test Application Deployment
   teaser: Put it all together
@@ -1446,7 +1446,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 22-observe-application-deployment
-  id: q3qrs6ofkrss
+  id: iriwn61yrqyf
   type: challenge
   title: Observe Application Deployment
   teaser: Collect metrics and traces across clouds.
@@ -1518,4 +1518,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "8568439697622782301"
+checksum: "17411353806857257522"
