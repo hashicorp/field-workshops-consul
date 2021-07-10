@@ -9,54 +9,8 @@ cat << EOF > /root/terraform/gcp-consul-secondary/terraform.tfvars
 gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
 EOF
 
-#ip reservation
-#static IP for SANs
-gcloud beta compute addresses create internal-10-1-0-10 \
-    --region=us-central1 \
-    --subnet=shared \
-    --addresses=10.1.0.10 \
-    --purpose=SHARED_LOADBALANCER_VIP
-gcloud beta compute addresses create internal-10-1-0-11 \
-    --region=us-central1 \
-    --subnet=shared \
-    --addresses=10.1.0.11 \
-    --purpose=SHARED_LOADBALANCER_VIP
-gcloud beta compute addresses create internal-10-1-0-12 \
-    --region=us-central1 \
-    --subnet=shared \
-    --addresses=10.1.0.12 \
-    --purpose=SHARED_LOADBALANCER_VIP
-
 #helm3
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 helm repo add hashicorp https://helm.releases.hashicorp.com
-
-cat <<EOF>  /root/terraform/gcp-consul-secondary/consul-join.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: consul-join
-  annotations:
-    "cloud.google.com/load-balancer-type": "Internal"
-spec:
-  selector:
-    app: consul
-    component: server
-  ports:
-    - name: api
-      protocol: TCP
-      port: 8501
-      targetPort: 8501
-    - name: rpc
-      protocol: TCP
-      port: 8300
-      targetPort: 8300
-    - name: gossip
-      protocol: TCP
-      port: 8301
-      targetPort: 8301
-  type: LoadBalancer
-  loadBalancerIP: 10.1.0.10
-EOF
 
 exit 0

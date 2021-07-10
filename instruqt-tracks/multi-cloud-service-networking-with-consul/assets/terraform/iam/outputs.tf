@@ -37,3 +37,7 @@ output "azure_product_api_user_assigned_identity_principal_id" {
 output "azure_product_api_user_assigned_identity_id" {
   value = azurerm_user_assigned_identity.product-api.id
 }
+
+output "gcp_consul_service_account_email" {
+  value = google_service_account.consul.email
+}

@@ -37,9 +37,9 @@ EOF
 
 sleep 5
 
-#helm config
-kubectl apply -f /root/terraform/gcp-consul-secondary/consul-join.yaml
-helm install hashicorp hashicorp/consul -f /root/helm/gke-consul-values.yaml --debug --wait --version 0.31.1
+#license & helm install
+kubectl create secret generic consul-ent-license --from-literal="key=$(cat /etc/consul.hclic)"
+helm install hashicorp hashicorp/consul -f /root/helm/gke-consul-values.yaml --debug --wait --version 0.32.1
 sleep 60
 
 exit 0

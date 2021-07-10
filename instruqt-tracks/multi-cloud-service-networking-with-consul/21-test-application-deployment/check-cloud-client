@@ -2,7 +2,7 @@
 
 #endpoint
 kubectl config use-context graphql
-endpoint=$(kubectl get svc public-api-service -o json | jq -r .status.loadBalancer.ingress[0].ip)
+endpoint=$(kubectl get svc consul-graphql-graphql-ingress-gateway -o json | jq -r .status.loadBalancer.ingress[0].ip)
 
 #product
 n=0

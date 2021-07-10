@@ -33,7 +33,6 @@ acl = {
   default_policy = "deny"
   down_policy   = "extend-cache"
   enable_token_persistence = true
-  enable_token_replication = true
   tokens {
     master = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
     agent  = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
@@ -106,6 +105,7 @@ cat <<EOF> /etc/consul.d/server.json
   "log_level": "INFO",
   "node_name": "consul-server-0",
   "ui": true,
+  "license_path": "/etc/consul.d/consul.hclic",
   "connect": {
     "enable_mesh_gateway_wan_federation": true,
     "enabled": true,

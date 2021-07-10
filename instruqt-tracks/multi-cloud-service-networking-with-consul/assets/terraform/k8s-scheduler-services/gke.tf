@@ -21,7 +21,9 @@ resource "google_container_cluster" "graphql" {
   }
 
   node_config {
+    service_account = data.terraform_remote_state.iam.outputs.gcp_consul_service_account_email
     oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform",
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
     ]
@@ -29,7 +31,7 @@ resource "google_container_cluster" "graphql" {
       disable-legacy-endpoints = "true"
     }
     machine_type = "n1-standard-2"
-    tags         = ["consul-connect"]
+    tags = ["consul-client", "consul-connect"]
   }
 
   enable_legacy_abac = true
@@ -63,7 +65,9 @@ resource "google_container_cluster" "react" {
   }
 
   node_config {
+    service_account = data.terraform_remote_state.iam.outputs.gcp_consul_service_account_email
     oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform",
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
     ]
@@ -71,7 +75,7 @@ resource "google_container_cluster" "react" {
       disable-legacy-endpoints = "true"
     }
     machine_type = "n1-standard-2"
-    tags         = ["consul-connect"]
+    tags = ["consul-client", "consul-connect"]
   }
 
   enable_legacy_abac = true

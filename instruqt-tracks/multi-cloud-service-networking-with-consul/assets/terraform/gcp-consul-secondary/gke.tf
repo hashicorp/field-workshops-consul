@@ -21,7 +21,9 @@ resource "google_container_cluster" "shared" {
   }
 
   node_config {
+    service_account = data.terraform_remote_state.iam.outputs.gcp_consul_service_account_email
     oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform",
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
     ]

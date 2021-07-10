@@ -33,4 +33,13 @@ then
   fail-message "Error getting Azure Consul IAM role"
   exit 1
 fi
+
+#check gcp roles
+gcloud iam service-accounts describe $(terraform output -state /root/terraform/iam/terraform.tfstate gcp_consul_service_account_email)
+if [ $? -ne 0 ]
+then
+  fail-message "Could not check Consul GCP role."
+  exit 1
+fi
+
 exit 0

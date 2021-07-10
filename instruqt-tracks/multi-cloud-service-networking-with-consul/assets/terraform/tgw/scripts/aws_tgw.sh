@@ -125,12 +125,6 @@ sudo systemctl enable envoy.service
 sudo systemctl start envoy.service
 sleep 10
 
-#license
-sudo crontab -l > consul
-sudo echo "*/28 * * * * sudo service consul restart" >> consul
-sudo crontab consul
-sudo rm consul
-
 #make sure the config was picked up
 sudo service consul restart
 sudo service envoy restart

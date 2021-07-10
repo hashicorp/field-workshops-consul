@@ -9,7 +9,7 @@ sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(l
 
 #install packages
 sudo apt update -y
-sudo apt install awscli consul-enterprise=1.9.4+ent vault-enterprise=1.7.1+ent nomad-enterprise=1.0.4+ent docker.io jq -y
+sudo apt install awscli consul-enterprise=1.10.0+ent vault-enterprise=1.7.1+ent nomad-enterprise=1.0.4+ent docker.io jq -y
 
 #pgk checks
 #aws cli

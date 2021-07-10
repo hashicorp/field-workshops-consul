@@ -13,7 +13,7 @@ fi
 
 #aws
 aws_esm=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/consul-esm?dc=aws-us-east-1&passing=true")
-if [ "$(echo "${aws_esm}" | jq '. | length')" != "1" ]; then
+if [ "$(echo "${aws_esm}" | jq '. | length')" -lt "1" ]; then
   fail-message "AWS ESM is not healthy"
   exit 1
 fi

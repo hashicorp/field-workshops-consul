@@ -1,10 +1,12 @@
 #!/bin/bash
 
 kubectl config use-context graphql
-kubectl apply -f public-api.yaml
+kubectl apply -f k8s/public-api
 
 kubectl config use-context react
-kubectl apply -f web.yaml
+helm install nginx-ingress -f /root/helm/nginx-ingress.yml ingress-nginx/ingress-nginx  --debug --wait
+sleep 10
+kubectl apply -f k8s/web
 
 sleep 60
 

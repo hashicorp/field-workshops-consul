@@ -141,15 +141,8 @@ sudo systemctl enable consul-esm.service
 sudo systemctl start consul-esm.service
 sleep 10
 
-#license
-sudo crontab -l > consul
-sudo echo "*/28 * * * * sudo service consul restart" >> consul
-sudo crontab consul
-sudo rm consul
-
 #make sure the config was picked up
 sudo service consul restart
 sudo service consul-esm restart
-
 
 exit 0
