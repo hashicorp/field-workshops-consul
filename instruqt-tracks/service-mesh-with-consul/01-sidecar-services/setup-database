@@ -8,7 +8,7 @@ export PATH=/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 apt-get update -y && apt-get install -y curl xz-utils lsb-release software-properties-common
 
 # ENVOY - ALTERNATIVE INSTALLATION METHOD
-ENVOY_VERSION="1.16.3"
+ENVOY_VERSION="1.18.3"
 wget https://archive.tetratelabs.io/envoy/download/v${ENVOY_VERSION}/envoy-v${ENVOY_VERSION}-linux-amd64.tar.xz
 tar -xf envoy-v${ENVOY_VERSION}-linux-amd64.tar.xz
 chmod +x envoy-v${ENVOY_VERSION}-linux-amd64/bin/envoy
@@ -20,7 +20,7 @@ envoy --version
 rm -f /usr/local/bin/consul
 curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
 apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-apt-get update -y && apt-get install -y consul=1.9.4
+apt-get update -y && apt-get install -y consul=1.10.0
 rm -f /etc/consul.d/consul.hcl
 
 # Creating the Consul client config
