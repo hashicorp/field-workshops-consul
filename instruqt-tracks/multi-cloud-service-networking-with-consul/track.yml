@@ -15,8 +15,9 @@ owner: hashicorp
 developers:
 - lance@hashicorp.com
 private: true
-published: false
+published: true
 show_timer: true
+skipping_enabled: true
 challenges:
 - slug: 01-provision-cloud-infra
   id: bmfubswpxeni
@@ -1518,4 +1519,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "5357960719920367342"
+checksum: "7222261857038168710"
