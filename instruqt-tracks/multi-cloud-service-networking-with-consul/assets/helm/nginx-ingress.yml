@@ -19,6 +19,6 @@ controller:
   service:
     annotations:
       consul.hashicorp.com/service-sync: "true"
-      consul.hashicorp.com/service-name: "ingress-nginx-controller-svc"
+      consul.hashicorp.com/service-name: "nginx"
 serviceAccount:
   name: ingress-nginx-controller
