@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#tf
+cd /root/terraform/infra
+terraform init
+
+pubkey=$(cat ~/.ssh/id_rsa.pub)
+cat << EOF > /root/terraform/infra/terraform.tfvars
+gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
+ssh_public_key="${pubkey}"
+EOF
+
+set-workdir /root/terraform/infra
+
+exit 0

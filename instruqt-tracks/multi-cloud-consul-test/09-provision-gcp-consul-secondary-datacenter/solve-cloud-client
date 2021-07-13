@@ -1,0 +1,45 @@
+#!/bin/bash
+
+#provision K8s clusters
+export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)
+terraform apply -auto-approve 2>&1 | tee terraform.out
+
+sleep 15
+
+#helm config
+gcloud container clusters get-credentials \
+  $(terraform output -state /root/terraform/gcp-consul-secondary/terraform.tfstate gcp_gke_cluster_shared_name) \
+  --region us-central1-a
+kubectl config rename-context $(kubectl config current-context) shared
+kubectl config use-context shared
+
+#helm secrets
+vault login -method=userpass username=admin password=admin
+aws_mgw=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_mgw_public_ip)
+server_json=$(jq -n --arg mgw "$aws_mgw" '{primary_datacenter: "aws-us-east-1",primary_gateways:["\($mgw):443"]}')
+cat <<EOF | kubectl apply -f -
+{
+"apiVersion": "v1",
+"kind": "Secret",
+  "data": {
+    "caCert": "$(vault read -field certificate pki/cert/ca | base64 -w 0)",
+    "caKey": "$(vault kv get -field private_key kv/pki | base64 -w 0)",
+    "gossipEncryptionKey": "$(vault kv get -field gossip_key kv/consul | base64 -w 0)",
+    "replicationToken": "$(vault read -field token consul/creds/replication | base64 -w 0)",
+    "serverConfigJSON": "$(echo $server_json | base64 -w 0)"
+    },
+    "metadata": {
+        "name": "consul-federation",
+        "namespace": "default"
+    }
+}
+EOF
+
+sleep 5
+
+#license & helm install
+kubectl create secret generic consul-ent-license --from-literal="key=$(cat /etc/consul.hclic)"
+helm install hashicorp hashicorp/consul -f /root/helm/gke-consul-values.yaml --debug --wait --version 0.32.1
+sleep 60
+
+exit 0

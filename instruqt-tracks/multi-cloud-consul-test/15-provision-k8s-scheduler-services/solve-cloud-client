@@ -1,0 +1,31 @@
+#!/bin/bash
+
+#provision k8s
+export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)
+terraform apply -auto-approve 2>&1 | tee terraform.out
+
+sleep 15
+
+#creds
+vault login -method=userpass username=admin password=admin
+export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+
+#react cluster
+gcloud container clusters get-credentials $(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_react_name) --region us-central1-a
+kubectl config rename-context $(kubectl config current-context) react
+kubectl config use-context react
+kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
+kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
+kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
+helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f /root/helm/react-consul-values.yaml --debug --wait --timeout 10m --version 0.32.1
+
+#graphql
+gcloud container clusters get-credentials $(terraform output -state /root/terraform/k8s-scheduler-services/terraform.tfstate gcp_gke_cluster_graphql_name) --region us-central1-a
+kubectl config rename-context $(kubectl config current-context) graphql
+kubectl config use-context graphql
+kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
+kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
+kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
+helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_graphql_endpoint)" -f /root/helm/graphql-consul-values.yaml --debug --wait --timeout 10m --version 0.32.1
+
+exit 0

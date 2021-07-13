@@ -1,0 +1,22 @@
+#!/bin/bash
+
+
+#default
+vault login -method=userpass username=admin password=admin
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+consul intention create -allow '*/*' 'default/vault'
+consul intention create -allow 'default/payments-api' 'default/redis'
+consul intention create -allow 'frontend/public-api' 'default/payments-api'
+consul intention create -allow 'product/*' 'default/postgres'
+
+#product
+vault login -method=userpass username=product-developer password=product
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/product-developer)
+consul intention create -allow 'frontend/public-api' 'product/product-api'
+
+#frontend
+#vault login -method=userpass username=frontend-developer password=frontend
+#export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/frontend-developer)
+#consul intention create -allow 'frontend/web' 'frontend/public-api'
+
+exit 0

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#tf
+terraform apply -auto-approve 2>&1 | tee terraform.out
+
+#wait for Vault
+sleep 180
+
+exit 0

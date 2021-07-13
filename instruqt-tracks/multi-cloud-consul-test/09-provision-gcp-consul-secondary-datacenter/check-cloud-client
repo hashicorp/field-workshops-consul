@@ -1,0 +1,10 @@
+#!/bin/bash
+
+kubectl config use-context shared
+status=$(helm status hashicorp --output json | jq -r '.info.status')
+if [ "${status}" != "deployed" ]; then
+  fail-message "Helm chart is not deployed"
+  exit 1
+fi
+
+exit 0

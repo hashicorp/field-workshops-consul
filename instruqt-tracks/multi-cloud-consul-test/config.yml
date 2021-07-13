@@ -1,0 +1,28 @@
+version: "2"
+containers:
+- name: cloud-client
+  image: gcr.io/instruqt-hashicorp/consul-cloud-client:v1.10.0
+  shell: /bin/bash
+  ports:
+  - 80
+  - 8200
+  - 8500
+  - 8080
+  - 16686
+  memory: 2000
+gcp_projects:
+- name: consul
+  services:
+  - container.googleapis.com
+  - cloudresourcemanager.googleapis.com
+  - compute.googleapis.com
+  - iam.googleapis.com
+  - cloudkms.googleapis.com
+aws_accounts:
+- name: consul
+  managed_policies:
+  - arn:aws:iam::aws:policy/AdministratorAccess
+azure_subscriptions:
+- name: consul
+  roles:
+  - Owner

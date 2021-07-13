@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#login
+vault login -method=userpass username=admin password=admin
+
+#seed vault with consul bootstrap secrets
+vault kv put kv/consul \
+  master_token=$(cat /proc/sys/kernel/random/uuid) \
+  gossip_key=$(consul keygen) \
+  ttl=5m
+
+#wait for restart
+sleep 120
+
+exit 0

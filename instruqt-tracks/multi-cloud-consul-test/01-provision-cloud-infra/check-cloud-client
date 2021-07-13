@@ -1,0 +1,46 @@
+#!/bin/bash
+
+#check images
+echo "Checking Packer Azure VM"
+azure_vm=$(az image list -g packer | jq -r .[0].tags.name)
+if [ "${azure_vm}" != "Hashistack" ]; then
+  fail-message "Could not get Packer Azure VM. Rebuild w/Packer."
+  exit 1
+fi
+echo "Checking Packer AWS AMI"
+aws_ami=$(aws ec2 describe-images --owners self | jq -r .Images[0].Description)
+if [ "${aws_ami}" != "Hashistack - Ubuntu" ]; then
+  fail-message "Could not get Packer AWS AMI. Rebuild w/Packer."
+  exit 1
+fi
+
+#aws vpc
+echo "Checking AWS VPCs"
+aws_vpc=$(aws ec2 describe-vpcs | jq '[.. |."State"? | select(. == "available")] | length')
+if [ "${aws_vpc}" != "3" ]; then
+  fail-message "AWS VPCs did not provision successful."
+  exit 1
+fi
+
+#azure vpc
+echo "Verifying Azure VNETs"
+rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
+vnet_count=$(az network vnet list -g "${rg}" | jq '. | length')
+if [ -z "$vnet_count" ]; then
+      fail-message "Could not get Azure VNets. Check your Terraform."
+      exit 1
+fi
+if [ "$vnet_count" != "2" ]; then
+  fail-message "Azure VNETs did not provision successful."
+  exit 1
+fi
+
+#gcp vpc
+echo "Verifying GCP VPCs"
+gcp_vpc=$(gcloud compute networks list --format=json | jq '. | length')
+if [ "${gcp_vpc}" != "3" ]; then
+  fail-message "GCP VPCs did not provision successful."
+  exit 1
+fi
+
+exit 0

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set-workdir /root/policies/consul
+
+exit 0

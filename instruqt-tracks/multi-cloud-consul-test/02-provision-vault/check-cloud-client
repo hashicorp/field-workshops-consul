@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#aws
+vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
+echo "Vault Load balancer is: $vault_lb"
+if [ -z "${vault_lb}" ]; then
+  fail-message "AWS Vault is not provisioned yet"
+  exit 1
+fi
+vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://{$vault_lb}:8200/v1/sys/health)
+if [ "${vault_api}" != "501" ]; then
+  fail-message "AWS Vault service did not return a 501. Please wait a few moments and try again."
+  exit 1
+fi
+
+#azure
+vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate azure_vault_ip)
+echo "Vault Load balancer is: $vault_lb"
+if [ -z "${vault_lb}" ]; then
+  fail-message "Azure Vault is not provisioned yet"
+  exit 1
+fi
+vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://{$vault_lb}:8200/v1/sys/health)
+if [ "${vault_api}" != "501" ]; then
+  fail-message "Azure Vault service did not return a 501. Please wait a few moments and try again."
+  exit 1
+fi
+
+exit 0

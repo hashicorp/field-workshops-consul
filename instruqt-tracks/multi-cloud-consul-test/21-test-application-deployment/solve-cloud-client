@@ -1,0 +1,31 @@
+#!/bin/sh
+
+#ui
+kubectl config use-context react
+echo "http://$(kubectl get svc nginx-ingress-controller -o json | jq -r .status.loadBalancer.ingress[0].ip)"
+
+#public
+kubectl config use-context graphql
+endpoint=$(kubectl get svc consul-graphql-graphql-ingress-gateway -o json | jq -r .status.loadBalancer.ingress[0].ip)
+
+#public api
+curl -s -v http://${endpoint}:8080/api \
+  -H 'Accept-Encoding: gzip, deflate, br' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
+  -H 'Connection: keep-alive' \
+  -H 'DNT: 1' \
+  --data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+  --compressed | jq
+
+#payments
+curl -s -v http://${endpoint}:8080/api \
+  -H 'Accept-Encoding: gzip, deflate, br' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
+  -H 'Connection: keep-alive' \
+  -H 'DNT: 1' \
+  --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+  --compressed | jq
+
+exit 0

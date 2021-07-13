@@ -1,0 +1,105 @@
+#!/bin/bash
+
+#ui access
+consul_lb=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip)
+echo "export CONSUL_HTTP_ADDR=http://${consul_lb}:8500" >> ~/.bashrc
+cat << EOF > /etc/nginx/conf.d/consul.conf
+server {
+  listen 8500;
+  location / {
+    proxy_pass http://${consul_lb}:8500;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_redirect off;
+  }
+  access_log /var/log/nginx/consul.log;
+}
+EOF
+/usr/sbin/service nginx restart
+
+#aws
+AWS_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
+export VAULT_ADDR=http://${AWS_VAULT_IP}:8200
+export VAULT_TOKEN=$(cat /root/aws_vault_keys.json | jq -r .root_token)
+export CONSUL_HTTP_ADDR="http://$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip):8500"
+export CONSUL_HTTP_TOKEN=$(vault kv get -field master_token kv/consul)
+
+echo 'node_prefix "" {
+  policy = "read"
+}
+session_prefix "" {
+  policy = "read"
+}
+agent_prefix "" {
+  policy = "read"
+}
+query_prefix "" {
+  policy = "read"
+}
+operator = "read"
+namespace_prefix "" {
+  acl = "read"
+  intention = "read"
+  service_prefix "" {
+    policy = "read"
+  }
+  node_prefix "" {
+    policy = "read"
+  }
+}' |  consul acl policy create -name anonymous -rules -
+consul acl token update -id anonymous -policy-name anonymous
+
+cat << EOF > /root/terraform/aws-consul-primary/proxy-defaults.hcl
+Kind      = "proxy-defaults"
+Name      = "global"
+Namespace = "default"
+Config {
+  protocol = "http"
+  envoy_extra_static_clusters_json = <<EOL
+    {
+      "connect_timeout": "3.000s",
+      "dns_lookup_family": "V4_ONLY",
+      "lb_policy": "ROUND_ROBIN",
+      "load_assignment": {
+          "cluster_name": "jaeger_zipkin",
+          "endpoints": [
+              {
+                  "lb_endpoints": [
+                      {
+                          "endpoint": {
+                              "address": {
+                                  "socket_address": {
+                                      "address": "127.0.0.1",
+                                      "port_value": 9411,
+                                      "protocol": "TCP"
+                                  }
+                              }
+                          }
+                      }
+                  ]
+              }
+          ]
+      },
+      "name": "jaeger_zipkin",
+      "type": "STRICT_DNS"
+    }
+  EOL
+  envoy_tracing_json = <<EOL
+    {
+      "http": {
+        "name": "envoy.tracers.zipkin",
+        "typed_config": {
+          "@type": "type.googleapis.com/envoy.config.trace.v3.ZipkinConfig",
+          "collector_cluster": "jaeger_zipkin",
+          "collector_endpoint": "/api/v2/spans",
+          "collector_endpoint_version": "HTTP_JSON"
+        }
+      }
+    }
+  EOL
+}
+MeshGateway {
+   Mode = "local"
+}
+EOF
+
+exit 0

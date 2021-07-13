@@ -1,0 +1,77 @@
+#!/bin/bash
+
+#creds
+vault login -method=userpass username=admin password=admin
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+
+#namespace sd
+consul acl policy read -name cross-namespace-policy-sd
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking cross namespace policy"
+  exit 1
+fi
+
+#namespaces
+consul namespace read payments
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking payments namespace"
+  exit 1
+fi
+consul namespace read product
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking product namespace"
+  exit 1
+fi
+consul namespace read frontend
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking frontend namespace"
+  exit 1
+fi
+
+#dev policies
+consul acl policy read -name payments-developer-policy
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking payments developer policy"
+  exit 1
+fi
+
+consul acl policy read -name product-developer-policy
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking product developer policy"
+  exit 1
+fi
+
+consul acl policy read -name frontend-developer-policy
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking frontend developer policy"
+  exit 1
+fi
+
+#check creds
+vault read consul/creds/payments-developer
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking payments dev access"
+  exit 1
+fi
+vault read consul/creds/product-developer
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking product dev access"
+  exit 1
+fi
+vault read consul/creds/frontend-developer
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking frontend dev access"
+  exit 1
+fi
+
+exit 0
