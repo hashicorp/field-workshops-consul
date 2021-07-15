@@ -1,12 +1,5 @@
 #!/bin/bash
 
-cd /root/terraform/k8s-scheduler-services
-terraform init
-
-cat << EOF > /root/terraform/k8s-scheduler-services/terraform.tfvars
-gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
-EOF
-
 set-workdir /root/terraform/k8s-scheduler-services
 
 exit 0

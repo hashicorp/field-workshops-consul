@@ -1,13 +1,7 @@
 #!/bin/bash
 
-#wait for azure accounts to propagate
-sleep 180
-
 #tf
-export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)
-terraform apply -auto-approve 2>&1 | tee terraform.out
-
-#wait for the azure api
-sleep 120
+#terraform apply -auto-approve 2>&1 | tee terraform.out
+echo "Skipping plan & apply for module lifecycle"
 
 exit 0

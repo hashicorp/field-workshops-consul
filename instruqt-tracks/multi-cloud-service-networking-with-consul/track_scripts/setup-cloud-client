@@ -1,0 +1,287 @@
+#!/bin/bash -e
+
+# Ensure we load /etc/profile.d/instruqt-env.sh
+echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
+source /root/.bashrc
+
+#wait at least five minutes for Azure User to propagate
+#az upgrade -y
+az account clear
+echo "Logging in with Azure SPN..."
+n=0
+until [ $n -ge 5 ]; do
+  az login \
+  --username "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_USERNAME}" \
+  --password "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_PASSWORD}" && break
+  n=$[$n+1]
+  sleep 60
+done
+if [ $n -ge 5 ]; then
+  exit 1
+fi
+
+#wait more because Azure
+echo "Waiting extra for Azure..."
+sleep 180
+
+#aws setup
+aws configure set default.region us-east-1
+aws ec2 create-default-vpc
+
+#azure packer setup
+az group create -l westus2 -n packer
+
+#cloud client packages - already on machine now with packer
+#apt update -y
+#apt install software-properties-common -y
+#curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+#apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+#apt update -y
+#apt install terraform=0.13.5 packer=1.7.0 consul-enterprise=1.10.0+ent vault-enterprise=1.7.1+ent nomad-enterprise=1.0.4+ent libcap-dev jq redis-server -y
+
+#tf creds
+echo 'export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)' >> /root/.bashrc
+
+#get assets
+echo "cloning assets..."
+git clone https://github.com/hashicorp/field-workshops-consul.git
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/terraform .
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/packer .
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/apps .
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/policies .
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/helm .
+rm -rf field-workshops-consul
+
+#fix path
+echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
+
+#ssh
+cat << EOF > ~/.ssh/config
+Host *
+    StrictHostKeyChecking no
+EOF
+
+#make vault run in instruqt container
+setcap cap_ipc_lock= /usr/bin/vault
+
+#optimistic provisioning
+
+#packer
+echo "Provisoning Packer Builds..."
+cd /root/packer
+nohup packer build hashistack.json 2>&1 | tee nohup.out &
+
+#infra
+echo "Provisoning Infra..."
+cd /root/terraform/infra
+terraform init
+pubkey=$(cat ~/.ssh/id_rsa.pub)
+cat << EOF > /root/terraform/infra/terraform.tfvars
+gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
+ssh_public_key="${pubkey}"
+EOF
+export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)
+terraform apply -auto-approve 2>&1 | tee nohup.out
+
+#iam
+echo "Provisoning IAM..."
+cd /root/terraform/iam
+terraform init
+cat << EOF > /root/terraform/iam/terraform.tfvars
+gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
+EOF
+terraform apply -auto-approve 2>&1 | tee nohup.out
+
+#gcp GKE secondary
+echo "Provisoning GKE K8s Consul Cluster..."
+cd /root/terraform/gcp-consul-secondary
+terraform init
+cat << EOF > /root/terraform/gcp-consul-secondary/terraform.tfvars
+gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
+EOF
+export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)
+nohup terraform apply -auto-approve 2>&1 | tee nohup.out &
+
+#gcp GKE app clusters
+echo "Provisoning GKE K8s App Clusters..."
+cd /root/terraform/k8s-scheduler-services
+terraform init
+cat << EOF > /root/terraform/k8s-scheduler-services/terraform.tfvars
+gcp_project_id="$(echo $INSTRUQT_GCP_PROJECT_CONSUL_PROJECT_ID)"
+EOF
+export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)
+nohup terraform apply -auto-approve 2>&1 | tee nohup.out &
+
+#aws elasticache
+echo "Provisoning AWS ElastiCache..."
+cd /root/terraform/cache-services
+terraform init
+AWS_CONSUL_IP=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip)
+cat << EOF > /root/terraform/cache-services/terraform.tfvars
+consul_http_addr="http://127.0.0.1:8500"
+EOF
+nohup terraform apply -target=aws_elasticache_cluster.redis -auto-approve 2>&1 | tee nohup.out &
+
+#azure postgreSQL
+echo "Provisoning Azure PostgreSQL..."
+cd /root/terraform/database-services
+terraform init
+AZURE_CONSUL_IP=$(terraform output -state /root/terraform/azure-consul-secondary/terraform.tfstate azure_consul_public_ip)
+cat << EOF > /root/terraform/database-services/terraform.tfvars
+consul_http_addr="http://127.0.0.1:8500"
+EOF
+nohup terraform apply -target=azurerm_postgresql_server.postgres -auto-approve 2>&1 | tee nohup.out &
+
+#wait for packer images
+
+#aws
+echo "Checking AWS Images"
+n=0
+until [ $n -ge 5 ]; do
+  echo "Fetching AWS AMI..."
+  aws_ami=$(aws ec2 describe-images --owners self | jq -r .Images[0].Description)
+  if [ "${aws_ami}" = "Hashistack - Ubuntu" ]; then
+    break
+  fi
+  n=$[$n+1]
+  sleep 60
+done
+if [ $n -ge 5 ]; then
+  fail-message "Could not get AWS AMI."
+  exit 1
+fi
+
+#azure
+echo "Checking Azure Images"
+n=0
+until [ $n -ge 5 ]; do
+  echo "Fetching Azure Image..."
+  azure_vm=$(az image list -g packer | jq -r .[0].tags.name)
+  if [ "${azure_vm}" = "Hashistack" ]; then
+    break
+  fi
+  n=$[$n+1]
+  sleep 60
+done
+if [ $n -ge 5 ]; then
+  fail-message "Could not get Azure Image."
+  exit 1
+fi
+
+#vault
+echo "Provisoning Vault..."
+cd /root/terraform/vault
+terraform init
+pubkey=$(cat ~/.ssh/id_rsa.pub)
+cat << EOF > /root/terraform/vault/terraform.tfvars
+ssh_public_key="${pubkey}"
+EOF
+terraform apply -auto-approve 2>&1 | tee terraform.out
+echo "Waiting for Vault..."
+sleep 180
+
+#run pre-flight checks
+echo "Running pre-flight checks..."
+
+#infra
+
+#aws vpc
+echo "Checking AWS VPCs"
+aws_vpc=$(aws ec2 describe-vpcs | jq '[.. |."State"? | select(. == "available")] | length')
+if [ "${aws_vpc}" != "3" ]; then
+  fail-message "AWS VPCs did not provision successful."
+  exit 1
+fi
+
+#azure vpc
+echo "Verifying Azure VNETs"
+rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
+vnet_count=$(az network vnet list -g "${rg}" | jq '. | length')
+if [ -z "$vnet_count" ]; then
+      fail-message "Could not get Azure VNets. Check your Terraform."
+      exit 1
+fi
+if [ "$vnet_count" != "2" ]; then
+  fail-message "Azure VNETs did not provision successful."
+  exit 1
+fi
+
+#gcp vpc
+echo "Verifying GCP VPCs"
+gcp_vpc=$(gcloud compute networks list --format=json | jq '. | length')
+if [ "${gcp_vpc}" != "3" ]; then
+  fail-message "GCP VPCs did not provision successful."
+  exit 1
+fi
+
+#iam
+#check aws roles
+aws iam get-role --role-name consul-$(terraform output -state /root/terraform/infra/terraform.tfstate env)
+if [ $? -ne 0 ]
+then
+  fail-message "Error getting AWS Consul IAM role"
+  exit 1
+fi
+aws iam get-role --role-name nomad-$(terraform output -state /root/terraform/infra/terraform.tfstate env)
+if [ $? -ne 0 ]
+then
+  fail-message "Error getting AWS Nomad IAM role"
+  exit 1
+fi
+
+#check azure roles
+rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
+az identity show \
+  --name consul-$(terraform output -state /root/terraform/infra/terraform.tfstate env) \
+  --resource-group "${rg}"
+if [ $? -ne 0 ]
+then
+  fail-message "Error getting Azure Consul IAM role"
+  exit 1
+fi
+rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
+az identity show \
+  --name product-api-$(terraform output -state /root/terraform/infra/terraform.tfstate env) \
+  --resource-group "${rg}"
+if [ $? -ne 0 ]
+then
+  fail-message "Error getting Azure Consul IAM role"
+  exit 1
+fi
+
+#check gcp roles
+gcloud iam service-accounts describe $(terraform output -state /root/terraform/iam/terraform.tfstate gcp_consul_service_account_email)
+if [ $? -ne 0 ]
+then
+  fail-message "Could not check Consul GCP role."
+  exit 1
+fi
+
+#vault
+#aws
+vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
+echo "Vault Load balancer is: $vault_lb"
+if [ -z "${vault_lb}" ]; then
+  fail-message "AWS Vault is not provisioned yet"
+  exit 1
+fi
+vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://{$vault_lb}:8200/v1/sys/health)
+if [ "${vault_api}" != "501" ]; then
+  fail-message "AWS Vault service did not return a 501. Please wait a few moments and try again."
+  exit 1
+fi
+
+#azure
+vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate azure_vault_ip)
+echo "Vault Load balancer is: $vault_lb"
+if [ -z "${vault_lb}" ]; then
+  fail-message "Azure Vault is not provisioned yet"
+  exit 1
+fi
+vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://{$vault_lb}:8200/v1/sys/health)
+if [ "${vault_api}" != "501" ]; then
+  fail-message "Azure Vault service did not return a 501. Please wait a few moments and try again."
+  exit 1
+fi
+
+exit 0

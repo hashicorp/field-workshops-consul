@@ -40,11 +40,12 @@ challenges:
     aws ec2 describe-images --owners self | jq
     ```
 
-    Inspect the terraform code in the code editor and create the VPCs and VNets for shared services and application workloads. <br>
+    Inspect the terraform code and validate the VPCs and VNets that were pre-provisioned for shared services and application workloads. <br>
 
     ```
-    terraform plan
-    terraform apply -auto-approve
+    aws ec2 describe-vpcs
+    gcloud compute networks list
+    az network vnet list
     ```
 
     If you get an error on your Packer images, you can rebuild either image below from the packer directory:
@@ -1519,4 +1520,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "7222261857038168710"
+checksum: "8988463872569825667"
