@@ -29,13 +29,7 @@ cat <<-EOF > /etc/consul.d/client.json
   "bind_addr": "0.0.0.0",
   "client_addr": "0.0.0.0",
   "data_dir": "/consul/data",
-  "log_level": "INFO",
   "node_name": "Application",
-  "server": false,
-  "ui": false,
-  "leave_on_terminate": false,
-  "skip_leave_on_interrupt": true,
-  "rejoin_after_leave": true,
   "connect": {
     "enabled": true
   },

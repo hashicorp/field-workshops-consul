@@ -34,6 +34,9 @@ challenges:
   type: challenge
   title: Get to Know Consul
   teaser: My First Consul cluster
+  notes:
+  - type: text
+    contents: "\U0001F578️You are about to enter the Consul Zone\U0001F47D"
   assignment: |
     Welcome to Consul Basics! In this lab you'll start up a three-node Consul cluster.
 
@@ -52,9 +55,6 @@ challenges:
     Our startup script is simple and runs Consul as a background process. In production this would be daemonized or managed by an orchestrator.
 
     Once you have a healthy cluster, the Consul UI will become available. Click on the Nodes tab in the Consul UI to see your three servers. The leader is marked with a star. ⭐
-  notes:
-  - type: text
-    contents: "\U0001F578️You are about to enter the Consul Zone\U0001F47D"
   tabs:
   - title: Consul0
     type: terminal
@@ -80,6 +80,11 @@ challenges:
   type: challenge
   title: Consul CLI
   teaser: Take the Consul CLI for a spin
+  notes:
+  - type: text
+    contents: |-
+      Consul is distributed as a single binary file, which means it can act as both a server or a command line client.
+      You can read more about the full list of commands [here](https://www.consul.io/docs/commands/index.html).
   assignment: |-
     The Consul binary can act as a server, client, or command line tool. We've preconfigured the command line settings for you with the `CONSUL_HTTP_ADDR` environment variable.
 
@@ -101,11 +106,6 @@ challenges:
       - `consul info` <br>
 
     You can check out the same info in the Consul UI.
-  notes:
-  - type: text
-    contents: |-
-      Consul is distributed as a single binary file, which means it can act as both a server or a command line client.
-      You can read more about the full list of commands [here](https://www.consul.io/docs/commands/index.html).
   tabs:
   - title: Consul0
     type: terminal
@@ -127,6 +127,11 @@ challenges:
   type: challenge
   title: Consul API
   teaser: Use the Consul API
+  notes:
+  - type: text
+    contents: |-
+      Consul has a RESTful API which you can use to interact with Consul.
+      You can see the see Consul API documentation [here](https://www.consul.io/api/index.html).
   assignment: |-
     Let's try some of the same commands from our last assignment with the API. We'll use the Unix `curl` command to interact with the API. Copy and paste each command into the terminal and view the output.
 
@@ -138,11 +143,6 @@ challenges:
       - `curl -s http://127.0.0.1:8500/v1/status/leader | jq`
     * Agent Info:
       - `curl -s http://127.0.0.1:8500/v1/agent/self | jq` <br>
-  notes:
-  - type: text
-    contents: |-
-      Consul has a RESTful API which you can use to interact with Consul.
-      You can see the see Consul API documentation [here](https://www.consul.io/api/index.html).
   tabs:
   - title: Consul0
     type: terminal
@@ -164,6 +164,12 @@ challenges:
   type: challenge
   title: Add an Agent
   teaser: Add a Consul client agent to your Consul cluster.
+  notes:
+  - type: text
+    contents: |-
+      The Consul agent runs on every node where you want to keep track of services. A node can be a physical server, VM, or container.
+
+      The agent tracks information about the node and its associated services. Agents report this information to the Consul servers, where we have a central view of node and service status.
   assignment: |-
     We've added an `App Server` to your lab environment. The app server is configured to run in `client` mode.
 
@@ -176,12 +182,6 @@ challenges:
     ```
 
     Look at the node list in the Consul UI or run the `consul members` command to verify that the app server has joined the cluster.
-  notes:
-  - type: text
-    contents: |-
-      The Consul agent runs on every node where you want to keep track of services. A node can be a physical server, VM, or container.
-
-      The agent tracks information about the node and its associated services. Agents report this information to the Consul servers, where we have a central view of node and service status.
   tabs:
   - title: App
     type: terminal
@@ -201,6 +201,18 @@ challenges:
   type: challenge
   title: Consul High Availability
   teaser: Test Consul's High Availability Capabilities
+  notes:
+  - type: text
+    contents: |-
+      Consul servers work together to elect a single leader, which becomes the primary source of truth for the cluster. All updates are forwarded to the cluster leader. If the leader goes down one of the other servers can immediately take its place.
+
+      To ensure high availability within the system, we recommend deploying Consul with 3 or 5 server nodes.
+  - type: text
+    contents: |-
+      Quorum requires at least (n+1)/2 members. You need quorum for a healthy cluster. <br>
+
+      A three-node cluster can tolerate the loss of a single member.
+      A five-node cluster can tolerate the loss of two members and continue to operate.
   assignment: |-
     We have 3 servers in our lab environment. This means we can lose one
     server and still have a healthy cluster. You can read more about the Consensus
@@ -254,18 +266,6 @@ challenges:
     And run `consul members` one last time. You should see all three server nodes in alive status. <br>
 
     Congratulations, your Consul cluster is healthy again.
-  notes:
-  - type: text
-    contents: |-
-      Consul servers work together to elect a single leader, which becomes the primary source of truth for the cluster. All updates are forwarded to the cluster leader. If the leader goes down one of the other servers can immediately take its place.
-
-      To ensure high availability within the system, we recommend deploying Consul with 3 or 5 server nodes.
-  - type: text
-    contents: |-
-      Quorum requires at least (n+1)/2 members. You need quorum for a healthy cluster. <br>
-
-      A three-node cluster can tolerate the loss of a single member.
-      A five-node cluster can tolerate the loss of two members and continue to operate.
   tabs:
   - title: Consul UI
     type: service
@@ -290,6 +290,16 @@ challenges:
   type: challenge
   title: Consul ACLs
   teaser: Set up basic Consul ACLs
+  notes:
+  - type: text
+    contents: |-
+      Consul uses Access Control Lists (ACLs) to secure the UI, API, CLI, service communications, and agent communications.
+      ACLs operate by grouping rules into policies, then associating one or more policies with a token.
+      ACLs are imperative for all Consul production environments. <br>
+
+      For a detailed explanation of the ACL system, check out this [guide](https://learn.hashicorp.com/consul/security-networking/production-acls). <br>
+
+      This challenge will take 1-2 minutes to spin up. Please be patient.
   assignment: |-
     Let's apply some access controls to our Consul cluster to prevent unauthorized access. In this challenge you'll use the master bootstrap token to access the UI and to enable a policy for your app server.
 
@@ -342,16 +352,6 @@ challenges:
 
     You can now verify that the `App` agent logs are no longer logging errors.
     Nice work!!! You just secured your first Consul agent!
-  notes:
-  - type: text
-    contents: |-
-      Consul uses Access Control Lists (ACLs) to secure the UI, API, CLI, service communications, and agent communications.
-      ACLs operate by grouping rules into policies, then associating one or more policies with a token.
-      ACLs are imperative for all Consul production environments. <br>
-
-      For a detailed explanation of the ACL system, check out this [guide](https://learn.hashicorp.com/consul/security-networking/production-acls). <br>
-
-      This challenge will take 1-2 minutes to spin up. Please be patient.
   tabs:
   - title: Consul UI
     type: service
@@ -370,4 +370,4 @@ challenges:
     path: /tmp/bootstrap.txt
   difficulty: basic
   timelimit: 600
-checksum: "17282698375088453083"
+checksum: "4620626064868703026"

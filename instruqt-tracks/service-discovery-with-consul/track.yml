@@ -2,9 +2,7 @@ slug: service-discovery-with-consul
 id: nyzxxfyzce4a
 type: track
 title: Service Discovery with Consul
-teaser: Tired of manually updating IP addresses in config files? Is your network CMDB
-  or spreadsheet woefully out of date? Learn how Consul can automatically keep your
-  service catalog up to date and current.
+teaser: Tired of manually updating IP addresses in config files? Is your network CMDB or spreadsheet woefully out of date? Learn how Consul can automatically keep your service catalog up to date and current.
 description: |
   Join us on an adventure of service discovery. In this track you'll learn how to connect a web application with its database using Consul. Topics covered include service registration, health checks, service discovery, automated config management, and seamless DNS integration.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
@@ -29,14 +27,6 @@ challenges:
   title: "The website is DOWN! \U0001F631"
   teaser: |
     The company website is down and it's up to you to fix it. Use your Consul superpowers to find the database server and reconnect it to the app.
-  assignment: |
-    The website is DOWN! Your application server is not working correctly. You've determined that the app can't connect to the database.
-
-    Click on the *Nodes* tab in the Consul UI to find the database server's IP address.
-
-    Edit the `wp-config.php` file in the *App Config* tab. On line 32 you'll find the configuration for the database server. Update the IP address in the file and save it with *CTRL-S*.
-
-    Verify that the application is loading in the *Website* tab. You may need to hit the refresh button for the site to load.
   notes:
   - type: text
     contents: |
@@ -49,6 +39,14 @@ challenges:
       Visit the *Nodes* tab of the Consul UI to see the IP addresses of all your machines.
   - type: text
     contents: "\U0001F441️ Next Stop...the Consul Zone \U0001F570️"
+  assignment: |
+    The website is DOWN! Your application server is not working correctly. You've determined that the app can't connect to the database.
+
+    Click on the *Nodes* tab in the Consul UI to find the database server's IP address.
+
+    Edit the `wp-config.php` file in the *App Config* tab. On line 32 you'll find the configuration for the database server. Update the IP address in the file and save it with *CTRL-S*.
+
+    Verify that the application is loading in the *Website* tab. You may need to hit the refresh button for the site to load.
   tabs:
   - title: Consul UI
     type: service
@@ -69,8 +67,21 @@ challenges:
   id: qy8zgg6pz8mv
   type: challenge
   title: Register a Service Check for the Database ✔️
-  teaser: In this challenge you'll attach a health check to the database service so
-    we can monitor its status.
+  teaser: In this challenge you'll attach a health check to the database service so we can monitor its status.
+  notes:
+  - type: text
+    contents: |-
+      Now that you've got the website back up and running, it's time to put a health check on that database service. <br>
+
+      Application health checks are easy to build and can check a wide array of conditions.
+      Once you have this rich data it is easy to build automation around it. <br>
+
+      In this challenge you'll configure a service health check on the database server,
+      so that you'll always know where the database service is, and whether it is healthy.
+  - type: video
+    url: https://www.youtube.com/embed/CIv65T172mU?modestbranding=1&rel=0
+  - type: text
+    contents: "✔️ Check Yourself Before you Wreck Yourself \U0001F468‍\U0001F4BB"
   assignment: |
     In this challenge you'll create a service check that will register the database service in Consul's catalog. You'll need to copy a service definition file into the Consul config directory to activate the service.
 
@@ -97,20 +108,6 @@ challenges:
     To find the health check in the UI click on *Services* and then *mysql*.
 
     NOTE: It may take a moment for the health check to show up as healthy.
-  notes:
-  - type: text
-    contents: |-
-      Now that you've got the website back up and running, it's time to put a health check on that database service. <br>
-
-      Application health checks are easy to build and can check a wide array of conditions.
-      Once you have this rich data it is easy to build automation around it. <br>
-
-      In this challenge you'll configure a service health check on the database server,
-      so that you'll always know where the database service is, and whether it is healthy.
-  - type: video
-    url: https://www.youtube.com/embed/CIv65T172mU?modestbranding=1&rel=0
-  - type: text
-    contents: "✔️ Check Yourself Before you Wreck Yourself \U0001F468‍\U0001F4BB"
   tabs:
   - title: Consul UI
     type: service
@@ -125,8 +122,10 @@ challenges:
   id: rxiqqury4hcw
   type: challenge
   title: Register a Service Check for the Application ✔️
-  teaser: In this challenge you'll attach a health check to the application so we
-    can monitor its status.
+  teaser: In this challenge you'll attach a health check to the application so we can monitor its status.
+  notes:
+  - type: text
+    contents: You can use Consul to monitor all kinds of services. In this challenge you'll add a service check to your application.
   assignment: |
     Just like in the previous challenge, you'll need to copy a service definition file and reload Consul.
 
@@ -153,10 +152,6 @@ challenges:
     To find the health check in the UI click on *Services* and then *http*.
 
     NOTE: It may take a moment for the health check to show up as healthy.
-  notes:
-  - type: text
-    contents: You can use Consul to monitor all kinds of services. In this challenge
-      you'll add a service check to your application.
   tabs:
   - title: Consul UI
     type: service
@@ -171,8 +166,17 @@ challenges:
   id: m99lb94yn3ac
   type: challenge
   title: "Automate Your Job with Consul Template\U0001F916"
-  teaser: Now that you have the website back up and running, it's time to automate
-    this so you don't get woken up at 2 am again.
+  teaser: Now that you have the website back up and running, it's time to automate this so you don't get woken up at 2 am again.
+  notes:
+  - type: text
+    contents: |
+      The database and application are both registered in the Consul catalog. The health status and IP addresses of each service are always up to date, and can be queried at any time.
+
+      In the next challenge you'll automate the configuration of your wp-config.php file using Consul Template.
+
+      Consul Template is a small agent that can manage files and populate them with data from the Consul catalog.
+  - type: text
+    contents: "\U0001F5A7 All Your Service Are Belong To Us \U0001F469‍\U0001F4BB"
   assignment: |
     In this challenge you'll use consul-template to ensure that the application config always has the correct IP address. Run the following command on the *App Server* terminal tab to query the Consul service catalog for your database server:
 
@@ -197,16 +201,6 @@ challenges:
     Open the *Website* tab and verify that the web app is loading correctly.
 
     Consul Template will continuously watch for changes and update your configuration files automatically.
-  notes:
-  - type: text
-    contents: |
-      The database and application are both registered in the Consul catalog. The health status and IP addresses of each service are always up to date, and can be queried at any time.
-
-      In the next challenge you'll automate the configuration of your wp-config.php file using Consul Template.
-
-      Consul Template is a small agent that can manage files and populate them with data from the Consul catalog.
-  - type: text
-    contents: "\U0001F5A7 All Your Service Are Belong To Us \U0001F469‍\U0001F4BB"
   tabs:
   - title: Website
     type: service
@@ -233,8 +227,21 @@ challenges:
   id: icwdlsw0pseb
   type: challenge
   title: "Seamless Service Discovery with Consul DNS \U0001F5A7"
-  teaser: Consul can provide seamless access to all nodes and services in the catalog,
-    without rewriting your apps.
+  teaser: Consul can provide seamless access to all nodes and services in the catalog, without rewriting your apps.
+  notes:
+  - type: text
+    contents: |
+      The Consul catalog can seamlessly integrate with your current application infrastructure without changing any of your code.
+      Imagine giving all your applications and services easy access to configuration data, health checks, and network info. <br>
+
+      This is the magic of Consul DNS integration. With this configuration any application that speaks DNS can take advantage of the powerful Consul service catalog.
+      In the next challenge we'll use dnsmasq to route all local queries for *.consul addresses to the Consul service. Our application will now be able to use a simple Consul-managed DNS name for connecting to the database.
+  - type: text
+    contents: |-
+      There are several different ways to integrate Consul into your system DNS. <br>
+      Check out the HashiCorp Learn guide to learn more about DNS forwarding: https://learn.hashicorp.com/consul/security-networking/forwarding
+  - type: text
+    contents: "\U0001F310 Consul - A Powerful DNS-based Service Catalog \U0001F578️"
   assignment: |-
     In this exercise you'll configure Consul to act as a local DNS server,
     providing seamless access to your service catalog via simple DNS hostnames. The
@@ -271,20 +278,6 @@ challenges:
     ```
 
     Visit the Website tab and verify that the app has connected to the database using Consul DNS.
-  notes:
-  - type: text
-    contents: |
-      The Consul catalog can seamlessly integrate with your current application infrastructure without changing any of your code.
-      Imagine giving all your applications and services easy access to configuration data, health checks, and network info. <br>
-
-      This is the magic of Consul DNS integration. With this configuration any application that speaks DNS can take advantage of the powerful Consul service catalog.
-      In the next challenge we'll use dnsmasq to route all local queries for *.consul addresses to the Consul service. Our application will now be able to use a simple Consul-managed DNS name for connecting to the database.
-  - type: text
-    contents: |-
-      There are several different ways to integrate Consul into your system DNS. <br>
-      Check out the HashiCorp Learn guide to learn more about DNS forwarding: https://learn.hashicorp.com/consul/security-networking/forwarding
-  - type: text
-    contents: "\U0001F310 Consul - A Powerful DNS-based Service Catalog \U0001F578️"
   tabs:
   - title: Website
     type: service
@@ -303,4 +296,4 @@ challenges:
     hostname: app
   difficulty: basic
   timelimit: 900
-checksum: "6415079188478216818"
+checksum: "12769099385139066651"
