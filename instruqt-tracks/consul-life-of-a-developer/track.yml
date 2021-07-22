@@ -522,7 +522,7 @@ challenges:
   teaser: Scale up & Scale Down
   assignment: |
     Service Discovery is a important component of Service Mesh, and K8s is one of many platforms Consul supports native service discovery.
-    Understadning of the low level data plane is not required, but it can be helpful to get a deeper understanding of the mesh at work!
+    Understanding of the low level data plane is not required, but it can be helpful to get a deeper understanding of the mesh at work!
 
     When running on K8s, Consul can consume K8s probes to determine if an instance is healthy or not to receive traffic.
     You will test this workflow below. <br>
@@ -1064,4 +1064,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
-checksum: "3535411516985599699"
+checksum: "4751133666367185952"
