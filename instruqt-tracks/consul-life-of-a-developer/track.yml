@@ -615,7 +615,7 @@ challenges:
     ```
 
     The dataplane will be updated to reflect this change.
-    The `health_flags` will not be `healthy`. <br>
+    The `health_flags` will be `healthy`. <br>
 
     ```
     kubectl config use-context k8s1
