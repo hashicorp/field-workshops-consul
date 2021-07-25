@@ -24,7 +24,9 @@ challenges:
     You can see the repository for the HashiCups demo application here: https://github.com/hashicorp-demoapp. <br>
 
 
-    You can also view the services already running in your primary Kube cluster. Prometheus will deploy in a future assignment.
+    You can also view the services already running in your primary Kube cluster. Prometheus will deploy in a future assignment. <br>
+
+    Check the first k8s cluster. <br>
 
     ```
     kubectl config use-context k8s1
@@ -33,7 +35,16 @@ challenges:
     kubectl get svc
     ```
 
-    In the next few assignments you will deploy Consul.
+    Check the second k8s cluster. <br>
+
+    ```
+    kubectl config use-context k8s2
+    kubectl get deployments
+    kubectl get pods
+    kubectl get svc
+    ```
+
+    In the next few assignments you will validate the Consul deployment.
   tabs:
   - title: Workstation
     type: terminal
@@ -51,17 +62,17 @@ challenges:
   assignment: |-
     You can see the complete guide on Kubernetes multi-cluster federation here: https://www.consul.io/docs/k8s/installation/multi-cluster/kubernetes <br>
 
-    Start deploying Consul to k8s1 with Helm. This cluster that will run our stateless workloads.  <br>
+    Start validating Consul on k8s1 with Helm. This cluster that will run our stateless workloads.  <br>
 
     ```
     kubectl config use-context k8s1
-    helm install -f /root/helm/k8s1-consul-values.yaml consul hashicorp/consul  --wait --debug
+    helm status consul
     ```
 
     Check the pods. <br>
 
     ```
-    kubectl get pods
+    kubectl get pods -l app=consul
     ```
 
     Check the Consul API. <br>
@@ -73,6 +84,15 @@ challenges:
     You can also see the Consul UI is now up. <br>
 
     Last, set up the proxy, and mesh defaults for the mesh. <br>
+
+    Review the configuration. <br>
+
+    ```
+    cat deployments/config/proxy-defaults.yml
+    cat deployments/config/mesh.yml
+    ```
+
+    Apply the config. <br>
 
     ```
     kubectl apply -f deployments/config/proxy-defaults.yml
@@ -122,27 +142,19 @@ challenges:
   title: Service Mesh - Connect Your Runtimes - Part 2s
   teaser: Connect Stateful K8s Cluster
   assignment: |-
-    In this assignment you will finish the steps in this guide for the secondary cluster: https://www.consul.io/docs/k8s/installation/multi-cluster/kubernetes <br>
-
-    First, create the federation secret. The helm chart created this for you on the primary cluster. Use the below command to extract it.
-
-    ```
-    kubectl config use-context k8s1
-    kubectl get secret consul-federation -o yaml > consul-federation-secret.yaml
-    ```
-
-    Switch the second k8s cluster.
-
-    ```
-    kubectl config use-context k8s2
-    kubectl apply -f consul-federation-secret.yaml
-    ```
+    In this assignment you will validate the steps in this guide for the secondary cluster: https://www.consul.io/docs/k8s/installation/multi-cluster/kubernetes <br>
 
     Deploy Consul to k8s2 cluster.
 
     ```
     kubectl config use-context k8s2
-    helm install -f /root/helm/k8s2-consul-values.yaml hashicorp hashicorp/consul  --wait --debug
+    helm status consul
+    ```
+
+    Check the pods. <br>
+
+    ```
+    kubectl get pods -l app=consul
     ```
 
     Check that the Kubernetes clusters are now federated.
@@ -422,7 +434,7 @@ challenges:
     Inspect the SNI value for this service now. <br>
 
     ```
-    kubectl exec deploy/payments-api-v1 -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."dynamic_active_clusters"? | select(. != null)[2]]'
+    kubectl exec deploy/payments-api-v1 -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."dynamic_active_clusters"? | select(. != null)[1]]'
     ```
 
     Now that you understand the internals of the cross cluster routing, let's test the application so you can make sure it works. <br>
@@ -962,9 +974,10 @@ challenges:
     kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."http_filters"? | select(. != null)[0]]'
     ```
 
-    Try the API again to fix the connectivity.
+    Try the API again to fix the connectivity. You will need to wait a few moments for the change to propagate. <br>
 
     ```
+    sleep 30
     curl -s -v http://${ip}:8080/api \
     -H 'Accept-Encoding: gzip, deflate, br' \
     -H 'Content-Type: application/json' \
@@ -1064,4 +1077,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
-checksum: "4751133666367185952"
+checksum: "3381972170084081541"

@@ -1,11 +1,5 @@
 #!/bin/bash
 
-kubectl config use-context k8s1
-kubectl get secret consul-federation -o yaml > consul-federation-secret.yaml
-kubectl config use-context k8s2
-kubectl apply -f consul-federation-secret.yaml
-kubectl config use-context k8s2
-helm install -f /root/helm/k8s2-consul-values.yaml hashicorp hashicorp/consul  --wait --debug
-sleep 15
+echo "Consul deployed in track setup script. Skipping..."
 
 exit 0

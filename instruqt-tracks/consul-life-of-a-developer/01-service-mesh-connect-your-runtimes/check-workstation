@@ -15,7 +15,7 @@ fi
 
 #check mesh
 if [ "$(consul config read -kind mesh -name mesh | jq -r .TransparentProxy.MeshDestinationsOnly)" != "false" ]; then
-  fail-message "Mesh destination is not false"
+  fail-message "Mesh destination is not true"
   exit 1
 fi
 

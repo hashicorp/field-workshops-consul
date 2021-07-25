@@ -36,7 +36,7 @@ Restart=always
 RestartSec=5s
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
-ExecStart=/usr/local/bin/k3s server --node-name=k8s1 --cluster-init --disable traefik
+ExecStart=/usr/local/bin/k3s server --node-name=k8s2 --cluster-init --disable traefik
 EOF
 sudo systemctl daemon-reload
 sudo service k3s start
@@ -72,10 +72,5 @@ echo "source /usr/share/bash-completion/bash_completion" >> /root/.bashrc
 echo "complete -F __start_kubectl k" >> /root/.bashrc
 /usr/bin/start.sh
 echo "K8s setup complete"
-
-#get the consul binary
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-apt install consul -y
 
 exit 0

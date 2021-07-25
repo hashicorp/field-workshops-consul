@@ -184,4 +184,46 @@ spec:
 EOF
 sleep 15
 
+#deploy consul
+echo "Deploying Consul..."
+
+#k8s1
+kubectl config use-context k8s1
+helm install -f /root/helm/k8s1-consul-values.yaml consul hashicorp/consul  --wait --debug
+kubectl get secret consul-federation -o yaml > consul-federation-secret.yaml
+
+#k8s2
+kubectl config use-context k8s2
+kubectl apply -f consul-federation-secret.yaml
+helm install -f /root/helm/k8s2-consul-values.yaml consul hashicorp/consul  --wait --debug
+
+#pre-flight checks
+echo "Running pre-flight checks..."
+
+#k8s1
+kubectl config use-context k8s1
+status=$(helm status consul -o json | jq -r .info.status)
+if [ "$status" != "deployed" ]; then
+  fail-message "Your Consul cluster is not deployed with Helm."
+  exit 1
+fi
+leader=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8500/v1/status/leader)
+if [ "$leader" != "200" ]; then
+  fail-message "Your Consul cluster is does not have a leader."
+  exit 1
+fi
+
+#k8s2
+kubectl config use-context k8s2
+status=$(helm status consul -o json | jq -r .info.status)
+if [ "$status" != "deployed" ]; then
+  fail-message "Your Consul cluster is not deployed with Helm."
+  exit 1
+fi
+leader=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8500/v1/status/leader?dc=k8s2)
+if [ "$leader" != "200" ]; then
+  fail-message "Your Consul cluster is does not have a leader."
+  exit 1
+fi
+
 exit 0
