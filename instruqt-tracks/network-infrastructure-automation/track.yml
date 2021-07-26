@@ -4,10 +4,7 @@ version: 0.0.1
 type: track
 title: Network Infrastructure Automation - Update
 teaser: Automate the provisioning and ongoing management of network infrastructure.
-description: In this workshop you'll learn how to automate the provisioning and management
-  of traditional network infrastructure using Terraform, Consul, and Consul Terraform
-  Sync. Eliminate exposure to operational overhead and security risk while accelerating
-  the deployment and scaling of applications and services.
+description: In this workshop you'll learn how to automate the provisioning and management of traditional network infrastructure using Terraform, Consul, and Consul Terraform Sync. Eliminate exposure to operational overhead and security risk while accelerating the deployment and scaling of applications and services.
 icon: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/NIA-CTS-Icon.png
 tags:
 - consul
@@ -27,6 +24,12 @@ challenges:
   type: challenge
   title: Review Lab Objectives
   teaser: Before we begin, lets quickly review the architecture.
+  notes:
+  - type: text
+    contents: |-
+      Every journey begins with a single step!
+
+      Step 1, review the environment you will build using Terraform, and manage using Consul Terraform Sync.
   assignment: |
     "In this workshop, we will build the infrastructure depicted in the 'NIA - Traffic Flow' tab on the left, but before we do, let's quickly review the operational challenges we are going to address.
 
@@ -47,12 +50,6 @@ challenges:
     NOTE: Consul Terraform Sync automates the management of policy address groups on the Palo Alto Firewalls. This facilitates having fine-grained policies without increasing operational overhead.
 
     In the next few challenges we are going to build this cloud environment, enabling you to see this workflow in operation."
-  notes:
-  - type: text
-    contents: |-
-      Every journey begins with a single step!
-
-      Step 1, review the environment you will build using Terraform, and manage using Consul Terraform Sync.
   tabs:
   - title: NetOps - Operational Pattern
     type: website
@@ -70,6 +67,11 @@ challenges:
   type: challenge
   title: Provision Azure VNETs
   teaser: Deploy basic network infrastructure using Terraform
+  notes:
+  - type: text
+    contents: |
+      Setting up your environment... Your Azure account will be ready in ~5 minutes.
+      Keep an eye on the bottom right corner to know when you can get started.
   assignment: |-
     In this assignment you will provision the VNets in the "Current Lab Setup" tab that will used in the following assignments.
 
@@ -97,11 +99,6 @@ challenges:
     ```
 
     You will leverage these VNETs in the next few assignments.
-  notes:
-  - type: text
-    contents: |
-      Setting up your environment... Your Azure account will be ready in ~5 minutes.
-      Keep an eye on the bottom right corner to know when you can get started.
   tabs:
   - title: Current Lab Setup
     type: website
@@ -125,6 +122,10 @@ challenges:
   type: challenge
   title: Provision Core Services
   teaser: Provision Vault and Consul using Terraform
+  notes:
+  - type: text
+    contents: |
+      Terraform allows you to document, share, and deploy environments in one workflow by using Infrastructure as Code!
   assignment: |
     With the VNETs provisioned, you are now ready to deploy Consul, Vault, and a Bastion Host used to access various services in future challenges.
 
@@ -152,10 +153,6 @@ challenges:
      terraform apply -auto-approve
 
      ```
-  notes:
-  - type: text
-    contents: |
-      Terraform allows you to document, share, and deploy environments in one workflow by using Infrastructure as Code!
   tabs:
   - title: Current lab setup
     type: website
@@ -183,6 +180,10 @@ challenges:
   type: challenge
   title: Provision F5 BIG-IP & Palo Alto Firewall
   teaser: Provision an F5 BIG-IP VE & Palo Alto Firewall using Terraform
+  notes:
+  - type: text
+    contents: |
+      In this exercise we will be provisioning an F5 BIG-IP Virtual Edition and Palo Alto VM Series Firewall using Terraform.
   assignment: |
     First we will provision the Palo Alto Firewall.
 
@@ -190,7 +191,7 @@ challenges:
     ```
     cd /root/terraform/panw-vm
     terraform plan
-    nohup terraform apply -auto-approve > /root/terraform/panw-vm/terraform.out &
+    terraform apply -auto-approve
 
     ```
 
@@ -211,10 +212,6 @@ challenges:
     Once the Terraform apply is complete, the BIG-IP is accessible using the IP address provided in the Terraform output.
 
     **NOTE:** You will need to open the BIG-IP URL in a separate browser tab. If you are using chrome, you may be presented with a certificate error. To bypass this error, type "thisisunsafe" into the Chrome window.
-  notes:
-  - type: text
-    contents: |
-      In this exercise we will be provisioning an F5 BIG-IP Virtual Edition and Palo Alto VM Series Firewall using Terraform.
   tabs:
   - title: Current lab setup
     type: website
@@ -242,6 +239,9 @@ challenges:
   type: challenge
   title: Configure Palo Alto Firewall
   teaser: Provision a Palo Alto VM-Series Firewall using Terraform.
+  notes:
+  - type: text
+    contents: Next we shall configure the newly deployed Palo Alto virtual machine.
   assignment: |-
     Now we will configure the Palo Alto Firewall using Terraform.
 
@@ -249,7 +249,7 @@ challenges:
      In the `Shell` tab run the following command:
 
      ```
-    tail /root/terraform/panw-vm/terraform.out -n 12
+    tail /root/terraform/panw-vm/nohup.out -n 12
     ```
 
      You should see `Apply complete!`. If it hasn't finished yet, review the Terraform code that will be used to configure the firewall, in the 'Terraform Code' tab.
@@ -268,9 +268,6 @@ challenges:
     ```
     ssh -q -A -J azure-user@$bastion_ip paloalto@$firewall_ip
     ```
-  notes:
-  - type: text
-    contents: Next we shall configure the newly deployed Palo Alto virtual machine.
   tabs:
   - title: Provision PANW
     type: website
@@ -298,6 +295,10 @@ challenges:
   type: challenge
   title: Validate Vault & Consul
   teaser: Verify Vault, and Consul are operational
+  notes:
+  - type: text
+    contents: |
+      Next we shall verify the core services are operating as expected.
   assignment: |
     Consul and Vault should now be provisioned and accessible from the corresponding tabs.
 
@@ -323,10 +324,6 @@ challenges:
     echo $VAULT_ADDR
     ```
     Consul is not configured with any authentication mechanisms in this Lab. Consul authentication can be activated with ACLs and Vault (Not in scope of this lab)
-  notes:
-  - type: text
-    contents: |
-      Next we shall verify the core services are operating as expected.
   tabs:
   - title: Current lab setup
     type: website
@@ -356,6 +353,10 @@ challenges:
   type: challenge
   title: Deploy App environments
   teaser: Deploy a 2-tier VM based application to the cloud.
+  notes:
+  - type: text
+    contents: |
+      Now we'll deploy the last piece of infrastructure before experiencing the magic of Network Infrastructure Automation w/ Consul Terraform Sync.
   assignment: |-
     In this assignment we will be deploying the application into Azure based VMs.
 
@@ -377,10 +378,6 @@ challenges:
     Since the new App and Web services auto-register themselves into Consul, you can now watch the progress of the App deployment by watching the `Consul` tab.
 
     You will explore the environment in more detail in the next challenge.
-  notes:
-  - type: text
-    contents: |
-      Now we'll deploy the last piece of infrastructure before experiencing the magic of Network Infrastructure Automation w/ Consul Terraform Sync.
   tabs:
   - title: Current lab setup
     type: website
@@ -417,8 +414,11 @@ challenges:
   id: 4pa4nyish9os
   type: challenge
   title: Deploy 'Consul Terraform Sync'
-  teaser: Now we are going install Consul Terraform Sync and bring dynamic service
-    discovery to network infrastructure.
+  teaser: Now we are going install Consul Terraform Sync and bring dynamic service discovery to network infrastructure.
+  notes:
+  - type: text
+    contents: |
+      Now we're going to eliminate a lot of operational friction by installing `consul-terraform-sync`. This will auto-update network infrastructure as service changes occur!
   assignment: |-
     Before installing Consul Terraform Sync, lets take a look at the F5 BIG-IP and the Palo Alto Firewall.
 
@@ -471,10 +471,6 @@ challenges:
     Lastly, navigate back to the 'Current Lab Setup' tab and marvel at the beauty of Network Infrastructure Automation. You did this!
 
     Move to the next assignment when you are ready.
-  notes:
-  - type: text
-    contents: |
-      Now we're going to eliminate a lot of operational friction by installing `consul-terraform-sync`. This will auto-update network infrastructure as service changes occur!
   tabs:
   - title: Current Lab Setup
     type: website
@@ -512,6 +508,14 @@ challenges:
   type: challenge
   title: Scale the application
   teaser: Let Consul take care of routine adds/moves/changes of services instances.
+  notes:
+  - type: text
+    contents: |
+      75% companies surveyed take Days or even Weeks to complete networking tasks.
+
+      Organizations seeking to improve application delivery cycle are often blocked at the networking layer
+
+      [source](https://zkresearch.com/research/2017-application-delivery-controller-study)
   assignment: |-
     In this assignment we will watch CTS run as we scale up the application. Tail the CTS logs in one of the shells.
 
@@ -557,14 +561,6 @@ challenges:
     ```
 
     This concludes the final step in the Network Infrastructure Automation workshop.
-  notes:
-  - type: text
-    contents: |
-      75% companies surveyed take Days or even Weeks to complete networking tasks.
-
-      Organizations seeking to improve application delivery cycle are often blocked at the networking layer
-
-      [source](https://zkresearch.com/research/2017-application-delivery-controller-study)
   tabs:
   - title: Current lab setup
     type: website
@@ -605,4 +601,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-checksum: "14753806541006265867"
+checksum: "6122089451291532452"

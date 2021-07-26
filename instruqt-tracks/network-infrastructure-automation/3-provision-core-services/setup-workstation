@@ -1,35 +1,10 @@
 #!/bin/bash
 
-echo ""
-echo ""
-echo ">>------------------------------<<"
-echo ">> Starting Core Services Setup <<"
-echo ">>------------------------------<<"
-
+#dir
 set-workdir /root/terraform
 
-cd /root/terraform/vault
-terraform init
-
-pubkey=$(cat ~/.ssh/id_rsa.pub)
-cat << EOF > /root/terraform/vault/terraform.tfvars
-ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
-EOF
-
-cd /root/terraform/consul-server
-terraform init
-
-cat << EOF > /root/terraform/consul-server/terraform.tfvars
-ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
-EOF
-
+#profile
 bastion_ip=$(terraform output -state /root/terraform/vnet/terraform.tfstate bastion_ip)
 echo "export bastion_ip=${bastion_ip}" >> ~/.bashrc
-
-echo ""
-echo ""
-echo ">>------------------------------<<"
-echo ">> Core Services Setup Complete <<"
-echo ">>------------------------------<<"
 
 exit 0

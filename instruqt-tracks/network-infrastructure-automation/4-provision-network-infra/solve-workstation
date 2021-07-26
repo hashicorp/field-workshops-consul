@@ -1,39 +1,11 @@
 #!/bin/bash
 
-echo ""
-echo ""
-echo ">>--------------------------------<<"
-echo ">> Network Infra: Deploying PANOS <<"
-echo ">>--------------------------------<<"
-
+#panw
 cd /root/terraform/panw-vm
-nohup terraform apply -auto-approve > /root/terraform/panw-vm/terraform.out &
+terraform apply -auto-approve 2>&1 | tee /root/terraform/panw-vm/terraform.out
 
-echo ""
-echo ""
-echo ">>-------------------------------<<"
-echo ">> Network Infra: PANOS Deployed <<"
-echo ">>-------------------------------<<"
-
-echo ""
-echo ""
-echo ">>---------------------------------<<"
-echo ">> Network Infra: Deploying BIG-IP <<"
-echo ">>---------------------------------<<"
-
+#f5
 cd /root/terraform/bigip
-terraform apply -refresh=false -auto-approve > /root/terraform/bigip/terraform.out
-
-echo ""
-echo ""
-echo ">>--------------------------------<<"
-echo ">> Network Infra: BIG-IP Deployed <<"
-echo ">>--------------------------------<<"
-
-#block PANW FW
-while [ -f /root/terraform/panw-vm/.terraform.tfstate.lock.info ]; do echo 'PANW still provisioning'; sleep 5;  done
-
-#wait for F5
-sleep 180
+terraform apply -auto-approve 2>&1 | tee /root/terraform/bigip/terraform.out
 
 exit 0

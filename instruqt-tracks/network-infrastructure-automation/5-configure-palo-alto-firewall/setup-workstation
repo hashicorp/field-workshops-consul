@@ -68,9 +68,6 @@ cat << EOF > /root/terraform/panos_commit/panos-commit.json
 }
 EOF
 
-# Needs a little bootup time before configuring.
-sleep 90
-
 echo ""
 echo ""
 echo ">>-----------------------------<<"

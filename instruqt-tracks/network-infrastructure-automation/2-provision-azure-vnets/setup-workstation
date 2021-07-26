@@ -1,23 +1,6 @@
 #!/bin/bash
 
-#provision
-cd /root/terraform/vnet
-/usr/bin/terraform init
-
-pubkey=$(cat ~/.ssh/id_rsa.pub)
-cat << EOF > /root/terraform/vnet/terraform.tfvars
-ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
-EOF
-
 #assignment
 set-workdir /root/terraform/vnet
-cd /root/terraform/vnet
-
-echo ""
-echo ""
-echo ">>----------------------------<<"
-echo ">> Azure VNETs Setup Complete <<"
-echo ">>----------------------------<<"
-
 
 exit 0

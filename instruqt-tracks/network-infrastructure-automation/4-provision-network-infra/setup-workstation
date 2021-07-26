@@ -1,28 +1,5 @@
 #!/bin/sh
 
-echo ""
-echo ""
-echo ">>------------------------------<<"
-echo ">> Starting Network Infra Setup <<"
-echo ">>------------------------------<<"
-
-set-workdir /root/terraform/panw-vm
-
-az vm image terms accept --urn paloaltonetworks:vmseries1:bundle1:latest
-
-cd /root/terraform/panw-vm
-terraform init
-
-cd /root/terraform/bigip
-terraform init
-
-#import the marketplace agreement if it exists for some reason
-terraform import azurerm_marketplace_agreement.f5 "/subscriptions/${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SUBSCRIPTION_ID}/providers/Microsoft.MarketplaceOrdering/agreements/f5-networks/offers/f5-big-ip-good/plans/f5-bigip-virtual-edition-25m-good-hourly"
-
-echo ""
-echo ""
-echo ">>------------------------------<<"
-echo ">> Network Infra Setup Complete <<"
-echo ">>------------------------------<<"
+set-workdir /root/terraform
 
 exit 0

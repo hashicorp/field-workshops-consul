@@ -16,6 +16,15 @@ if [ -z "${pa_url}" ] || [ "${pa_url}" = "null" ]; then
   exit 1
 fi
 
+#check PANW is up
+firewall_ip=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate FirewallIP)
+pa_username=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_username)
+pa_password=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_password)
+if [ "$(curl -sk -o /dev/null  -u ${pa_username}:${pa_password} -w ''%{http_code}'' https://${firewall_ip}/restapi/v9.1/Device/VirtualSystems)" != "200" ]; then
+  fail-message "Could not get 200 status from PANW."
+  exit 1
+fi
+
 #check BIG-IP is up
 f5_username=$(terraform output -state /root/terraform/bigip/terraform.tfstate f5_username)
 f5_password=$(terraform output -state /root/terraform/bigip/terraform.tfstate f5_password)
@@ -24,3 +33,5 @@ if [ "${f5_status}" != "200" ]; then
   fail-message "Could not get 200 status from F5 BIG-IP API."
   exit 1
 fi
+
+exit 0
