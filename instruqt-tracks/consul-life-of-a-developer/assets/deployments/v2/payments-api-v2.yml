@@ -69,8 +69,6 @@ spec:
         app: payments-api
         version: v2
       annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9901"
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service-upstreams: "payments-queue:6379:k8s2"
         consul.hashicorp.com/service-meta-version: v2
