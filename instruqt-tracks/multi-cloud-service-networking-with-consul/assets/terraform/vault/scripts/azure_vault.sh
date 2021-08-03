@@ -46,14 +46,13 @@ sudo systemctl start consul.service
 #vault
 cat <<EOF> /etc/vault.d/vault.hcl
 ui = true
+license_path = "/etc/vault.d/vault.hclic"
 
-#Storage
 storage "raft" {
   path = "/opt/vault/raft"
   node_id = "vault-server-0"
 }
 
-# HTTP listener
 listener "tcp" {
   address       = "0.0.0.0:8200"
   tls_disable   = "true"

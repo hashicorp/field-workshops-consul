@@ -89,6 +89,17 @@
     },
     {
       "type": "file",
+      "source": "/etc/vault.hclic",
+      "destination": "/tmp/vault.hclic"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo mv /tmp/vault.hclic /etc/vault.d/vault.hclic"
+      ]
+    },
+    {
+      "type": "file",
       "source": "/usr/local/bin/envoy",
       "destination": "/tmp/envoy"
     },
