@@ -59,17 +59,17 @@ template {
 template {
   source      = "/etc/vault-agent.d/consul-cert-template.ctmpl"
   destination = "/opt/consul/tls/server-cert.pem"
-  command     = "sudo service consul reload"
+  command     = "sudo service consul restart"
 }
 template {
   source      = "/etc/vault-agent.d/consul-key-template.ctmpl"
   destination = "/opt/consul/tls/server-key.pem"
-  command     = "sudo service consul reload"
+  command     = "sudo service consul restart"
 }
 template {
   source      = "/etc/vault-agent.d/consul-acl-template.ctmpl"
   destination = "/etc/consul.d/acl.hcl"
-  command     = "sudo service consul reload"
+  command     = "sudo service consul restart"
 }
 vault {
   address = "$${VAULT_ADDR}"
