@@ -46,7 +46,7 @@ template {
 template {
   source      = "/etc/vault-agent.d/consul-acl-template.ctmpl"
   destination = "/etc/consul.d/acl.hcl"
-  command     = "sudo service consul reload"
+  command     = "sudo service consul restart"
 }
 template {
   source      = "/etc/vault-agent.d/envoy-token-template.ctmpl"
