@@ -54,7 +54,7 @@ auto_auth {
 template {
   source      = "/etc/vault-agent.d/consul-ca-template.ctmpl"
   destination = "/opt/consul/tls/ca-cert.pem"
-  command     = "sudo service consul reload"
+  command     = "sudo service consul restart"
 }
 template {
   source      = "/etc/vault-agent.d/consul-cert-template.ctmpl"
