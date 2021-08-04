@@ -97,7 +97,7 @@ template {
 template {
   source      = "/etc/vault-agent.d/product-api-template.ctmpl"
   destination = "/etc/consul.d/product-api.hcl"
-  command     = "sudo service envoy restart"
+  command     = "sudo service consul restart"
 }
 vault {
   address = "$${VAULT_ADDR}"
