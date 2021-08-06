@@ -1,51 +1,17 @@
 #!/bin/bash
 
-#ip
-local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
+#meta
+local_ipv4=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
 
-#install vault & consul
+#dirs
 mkdir -p /opt/vault/raft
-chown vault:vault /opt/vault/raft
-
-#consul
-cat <<EOF> /etc/consul.d/client.json
-{
-  "datacenter": "aws-us-east-1",
-  "primary_datacenter": "aws-us-east-1",
-  "advertise_addr": "$${local_ipv4}",
-  "data_dir": "/opt/consul/data",
-  "client_addr": "0.0.0.0",
-  "log_level": "INFO",
-  "retry_join": ["provider=aws tag_key=Env tag_value=consul-${env}"],
-  "ui": true,
-  "connect": {
-    "enabled": true
-  },
-  "ports": {
-    "grpc": 8502
-  }
-}
-EOF
-
+mkdir -p /etc/vault-agent.d/
 mkdir -p /opt/consul/tls/
-cat <<EOF> /etc/consul.d/tls.json
-{
-  "verify_incoming": false,
-  "verify_outgoing": true,
-  "verify_server_hostname": true,
-  "ca_file": "/opt/consul/tls/ca-cert.pem",
-  "auto_encrypt": {
-    "tls": true
-  }
-}
-EOF
-
-sudo systemctl enable consul.service
-sudo systemctl start consul.service
+chown -R vault:vault /opt/vault/raft
+chown -R consul:consul /opt/consul/
+chown -R consul:consul /etc/consul.d/
 
 #vault
-mkdir -p /opt/vault/raft
-chown vault:vault /opt/vault/raft
 cat <<EOF> /etc/vault.d/vault.hcl
 ui = true
 license_path = "/etc/vault.d/vault.hclic"
@@ -68,7 +34,6 @@ seal "awskms" {
 api_addr     = "http://$${local_ipv4}:8200"
 cluster_addr = "http://$${local_ipv4}:8201"
 EOF
-
 cat <<'EOF'> /usr/lib/systemd/system/vault.service
 [Unit]
 Description="HashiCorp Vault - A tool for managing secrets"
@@ -105,20 +70,16 @@ LimitMEMLOCK=infinity
 [Install]
 WantedBy=multi-user.target
 EOF
-
 sudo systemctl enable vault.service
 sudo systemctl start vault.service
 
 #vault agent
-mkdir -p /etc/vault-agent.d/
-
 cat <<EOF> /etc/vault-agent.d/consul-ca-template.ctmpl
 {{ with secret "pki/cert/ca" }}
 {{ .Data.certificate }}
 {{ end }}
 EOF
-
-cat <<EOF> /etc/vault-agent.d/consul-secrets-template.ctmpl
+cat <<EOF> /etc/vault-agent.d/consul-acl-template.ctmpl
 acl {
   enabled        = true
   default_policy = "deny"
@@ -152,12 +113,12 @@ auto_auth {
 template {
   source      = "/etc/vault-agent.d/consul-ca-template.ctmpl"
   destination = "/opt/consul/tls/ca-cert.pem"
-  command     = "sudo service consul restart"
+  command     = "sudo service consul reload"
 }
 template {
-  source      = "/etc/vault-agent.d/consul-secrets-template.ctmpl"
-  destination = "/etc/consul.d/secrets.hcl"
-  command     = "sudo service consul restart"
+  source      = "/etc/vault-agent.d/consul-acl-template.ctmpl"
+  destination = "/etc/consul.d/acl.hcl"
+  command     = "sudo service consul reload"
 }
 template {
   source      = "/etc/vault-agent.d/vault-template.ctmpl"
@@ -168,7 +129,6 @@ vault {
   address = "http://localhost:8200"
 }
 EOF
-
 cat <<EOF > /etc/systemd/system/vault-agent.service
 [Unit]
 Description=Envoy
@@ -182,7 +142,43 @@ StartLimitIntervalSec=0
 [Install]
 WantedBy=multi-user.target
 EOF
+sudo vault agent -config=/etc/vault-agent.d/vault.hcl -log-level=debug -exit-after-auth
 
+#consul
+cat <<EOF> /etc/consul.d/client.json
+{
+  "datacenter": "aws-us-east-1",
+  "primary_datacenter": "aws-us-east-1",
+  "advertise_addr": "$${local_ipv4}",
+  "data_dir": "/opt/consul/data",
+  "client_addr": "0.0.0.0",
+  "log_level": "INFO",
+  "retry_join": ["provider=aws tag_key=Env tag_value=consul-${env}"],
+  "ui": true,
+  "connect": {
+    "enabled": true
+  },
+  "ports": {
+    "grpc": 8502
+  }
+}
+EOF
+cat <<EOF> /etc/consul.d/tls.json
+{
+  "verify_incoming": false,
+  "verify_outgoing": true,
+  "verify_server_hostname": true,
+  "ca_file": "/opt/consul/tls/ca-cert.pem",
+  "auto_encrypt": {
+    "tls": true
+  }
+}
+EOF
+sudo systemctl enable consul.service
+sudo systemctl start consul.service
+
+#start the vault-agent
+sleep 30
 sudo systemctl enable vault-agent.service
 sudo systemctl start vault-agent.service
 
