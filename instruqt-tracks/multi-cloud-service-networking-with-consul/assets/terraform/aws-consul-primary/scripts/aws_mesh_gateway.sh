@@ -8,7 +8,14 @@ public_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)"
 export VAULT_ADDR=http://$(aws ec2 describe-instances --filters "Name=tag:Name,Values=vault" \
  --region us-east-1 --query 'Reservations[*].Instances[*].PrivateIpAddress' \
  --output text):8200
+
+#dirs
 mkdir -p /etc/vault-agent.d/
+mkdir -p /opt/consul/tls/
+chown -R consul:consul /opt/consul/
+chown -R consul:consul /etc/consul.d/
+
+#vault-agent
 cat <<EOF> /etc/vault-agent.d/consul-ca-template.ctmpl
 {{ with secret "pki/cert/ca" }}{{ .Data.certificate }}{{ end }}
 EOF
@@ -41,12 +48,12 @@ auto_auth {
 template {
   source      = "/etc/vault-agent.d/consul-ca-template.ctmpl"
   destination = "/opt/consul/tls/ca-cert.pem"
-  command     = "sudo service consul restart"
+  command     = "sudo service consul reload"
 }
 template {
   source      = "/etc/vault-agent.d/consul-acl-template.ctmpl"
   destination = "/etc/consul.d/acl.hcl"
-  command     = "sudo service consul restart"
+  command     = "sudo service consul reload"
 }
 template {
   source      = "/etc/vault-agent.d/envoy-token-template.ctmpl"
@@ -69,11 +76,9 @@ RestartSec=5
 [Install]
 WantedBy=multi-user.target
 EOF
-sudo systemctl enable vault-agent.service
-sudo systemctl start vault-agent.service
-sleep 10
+sudo vault agent -config=/etc/vault-agent.d/vault.hcl -log-level=debug -exit-after-auth
 
-mkdir -p /opt/consul/tls/
+#consul
 cat <<EOF> /etc/consul.d/consul.hcl
 datacenter = "aws-us-east-1"
 primary_datacenter = "aws-us-east-1"
@@ -99,11 +104,8 @@ auto_encrypt = {
   tls = true
 }
 EOF
-chown -R consul:consul /opt/consul/
-chown -R consul:consul /etc/consul.d/
 sudo systemctl enable consul.service
 sudo systemctl start consul.service
-sleep 10
 
 #envoy mgw
 cat <<EOF > /etc/systemd/system/envoy.service
@@ -121,10 +123,9 @@ WantedBy=multi-user.target
 EOF
 sudo systemctl enable envoy.service
 sudo systemctl start envoy.service
-sleep 10
 
-#make sure the config was picked up
-sudo service consul restart
-sudo service envoy restart
-
+#start the vault-agent
+sleep 30
+sudo systemctl enable vault-agent.service
+sudo systemctl start vault-agent.service
 exit 0

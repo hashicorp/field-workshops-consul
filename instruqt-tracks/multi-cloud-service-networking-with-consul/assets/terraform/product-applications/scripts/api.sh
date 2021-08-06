@@ -7,7 +7,14 @@ public_ipv4="$(curl -s -H Metadata:true --noproxy "*" "http://169.254.169.254/me
 #vault
 az login --identity
 export VAULT_ADDR="http://$(az vm show -g $(curl -s -H Metadata:true "http://169.254.169.254/metadata/instance?api-version=2017-08-01" | jq -r '.compute | .resourceGroupName') -n vault-server-vm -d | jq -r .privateIps):8200"
+
+#dirs
 mkdir -p /etc/vault-agent.d/
+mkdir -p /opt/consul/tls/
+chown -R consul:consul /opt/consul/
+chown -R consul:consul /etc/consul.d/
+
+#vault-agent
 cat <<EOF> /etc/vault-agent.d/consul-ca-template.ctmpl
 {{ with secret "pki/cert/ca" }}{{ .Data.certificate }}{{ end }}
 EOF
@@ -82,22 +89,22 @@ auto_auth {
 template {
   source      = "/etc/vault-agent.d/consul-ca-template.ctmpl"
   destination = "/opt/consul/tls/ca-cert.pem"
-  command     = "sudo service consul restart"
+  command     = "sudo service consul reload"
 }
 template {
   source      = "/etc/vault-agent.d/consul-acl-template.ctmpl"
   destination = "/etc/consul.d/acl.hcl"
-  command     = "sudo service consul restart"
+  command     = "sudo service consul reload"
+}
+template {
+  source      = "/etc/vault-agent.d/product-api-template.ctmpl"
+  destination = "/etc/consul.d/product-api.hcl"
+  command     = "sudo service consul reload"
 }
 template {
   source      = "/etc/vault-agent.d/envoy-token-template.ctmpl"
   destination = "/etc/envoy/consul.token"
   command     = "sudo service envoy restart"
-}
-template {
-  source      = "/etc/vault-agent.d/product-api-template.ctmpl"
-  destination = "/etc/consul.d/product-api.hcl"
-  command     = "sudo service consul restart"
 }
 vault {
   address = "$${VAULT_ADDR}"
@@ -118,10 +125,9 @@ WantedBy=multi-user.target
 EOF
 sudo systemctl enable vault-agent.service
 sudo systemctl start vault-agent.service
-sleep 10
+sudo vault agent -config=/etc/vault-agent.d/vault.hcl -log-level=debug -exit-after-auth
 
 #consul
-mkdir -p /opt/consul/tls/
 cat <<EOF> /etc/consul.d/consul.hcl
 datacenter = "azure-west-us-2"
 primary_datacenter = "aws-us-east-1"
@@ -147,11 +153,8 @@ auto_encrypt = {
   tls = true
 }
 EOF
-chown -R consul:consul /opt/consul/
-chown -R consul:consul /etc/consul.d/
 sudo systemctl enable consul.service
 sudo systemctl start consul.service
-sleep 10
 
 #install envoy
 cat <<EOF > /etc/systemd/system/envoy.service
@@ -169,7 +172,6 @@ WantedBy=multi-user.target
 EOF
 sudo systemctl enable envoy.service
 sudo systemctl start envoy.service
-sleep 5
 
 #install the application
 wget https://github.com/hashicorp-demoapp/product-api-go/releases/download/v0.0.15/product-api -O /product-api
@@ -194,11 +196,10 @@ WantedBy=multi-user.target
 EOF
 sudo systemctl enable product-api.service
 sudo systemctl start product-api.service
-sleep 5
 
-#make sure the config was picked up
-sudo service consul restart
-sudo service envoy restart
-sudo service product-api restart
+#start the vault-agent
+sleep 30
+sudo systemctl enable vault-agent.service
+sudo systemctl start vault-agent.service
 
 exit 0

@@ -10,8 +10,13 @@ export VAULT_TOKEN=$(vault write -field=token auth/azure/login -field=token role
      jwt="$(curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fmanagement.azure.com%2F' -H Metadata:true | jq -r '.access_token')")
 CONNECT_TOKEN=$(vault token create -field token -policy connect -period 8h -orphan)
 
+#dirs
 mkdir -p /etc/vault-agent.d/
 mkdir -p /opt/consul/tls/
+chown -R consul:consul /opt/consul/
+chown -R consul:consul /etc/consul.d/
+
+#vault-agent
 cat <<EOF> /etc/vault-agent.d/consul-ca-template.ctmpl
 {{ with secret "pki/cert/ca" }}
 {{ .Data.certificate }}
@@ -55,22 +60,22 @@ auto_auth {
 template {
   source      = "/etc/vault-agent.d/consul-ca-template.ctmpl"
   destination = "/opt/consul/tls/ca-cert.pem"
-  command     = "sudo service consul restart"
+  command     = "sudo service consul reload"
 }
 template {
   source      = "/etc/vault-agent.d/consul-cert-template.ctmpl"
   destination = "/opt/consul/tls/server-cert.pem"
-  command     = "sudo service consul restart"
+  command     = "sudo service consul reload"
 }
 template {
   source      = "/etc/vault-agent.d/consul-key-template.ctmpl"
   destination = "/opt/consul/tls/server-key.pem"
-  command     = "sudo service consul restart"
+  command     = "sudo service consul reload"
 }
 template {
   source      = "/etc/vault-agent.d/consul-acl-template.ctmpl"
   destination = "/etc/consul.d/acl.hcl"
-  command     = "sudo service consul restart"
+  command     = "sudo service consul reload"
 }
 vault {
   address = "$${VAULT_ADDR}"
@@ -89,11 +94,9 @@ StartLimitIntervalSec=0
 [Install]
 WantedBy=multi-user.target
 EOF
-sudo systemctl enable vault-agent.service
-sudo systemctl start vault-agent.service
-sleep 10
+sudo vault agent -config=/etc/vault-agent.d/vault.hcl -log-level=debug -exit-after-auth
 
-#config
+#consul
 cat <<EOF> /etc/consul.d/server.json
 {
   "datacenter": "azure-west-us-2",
@@ -134,13 +137,12 @@ cat <<EOF> /etc/consul.d/tls.json
   }
 }
 EOF
-chown -R consul:consul /opt/consul/
-chown -R consul:consul /etc/consul.d/
 sudo systemctl enable consul.service
 sudo systemctl start consul.service
-sleep 15
 
-#make sure the config was picked up
-sudo service consul restart
+#start the vault-agent
+sleep 30
+sudo systemctl enable vault-agent.service
+sudo systemctl start vault-agent.service
 
 exit 0
