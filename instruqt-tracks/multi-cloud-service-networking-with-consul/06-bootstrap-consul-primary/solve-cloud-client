@@ -18,6 +18,10 @@ consul acl policy create -name replication -rules @/root/policies/consul/replica
 #consul acl token create -policy-name replication -secret=$(vault kv get -field replication_token kv/consul)
 vault write consul/roles/replication policies=replication
 
+#create the agent policy & vault role
+consul acl policy create -name agent -rules @/root/policies/consul/agent.hcl
+vault write consul/roles/agent policies=agent
+
 #create the mgw policy & vault role
 consul acl policy create -name mesh-gateway -rules @/root/policies/consul/mesh-gateway.hcl
 vault write consul/roles/mgw policies=mesh-gateway

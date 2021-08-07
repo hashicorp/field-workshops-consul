@@ -32,7 +32,7 @@ cat <<EOF> /etc/vault-agent.d/consul-key-template.ctmpl
 {{ .Data.private_key }}
 {{ end }}
 EOF
-cat <<EOF> /etc/vault-agent.d/consul-acl-template.ctmpl
+cat <<EOF> /etc/vault-agent.d/consul-acl-template-bootstrap.ctmpl
 acl = {
   enabled        = true
   default_policy = "deny"
@@ -41,6 +41,18 @@ acl = {
   tokens {
     master = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
     agent  = {{ with secret "kv/consul" }}"{{ .Data.data.master_token }}"{{ end }}
+  }
+}
+encrypt = {{ with secret "kv/consul" }}"{{ .Data.data.gossip_key }}"{{ end }}
+EOF
+cat <<EOF> /etc/vault-agent.d/consul-acl-template.ctmpl
+acl = {
+  enabled        = true
+  default_policy = "deny"
+  down_policy   = "extend-cache"
+  enable_token_persistence = true
+  tokens {
+    agent  = {{ with secret "consul/creds/agent" }}"{{ .Data.token }}"{{ end }}
   }
 }
 encrypt = {{ with secret "kv/consul" }}"{{ .Data.data.gossip_key }}"{{ end }}
@@ -80,6 +92,41 @@ vault {
   address = "$${VAULT_ADDR}"
 }
 EOF
+cat <<EOF> /etc/vault-agent.d/vault-bootstrap.hcl
+pid_file = "/var/run/vault-agent-pidfile"
+auto_auth {
+  method "aws" {
+      mount_path = "auth/aws"
+      config = {
+          type = "iam"
+          role = "consul"
+      }
+  }
+}
+template {
+  source      = "/etc/vault-agent.d/consul-ca-template.ctmpl"
+  destination = "/opt/consul/tls/ca-cert.pem"
+  command     = "sudo service consul restart"
+}
+template {
+  source      = "/etc/vault-agent.d/consul-cert-template.ctmpl"
+  destination = "/opt/consul/tls/server-cert.pem"
+  command     = "sudo service consul restart"
+}
+template {
+  source      = "/etc/vault-agent.d/consul-key-template.ctmpl"
+  destination = "/opt/consul/tls/server-key.pem"
+  command     = "sudo service consul restart"
+}
+template {
+  source      = "/etc/vault-agent.d/consul-acl-template-bootstrap.ctmpl"
+  destination = "/etc/consul.d/acl.hcl"
+  command     = "sudo service consul restart"
+}
+vault {
+  address = "$${VAULT_ADDR}"
+}
+EOF
 cat <<EOF > /etc/systemd/system/vault-agent.service
 [Unit]
 Description=Envoy
@@ -93,7 +140,7 @@ StartLimitIntervalSec=0
 [Install]
 WantedBy=multi-user.target
 EOF
-sudo vault agent -config=/etc/vault-agent.d/vault.hcl -log-level=debug -exit-after-auth
+sudo vault agent -config=/etc/vault-agent.d/vault-bootstrap.hcl -log-level=debug -exit-after-auth
 
 #consul
 cat <<EOF> /etc/consul.d/server.json
