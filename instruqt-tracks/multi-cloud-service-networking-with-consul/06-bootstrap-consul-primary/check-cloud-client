@@ -12,6 +12,14 @@ then
   exit 1
 fi
 
+#check the agent token
+vault read consul/creds/agent
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking Consul agent acl token"
+  exit 1
+fi
+
 #check the mgw token
 vault read consul/creds/mgw
 if [ $? -ne 0 ]
