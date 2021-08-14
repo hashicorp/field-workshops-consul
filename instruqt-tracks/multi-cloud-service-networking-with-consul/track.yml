@@ -207,6 +207,15 @@ challenges:
       ttl=5m
     ```
 
+    Last, configure Vault to support auto_config in both DCs.
+
+    ```
+    vault write /auth/aws/config/identity iam_metadata=client_arn
+    vault write identity/oidc/key/consul allowed_client_ids=consul-server-aws-us-east-1,consul-server-azure-west-us-2
+    vault write identity/oidc/role/consul-aws-us-east-1 key=consul client_id=consul-server-aws-us-east-1 template='{"consul": {"node_arn": {{identity.entity.aliases.'$(vault auth list -format=json | jq -r '."aws/".accessor')'.metadata.client_arn}} } }'
+    vault write identity/oidc/role/consul-azure-west-us-2 key=consul client_id=consul-server-azure-west-us-2 template='{"consul": {"node_vm": {{identity.entity.aliases.'$(vault auth list -format=json | jq -r '."azure/".accessor')'.metadata.vm_name}} } }'
+    ```
+
     **NOTE**: If you receive errors you can run the following two scripts to repair your Vault environment.
 
     ```
@@ -370,6 +379,13 @@ challenges:
 
     * Consul MGW - `ssh ubuntu@$(terraform output aws_mgw_public_ip) 'journalctl -u consul -f'`
 
+    Check the intro JWT for Consul Auto Config when the Consul MGW is healthy. The `node_arn` will allow us to get a node identity signed by Vault.
+
+    ```
+    curl -s $VAULT_ADDR/v1/identity/oidc/.well-known/keys  | jq
+    ssh ubuntu@$(terraform output aws_mgw_public_ip) 'cat /etc/consul.d/token' | jwt
+    ```
+
     Next, tie the token in Vault to the replication policy so we can establish trust with federated clusters. <br>
 
     ```
@@ -510,6 +526,14 @@ challenges:
 
     * Consul Server - `ssh ubuntu@$(terraform output azure_consul_public_ip) 'tail -f /var/log/cloud-init-output.log'`
     * Consul MGW    - `ssh ubuntu@$(terraform output azure_mgw_public_ip) 'tail -f /var/log/cloud-init-output.log'`
+
+
+    Check the intro JWT for Consul Auto Config when the Consul MGW is healthy. The `node_vm` will allow us to get a node identity signed by Vault.
+
+    ```
+    curl -s $VAULT_ADDR/v1/identity/oidc/.well-known/keys  | jq
+    ssh ubuntu@$(terraform output azure_mgw_public_ip) 'cat /etc/consul.d/token' | jwt
+    ```
 
     Wait for the server to elect a leader (it can take a few minutes for the Azure compute instance to become available).
     Replication with the primary will be enabled. <br>
@@ -1527,4 +1551,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "4158458774058255681"
+checksum: "8234237693471469933"
