@@ -3,6 +3,7 @@
 #metadata
 local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
 public_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)"
+instance="$(curl -s http://169.254.169.254/latest/meta-data/instance-id)"
 
 #vault
 export VAULT_ADDR=http://$(aws ec2 describe-instances --filters "Name=tag:Name,Values=vault" \

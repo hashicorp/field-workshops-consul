@@ -111,7 +111,7 @@ template {
 template {
   source      = "/etc/vault-agent.d/jwt-template.ctmpl"
   destination = "/etc/consul.d/token"
-  command     = "sudo service consul reload"
+  command     = "sudo service consul restart"
 }
 vault {
   address = "http://localhost:8200"
