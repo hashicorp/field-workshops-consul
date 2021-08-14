@@ -374,16 +374,45 @@ challenges:
     ```
     consul acl policy create -name mesh-gateway -rules @/root/policies/consul/mesh-gateway.hcl
     vault write consul/roles/mgw policies=mesh-gateway
+    sleep 60
     ```
     You can monitor the MGW with the below commands. <br>
 
     * Consul MGW - `ssh ubuntu@$(terraform output aws_mgw_public_ip) 'journalctl -u consul -f'`
 
-    Check the intro JWT for Consul Auto Config when the Consul MGW is healthy. The `node_arn` will allow us to get a node identity signed by Vault.
+    Check out the Consul Auto Config configuration on the Consul Server and an example Consul Client.  The `node_arn` will allow us to get a node identity signed by Vault.
+
+    Start with the server. <br>
+
+    ```
+    ssh ubuntu@$(terraform output aws_consul_public_ip) 'cat /etc/consul.d/server.json' | jq .auto_config
+    ```
+
+    Check the client. <br>
+
+    ```
+    ssh ubuntu@$(terraform output aws_mgw_public_ip) 'cat /etc/consul.d/auto.json' | jq
+    ```
+
+    Now review the issued intro token and check that it was signed by Vault.
 
     ```
     curl -s $VAULT_ADDR/v1/identity/oidc/.well-known/keys  | jq
     ssh ubuntu@$(terraform output aws_mgw_public_ip) 'cat /etc/consul.d/token' | jwt
+    ```
+
+    The auto config secrets will be stored in the `data_dir`. These will be auto rotated by the Consul client. <br>
+
+    Check the ACL secrets. <br>
+
+    ```
+    ssh ubuntu@$(terraform output aws_mgw_public_ip) 'sudo cat /opt/consul/data/auto-config.json' | jq .Config.ACL
+    ```
+
+    Check the Gossip Key. <br>
+
+    ```
+    ssh ubuntu@$(terraform output aws_mgw_public_ip) 'sudo cat /opt/consul/data/auto-config.json' | jq .Config.Gossip
     ```
 
     Next, tie the token in Vault to the replication policy so we can establish trust with federated clusters. <br>
@@ -528,13 +557,6 @@ challenges:
     * Consul MGW    - `ssh ubuntu@$(terraform output azure_mgw_public_ip) 'tail -f /var/log/cloud-init-output.log'`
 
 
-    Check the intro JWT for Consul Auto Config when the Consul MGW is healthy. The `node_vm` will allow us to get a node identity signed by Vault.
-
-    ```
-    curl -s $VAULT_ADDR/v1/identity/oidc/.well-known/keys  | jq
-    ssh ubuntu@$(terraform output azure_mgw_public_ip) 'cat /etc/consul.d/token' | jwt
-    ```
-
     Wait for the server to elect a leader (it can take a few minutes for the Azure compute instance to become available).
     Replication with the primary will be enabled. <br>
 
@@ -542,6 +564,41 @@ challenges:
     consul_api=$(terraform output azure_consul_public_ip)
     curl -s -v http://{$consul_api}:8500/v1/status/leader
     curl -s -v http://{$consul_api}:8500/v1/acl/replication | jq
+    ```
+
+    Check out the Consul Auto Config configuration on the Consul Server and an example Consul Client.  The `node_vm` will allow us to get a node identity signed by Vault.
+
+    Start with the server. <br>
+
+    ```
+    ssh ubuntu@$(terraform output azure_consul_public_ip) 'cat /etc/consul.d/server.json' | jq .auto_config
+    ```
+
+    Check the client. <br>
+
+    ```
+    ssh ubuntu@$(terraform output azure_mgw_public_ip) 'cat /etc/consul.d/auto.json' | jq
+    ```
+
+    Now review the issued intro token and check that it was signed by Vault.
+
+    ```
+    curl -s $VAULT_ADDR/v1/identity/oidc/.well-known/keys  | jq
+    ssh ubuntu@$(terraform output azure_mgw_public_ip) 'cat /etc/consul.d/token' | jwt
+    ```
+
+    The auto config secrets will be stored in the `data_dir`. These will be auto rotated by the Consul client. <br>
+
+    Check the ACL secrets. <br>
+
+    ```
+    ssh ubuntu@$(terraform output azure_mgw_public_ip) 'sudo cat /opt/consul/data/auto-config.json' | jq .Config.ACL
+    ```
+
+    Check the Gossip Key. <br>
+
+    ```
+    ssh ubuntu@$(terraform output azure_mgw_public_ip) 'sudo cat /opt/consul/data/auto-config.json' | jq .Config.Gossip
     ```
 
     Check the CA infrastructure for the secondary. Notice the `sec-` prefix for secondary DC. <br>
@@ -1551,4 +1608,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "8234237693471469933"
+checksum: "7543646381318275595"
