@@ -3,6 +3,7 @@
 #metadata
 local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
 public_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)"
+instance="$(curl -s http://169.254.169.254/latest/meta-data/instance-id)"
 
 #vault
 export VAULT_ADDR=http://$(aws ec2 describe-instances --filters "Name=tag:Name,Values=vault" \
@@ -19,20 +20,11 @@ chown -R consul:consul /etc/consul.d/
 cat <<EOF> /etc/vault-agent.d/consul-ca-template.ctmpl
 {{ with secret "pki/cert/ca" }}{{ .Data.certificate }}{{ end }}
 EOF
-cat <<EOF> /etc/vault-agent.d/consul-acl-template.ctmpl
-acl = {
-  enabled        = true
-  default_policy = "deny"
-  down_policy   = "extend-cache"
-  enable_token_persistence = true
-  tokens {
-    agent  = {{ with secret "consul/creds/esm" }}"{{ .Data.token }}"{{ end }}
-  }
-}
-encrypt = {{ with secret "kv/consul" }}"{{ .Data.data.gossip_key }}"{{ end }}
-EOF
 cat <<EOF> /etc/vault-agent.d/esm-token-template.ctmpl
 token = {{ with secret "consul/creds/esm" }}"{{ .Data.token }}"{{ end }}
+EOF
+cat <<EOF> /etc/vault-agent.d/jwt-template.ctmpl
+{{ with secret "identity/oidc/token/consul-aws-us-east-1" }}{{ .Data.token }}{{ end }}
 EOF
 cat <<EOF> /etc/vault-agent.d/vault.hcl
 pid_file = "/var/run/vault-agent-pidfile"
@@ -51,14 +43,14 @@ template {
   command     = "sudo service consul reload"
 }
 template {
-  source      = "/etc/vault-agent.d/consul-acl-template.ctmpl"
-  destination = "/etc/consul.d/acl.hcl"
-  command     = "sudo service consul reload"
-}
-template {
   source      = "/etc/vault-agent.d/esm-token-template.ctmpl"
   destination = "/etc/consul-esm.d/config.hcl"
   command     = "sudo service consul-esm restart"
+}
+template {
+  source      = "/etc/vault-agent.d/jwt-template.ctmpl"
+  destination = "/etc/consul.d/token"
+  command     = "sudo service consul reload"
 }
 vault {
   address = "$${VAULT_ADDR}"
@@ -85,6 +77,7 @@ datacenter = "aws-us-east-1"
 primary_datacenter = "aws-us-east-1"
 advertise_addr = "$${local_ipv4}"
 client_addr = "0.0.0.0"
+node_name = "$${instance}"
 ui = true
 connect = {
   enabled = true
@@ -94,15 +87,22 @@ log_level = "INFO"
 ports = {
   grpc = 8502
 }
-retry_join = ["provider=aws tag_key=Env tag_value=consul-${env}"]
 EOF
 cat <<EOF> /etc/consul.d/tls.hcl
 ca_file = "/opt/consul/tls/ca-cert.pem"
 verify_incoming = false
 verify_outgoing = true
 verify_server_hostname = true
-auto_encrypt = {
-  tls = true
+EOF
+cat <<EOF> /etc/consul.d/auto.json
+{
+  "auto_config": {
+    "enabled": true,
+    "intro_token_file": "/etc/consul.d/token",
+    "server_addresses": [
+      "provider=aws tag_key=Env tag_value=consul-${env}"
+    ]
+  }
 }
 EOF
 sudo systemctl enable consul.service
