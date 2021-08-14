@@ -11,3 +11,6 @@ service_prefix "" {
 session_prefix "" {
    policy = "write"
 }
+node_prefix "" {
+  policy = "write"
+}

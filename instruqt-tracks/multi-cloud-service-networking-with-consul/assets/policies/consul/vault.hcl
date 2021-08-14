@@ -1,20 +1,15 @@
-path "kv/data/consul"
-{
-  capabilities = ["read"]
+key_prefix "vault/" {
+  "policy" = "write"
 }
-path "consul/creds/vault"
-{
-  capabilities = ["read"]
+node_prefix "" {
+  "policy" = "write"
 }
-path "pki/cert/ca"
-{
-  capabilities = ["read"]
+service "vault" {
+  "policy" = "write"
 }
-path "identity/oidc/token/consul-aws-us-east-1"
-{
-  capabilities = ["read"]
+agent_prefix "" {
+  "policy" = "write"
 }
-path "identity/oidc/token/consul-azure-west-us-2"
-{
-  capabilities = ["read"]
+session_prefix "" {
+  "policy" = "write"
 }
