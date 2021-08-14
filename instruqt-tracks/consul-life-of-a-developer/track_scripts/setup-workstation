@@ -189,13 +189,13 @@ echo "Deploying Consul..."
 
 #k8s1
 kubectl config use-context k8s1
-helm install -f /root/helm/k8s1-consul-values.yaml consul hashicorp/consul  --wait --debug
+helm install -f /root/helm/k8s1-consul-values.yaml consul hashicorp/consul  --version v0.32.1 --wait --debug
 kubectl get secret consul-federation -o yaml > consul-federation-secret.yaml
 
 #k8s2
 kubectl config use-context k8s2
 kubectl apply -f consul-federation-secret.yaml
-helm install -f /root/helm/k8s2-consul-values.yaml consul hashicorp/consul  --wait --debug
+helm install -f /root/helm/k8s2-consul-values.yaml consul hashicorp/consul  --version v0.32.1 --wait --debug
 
 #pre-flight checks
 echo "Running pre-flight checks..."
