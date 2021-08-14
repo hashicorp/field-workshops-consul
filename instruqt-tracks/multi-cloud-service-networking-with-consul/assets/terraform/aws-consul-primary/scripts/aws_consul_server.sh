@@ -5,7 +5,7 @@ local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
 
 #vault
 export VAULT_ADDR=http://$(aws ec2 describe-instances --filters "Name=tag:Name,Values=vault" \
- --region us-east-1 --query 'Reservations[*].Instances[*].PublicIpAddress' \
+ --region us-east-1 --query 'Reservations[*].Instances[*].PrivateIpAddress' \
  --output text):8200
 vault login -method=aws role=consul
 CONNECT_TOKEN=$(vault token create -field token -policy connect -period 8h -orphan)
@@ -156,6 +156,24 @@ cat <<EOF> /etc/consul.d/server.json
   "node_name": "consul-server-0",
   "ui": true,
   "license_path": "/etc/consul.d/consul.hclic",
+  "auto_config": {
+    "authorization": {
+      "enabled": true,
+      "static": {
+        "oidc_discovery_url": "$${VAULT_ADDR}/v1/identity/oidc",
+        "bound_issuer": "$${VAULT_ADDR}/v1/identity/oidc",
+        "bound_audiences": [
+          "consul-server-aws-us-east-1"
+        ],
+        "claim_mappings": {
+          "/consul/node_arn": "node"
+        },
+        "claim_assertions": [
+          "value.node contains \"\$${node}\""
+        ]
+      }
+    }
+  },
   "connect": {
     "enable_mesh_gateway_wan_federation": true,
     "enabled": true,

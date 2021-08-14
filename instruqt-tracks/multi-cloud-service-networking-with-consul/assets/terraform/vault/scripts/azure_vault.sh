@@ -76,28 +76,16 @@ sudo systemctl start vault.service
 
 #vault agent
 cat <<EOF> /etc/vault-agent.d/consul-ca-template.ctmpl
-{{ with secret "pki/cert/ca" }}
-{{ .Data.certificate }}
-{{ end }}
-EOF
-cat <<EOF> /etc/vault-agent.d/consul-acl-template.ctmpl
-acl {
-  enabled        = true
-  default_policy = "deny"
-  down_policy   = "extend-cache"
-  enable_token_persistence = true
-  enable_token_replication = true
-  tokens {
-    agent  = {{ with secret "consul/creds/vault" }}"{{ .Data.token }}"{{ end }}
-  }
-}
-encrypt = {{ with secret "kv/consul" }}"{{ .Data.data.gossip_key }}"{{ end }}
+{{ with secret "pki/cert/ca" }}{{ .Data.certificate }}{{ end }}
 EOF
 cat <<EOF> /etc/vault-agent.d/vault-template.ctmpl
 service_registration "consul" {
   address = "localhost:8500"{{ with secret "consul/creds/vault" }}
   token   = "{{ .Data.token }}"{{ end }}
 }
+EOF
+cat <<EOF> /etc/vault-agent.d/jwt-template.ctmpl
+{{ with secret "identity/oidc/token/consul-azure-west-us-2" }}{{ .Data.token }}{{ end }}
 EOF
 cat <<EOF> /etc/vault-agent.d/vault.hcl
 pid_file = "/var/run/vault-agent-pidfile"
@@ -116,14 +104,14 @@ template {
   command     = "sudo service consul reload"
 }
 template {
-  source      = "/etc/vault-agent.d/consul-acl-template.ctmpl"
-  destination = "/etc/consul.d/acl.hcl"
-  command     = "sudo service consul reload"
-}
-template {
   source      = "/etc/vault-agent.d/vault-template.ctmpl"
   destination = "/etc/vault.d/consul.hcl"
   command     = "sudo service vault restart"
+}
+template {
+  source      = "/etc/vault-agent.d/jwt-template.ctmpl"
+  destination = "/etc/consul.d/token"
+  command     = "sudo service consul reload"
 }
 vault {
   address = "http://localhost:8200"
@@ -153,7 +141,6 @@ cat <<EOF> /etc/consul.d/client.json
   "data_dir": "/opt/consul/data",
   "client_addr": "0.0.0.0",
   "log_level": "INFO",
-  "retry_join": ["provider=azure tag_name=Env tag_value=consul-${env} subscription_id=${subscription_id}"],
   "ui": true,
   "connect": {
     "enabled": true
@@ -163,14 +150,20 @@ cat <<EOF> /etc/consul.d/client.json
   }
 }
 EOF
-cat <<EOF> /etc/consul.d/tls.json
+cat <<EOF> /etc/consul.d/tls.hcl
+ca_file = "/opt/consul/tls/ca-cert.pem"
+verify_incoming = false
+verify_outgoing = true
+verify_server_hostname = true
+EOF
+cat <<EOF> /etc/consul.d/auto.json
 {
-  "verify_incoming": false,
-  "verify_outgoing": true,
-  "verify_server_hostname": true,
-  "ca_file": "/opt/consul/tls/ca-cert.pem",
-  "auto_encrypt": {
-    "tls": true
+  "auto_config": {
+    "enabled": true,
+    "intro_token_file": "/etc/consul.d/token",
+    "server_addresses": [
+      "provider=azure tag_name=Env tag_value=consul-${env} subscription_id=${subscription_id}"
+    ]
   }
 }
 EOF
