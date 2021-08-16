@@ -207,13 +207,12 @@ challenges:
       ttl=5m
     ```
 
-    Last, configure Vault to support auto_config in both DCs.
+    Last, configure Vault to support Auto Config in the AWS DC. Auto Config is out of scope for this lab in Azure DC.
 
     ```
-    vault write /auth/aws/config/identity iam_metadata=client_arn
-    vault write identity/oidc/key/consul allowed_client_ids=consul-server-aws-us-east-1,consul-server-azure-west-us-2
-    vault write identity/oidc/role/consul-aws-us-east-1 key=consul client_id=consul-server-aws-us-east-1 template='{"consul": {"node_arn": {{identity.entity.aliases.'$(vault auth list -format=json | jq -r '."aws/".accessor')'.metadata.client_arn}} } }'
-    vault write identity/oidc/role/consul-azure-west-us-2 key=consul client_id=consul-server-azure-west-us-2 template='{"consul": {"node_vm": {{identity.entity.aliases.'$(vault auth list -format=json | jq -r '."azure/".accessor')'.metadata.vm_name}} } }'
+    vault write /auth/aws/config/identity iam_alias=full_arn
+    vault write identity/oidc/key/consul allowed_client_ids=consul-server-aws-us-east-1
+    vault write identity/oidc/role/consul-aws-us-east-1 key=consul client_id=consul-server-aws-us-east-1 template='{"consul": {"node_arn": {{identity.entity.aliases.'$(vault auth list -format=json | jq -r '."aws/".accessor')'.name}} } }'
     ```
 
     **NOTE**: If you receive errors you can run the following two scripts to repair your Vault environment.
@@ -388,10 +387,16 @@ challenges:
     ssh ubuntu@$(terraform output aws_consul_public_ip) 'cat /etc/consul.d/server.json' | jq .auto_config
     ```
 
-    Check the client. <br>
+    Check the MGW client agent config. <br>
 
     ```
     ssh ubuntu@$(terraform output aws_mgw_public_ip) 'cat /etc/consul.d/auto.json' | jq
+    ```
+
+    Check the MGW client agent node.
+
+    ```
+    ssh ubuntu@$(terraform output aws_mgw_public_ip) 'curl -s localhost:8500/v1/agent/self' | jq .Config.NodeName
     ```
 
     Now review the issued intro token and check that it was signed by Vault.
@@ -564,41 +569,6 @@ challenges:
     consul_api=$(terraform output azure_consul_public_ip)
     curl -s -v http://{$consul_api}:8500/v1/status/leader
     curl -s -v http://{$consul_api}:8500/v1/acl/replication | jq
-    ```
-
-    Check out the Consul Auto Config configuration on the Consul Server and an example Consul Client.  The `node_vm` will allow us to get a node identity signed by Vault.
-
-    Start with the server. <br>
-
-    ```
-    ssh ubuntu@$(terraform output azure_consul_public_ip) 'cat /etc/consul.d/server.json' | jq .auto_config
-    ```
-
-    Check the client. <br>
-
-    ```
-    ssh ubuntu@$(terraform output azure_mgw_public_ip) 'cat /etc/consul.d/auto.json' | jq
-    ```
-
-    Now review the issued intro token and check that it was signed by Vault.
-
-    ```
-    curl -s $VAULT_ADDR/v1/identity/oidc/.well-known/keys  | jq
-    ssh ubuntu@$(terraform output azure_mgw_public_ip) 'cat /etc/consul.d/token' | jwt
-    ```
-
-    The auto config secrets will be stored in the `data_dir`. These will be auto rotated by the Consul client. <br>
-
-    Check the ACL secrets. <br>
-
-    ```
-    ssh ubuntu@$(terraform output azure_mgw_public_ip) 'sudo cat /opt/consul/data/auto-config.json' | jq .Config.ACL
-    ```
-
-    Check the Gossip Key. <br>
-
-    ```
-    ssh ubuntu@$(terraform output azure_mgw_public_ip) 'sudo cat /opt/consul/data/auto-config.json' | jq .Config.Gossip
     ```
 
     Check the CA infrastructure for the secondary. Notice the `sec-` prefix for secondary DC. <br>
@@ -1608,4 +1578,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "7543646381318275595"
+checksum: "10147466791608305871"

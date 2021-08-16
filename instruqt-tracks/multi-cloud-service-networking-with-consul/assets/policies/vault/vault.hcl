@@ -14,7 +14,3 @@ path "identity/oidc/token/consul-aws-us-east-1"
 {
   capabilities = ["read"]
 }
-path "identity/oidc/token/consul-azure-west-us-2"
-{
-  capabilities = ["read"]
-}

@@ -141,7 +141,7 @@ nohup terraform apply -target=azurerm_postgresql_server.postgres -auto-approve 2
 #aws
 echo "Checking AWS Images"
 n=0
-until [ $n -ge 5 ]; do
+until [ $n -ge 10 ]; do
   echo "Fetching AWS AMI..."
   aws_ami=$(aws ec2 describe-images --owners self | jq -r .Images[0].Description)
   if [ "${aws_ami}" = "Hashistack - Ubuntu" ]; then
@@ -150,7 +150,7 @@ until [ $n -ge 5 ]; do
   n=$[$n+1]
   sleep 60
 done
-if [ $n -ge 5 ]; then
+if [ $n -ge 10 ]; then
   fail-message "Could not get AWS AMI."
   exit 1
 fi

@@ -169,7 +169,7 @@ cat <<EOF> /etc/consul.d/server.json
           "/consul/node_arn": "node"
         },
         "claim_assertions": [
-          "value.node contains \"\$${node}\""
+          "value.node matches \"^arn:aws:sts::(.*?):assumed-role/(.*?)/\$${node}\$$\""
         ]
       }
     }
@@ -189,7 +189,7 @@ cat <<EOF> /etc/consul.d/server.json
 EOF
 cat <<EOF> /etc/consul.d/tls.json
 {
-  "verify_incoming": true,
+  "verify_incoming_rpc": true,
   "verify_outgoing": true,
   "verify_server_hostname": true,
   "ca_file": "/opt/consul/tls/ca-cert.pem",
