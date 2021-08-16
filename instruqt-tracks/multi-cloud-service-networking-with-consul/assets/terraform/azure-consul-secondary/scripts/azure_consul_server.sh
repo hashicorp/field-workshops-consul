@@ -5,7 +5,7 @@ local_ipv4=$(curl -H Metadata:true --noproxy "*" "http://169.254.169.254/metadat
 
 #vault
 az login --identity
-export VAULT_ADDR="http://$(az vm show -g $(curl -s -H Metadata:true "http://169.254.169.254/metadata/instance?api-version=2017-08-01" | jq -r '.compute | .resourceGroupName') -n vault-server-vm -d | jq -r .privateIps):8200"
+export VAULT_ADDR="http://$(az vm show -g $(curl -s -H Metadata:true "http://169.254.169.254/metadata/instance?api-version=2017-08-01" | jq -r '.compute | .resourceGroupName') -n vault-server-vm -d | jq -r .publicIps):8200"
 export VAULT_TOKEN=$(vault write -field=token auth/azure/login -field=token role="consul" \
      jwt="$(curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fmanagement.azure.com%2F' -H Metadata:true | jq -r '.access_token')")
 CONNECT_TOKEN=$(vault token create -field token -policy connect -period 8h -orphan)
@@ -111,24 +111,6 @@ cat <<EOF> /etc/consul.d/server.json
   "ui": true,
   "primary_gateways" : ["${primary_wan_gateway}"],
   "license_path": "/etc/consul.d/consul.hclic",
-  "auto_config": {
-    "authorization": {
-      "enabled": true,
-      "static": {
-        "oidc_discovery_url": "$${VAULT_ADDR}/v1/identity/oidc",
-        "bound_issuer": "$${VAULT_ADDR}/v1/identity/oidc",
-        "bound_audiences": [
-          "consul-server-azure-west-us-2"
-        ],
-        "claim_mappings": {
-          "/consul/node_vm": "node"
-        },
-        "claim_assertions": [
-          "value.node contains \"\$${node}\""
-        ]
-      }
-    }
-  },
   "connect": {
     "enable_mesh_gateway_wan_federation": true,
     "enabled": true,

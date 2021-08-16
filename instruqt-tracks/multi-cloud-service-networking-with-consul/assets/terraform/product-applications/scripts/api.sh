@@ -18,11 +18,18 @@ chown -R consul:consul /etc/consul.d/
 cat <<EOF> /etc/vault-agent.d/consul-ca-template.ctmpl
 {{ with secret "pki/cert/ca" }}{{ .Data.certificate }}{{ end }}
 EOF
-cat <<EOF> /etc/vault-agent.d/jwt-template.ctmpl
-{{ with secret "identity/oidc/token/consul-azure-west-us-2" }}{{ .Data.token }}{{ end }}
-EOF
-cat <<EOF> /etc/vault-agent.d/envoy-token-template.ctmpl
-{{ with secret "kv/consul" }}{{ .Data.data.master_token }}{{ end }}
+cat <<EOF> /etc/vault-agent.d/consul-acl-template.ctmpl
+acl = {
+  enabled        = true
+  default_policy = "deny"
+  down_policy   = "extend-cache"
+  enable_token_persistence = true
+  enable_token_replication = true
+  tokens {
+    agent  = {{ with secret "consul/creds/agent" }}"{{ .Data.token }}"{{ end }}
+  }
+}
+encrypt = {{ with secret "kv/consul" }}"{{ .Data.data.gossip_key }}"{{ end }}
 EOF
 cat <<EOF> /etc/vault-agent.d/product-api-template.ctmpl
 service {
@@ -65,6 +72,9 @@ service {
   }
 }
 EOF
+cat <<EOF> /etc/vault-agent.d/envoy-token-template.ctmpl
+{{ with secret "kv/consul" }}{{ .Data.data.master_token }}{{ end }}
+EOF
 cat <<EOF> /etc/vault-agent.d/vault.hcl
 pid_file = "/var/run/vault-agent-pidfile"
 auto_auth {
@@ -82,6 +92,11 @@ template {
   command     = "sudo service consul reload"
 }
 template {
+  source      = "/etc/vault-agent.d/consul-acl-template.ctmpl"
+  destination = "/etc/consul.d/acl.hcl"
+  command     = "sudo service consul reload"
+}
+template {
   source      = "/etc/vault-agent.d/product-api-template.ctmpl"
   destination = "/etc/consul.d/product-api.hcl"
   command     = "sudo service consul reload"
@@ -90,11 +105,6 @@ template {
   source      = "/etc/vault-agent.d/envoy-token-template.ctmpl"
   destination = "/etc/envoy/consul.token"
   command     = "sudo service envoy restart"
-}
-template {
-  source      = "/etc/vault-agent.d/jwt-template.ctmpl"
-  destination = "/etc/consul.d/token"
-  command     = "sudo service consul reload"
 }
 vault {
   address = "$${VAULT_ADDR}"
@@ -132,22 +142,15 @@ log_level = "INFO"
 ports = {
   grpc = 8502
 }
+retry_join = ["provider=azure tag_name=Env tag_value=consul-${env} subscription_id=${subscription_id}"]
 EOF
 cat <<EOF> /etc/consul.d/tls.hcl
 ca_file = "/opt/consul/tls/ca-cert.pem"
 verify_incoming = false
 verify_outgoing = true
 verify_server_hostname = true
-EOF
-cat <<EOF> /etc/consul.d/auto.json
-{
-  "auto_config": {
-    "enabled": true,
-    "intro_token_file": "/etc/consul.d/token",
-    "server_addresses": [
-      "provider=azure tag_name=Env tag_value=consul-${env} subscription_id=${subscription_id}"
-    ]
-  }
+auto_encrypt = {
+  tls = true
 }
 EOF
 sudo systemctl enable consul.service

@@ -127,7 +127,7 @@ resource "azurerm_virtual_machine" "vault" {
     managed_disk_type = "Standard_LRS"
   }
   os_profile {
-    computer_name  = "vault-server"
+    computer_name  = "vault-server-0"
     admin_username = "ubuntu"
     custom_data    = data.template_file.azure-vault-init.rendered
   }
