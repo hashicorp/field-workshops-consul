@@ -6,7 +6,7 @@ path "pki/cert/ca"
 {
   capabilities = ["read"]
 }
-path "identity/oidc/token/consul-azure-west-us-2"
+path "consul/creds/agent"
 {
   capabilities = ["read"]
 }

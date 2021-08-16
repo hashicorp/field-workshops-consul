@@ -222,9 +222,9 @@ then
 fi
 
 #check jwt for auto config
-iam_meta=$(vault read /auth/aws/config/identity -format=json | jq -r .data.iam_metadata[0])
-if [ "${iam_meta}" != "client_arn" ]; then
-  fail-message "Error AWS IAM meta is not client_arn."
+iam_alias=$(vault read /auth/aws/config/identity -format=json | jq -r .data.iam_alias)
+if [ "${iam_alias}" != "full_arn" ]; then
+  fail-message "Error AWS IAM alias is not full_arn."
   exit 1
 fi
 
@@ -239,13 +239,6 @@ vault read identity/oidc/role/consul-aws-us-east-1
 if [ $? -ne 0 ]
 then
   fail-message "Error getting AWS OIDC role."
-  exit 1
-fi
-
-vault read identity/oidc/role/consul-azure-west-us-2
-if [ $? -ne 0 ]
-then
-  fail-message "Error getting AZURE OIDC role."
   exit 1
 fi
 
