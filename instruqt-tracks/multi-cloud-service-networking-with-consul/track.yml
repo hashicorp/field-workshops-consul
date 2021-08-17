@@ -212,7 +212,7 @@ challenges:
     ```
     vault write /auth/aws/config/identity iam_alias=full_arn
     vault write identity/oidc/key/consul allowed_client_ids=consul-server-aws-us-east-1
-    vault write identity/oidc/role/consul-aws-us-east-1 key=consul client_id=consul-server-aws-us-east-1 template='{"consul": {"node_arn": {{identity.entity.aliases.'$(vault auth list -format=json | jq -r '."aws/".accessor')'.name}} } }'
+    vault write identity/oidc/role/consul-aws-us-east-1 ttl=30m key=consul client_id=consul-server-aws-us-east-1 template='{"consul": {"node_arn": {{identity.entity.aliases.'$(vault auth list -format=json | jq -r '."aws/".accessor')'.name}} } }'
     ```
 
     **NOTE**: If you receive errors you can run the following two scripts to repair your Vault environment.
@@ -399,7 +399,7 @@ challenges:
     ssh ubuntu@$(terraform output aws_mgw_public_ip) 'curl -s localhost:8500/v1/agent/self' | jq .Config.NodeName
     ```
 
-    Now review the issued intro token and check that it was signed by Vault.
+    Now review the issued intro token and check that it was signed by Vault. The token will have a 30 min expiry.
 
     ```
     curl -s $VAULT_ADDR/v1/identity/oidc/.well-known/keys  | jq
@@ -1578,4 +1578,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "10147466791608305871"
+checksum: "10217259623260299659"

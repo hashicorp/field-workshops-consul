@@ -12,7 +12,7 @@ vault kv put kv/consul \
 #auto config support
 vault write /auth/aws/config/identity iam_alias=full_arn
 vault write identity/oidc/key/consul allowed_client_ids=consul-server-aws-us-east-1
-vault write identity/oidc/role/consul-aws-us-east-1 key=consul client_id=consul-server-aws-us-east-1 template='{"consul": {"node_arn": {{identity.entity.aliases.'$(vault auth list -format=json | jq -r '."aws/".accessor')'.name}} } }'
+vault write identity/oidc/role/consul-aws-us-east-1 ttl=30m key=consul client_id=consul-server-aws-us-east-1 template='{"consul": {"node_arn": {{identity.entity.aliases.'$(vault auth list -format=json | jq -r '."aws/".accessor')'.name}} } }'
 
 #wait for restart
 sleep 120
