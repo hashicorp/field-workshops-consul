@@ -169,7 +169,7 @@ cat <<EOF> /etc/consul.d/server.json
           "/consul/node_arn": "node"
         },
         "claim_assertions": [
-          "value.node matches \"^arn:aws:sts::(.*?):assumed-role/(.*?)/\$${node}\$$\""
+          "value.node matches \"^arn:aws:sts::(.*?):assumed-role/(.*?)/\$${node}\$\""
         ]
       }
     }
