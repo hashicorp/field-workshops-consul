@@ -30,7 +30,7 @@ challenges:
       You are being provisioned on-demand cloud infrastructure. <br>
       Please be patient as this can take up to ~15 minutes.
   assignment: |
-    The terraform code will provision cloud infrastructure in AWS, GPC, and Azure. <br>
+    The terraform code will provision cloud infrastructure in AWS, GCP, and Azure. <br>
 
     Your lab environment will leverage pre-built packer images.
     You can inspect the image build in the code editor, and validate the images are available in AWS & Azure. <br>
