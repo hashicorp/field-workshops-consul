@@ -116,11 +116,14 @@ private_key=$(vault write -field private_key pki/root/generate/exported\
     key_bits="521" \
     ttl=8760h)
 vault kv put kv/pki private_key="${private_key}"
-vault secrets enable -path connect-root pki
 vault write pki/roles/consul \
     allowed_domains=consul,internal \
     allow_subdomains=true \
     max_ttl=72h
+
+#managed this with consul managed policy
+#vault secrets enable -path connect-root pki
+
 
 #vault trust - lab servers
 echo "Creating cloud trust with Vault Servers"

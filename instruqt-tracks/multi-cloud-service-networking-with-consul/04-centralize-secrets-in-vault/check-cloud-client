@@ -13,7 +13,7 @@ if [ -z "${vault_lb}" ]; then
   fail-message "AWS Vault is not provisioned yet"
   exit 1
 fi
-vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://{$vault_lb}:8200/v1/sys/health)
+vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://${vault_lb}:8200/v1/sys/health)
 if [ "${vault_api}" != "200" ]; then
   fail-message "AWS Vault service did not return a 200. Please wait a few moments and try again."
   exit 1
@@ -26,7 +26,7 @@ if [ -z "${vault_lb}" ]; then
   fail-message "Azure Vault is not provisioned yet"
   exit 1
 fi
-vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://{$vault_lb}:8200/v1/sys/health)
+vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://${vault_lb}:8200/v1/sys/health)
 if [ "${vault_api}" != "200" ]; then
   fail-message "Azure Vault service did not return a 200. Please wait a few moments and try again."
   exit 1
@@ -163,11 +163,14 @@ then
   fail-message "Error checking kv for pki root private key"
   exit 1
 fi
-connect_root=$(vault secrets list -format json | jq -r '."connect-root/".type')
-if [ "${connect_root}" != "pki" ]; then
-  fail-message "Error checking connect root PKI engine"
-  exit 1
-fi
+
+#manage - this with consul managed poicy
+#connect_root=$(vault secrets list -format json | jq -r '."connect-root/".type')
+#if [ "${connect_root}" != "pki" ]; then
+#  fail-message "Error checking connect root PKI engine"
+#  exit 1
+#fi
+
 vault read pki/roles/consul
 if [ $? -ne 0 ]
 then

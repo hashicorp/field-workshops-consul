@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 # Ensure we load /etc/profile.d/instruqt-env.sh
 echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
@@ -182,7 +182,7 @@ ssh_public_key="${pubkey}"
 EOF
 terraform apply -auto-approve 2>&1 | tee terraform.out
 echo "Waiting for Vault..."
-sleep 180
+sleep 300
 
 #run pre-flight checks
 echo "Running pre-flight checks..."
@@ -264,12 +264,12 @@ fi
 #vault
 #aws
 vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
-echo "Vault Load balancer is: $vault_lb"
+echo "Vault Load balancer is: ${vault_lb}"
 if [ -z "${vault_lb}" ]; then
   fail-message "AWS Vault is not provisioned yet"
   exit 1
 fi
-vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://{$vault_lb}:8200/v1/sys/health)
+vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://${vault_lb}:8200/v1/sys/health)
 if [ "${vault_api}" != "501" ]; then
   fail-message "AWS Vault service did not return a 501. Please wait a few moments and try again."
   exit 1
@@ -277,12 +277,12 @@ fi
 
 #azure
 vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate azure_vault_ip)
-echo "Vault Load balancer is: $vault_lb"
+echo "Vault Load balancer is: ${vault_lb}"
 if [ -z "${vault_lb}" ]; then
   fail-message "Azure Vault is not provisioned yet"
   exit 1
 fi
-vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://{$vault_lb}:8200/v1/sys/health)
+vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://${vault_lb}:8200/v1/sys/health)
 if [ "${vault_api}" != "501" ]; then
   fail-message "Azure Vault service did not return a 501. Please wait a few moments and try again."
   exit 1
