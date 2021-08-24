@@ -1,6 +1,22 @@
 #!/bin/sh
 
-#endpoint
+#Frontend Nginx TProxy Endpoint
+kubectl config use-context react
+endpoint=$(kubectl get svc nginx-ingress-controller -o json | jq -r .status.loadBalancer.ingress[0].ip)
+
+#nginx
+n=0
+until [ $n -ge 3 ]; do
+  curl -s --output /dev/null --silent -fail http://${endpoint} && break
+  n=$[$n+1]
+  sleep 5
+done
+if [ $n -ge 3 ]; then
+  fail-message "Frontend Nginx service did not return a 200"
+  exit 1
+fi
+
+#Consul Ingress API Endpoint
 kubectl config use-context graphql
 endpoint=$(kubectl get svc consul-graphql-graphql-ingress-gateway -o json | jq -r .status.loadBalancer.ingress[0].ip)
 
