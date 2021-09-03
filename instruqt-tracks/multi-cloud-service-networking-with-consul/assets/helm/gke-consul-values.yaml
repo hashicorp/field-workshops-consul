@@ -1,7 +1,7 @@
 global:
   name: consul
   datacenter: gcp-us-central-1
-  image: 'hashicorp/consul-enterprise:1.10.0-ent'
+  image: 'hashicorp/consul-enterprise:1.10.2-ent'
   tls:
     enabled: true
     caCert:
