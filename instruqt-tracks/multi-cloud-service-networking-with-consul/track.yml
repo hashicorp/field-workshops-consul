@@ -667,7 +667,7 @@ challenges:
 
     ```
     kubectl create secret generic consul-ent-license --from-literal="key=$(cat /etc/consul.hclic)"
-    helm install hashicorp hashicorp/consul -f /root/helm/gke-consul-values.yaml --debug --wait --version 0.32.1
+    helm install hashicorp hashicorp/consul -f /root/helm/gke-consul-values.yaml --debug --wait --version 0.33.0
     ```
 
     Check that all three clusters are federated.
@@ -1070,7 +1070,7 @@ challenges:
     kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
     kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
     kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
-    helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f /root/helm/react-consul-values.yaml --debug --wait --timeout 10m --version 0.32.1
+    helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f /root/helm/react-consul-values.yaml --debug --wait --timeout 10m --version 0.33.0
     helm list -a
     ```
 
@@ -1084,7 +1084,7 @@ challenges:
     kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
     kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
     kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
-    helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_graphql_endpoint)" -f /root/helm/graphql-consul-values.yaml --debug --wait --timeout 10m --version 0.32.1
+    helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_graphql_endpoint)" -f /root/helm/graphql-consul-values.yaml --debug --wait --timeout 10m --version 0.33.0
     helm list -a
     ```
 
@@ -1578,4 +1578,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "4250316388010914251"
+checksum: "317540289913091889"

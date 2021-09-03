@@ -1,7 +1,7 @@
 version: "2"
 containers:
 - name: cloud-client
-  image: gcr.io/instruqt-hashicorp/consul-cloud-client:v1.10.0
+  image: gcr.io/instruqt-hashicorp/consul-cloud-client:v1.10.2
   shell: /bin/bash
   ports:
   - 80
