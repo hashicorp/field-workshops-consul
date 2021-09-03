@@ -14,7 +14,7 @@ sudo apt-add-repository "deb [arch=amd64] https://packages.microsoft.com/repos/a
 
 #install packages
 sudo apt update -y
-sudo apt install azure-cli consul-enterprise=1.10.0+ent vault-enterprise=1.8.0+ent nomad-enterprise=1.0.4+ent docker.io jq -y
+sudo apt install azure-cli consul-enterprise=1.10.2+ent vault-enterprise=1.8.0+ent nomad-enterprise=1.0.4+ent docker.io jq -y
 
 #pgk checks
 #azure cli
