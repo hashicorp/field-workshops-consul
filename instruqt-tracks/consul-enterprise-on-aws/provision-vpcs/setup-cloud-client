@@ -21,7 +21,7 @@ EOF
 #install terraform
 cd /tmp
 echo "installing terraform..."
-curl -O https://releases.hashicorp.com/terraform/0.12.27/terraform_0.12.27_linux_amd64.zip
+curl -O https://releases.hashicorp.com/terraform/1.0.7/terraform_1.0.7_linux_amd64.zip
 unzip *.zip
 mv terraform /usr/local/bin/terraform
 rm -f *.zip
@@ -30,7 +30,7 @@ cd /root
 #install consul
 cd /tmp
 echo "installing consul..."
-curl -O https://releases.hashicorp.com/consul/1.8.0+ent/consul_1.8.0+ent_linux_amd64.zip
+curl -O https://releases.hashicorp.com/consul/1.10.1+ent/consul_1.10.1+ent_linux_amd64.zip
 unzip *.zip
 mv consul /usr/local/bin/consul
 rm -f *.zip
@@ -39,7 +39,7 @@ cd /root
 #install vault
 cd /tmp
 echo "installing vault..."
-curl -O https://releases.hashicorp.com/vault/1.3.4/vault_1.3.4_linux_amd64.zip
+curl -O https://releases.hashicorp.com/vault/1.8.2/vault_1.8.2_darwin_amd64.zip
 unzip *.zip
 mv vault /usr/local/bin/vault
 rm -f *.zip
