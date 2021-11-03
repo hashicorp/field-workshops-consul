@@ -12,9 +12,6 @@ resource "google_container_cluster" "shared" {
   subnetwork = "shared"
 
   master_auth {
-    username = ""
-    password = ""
-
     client_certificate_config {
       issue_client_certificate = false
     }

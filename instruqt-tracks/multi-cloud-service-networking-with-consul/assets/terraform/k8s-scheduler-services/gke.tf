@@ -12,9 +12,6 @@ resource "google_container_cluster" "graphql" {
   ip_allocation_policy {}
 
   master_auth {
-    username = ""
-    password = ""
-
     client_certificate_config {
       issue_client_certificate = false
     }
@@ -31,7 +28,7 @@ resource "google_container_cluster" "graphql" {
       disable-legacy-endpoints = "true"
     }
     machine_type = "n1-standard-2"
-    tags = ["consul-client", "consul-connect"]
+    tags         = ["consul-client", "consul-connect"]
   }
 
   enable_legacy_abac = true
@@ -56,9 +53,6 @@ resource "google_container_cluster" "react" {
   ip_allocation_policy {}
 
   master_auth {
-    username = ""
-    password = ""
-
     client_certificate_config {
       issue_client_certificate = false
     }
@@ -75,7 +69,7 @@ resource "google_container_cluster" "react" {
       disable-legacy-endpoints = "true"
     }
     machine_type = "n1-standard-2"
-    tags = ["consul-client", "consul-connect"]
+    tags         = ["consul-client", "consul-connect"]
   }
 
   enable_legacy_abac = true
