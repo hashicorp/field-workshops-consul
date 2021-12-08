@@ -15,7 +15,7 @@ description: |-
   * Add Basic Security with Consul's ACLs
 
   Once you've learned these fundamentals you can proceed to intermediate and advanced topics like Service Discovery and Consul Connect.
-icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
+icon: https://storage.googleapis.com/instruqt-hashicorp-tracks/logo/consul.png
 tags:
 - introduction to consul
 - consul basics

@@ -6,7 +6,7 @@ title: 'DEPRECATED: HCS on Azure'
 teaser: 'See link for new track: https://play.instruqt.com/hashicorp/tracks/multi-cloud-service-networking-with-consul'
 description: Connect containerized and non-containerized workloads with the HashiCorp
   Consul Service on Azure
-icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
+icon: https://storage.googleapis.com/instruqt-hashicorp-tracks/logo/consul.png
 tags:
 - hcs
 - consul

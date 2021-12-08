@@ -5,7 +5,7 @@ title: 'DEPRECATED: Consul on AWS'
 teaser: 'See link for new track: https://play.instruqt.com/hashicorp/tracks/multi-cloud-service-networking-with-consul'
 description: In this track you will set up a Consul shared service on AWS, and connect
   applications across multiple platforms.
-icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
+icon: https://storage.googleapis.com/instruqt-hashicorp-tracks/logo/consul.png
 tags: []
 owner: hashicorp
 developers:
