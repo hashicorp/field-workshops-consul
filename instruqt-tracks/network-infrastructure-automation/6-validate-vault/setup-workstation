@@ -12,6 +12,9 @@ server {
   location / {
     proxy_pass http://${vault_lb};
     proxy_set_header X-Real-IP \$remote_addr;
+    proxy_http_version 1.1;
+    proxy_set_header Connection "";
+    proxy_read_timeout 180;
     proxy_redirect off;
   }
   access_log /var/log/nginx/vault.log;
@@ -25,6 +28,9 @@ server {
   location / {
     proxy_pass http://${consul_lb}:80;
     proxy_set_header X-Real-IP \$remote_addr;
+    proxy_http_version 1.1;
+    proxy_set_header Connection "";
+    proxy_read_timeout 180;
     proxy_redirect off;
   }
   access_log /var/log/nginx/consul.log;
