@@ -6,7 +6,7 @@ teaser: Evolve from service discovery to service mesh. No more mapping IP addres
 description: |-
   This track will build on what you learned in the service discovery track and take our application from service discovery to service mesh.
   We'll dive into mesh fundamentals and use an Envoy proxy to connect our application to its database.
-icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
+icon: https://storage.googleapis.com/instruqt-hashicorp-tracks/logo/consul.png
 tags: []
 owner: hashicorp
 developers:

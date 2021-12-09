@@ -5,7 +5,7 @@ title: Service Mesh with Consul Hybrid
 teaser: Connect disparate platforms across datacenters.
 description: In this track you leverage Mesh Gateways to connect applications and
   services between K8s and VMs in remote datacenters.
-icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
+icon: https://storage.googleapis.com/instruqt-hashicorp-tracks/logo/consul.png
 tags: []
 owner: hashicorp
 developers:

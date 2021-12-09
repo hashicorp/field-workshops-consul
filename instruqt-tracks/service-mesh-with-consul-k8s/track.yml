@@ -8,7 +8,7 @@ description: |-
   for service mesh.
 
   You'll work through scaling, monitoring, and tracing applications. To complete the track you, will gain experience with the advanced L7 traffic patterns.
-icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
+icon: https://storage.googleapis.com/instruqt-hashicorp-tracks/logo/consul.png
 tags: []
 owner: hashicorp
 developers:

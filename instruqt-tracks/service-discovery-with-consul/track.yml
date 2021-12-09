@@ -5,7 +5,7 @@ title: Service Discovery with Consul
 teaser: Tired of manually updating IP addresses in config files? Is your network CMDB or spreadsheet woefully out of date? Learn how Consul can automatically keep your service catalog up to date and current.
 description: |
   Join us on an adventure of service discovery. In this track you'll learn how to connect a web application with its database using Consul. Topics covered include service registration, health checks, service discovery, automated config management, and seamless DNS integration.
-icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
+icon: https://storage.googleapis.com/instruqt-hashicorp-tracks/logo/consul.png
 tags:
 - service discovery
 - health checks
