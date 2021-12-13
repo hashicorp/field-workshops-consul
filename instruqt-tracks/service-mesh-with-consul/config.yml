@@ -1,15 +1,5 @@
 version: "2"
 containers:
-- name: database
-  image: gcr.io/instruqt-hashicorp/hashidb:latest
-  shell: /bin/bash
-  ports:
-  - 3306
-  environment:
-    MYSQL_DATABASE: wordpress
-    MYSQL_PASS: HashiCorp123
-    MYSQL_ROOT_PASSWORD: HashiCorp123
-    MYSQL_USER: wp-user
 - name: consul-server-0
   image: consul:1.10.0
   ports:
@@ -33,7 +23,7 @@ containers:
     CONSUL_HTTP_ADDR: http://127.0.0.1:8500
   memory: 128
 - name: app
-  image: wordpress
+  image: wordpress:5.8.2
   shell: /bin/bash
   ports:
   - 80
@@ -56,3 +46,13 @@ containers:
   environment:
     CONSUL_HTTP_ADDR: http://127.0.0.1:8500
   memory: 128
+- name: database
+  image: gcr.io/instruqt-hashicorp/hashidb:latest
+  shell: /bin/bash
+  ports:
+  - 3306
+  environment:
+    MYSQL_DATABASE: wordpress
+    MYSQL_PASS: HashiCorp123
+    MYSQL_ROOT_PASSWORD: HashiCorp123
+    MYSQL_USER: wp-user

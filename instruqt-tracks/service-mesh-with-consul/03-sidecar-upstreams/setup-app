@@ -4,6 +4,9 @@
 echo "Fixing our path..."
 export PATH=/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 
+#Fix permission issues on / /var /dev - Bug https://bugs.launchpad.net/ubuntu/+source/systemd/+bug/1948904
+chown root / /var /dev
+
 #Utils
 apt-get update -y && apt-get install -y curl unzip wget dnsutils netcat jq xz-utils lsb-release software-properties-common gnupg2
 
