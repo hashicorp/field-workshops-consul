@@ -29,7 +29,7 @@ server {
   access_log /var/log/nginx/jaeger.log;
 }
 EOF
-service nginx restart
+/usr/sbin/service nginx reload
 sleep 15
 
 #create some traces

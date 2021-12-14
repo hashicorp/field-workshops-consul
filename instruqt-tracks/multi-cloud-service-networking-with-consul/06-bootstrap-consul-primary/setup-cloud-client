@@ -14,7 +14,7 @@ server {
   access_log /var/log/nginx/consul.log;
 }
 EOF
-/usr/sbin/service nginx restart
+/usr/sbin/service nginx reload
 
 #aws
 AWS_VAULT_IP=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)

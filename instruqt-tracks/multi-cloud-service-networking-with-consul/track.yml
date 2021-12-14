@@ -3,7 +3,8 @@ id: iklbsgjpisau
 type: track
 title: Multi Cloud Service Networking with Consul
 teaser: Deploy a multi-cloud service mesh solution with Consul
-description: Run a shared Consul service across multiple clouds and enable self-service for application teams.
+description: Run a shared Consul service across multiple clouds and enable self-service
+  for application teams.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags:
 - consul
@@ -215,16 +216,22 @@ challenges:
     vault write identity/oidc/role/consul-aws-us-east-1 ttl=30m key=consul client_id=consul-server-aws-us-east-1 template='{"consul": {"node_arn": {{identity.entity.aliases.'$(vault auth list -format=json | jq -r '."aws/".accessor')'.name}} } }'
     ```
 
-    **NOTE**: If you receive errors you can run the following two scripts to repair your Vault environment.
+    **NOTE: IF YOU RECEIVE ERRORS YOU CAN RUN THE FOLLOWING TWO SCRIPTS TO REPAIR YOUR VAULT ENVIRONMENT! THIS SCRIPT IS NOT NEEDED IF YOUR SANDBOX IS WORKING CORRECTLY!!**
 
     ```
+    #reset vault
     /root/terraform/vault/reset_vault.sh
     /root/terraform/vault/setup_vault.sh
+
+    #configure vault
     vault login -method=userpass username=admin password=admin
     vault kv put kv/consul \
       master_token=$(cat /proc/sys/kernel/random/uuid) \
       gossip_key=$(consul keygen) \
       ttl=5m
+    vault write /auth/aws/config/identity iam_alias=full_arn
+    vault write identity/oidc/key/consul allowed_client_ids=consul-server-aws-us-east-1
+    vault write identity/oidc/role/consul-aws-us-east-1 ttl=30m key=consul client_id=consul-server-aws-us-east-1 template='{"consul": {"node_arn": {{identity.entity.aliases.'$(vault auth list -format=json | jq -r '."aws/".accessor')'.name}} } }'
     ```
 
     You will tie these tokens to Consul policies in a later assignment.
@@ -279,6 +286,8 @@ challenges:
     ```
 
     You can monitor the init scripts with the below commands. <br>
+
+    **NOTE: YOU WILL SEE SECRETS ERRORS ON THE MGW. THIS IS OKAY!** <br>
 
 
     * Consul Server - `ssh ubuntu@$(terraform output aws_consul_public_ip) 'tail -f /var/log/cloud-init-output.log'`
@@ -1578,4 +1587,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "317540289913091889"
+checksum: "15985213669769703651"

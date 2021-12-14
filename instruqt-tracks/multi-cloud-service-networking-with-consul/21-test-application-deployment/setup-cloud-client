@@ -11,6 +11,6 @@ server {
   access_log /var/log/nginx/app.log;
 }
 EOF
-/usr/sbin/service nginx restart
+/usr/sbin/service nginx reload
 
 exit 0
