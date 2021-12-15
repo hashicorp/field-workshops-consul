@@ -69,7 +69,7 @@ spec:
       serviceAccountName: web
       containers:
         - name: web
-          image: hashicorpdemoapp/frontend:latest
+          image: hashicorpdemoapp/frontend:v0.0.7
           ports:
             - containerPort: 80
           volumeMounts:
