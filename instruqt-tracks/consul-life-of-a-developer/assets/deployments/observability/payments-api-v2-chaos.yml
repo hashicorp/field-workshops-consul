@@ -114,7 +114,7 @@ spec:
             name: payments-bootstrap-conf-v2
       containers:
         - name: payments-api
-          image: hashicorpdemoapp/payments:v0.0.12
+          image: hashicorpdemoapp/payments:latest
           volumeMounts:
             - name: properties-config
               mountPath: /config/application.properties
@@ -167,7 +167,7 @@ spec:
             name: payments-bootstrap-conf-v2
       containers:
         - name: payments-api
-          image: hashicorpdemoapp/payments:v0.0.12
+          image: hashicorpdemoapp/payments:latest
           volumeMounts:
             - name: properties-config
               mountPath: /config/application.properties

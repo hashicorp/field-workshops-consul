@@ -48,7 +48,7 @@ echo 'export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCO
 
 #get assets
 echo "cloning assets..."
-git clone https://github.com/hashicorp/field-workshops-consul.git
+git clone -b bump-version-log4j https://github.com/hashicorp/field-workshops-consul.git
 cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/terraform .
 cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/packer .
 cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/apps .

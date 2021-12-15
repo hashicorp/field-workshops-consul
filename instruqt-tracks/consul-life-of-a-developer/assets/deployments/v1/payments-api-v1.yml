@@ -58,7 +58,7 @@ spec:
             name: payments-properties-conf-v1
       containers:
         - name: payments-api
-          image: hashicorpdemoapp/payments:v0.0.12
+          image: hashicorpdemoapp/payments:latest
           volumeMounts:
             - name: properties-conf
               mountPath: /config/application.properties
