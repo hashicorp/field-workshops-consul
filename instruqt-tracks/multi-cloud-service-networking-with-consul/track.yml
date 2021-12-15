@@ -1241,6 +1241,10 @@ challenges:
     hostname: cloud-client
     path: /
     port: 8500
+  - title: Apps
+    type: code
+    hostname: cloud-client
+    path: /root/apps/nomad
   difficulty: basic
   timelimit: 300
 - slug: 18-deploy-product-applications
@@ -1587,4 +1591,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "17585179265419342659"
+checksum: "16131487639325850914"
