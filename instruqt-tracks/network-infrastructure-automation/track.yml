@@ -4,7 +4,10 @@ version: 0.0.1
 type: track
 title: Network Infrastructure Automation - Update
 teaser: Automate the provisioning and ongoing management of network infrastructure.
-description: In this workshop you'll learn how to automate the provisioning and management of traditional network infrastructure using Terraform, Consul, and Consul Terraform Sync. Eliminate exposure to operational overhead and security risk while accelerating the deployment and scaling of applications and services.
+description: In this workshop you'll learn how to automate the provisioning and management
+  of traditional network infrastructure using Terraform, Consul, and Consul Terraform
+  Sync. Eliminate exposure to operational overhead and security risk while accelerating
+  the deployment and scaling of applications and services.
 icon: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/NIA-CTS-Icon.png
 tags:
 - consul
@@ -414,7 +417,8 @@ challenges:
   id: 4pa4nyish9os
   type: challenge
   title: Deploy 'Consul Terraform Sync'
-  teaser: Now we are going install Consul Terraform Sync and bring dynamic service discovery to network infrastructure.
+  teaser: Now we are going install Consul Terraform Sync and bring dynamic service
+    discovery to network infrastructure.
   notes:
   - type: text
     contents: |
@@ -601,4 +605,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-checksum: "6122089451291532452"
+checksum: "14590901449097205310"

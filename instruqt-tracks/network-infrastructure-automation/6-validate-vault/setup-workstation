@@ -36,7 +36,8 @@ server {
   access_log /var/log/nginx/consul.log;
 }
 EOF
-/usr/sbin/service nginx restart
+/usr/sbin/service nginx reload
+
 rm -f /access.md
 bastion_ip=$(terraform output -state /root/terraform/vnet/terraform.tfstate bastion_ip)
 firewall_ip=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate FirewallIP)
