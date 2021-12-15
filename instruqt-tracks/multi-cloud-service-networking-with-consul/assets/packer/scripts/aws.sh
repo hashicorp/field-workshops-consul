@@ -9,7 +9,7 @@ sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(l
 
 #install packages
 sudo apt update -y
-sudo apt install awscli consul-enterprise=1.10.2+ent vault-enterprise=1.8.0+ent nomad-enterprise=1.0.4+ent docker.io jq -y
+sudo apt install awscli consul-enterprise=1.10.2+ent vault-enterprise=1.8.0+ent nomad-enterprise=1.0.4+ent docker.io jq unzip -y
 
 #pgk checks
 #aws cli
@@ -52,6 +52,13 @@ jq --version
 if [ $? -ne 0 ]
 then
   echo "Error checking jq version"
+  exit 1
+fi
+#unzip
+unzip -v
+if [ $? -ne 0 ]
+then
+  echo "Error checking unzip version"
   exit 1
 fi
 

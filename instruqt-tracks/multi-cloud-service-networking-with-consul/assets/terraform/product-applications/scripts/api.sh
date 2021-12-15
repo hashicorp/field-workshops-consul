@@ -174,7 +174,8 @@ sudo systemctl enable envoy.service
 sudo systemctl start envoy.service
 
 #install the application
-wget https://github.com/hashicorp-demoapp/product-api-go/releases/download/v0.0.15/product-api -O /product-api
+wget https://github.com/hashicorp-demoapp/product-api-go/releases/download/v0.0.19/product_api_go_linux_amd64.zip -O product_api_go_linux_amd64.zip
+unzip product_api_go_linux_amd64.zip
 chmod +x /product-api
 cat <<EOF > /conf.json
 {
@@ -182,6 +183,8 @@ cat <<EOF > /conf.json
   "bind_address": ":9090"
 }
 EOF
+
+#run it
 cat <<EOF > /etc/systemd/system/product-api.service
 [Unit]
 Description=Product API Service
