@@ -28,6 +28,12 @@ data:
     opentracing.jaeger.include-jaeger-env-tags=true
     logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter=DEBUG
     opentracing.jaeger.enable-b3-propagation=true
+    spring.profiles.active=chaos-monkey
+    spring.main.allow-bean-definition-overriding=true
+    chaos.monkey.enabled=false
+    chaos.monkey.watcher.actuatorHealth=true
+    chaos.monkey.assaults.exceptionsActive=true
+    chaos.monkey.assaults.level=1
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -58,7 +64,7 @@ spec:
             name: payments-properties-conf-v1
       containers:
         - name: payments-api
-          image: hashicorpdemoapp/payments:v0.0.14
+          image: hashicorpdemoapp/payments:v0.0.15
           volumeMounts:
             - name: properties-conf
               mountPath: /config/application.properties

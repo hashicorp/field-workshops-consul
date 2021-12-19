@@ -539,115 +539,111 @@ challenges:
     When running on K8s, Consul can consume K8s probes to determine if an instance is healthy or not to receive traffic.
     You will test this workflow below. <br>
 
-    Before you start, let's add curl to the container. <br>
+    Add add curl to the payments api pods. <br>
 
     ```
     kubectl config use-context k8s1
     kubectl exec deploy/payments-api-v1 -c payments-api -- apk add curl
     ```
 
-    First let's look at the health check for our payments API. It will return a 200. <br>
+    First let's look at the health check on *one* of our payments API pods. It will be passing. <br>
 
     ```
     kubectl exec deploy/payments-api-v1 -c payments-api -- curl -s 127.0.0.1:8080/actuator/health | jq
     ```
 
-    Check the dataplane for this instance of the payments api. You will inspect the Public API that connects to this service.
+    Check the downstream service view of the payments-api upstream. You will see two services, and their pod IPs.
 
     ```
     kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api
     ```
 
-    You will simulate an issue with the Redis component and see how this change is propagated through the mesh.
-    Scale the Redis component to zero on the stateless cluster.
-    You will wait 15 seconds for the three consecutive health checks to fail in the probe. <br>
+    We can use the chaos library on our payments service to simulate an application failure on one of our payments pods, and then look at its health check.
 
 
     ```
-    kubectl config use-context k8s2
-    kubectl scale statefulset payments-queue --replicas=0
-    sleep 30
+    kubectl exec deploy/payments-api-v1 -c payments-api -- curl -s -X POST localhost:8080/actuator/chaosmonkey/enable
+    sleep 15
     ```
 
-    Return to the other K8s cluster and check the health check again.
-    The status will be DOWN, with the REDIS component showing refused connection. <br>
+    Check the health check endpoint. <br>
 
     ```
-    kubectl config use-context k8s1
     kubectl exec deploy/payments-api-v1 -c payments-api -- curl -s 127.0.0.1:8080/actuator/health | jq
     ```
 
-    Let's check the status off the probe. <br>
+    Check the K8s probe. <br>
 
     ```
     kubectl get pod --selector=app=payments-api,version=v1 -o json | jq .items[0].status.conditions
     ```
 
-    Now, Check the status in Consul. <br>
+    Check the status in Consul. <br>
 
     ```
     curl -s http://127.0.0.1:8500/v1/health/checks/payments-api | jq
     ```
 
-    This will remove this instance from the data plane. You will see this reflected in Envoy's health flag.
-    The data plane keeps track of how many in total nodes there (healthy vs unhealthy) so it has an understadning of the proportion between the two.
+    This failure will remove this instance from the data plane. You will see this reflected in Envoy's health flag.
     The flag will prevent this instance from receiving traffic, and the value will be `/failed_eds_health` <br>
 
+    Check the downstream service for this flag. <br>
+
     ```
-    kubectl config use-context k8s1
     kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api
     ```
 
-    Let's bring the queue services back, and add an additional instance of our payment service.
+    Your payments service will now fail.
 
     ```
-    kubectl config use-context k8s2
-    kubectl scale statefulset payments-queue --replicas=1
-    sleep 30
+    ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
+    curl -s -v http://${ip}:8080/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+    --compressed | jq
     ```
 
-    Check the health check again for the payments API.
+    Scale the deployment to bring a heathly instance online, and wait for the pod to start. Consul will transparently shift traffic away from the failed pod.
 
     ```
-    kubectl config use-context k8s1
-    kubectl exec deploy/payments-api-v1 -c payments-api -- curl -s 127.0.0.1:8080/actuator/health | jq
+    kubectl scale deployment.v1.apps/payments-api-v1 --replicas=2
+    sleep 60
     ```
 
-    Check the probe again. <br>
-
-    ```
-    kubectl get pod --selector=app=payments-api,version=v1 -o json | jq .items[0].status.conditions
-    ```
-
-    Now, check the health check again in Consul.
-    The status will be passing. <br>
+    Check the status in Consul. You will two sets of service checks. One of the sets will be healthy. <br>
 
     ```
     curl -s http://127.0.0.1:8500/v1/health/checks/payments-api | jq
     ```
 
-    The dataplane will be updated to reflect this change.
-    The `health_flags` will be `healthy`. <br>
+    Now check the upstream service.
 
     ```
-    kubectl config use-context k8s1
-    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api
+    kubectl exec deploy/public-api -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api | grep health_flags
     ```
 
-    Last, let's add an additional instance of the payments API and see how quickly our public API propagates that update. <br>
+    Try your payments service again. <br>
 
     ```
-    kubectl config use-context k8s1
-    kubectl scale deployment.v1.apps/payments-api-v1 --replicas=2
-    sleep 30
+    ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
+    curl -s -v http://${ip}:8080/api \
+    -H 'Accept-Encoding: gzip, deflate, br' \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -H 'Connection: keep-alive' \
+    -H 'DNT: 1' \
+    --data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+    --compressed | jq
     ```
 
-    Check that the Consul control plane has this change, and that it gets to our dataplane.
-    Flags for these services are set to `healthy`. <br>
+    You can run a graceful restart of the deployment to cycle away the bad pod. You can proceed to the next challenge during the rollout.
 
     ```
-    curl -s http://127.0.0.1:8500/v1/catalog/service/payments-api | jq '[.. |."ServiceAddress"? | select(. != null)]'
-    kubectl exec deploy/public-api -c public-api -- wget -qO- 127.0.0.1:19000/clusters | grep payments-api
+    kubectl rollout restart deployment/payments-api-v1
     ```
 
     You will introduce more advanced traffic management in the next few assignments.
@@ -1077,4 +1073,4 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/consul-life-of-a-developer/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 500
-checksum: "356767235021987513"
+checksum: "3200759929940552023"

@@ -23,7 +23,7 @@ if [ "$product" != "200" ]; then
   exit 1
 fi
 
-#check payment
+#check payments
 payment=$(curl -s -o /dev/null -w "%{http_code}" http://${ip}:8080/api \
 -H 'Accept-Encoding: gzip, deflate, br' \
 -H 'Content-Type: application/json' \
@@ -34,22 +34,6 @@ payment=$(curl -s -o /dev/null -w "%{http_code}" http://${ip}:8080/api \
 --compressed)
 if [ "$payment" != "200" ]; then
   fail-message "Payment API did not return a 200."
-  exit 1
-fi
-
-#1 payments queue pods
-kubectl config use-context k8s2
-queue=$(kubectl get pod --selector=app=payments-queue | tail -n +2 | wc -l)
-if [ "$queue" != "1" ]; then
-  fail-message "Expecting 1 payment queue pod."
-  exit 1
-fi
-
-#2 payments api pods
-kubectl config use-context k8s1
-payments=$(kubectl get pod --selector=app=payments-api,version=v1 | tail -n +2 | wc -l)
-if [ "$payments" != "2" ]; then
-  fail-message "Expecting 2 payments api pod."
   exit 1
 fi
 
