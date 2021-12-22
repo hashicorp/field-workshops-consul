@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# This script runs when the platform setup the challenge.
+#
+# The platform determines if the script was successful using the exit code of this
+# script. If the exit code is not 0, the script fails. 
+#
+
+echo "This is the setup script"
+
+exit 0

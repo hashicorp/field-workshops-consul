@@ -1,0 +1,17 @@
+slug: secure-service-networking-for-aws
+id: 2oz9glafbqxw
+type: track
+title: Secure Service Networking for AWS
+teaser: A short description of the track.
+description: |-
+  Service Networking is tricky. Service Networking across multiple platforms is even trickier.  Let look at how to deliver Service Networking Securely across multiple platforms.
+
+  You can use any GitHub flavoured markdown.
+icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+tags: []
+owner: hashicorp
+developers:
+- npearce@hashicorp.com
+private: true
+published: false
+checksum: "18272232372908935849"
