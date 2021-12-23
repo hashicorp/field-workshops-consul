@@ -1,0 +1,10 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceSplitter
+metadata:
+  name: payments-api
+spec:
+  splits:
+    - weight: 50
+      serviceSubset: v1
+    - weight: 50
+      serviceSubset: v2

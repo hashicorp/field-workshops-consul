@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#run this check again to make sure the app is not broken.
+
+#context
+kubectl config use-context k8s1
+
+#get the ingress gateway
+kubectl describe svc consul-ingress-gateway
+ip=$(kubectl get svc consul-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[0].ip')
+
+#check product
+product=$(curl -s -o /dev/null -w "%{http_code}" http://${ip}:8080/api \
+-H 'Accept-Encoding: gzip, deflate, br' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-H 'Connection: keep-alive' \
+-H 'DNT: 1' \
+--data-binary '{"query":"{\n  coffees{id,name,price}\n}"}' \
+--compressed)
+if [ "$product" != "200" ]; then
+  fail-message "Product API did not return a 200."
+  exit 1
+fi
+
+#check payments
+payment=$(curl -s -o /dev/null -w "%{http_code}" http://${ip}:8080/api \
+-H 'Accept-Encoding: gzip, deflate, br' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-H 'Connection: keep-alive' \
+-H 'DNT: 1' \
+--data-binary '{"query":"mutation{ pay(details:{ name: \"nic\", type: \"mastercard\", number: \"1234123-0123123\", expiry:\"10/02\", cv2: 1231, amount: 12.23 }){id, card_plaintext, card_ciphertext, message } }"}' \
+--compressed)
+if [ "$payment" != "200" ]; then
+  fail-message "Payment API did not return a 200."
+  exit 1
+fi
+
+exit 0

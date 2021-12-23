@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#prometheus
+prometheus=$(curl -s -o /dev/null -w "%{http_code}" http://k8s1:9090/-/healthy)
+if [ "$prometheus" != "200" ]; then
+  fail-message "Prometheus is not up."
+  exit 1
+fi
+
+#granfana
+grafana=$(curl -s -o /dev/null -w "%{http_code}" http://k8s1:3000/api/health)
+if [ "$grafana" != "200" ]; then
+  fail-message "Grafana is not up."
+  exit 1
+fi
+
+exit 0

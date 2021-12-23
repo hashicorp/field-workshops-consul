@@ -1,0 +1,8 @@
+#!/bin/bash
+
+kubectl config use-context k8s1
+kubectl apply -f deployments/config/proxy-defaults.yml
+kubectl apply -f deployments/config/mesh.yml
+sleep 15
+
+exit 0

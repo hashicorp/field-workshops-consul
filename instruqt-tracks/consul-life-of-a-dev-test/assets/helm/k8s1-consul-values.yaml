@@ -1,0 +1,77 @@
+global:
+  name: consul
+  datacenter: k8s1
+  image: 'hashicorp/consul:1.11.0'
+  tls:
+    enabled: true
+    enableAutoEncrypt: true
+  federation:
+    enabled: true
+    createFederationSecret: true
+  acls:
+    manageSystemACLs: true
+    createReplicationToken: true
+  metrics:
+    enabled: true
+    enableGatewayMetrics: true
+server:
+  replicas: 1
+  bootstrapExpect: 1
+  extraConfig: |
+    {
+      "telemetry": {
+        "prometheus_retention_time": "8h",
+        "disable_hostname": true
+      }
+    }
+client:
+  enabled: true
+  extraConfig: |
+    {
+      "telemetry": {
+        "prometheus_retention_time": "1m",
+        "disable_hostname": true
+      }
+    }
+controller:
+  enabled: true
+syncCatalog:
+  enabled: true
+  toConsul: true
+  toK8S: false
+  default: false
+connectInject:
+  enabled: true
+  default: false
+  envoyExtraArgs: "-l debug"
+  metrics:
+    defaultEnabled: true
+    defaultEnableMerging: true
+  transparentProxy:
+    defaultEnabled: true
+ui:
+  enabled: true
+  service:
+    enabled: true
+    type: LoadBalancer
+    additionalSpec: |
+      ports:
+      - name: http
+        protocol: TCP
+        port: 8443
+        targetPort: 8501
+  metrics:
+    enabled: true
+    provider: "prometheus"
+    baseURL: http://prometheus-server
+ingressGateways:
+  enabled: true
+  defaults:
+    replicas: 1
+    service:
+      type: LoadBalancer
+      ports:
+        - port: 8080
+meshGateway:
+  enabled: true
+  replicas: 1

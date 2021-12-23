@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "Consul deployed in track setup script. Skipping..."
+
+exit 0

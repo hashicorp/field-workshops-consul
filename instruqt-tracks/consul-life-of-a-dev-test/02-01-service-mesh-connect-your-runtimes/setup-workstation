@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#context
+kubectl config use-context k8s1
+
+exit 0

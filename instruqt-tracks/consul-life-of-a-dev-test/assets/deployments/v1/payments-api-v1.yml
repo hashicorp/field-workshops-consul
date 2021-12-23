@@ -1,0 +1,81 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payments-api
+spec:
+  selector:
+    app: payments-api
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: payments-api
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payments-properties-conf-v1
+data:
+  application.properties: |
+    app.storage=redis
+    app.encryption.enabled=false
+    opentracing.jaeger.http-sender.url=http://jaeger-collector:14268/api/traces
+    opentracing.jaeger.include-jaeger-env-tags=true
+    logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter=DEBUG
+    opentracing.jaeger.enable-b3-propagation=true
+    spring.profiles.active=chaos-monkey
+    spring.main.allow-bean-definition-overriding=true
+    chaos.monkey.enabled=false
+    chaos.monkey.watcher.actuatorHealth=true
+    chaos.monkey.assaults.exceptionsActive=true
+    chaos.monkey.assaults.level=1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-api-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payments-api
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: payments-api
+        version: v1
+      annotations:
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/service-meta-version: v1
+        consul.hashicorp.com/service-tags: v1
+        consul.hashicorp.com/service-metrics-path: "/actuator/prometheus"
+        consul.hashicorp.com/connect-service-upstreams: "payments-queue:6379:k8s2"
+    spec:
+      serviceAccountName: payments-api
+      volumes:
+        - name: properties-conf
+          configMap:
+            name: payments-properties-conf-v1
+      containers:
+        - name: payments-api
+          image: hashicorpdemoapp/payments:v0.0.15
+          volumeMounts:
+            - name: properties-conf
+              mountPath: /config/application.properties
+              subPath: application.properties
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            timeoutSeconds: 1
+            periodSeconds: 5
+            failureThreshold: 3
+            initialDelaySeconds: 30

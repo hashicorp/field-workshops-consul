@@ -1,0 +1,14 @@
+slug: consul-life-of-a-dev-test
+type: track
+title: consul life of a dev test
+teaser: Build, Test, and Deploy Applications with HashiCorp Consul.
+description: Ship a new version of the HashiCups App on container runtimes.
+icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
+tags: []
+owner: hashicorp
+developers:
+- lance@hashicorp.com
+private: true
+published: false
+show_timer: true
+skipping_enabled: true
