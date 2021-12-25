@@ -41,3 +41,6 @@ server:
         - key: serverConfigJSON
           path: config.json
       load: true
+dns:
+  enabled: true
+  enableRedirection: true
