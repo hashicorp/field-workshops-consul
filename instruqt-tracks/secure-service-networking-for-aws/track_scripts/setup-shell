@@ -1,0 +1,66 @@
+#!/bin/bash
+
+#azure creds
+sleep 30
+
+#fix path
+echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
+
+# Youtils
+apt update
+apt install curl gnupg2 vim ca-certificates -y
+
+#Install NGinX
+# apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ABF5BD827BD9BF62
+# apt-add-repository "deb [arch=amd64] https://nginx.org/packages/ubuntu/ $(lsb_release -cs) nginx"
+# apt-add-repository "deb-src [arch=amd64] deb-src https://nginx.org/packages/ubuntu/ $(lsb_release -cs) nginx"
+# apt update -y
+# apt install nginx -y
+
+# cat << EOF > /etc/nginx/conf.d/hcp_portal.conf
+# server {
+#   listen 81;
+#   location / {
+#     proxy_pass https://portal.cloud.hashicorp.com:443;
+#     proxy_set_header Host portal.cloud.hashicorp.com;
+#     proxy_ssl_server_name on;
+#     proxy_redirect off;
+#   }
+#   access_log /var/log/nginx/hcp_portal.log;
+# }
+# EOF
+
+#apt-key adv --keyserver apt.releases.hashicorp.com --recv-keys DA418C88A3219F7B
+#cloud client packages
+#curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+apt-key adv --fetch-keys https://packages.cloud.google.com/apt/doc/apt-key.gpg
+apt update -y
+apt install software-properties-common -y
+apt update -y
+apt-key adv --fetch-keys https://apt.releases.hashicorp.com/gpg
+apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+apt update -y
+apt install awscli terraform=0.13.2 consul=1.9.4 vault=1.7.1 -y
+
+#make vault run in container
+/sbin/setcap cap_ipc_lock= /usr/bin/vault
+
+# Ensure we load /etc/profile.d/instruqt-env.sh
+echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
+source /root/.bashrc
+
+#get assets
+echo "cloning assets..."
+git clone -b n8-ssn4aws https://github.com/hashicorp/field-workshops-consul.git
+cp -r field-workshops-consul/instruqt-tracks/secure-service-networking-for-aws/assets/terraform /root/terraform
+rm -rf field-workshops-consul
+
+#ssh agent
+cat << EOF > ~/.ssh/config
+Host *
+    StrictHostKeyChecking no
+EOF
+eval $(ssh-agent)
+ssh-add ~/.ssh/id_rsa
+
+exit 0
