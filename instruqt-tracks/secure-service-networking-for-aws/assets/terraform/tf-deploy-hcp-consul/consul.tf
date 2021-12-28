@@ -9,7 +9,10 @@ terraform {
 }
 
 // Configure the provider
-provider "hcp" {}
+provider "hcp" {
+  client_id     = var.hcp_client_id
+  client_secret = var.hcp_client_secret
+}
 
 resource "hcp_hvn" "example_hvn" {
   hvn_id         = var.hvn_id

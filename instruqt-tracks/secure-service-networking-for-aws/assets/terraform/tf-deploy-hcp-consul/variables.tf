@@ -1,3 +1,13 @@
+variable "hcp_client_id" {
+  description = "The ID of the HCP principal."
+  type        = string
+  default     = ""
+}
+variable "hcp_client_secret" {
+  description = "The Secret of the HCP principal."
+  type        = string
+  default     = ""
+}
 variable "hvn_id" {
   description = "The ID of the HCP HVN."
   type        = string
