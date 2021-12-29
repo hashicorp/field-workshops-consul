@@ -8,7 +8,7 @@ echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
 
 # Youtils
 apt update
-apt install curl gnupg2 vim ca-certificates -y
+apt install git curl gnupg2 vim ca-certificates -y
 
 #Install NGinX
 # apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ABF5BD827BD9BF62
@@ -30,9 +30,9 @@ apt install curl gnupg2 vim ca-certificates -y
 # }
 # EOF
 
-#apt-key adv --keyserver apt.releases.hashicorp.com --recv-keys DA418C88A3219F7B
-#cloud client packages
-#curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+# Allow silent installs
+export DEBIAN_FRONTEND=noninteractive
+
 apt-key adv --fetch-keys https://packages.cloud.google.com/apt/doc/apt-key.gpg
 apt update -y
 apt install software-properties-common -y
