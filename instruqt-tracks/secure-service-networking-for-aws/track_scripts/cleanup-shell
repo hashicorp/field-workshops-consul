@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Cheanup HCP Consul
+
+echo "Deleting HCP Consul resources..."
+
+cd /root/terraform/tf-deploy-hcp-consul
+terraform destroy
