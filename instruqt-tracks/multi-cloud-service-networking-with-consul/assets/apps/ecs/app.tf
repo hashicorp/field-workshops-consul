@@ -31,7 +31,7 @@ module "payments_api" {
   consul_client_token_secret_arn = data.terraform_remote_state.ecs.outputs.aws_secretsmanager_consul_client_token_arn
   acl_secret_name_prefix         = "consul-mc-lab"
   consul_datacenter              = "aws-us-east-1"
-  consul_service_tags            = ["ecs"]
+  consul_service_tags            = ["app","ecs"]
 
   consul_image = "public.ecr.aws/hashicorp/consul-enterprise:1.10.4-ent"
 

@@ -10,7 +10,7 @@ job "payments-api" {
     }
     service {
       name = "payments-api"
-      tags = ["app"]
+      tags = ["app","nomad"]
       port = "8080"
       check {
         name     = "payments-api-health"
