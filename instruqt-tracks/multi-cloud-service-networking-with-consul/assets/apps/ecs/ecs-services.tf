@@ -1,6 +1,6 @@
 resource "aws_ecs_service" "payments_api" {
   name            = "payments-api"
-  cluster         = aws_ecs_cluster.this.arn
+  cluster         = data.terraform_remote_state.ecs.outputs.aws_ecs_cluster_arn
   task_definition = module.payments_api.task_definition_arn
   desired_count   = 2
   network_configuration {

@@ -1,19 +1,15 @@
-data "aws_availability_zones" "available" {
-  filter {
-    name   = "opt-in-status"
-    values = ["opt-in-not-required"]
+data "terraform_remote_state" "consul" {
+  backend = "local"
+
+  config = {
+    path = "../aws-consul-primary/terraform.tfstate"
   }
 }
 
-data "aws_caller_identity" "this" {}
+data "terraform_remote_state" "infra" {
+  backend = "local"
 
-data "aws_caller_identity" "current" {}
-
-data "aws_security_group" "vpc_default" {
-  name   = "default"
-  vpc_id = var.vpc_id
-}
-
-data "aws_vpc" "selected" {
-  id = var.vpc_id
+  config = {
+    path = "../infra/terraform.tfstate"
+  }
 }
