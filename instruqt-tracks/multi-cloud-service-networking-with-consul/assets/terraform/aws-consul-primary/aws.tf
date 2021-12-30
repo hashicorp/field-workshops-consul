@@ -49,14 +49,14 @@ resource "aws_security_group" "consul" {
 
   ingress {
     from_port   = 8302
-    to_port     = 8301
+    to_port     = 8302
     protocol    = "tcp"
     cidr_blocks = ["10.1.0.0/16", "10.2.0.0/16"]
   }
 
   ingress {
     from_port   = 8302
-    to_port     = 8301
+    to_port     = 8302
     protocol    = "udp"
     cidr_blocks = ["10.1.0.0/16", "10.2.0.0/16"]
   }

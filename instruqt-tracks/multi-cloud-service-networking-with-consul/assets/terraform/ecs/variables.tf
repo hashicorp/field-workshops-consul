@@ -55,6 +55,6 @@ variable "default_tags" {
   description = "Default Tags for AWS"
   type        = map(string)
   default = {
-    Environment = "consul"
+    Environment = "consul-ecs"
   }
 }

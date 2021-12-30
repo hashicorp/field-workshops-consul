@@ -1,23 +1,10 @@
-resource "aws_cloudwatch_log_group" "log_group" {
-  name = var.name
-}
-
 locals {
-  example_server_app_log_config = {
+  payments_api_log_config = {
     logDriver = "awslogs"
     options = {
-      awslogs-group         = aws_cloudwatch_log_group.log_group.name
-      awslogs-region        = var.region
-      awslogs-stream-prefix = "app"
-    }
-  }
-
-  example_client_app_log_config = {
-    logDriver = "awslogs"
-    options = {
-      awslogs-group         = aws_cloudwatch_log_group.log_group.name
-      awslogs-region        = var.region
-      awslogs-stream-prefix = "client"
+      awslogs-group         = data.terraform_remote_state.ecs.outputs.aws_cloudwatch_log_group_name
+      awslogs-region        = "aws-us-east-1"
+      awslogs-stream-prefix = "payments-api"
     }
   }
 }

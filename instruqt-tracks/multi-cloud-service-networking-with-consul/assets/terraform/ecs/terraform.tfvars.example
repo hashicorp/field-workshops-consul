@@ -1,4 +1,3 @@
-user_public_ip = "YOUR_PUBLIC_IP"
 vpc_id = "YOUR_AWS_VPC_ID"
 consul_acl_token = "YOUR_CONSUL_ACL_TOKEN"
 consul_gossip_key = "YOUR_CONSUL_GOSSIP_KEY"
@@ -7,5 +6,5 @@ consul_cluster_addrs = ["10.0.4.100"]
 private_subnets_ids = ["PRIVATE_SUBNET_ID1", "PRIVATE_SUBNET_ID2"]
 public_subnets_ids = ["PUBLIC_SUBNET_ID1", "PUBLIC_SUBNET_ID2"]
 region = "us-east-1"
-name = "learn-hcp"
+name = "consul-lab"
 consul_datacenter = "dc1"

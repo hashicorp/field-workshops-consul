@@ -1,3 +1,7 @@
+output "aws_consul_iam_policy_arn" {
+  value = aws_iam_policy.consul.arn
+}
+
 output "aws_consul_iam_role_arn" {
   value = aws_iam_role.consul.arn
 }
