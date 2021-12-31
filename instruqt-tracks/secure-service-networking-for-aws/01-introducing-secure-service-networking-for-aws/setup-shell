@@ -6,6 +6,11 @@
 # script. If the exit code is not 0, the script fails. 
 #
 
-echo "This is the setup script"
+echo "Initializing terraform for HCP auth verification challenge"
+
+cd terraform/tf-verify-hcp-auth/
+terraform init
+
+set-workdir /root/terraform/tf-verify-hcp-auth
 
 exit 0
