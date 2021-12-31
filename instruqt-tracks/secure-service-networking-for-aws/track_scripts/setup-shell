@@ -8,7 +8,7 @@ echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
 
 # Youtils
 apt update
-apt install git curl gnupg2 vim ca-certificates -y
+apt install git curl jq gnupg2 vim ca-certificates -y
 
 #Install NGinX
 # apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ABF5BD827BD9BF62
