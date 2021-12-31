@@ -21,6 +21,18 @@ module "payments_api" {
     {
       destination_name = "redis"
       local_bind_port  = 6379
+    },
+    {
+      destination_name = "vault"
+      local_bind_port  = 8200
+    },
+    {
+      destination_name = "jaeger-http-collector"
+      local_bind_port  = 14268
+    },
+    {
+      destination_name = "zipkin-http-collector"
+      local_bind_port  = 9411
     }
   ]
   retry_join                     = ["provider=aws region=us-east-1 tag_key=Env tag_value=consul-${data.terraform_remote_state.infra.outputs.env}"]
