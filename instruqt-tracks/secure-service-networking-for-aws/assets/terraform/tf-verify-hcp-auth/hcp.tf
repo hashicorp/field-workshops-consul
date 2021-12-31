@@ -8,15 +8,6 @@ terraform {
 }
 
 // Configure the provider
-provider "hcp" {
-  client_id     = var.hcp_client_id
-  client_secret = var.hcp_client_secret
-}
+provider "hcp" {}
 
 data "hcp_consul_versions" "default" {}
-
-resource "hcp_hvn" "learn_hvn" {
-  hvn_id         = var.hvn_id
-  cloud_provider = var.cloud_provider
-  region         = var.region
-}
