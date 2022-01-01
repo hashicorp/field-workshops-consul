@@ -17,6 +17,7 @@ developers:
 - lance@hashicorp.com
 private: true
 published: true
+maintenance: true
 show_timer: true
 skipping_enabled: true
 challenges:
@@ -1136,7 +1137,64 @@ challenges:
     path: /root/helm
   difficulty: basic
   timelimit: 500
-- slug: 16-configure-intentions
+- slug: 16-provision-ecs-scheduler-services
+  id: n48o9aovplqn
+  type: challenge
+  title: Provision ECS Scheduler Services
+  teaser: A short description of the challenge.
+  notes:
+  - type: text
+    contents: Replace this text with your own text
+  assignment: |
+    In this assignment you will deploy Consul on ECS. <br>
+
+    You can review the ECS documentation to learn more about the architecute and deployment models, as well as look at sample code: https://www.consul.io/docs/ecs <br>
+
+    Review the Terraform code, and then plan and apply. <br>
+
+    ```
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    You can review your ECS cluster after the deployment is complete. It may take a few moments for the cluster to be active. <br>
+
+
+    ```
+    aws ecs describe-clusters --cluster consul-mc-lab | jq
+    aws ecs describe-services --cluster consul-mc-lab --services consul-acl-controller | jq
+    ```
+
+    Move to the next challenge when the cluster is in active status.
+  tabs:
+  - title: Shell
+    type: terminal
+    hostname: cloud-client
+  - title: Cloud Consoles
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 80
+  - title: Terraform
+    type: code
+    hostname: cloud-client
+    path: /root/terraform/ecs
+  - title: Vault
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8200
+  - title: Consul
+    type: service
+    hostname: cloud-client
+    path: /
+    port: 8500
+  - title: Lab Architecture
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  difficulty: basic
+  timelimit: 600
+- slug: 17-configure-intentions
   id: 1pfkcfoq8ysz
   type: challenge
   title: Configure Intentions
@@ -1194,24 +1252,43 @@ challenges:
     path: /root/policies
   difficulty: basic
   timelimit: 300
-- slug: 17-deploy-payments-applications
+- slug: 18-deploy-payments-applications
   id: cruyignfbudn
   type: challenge
   title: Deploy Payments Tier
   teaser: Run Payments workloads
   assignment: |-
-    In this assignment you will schedule the payments-api with Nomad.
+    In this assignment you will schedule the payments-api with Nomad and ECS on AWS.
 
-    Run the nomad job.
+    First, schedule the Nomad job.
 
     ```
+    cd /root/apps/nomad
     nomad run payments-api.hcl
+    sleep 30
     ```
 
-    Payments API services should now be running in the cluster.
+    Payments API services running on Nomad should now be running in the cluster.
 
     ```
-    curl -s ${CONSUL_HTTP_ADDR}/v1/health/service/payments-api?passing=true | jq
+    curl -G -s ${CONSUL_HTTP_ADDR}/v1/health/service/payments-api?passing=true --data-urlencode 'filter=Service.Tags contains "nomad"' | jq
+    curl -G -s ${CONSUL_HTTP_ADDR}/v1/health/service/payments-api?passing=true --data-urlencode 'filter=Service.Tags contains "nomad"' | jq length
+    ```
+
+    Next, schedule the ECS job.
+
+    ```
+    cd /root/apps/ecs
+    terraform plan
+    terraform apply -auto-approve
+    sleep 60
+    ```
+
+    Payments API services running on ECS should now be running in the cluster.
+
+    ```
+    curl -G -s ${CONSUL_HTTP_ADDR}/v1/health/service/payments-api?passing=true --data-urlencode 'filter=Service.Tags contains "ecs"' | jq
+    curl -G -s ${CONSUL_HTTP_ADDR}/v1/health/service/payments-api?passing=true --data-urlencode 'filter=Service.Tags contains "ecs"' | jq length
     ```
 
     In future assignments you will use these APIs to process payments.
@@ -1230,7 +1307,7 @@ challenges:
   - title: Terraform
     type: code
     hostname: cloud-client
-    path: /root/terraform/nomad-scheduler-services
+    path: /root/terraform
   - title: Vault
     type: service
     hostname: cloud-client
@@ -1244,10 +1321,10 @@ challenges:
   - title: Apps
     type: code
     hostname: cloud-client
-    path: /root/apps/nomad
+    path: /root/apps
   difficulty: basic
   timelimit: 300
-- slug: 18-deploy-product-applications
+- slug: 19-deploy-product-applications
   id: eav10xzem4qs
   type: challenge
   title: Deploy Product Tier
@@ -1301,7 +1378,7 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 300
-- slug: 19-deploy-frontend-applications
+- slug: 20-deploy-frontend-applications
   id: z76koxyd2ptx
   type: challenge
   title: Deploy Frontend Tier
@@ -1367,7 +1444,7 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 300
-- slug: 20-review-application-deployment
+- slug: 21-review-application-deployment
   id: yfp4xyirkhja
   type: challenge
   title: Review Application Deployment
@@ -1423,7 +1500,7 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
   difficulty: basic
   timelimit: 300
-- slug: 21-test-application-deployment
+- slug: 22-test-application-deployment
   id: nhbawzeqgdha
   type: challenge
   title: Test Application Deployment
@@ -1518,7 +1595,7 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-- slug: 22-observe-application-deployment
+- slug: 23-observe-application-deployment
   id: iriwn61yrqyf
   type: challenge
   title: Observe Application Deployment
@@ -1591,4 +1668,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "16131487639325850914"
+checksum: "16499832690797182793"

@@ -5,6 +5,8 @@ module "payments_api" {
   family            = "payments-api"
   port              = "8080"
   log_configuration = local.payments_api_log_config
+  cpu = 512
+  memory = 1024
   container_definitions = [{
     name             = "payments-api"
     image            = "hashicorpdemoapp/payments:v0.0.15"
@@ -16,6 +18,13 @@ module "payments_api" {
         value = "payments-api"
       }
     ]
+    healthCheck = {
+      command  = ["CMD-SHELL", "curl -f localhost:8080/actuator/health || exit 1"]
+      interval = 5
+      retries  = 3
+      timeout  = 5
+      startPeriod = 90
+    }
   }]
   upstreams = [
     {

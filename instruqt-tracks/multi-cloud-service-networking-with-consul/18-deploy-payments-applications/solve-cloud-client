@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#nomad
+cd /root/apps/nomad
+nomad run payments-api.hcl
+sleep 90
+
+#ecs
+cd /root/apps/ecs
+terraform apply -auto-approve 2>&1 | tee terraform.out
+sleep 120
+
+exit 0

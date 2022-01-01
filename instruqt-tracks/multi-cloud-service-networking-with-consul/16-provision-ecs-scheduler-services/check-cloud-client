@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#check the ecs cluster
+status=$(aws ecs describe-clusters --cluster consul-mc-lab | jq -r .clusters[0].status)
+if [ "${status}" != "ACTIVE" ]; then
+  fail-message "ECS cluster is not active."
+  exit 1
+fi
+
+#check the controller
+status=$(aws ecs describe-services --cluster consul-mc-lab --services consul-acl-controller | jq -r .services[0].status)
+if [ "${status}" != "ACTIVE" ]; then
+  fail-message "ECS ACL Controller is not active."
+  exit 1
+fi
+
+exit 0

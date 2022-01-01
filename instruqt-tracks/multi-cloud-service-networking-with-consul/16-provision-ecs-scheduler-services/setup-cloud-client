@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#dir
+cd /root/terraform/ecs
+terraform init
+set-workdir /root/terraform/ecs
+
+#vault secrets
+vault login -method=userpass username=admin password=admin
+vault read -field certificate pki/cert/ca > consul-agent-ca.pem
+
+#config
+cat << EOF > /root/terraform/ecs/terraform.tfvars
+consul_acl_token = "$(vault kv get -field=master_token kv/consul)"
+consul_gossip_key = "$(vault kv get -field=gossip_key kv/consul)"
+consul_client_ca_path = "./consul-agent-ca.pem"
+region = "us-east-1"
+name = "consul-mc-lab"
+EOF
+
+exit 0

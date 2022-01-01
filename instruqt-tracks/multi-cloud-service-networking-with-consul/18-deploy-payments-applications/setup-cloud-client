@@ -1,8 +1,18 @@
 #!/bin/bash
 
-set-workdir /root/apps/nomad
+#dir
+set-workdir /root/apps/
 
+#nomad
 NOMAD_IP=$(terraform output -state /root/terraform/nomad-scheduler-services/terraform.tfstate aws_nomad_server_public_ip)
 echo "export NOMAD_ADDR=http://${NOMAD_IP}:4646" >> ~/.bashrc
+
+#ecs
+cd /root/apps/ecs
+terraform init
+cat << EOF > /root/terraform/ecs/terraform.tfvars
+region = "us-east-1"
+name = "consul-mc-lab"
+EOF
 
 exit 0

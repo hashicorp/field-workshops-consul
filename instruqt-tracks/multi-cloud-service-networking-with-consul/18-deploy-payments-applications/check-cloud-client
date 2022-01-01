@@ -5,8 +5,8 @@ vault login -method=userpass username=admin password=admin
 
 #aws
 aws_payments=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/payments-api?passing=true")
-if [ "$(echo "${aws_payments}" | jq '. | length')" != "2" ]; then
-  fail-message "AWS payment-api(s) is not healthy. Expecting 2 instances."
+if [ "$(echo "${aws_payments}" | jq '. | length')" != "4" ]; then
+  fail-message "AWS payment-api(s) is not healthy. Expecting 4 instances, 2 Nomad, 2 ECS."
   exit 1
 fi
 

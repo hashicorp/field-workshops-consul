@@ -1,6 +1,0 @@
-#!/bin/bash
-
-nomad run /root/apps/nomad/payments-api.hcl
-sleep 90
-
-exit 0
