@@ -9,7 +9,7 @@ module "payments_api" {
   memory = 1024
   container_definitions = [{
     name             = "payments-api"
-    image            = "hashicorpdemoapp/payments:v0.0.15"
+    image            = "hashicorpdemoapp/payments:v0.0.16"
     essential        = true
     logConfiguration = local.payments_api_log_config
     environment = [
