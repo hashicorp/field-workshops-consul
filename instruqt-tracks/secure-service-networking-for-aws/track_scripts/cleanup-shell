@@ -1,8 +1,19 @@
 #!/bin/bash
 
-# Cheanup HCP Consul
+# Cheanup HCP
 
-echo "Deleting HCP Consul resources..."
+echo "Deleting HCP Consul & HP Vault resources..."
 
-cd /root/terraform/tf-deploy-hcp-consul
-terraform destroy
+if [ -f "/root/terraform/tf-deploy-hcp-consul/terraform.tfstate" ]; 
+then
+  echo "Deleting HCP Consul resources..."
+  cd /root/terraform/tf-deploy-hcp-consul
+  terraform destroy
+fi
+
+if [ -f "/root/terraform/tf-deploy-hcp-vault/terraform.tfstate" ]; 
+then
+  echo "Deleting HCP Vault resources..."
+  cd /root/terraform/tf-deploy-hcp-vault
+  terraform destroy
+fi

@@ -14,14 +14,14 @@ provider "hcp" {
   client_secret = var.hcp_client_secret
 }
 
-resource "hcp_hvn" "example_hvn" {
+resource "hcp_hvn" "learn_hvn" {
   hvn_id         = var.hvn_id
   cloud_provider = var.cloud_provider
   region         = var.region
 }
 
-resource "hcp_consul_cluster" "example_hcp" {
-  hvn_id          = hcp_hvn.example_hvn.hvn_id
+resource "hcp_consul_cluster" "learn_hcp" {
+  hvn_id          = hcp_hvn.learn_hvn.hvn_id
   cluster_id      = var.cluster_id
   tier            = "development"
   public_endpoint = true

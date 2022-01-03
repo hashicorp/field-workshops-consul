@@ -8,7 +8,7 @@
 
 echo "Initializing terraform for HCP auth verification challenge"
 
-cd terraform/tf-verify-hcp-auth/
+cd /root/terraform/tf-verify-hcp-auth/
 terraform init
 
 set-workdir /root/terraform/tf-verify-hcp-auth

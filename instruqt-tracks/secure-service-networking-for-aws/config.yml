@@ -3,4 +3,9 @@ containers:
 - name: shell
   image: ubuntu
   shell: /bin/bash
-  memory: 256
+  memory: 2048
+aws_accounts:
+- name: consul
+  managed_policies:
+  - arn:aws:iam::aws:policy/AdministratorAccess
+  
