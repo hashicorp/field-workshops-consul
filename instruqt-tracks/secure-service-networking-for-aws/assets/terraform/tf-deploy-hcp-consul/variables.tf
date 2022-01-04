@@ -11,12 +11,12 @@ variable "hcp_client_secret" {
 variable "hvn_id" {
   description = "The ID of the HCP HVN."
   type        = string
-  default     = "learn-hvn"
+  default     = "workshop-hvn"
 }
 variable "cluster_id" {
   description = "The ID of the HCP Consul cluster."
   type        = string
-  default     = "learn-hcp-consul"
+  default     = "workshop-hcp-consul"
 }
 variable "region" {
   description = "The region of the HCP HVN and Consul cluster."
@@ -31,10 +31,10 @@ variable "cloud_provider" {
 variable "peering_id" {
   description = "The ID of the HCP peering connection."
   type        = string
-  default     = "learn-peering"
+  default     = "workshop-peering"
 }
 variable "route_id" {
   description = "The ID of the HCP HVN route."
   type        = string
-  default     = "learn-hvn-route"
+  default     = "workshop-hvn-route"
 }
