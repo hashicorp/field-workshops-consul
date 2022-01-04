@@ -20,7 +20,7 @@ resource "hcp_hvn" "learn_hvn" {
   region         = var.region
 }
 
-resource "hcp_consul_cluster" "learn_hcp" {
+resource "hcp_consul_cluster" "learn_hcp_consul" {
   hvn_id          = hcp_hvn.learn_hvn.hvn_id
   cluster_id      = var.cluster_id
   tier            = "development"
