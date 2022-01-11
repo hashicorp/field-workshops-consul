@@ -1319,7 +1319,7 @@ challenges:
     kubectl apply -f k8s/public-api
     ```
 
-    Deploy the React Frontend. This frontend will be exposed via an ingress controller with a Connect transparent proxy. <br>
+    Deploy the React Frontend. This frontend will be exposed via an ingress controller that is configured with a Connect transparent proxy. <br>
 
     ```
     kubectl config use-context react
