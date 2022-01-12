@@ -20,6 +20,10 @@ output "hcp_consul_version" {
   value = "${hcp_consul_cluster.workshop_hcp_consul.consul_version}"
 }
 
+output "hcp_consul_ca_file" {
+  value = "${hcp_consul_cluster.workshop_hcp_consul.consul_ca_file}"
+}
+
 #output "vpc_ecs" {
 #  value = "${hcp_consul_cluster.workshop_hcp_consul.consul_public_endpoint_url}"
 #}
