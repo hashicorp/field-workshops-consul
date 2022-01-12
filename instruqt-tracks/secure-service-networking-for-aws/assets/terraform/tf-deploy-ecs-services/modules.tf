@@ -11,7 +11,7 @@ module "acl_controller" {
     }
   }
   consul_bootstrap_token_secret_arn = aws_secretsmanager_secret.bootstrap_token.arn
-  consul_server_http_addr           = var.consul_cluster_addr
+  consul_server_http_addr           = data.terraform_remote_state.hpc.hcp_consul_private_endpoint_url
   ecs_cluster_arn                   = aws_ecs_cluster.this.arn
   region                            = var.region
   subnets                           = var.private_subnets_ids
@@ -58,14 +58,14 @@ module "example_client_app" {
     }
   ]
   // Strip away the https prefix from the Consul network address
-  retry_join                     = [substr(var.consul_cluster_addr, 8, -1)]
+  retry_join                     = [substr(data.terraform_remote_state.hpc.hcp_consul_private_endpoint_url, 8, -1)]
   tls                            = true
   consul_server_ca_cert_arn      = aws_secretsmanager_secret.consul_ca_cert.arn
   gossip_key_secret_arn          = aws_secretsmanager_secret.gossip_key.arn
   acls                           = true
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
   acl_secret_name_prefix         = var.name
-  consul_datacenter              = var.consul_datacenter
+  consul_datacenter              = data.terraform_remote_state.hpc.consul_datacenter
 
   depends_on = [module.acl_controller, module.example_server_app]
 }
@@ -90,14 +90,14 @@ module "example_server_app" {
     ]
   }]
   // Strip away the https prefix from the Consul network address
-  retry_join                     = [substr(var.consul_cluster_addr, 8, -1)]
+  retry_join                     = [substr(data.terraform_remote_state.hpc.hcp_consul_private_endpoint_url, 8, -1)]
   tls                            = true
   consul_server_ca_cert_arn      = aws_secretsmanager_secret.consul_ca_cert.arn
   gossip_key_secret_arn          = aws_secretsmanager_secret.gossip_key.arn
   acls                           = true
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
   acl_secret_name_prefix         = var.name
-  consul_datacenter              = var.consul_datacenter
+  consul_datacenter              = data.terraform_remote_state.hpc.consul_datacenter
 
   depends_on = [module.acl_controller]
 }

@@ -7,19 +7,18 @@ variable "name" {
 variable "region" {
   description = "AWS region."
   type        = string
-  default     = "us-east-1"
+  default     = "us-west-2"
 }
-
 variable "consul_cluster_addr" {
   type        = string
   description = "The network address of your Consul cluster. "
 }
 
-variable "consul_datacenter" {
-  type        = string
-  description = "The name of your Consul datacenter."
-  default     = "dc1"
-}
+#variable "consul_datacenter" {
+#  type        = string
+#  description = "The name of your Consul datacenter."
+#  default     = "dc1"
+#}
 
 variable "consul_acl_token" {
   type        = string
@@ -54,6 +53,7 @@ variable "vpc_id" {
 variable "user_public_ip" {
   description = "Your Public IP. This is used in the load balancer security groups to ensure only you can access the Consul UI and example application."
   type        = string
+  default     = "0.0.0.0/0"
 }
 
 variable "default_tags" {
