@@ -10,7 +10,7 @@ resource "aws_lb_target_group" "example_client_app" {
   name                 = "${var.name}-example-client-app"
   port                 = 9090
   protocol             = "HTTP"
-  vpc_id               = data.terraform_remote_state.hcp.aws_vpc_id
+  vpc_id               = data.terraform_remote_state.hcp.outputs.aws_vpc_id
   target_type          = "ip"
   deregistration_delay = 10
   health_check {
