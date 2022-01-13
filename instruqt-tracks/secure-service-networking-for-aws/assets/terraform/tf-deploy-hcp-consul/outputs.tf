@@ -1,5 +1,5 @@
 output "aws_vpc_id" {
-  value = "${aws_vpc.vpc_services.id}"
+  value = "${module.vpc.vpc_id}"
 }
 output "hcp_consul_public_endpoint_url" {
   value = "${hcp_consul_cluster.workshop_hcp_consul.consul_public_endpoint_url}"

@@ -28,11 +28,6 @@ variable "cloud_provider" {
   type        = string
   default     = "aws"
 }
-variable "peering_id" {
-  description = "The ID of the HCP peering connection."
-  type        = string
-  default     = "workshop-peering"
-}
 variable "route_id" {
   description = "The ID of the HCP HVN route."
   type        = string
