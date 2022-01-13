@@ -15,10 +15,18 @@ tabs:
   type: website
   url: https://portal.cloud.hashicorp.com:443/sign-up
   new_window: true
-- title: code
+- title: code - HCP
   type: code
   hostname: shell
   path: /root/terraform/tf-deploy-hcp-consul
+- title: code - HCP Config
+  type: code
+  hostname: shell
+  path: /root/config/
+- title: code - ecs
+  type: code
+  hostname: shell
+  path: /root/terraform/tf-deploy-ecs-services
 - title: Shell
   type: terminal
   hostname: shell
@@ -32,6 +40,22 @@ In this section you will use terraform to provision an HCP Consul cluster peered
 When you are ready to provision the resources, in the `shell` tab, execute:
 
 ```sh
-terraform apply
+terraform apply -auto-approve
 ```
 
+HCP Consul generates the cregistration file requires for connecting consul agents to the HCP Consul cluster. To read the consul config file, execute the following command:
+
+```sh
+terraform output hcp_consul_config_file | base64 -d | jq
+```
+
+Now we shall write this data to a file as we'll need it later:
+
+```sh
+terraform output hcp_consul_config_file | base64 -d | jq > /root/config/hcp_client_config.json
+```
+
+Now we shall grab the HCP Consul CA for our ECS and EKS deployments:
+```sh
+terraform output hcp_consul_ca_file | base64 -d > /root/config/hcp_ca.crt
+```

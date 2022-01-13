@@ -3,13 +3,17 @@ slug: introducing-secure-service-networking-for-aws
 id: pmdwnnimxkfb
 type: challenge
 title: Introducing Secure Service Networking for AWS
-teaser: Secure Service Networking is tricky on just one platform. Lets look at how
-  we're going to secure all services acorss multiple platforms.
+teaser: For many, Secure Service Networking is tricky on just one platform. Lets look
+  at how we can secure all services acorss multiple platforms.
 notes:
 - type: text
   contents: Secure Service Networking is tricky on just one platform. Lets look at
     how we're going to secure all services acorss multiple platforms.
 tabs:
+- title: HCP Consul
+  type: website
+  url: https://portal.cloud.hashicorp.com:443/sign-up
+  new_window: true
 - title: Shell
   type: terminal
   hostname: shell
@@ -54,14 +58,18 @@ First navigate to the *HCP Consul* tab - this will open a new window.
     export HCP_CLIENT_SECRET=<your-hcp-client-secret>
     ```
 
-2. Test if these credentials work by executing `terraform plan` in the Instruqt `shell` tab
+2. Test if these credentials work by executing the following command in the Instruqt `shell` tab:
+
+   ```sh
+   terraform apply -auto-approve
+   ```
 
     If there is something wrong with the credentials you will receive an authentication error. Verify your credentials and re-export them. If you still enconter authentication issues try recreating the service principal from the previous step and copying the new id and secret.
 
     If everything worked you will see a wall of text describing the resources terraform is ready to provision for you. You are ready to proceed.
 
 
-3. Variables are not preserved across Instrqut challenges. Either you can re-`export` them as variables (as above) when needed, or you can write them to a `terraform.tfvars` file with the following commands:
+3. Variables are not preserved across Instrqut challenges. Either you can re-`export` them as variables (as above) when needed, you can write them to a `terraform.tfvars` file, or you can persist them throughout the workship by writting them to your .bashrc file with the following commands:
 
     ```sh
     echo "export HCP_CLIENT_ID=$HCP_CLIENT_ID" >> ~/.bashrc

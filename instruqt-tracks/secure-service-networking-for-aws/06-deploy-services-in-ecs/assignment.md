@@ -8,6 +8,14 @@ notes:
 - type: text
   contents: Replace this text with your own text
 tabs:
+- title: code - ecs
+  type: code
+  hostname: shell
+  path: /root/terraform/tf-deploy-ecs-services
+- title: code - HCP Config
+  type: code
+  hostname: shell
+  path: /root/config/
 - title: Shell
   type: terminal
   hostname: shell

@@ -2,30 +2,63 @@ provider "aws" {
   region = var.region
 }
 
-resource "aws_vpc" "vpc_services" {
-  cidr_block = "172.31.0.0/16"
+#resource "aws_vpc" "vpc_services" {
+#  cidr_block = "172.31.0.0/16"
+#}
+#
+#data "aws_arn" "vpc_services" {
+#  arn = aws_vpc.vpc_services.arn
+#}
+
+#resource "hcp_aws_network_peering" "vpc_services" {
+#  hvn_id              = hcp_hvn.workshop_hvn.hvn_id
+#  peering_id          = var.peering_id
+#  peer_vpc_id         = aws_vpc.vpc_services.id
+#  peer_account_id     = aws_vpc.vpc_services.owner_id
+#  peer_vpc_region     = data.aws_arn.vpc_services.region
+#}
+#
+#resource "hcp_hvn_route" "peer_route" {
+#  hvn_link         = hcp_hvn.workshop_hvn.self_link
+#  hvn_route_id     = var.route_id
+#  destination_cidr = aws_vpc.vpc_services.cidr_block
+#  target_link      = hcp_aws_network_peering.vpc_services.self_link
+#}
+
+#resource "aws_vpc_peering_connection_accepter" "vpc_services" {
+#  vpc_peering_connection_id = hcp_aws_network_peering.vpc_services.provider_peering_id
+#  auto_accept               = true
+#}
+
+resource "hcp_aws_network_peering" "default" {
+  peering_id      = "${hcp_hvn.server.hvn_id}-peering"
+  hvn_id          = hcp_hvn.server.hvn_id
+  peer_vpc_id     = module.vpc.vpc_id
+  peer_account_id = data.aws_caller_identity.current.account_id
+  peer_vpc_region = var.region
 }
 
-data "aws_arn" "vpc_services" {
-  arn = aws_vpc.vpc_services.arn
-}
-
-resource "hcp_aws_network_peering" "vpc_services" {
-  hvn_id              = hcp_hvn.workshop_hvn.hvn_id
-  peering_id          = var.peering_id
-  peer_vpc_id         = aws_vpc.vpc_services.id
-  peer_account_id     = aws_vpc.vpc_services.owner_id
-  peer_vpc_region     = data.aws_arn.vpc_services.region
-}
-
-resource "hcp_hvn_route" "peer_route" {
-  hvn_link         = hcp_hvn.workshop_hvn.self_link
-  hvn_route_id     = var.route_id
-  destination_cidr = aws_vpc.vpc_services.cidr_block
-  target_link      = hcp_aws_network_peering.vpc_services.self_link
-}
-
-resource "aws_vpc_peering_connection_accepter" "vpc_services" {
-  vpc_peering_connection_id = hcp_aws_network_peering.vpc_services.provider_peering_id
+resource "aws_vpc_peering_connection_accepter" "peer" {
+  vpc_peering_connection_id = hcp_aws_network_peering.default.provider_peering_id
   auto_accept               = true
+}
+
+resource "hcp_hvn_route" "peering_route" {
+  depends_on       = [aws_vpc_peering_connection_accepter.peer]
+  hvn_link         = hcp_hvn.server.self_link
+  hvn_route_id     = "${hcp_hvn.server.hvn_id}-peering-route"
+  destination_cidr = module.vpc.vpc_cidr_block
+  target_link      = hcp_aws_network_peering.default.self_link
+}
+
+resource "aws_route" "peering" {
+  route_table_id            = module.vpc.public_route_table_ids[0]
+  destination_cidr_block    = hcp_hvn.server.cidr_block
+  vpc_peering_connection_id = aws_vpc_peering_connection_accepter.peer.vpc_peering_connection_id
+}
+
+resource "aws_route" "peering2" {
+  route_table_id            = module.vpc.private_route_table_ids[0]
+  destination_cidr_block    = hcp_hvn.server.cidr_block
+  vpc_peering_connection_id = aws_vpc_peering_connection_accepter.peer.vpc_peering_connection_id
 }

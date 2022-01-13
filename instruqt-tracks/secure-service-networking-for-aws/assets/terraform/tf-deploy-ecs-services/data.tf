@@ -12,10 +12,10 @@ data "aws_caller_identity" "current" {}
 data "aws_security_group" "vpc_default" {
   name   = "default"
 #  vpc_id = var.vpc_id
-  vpc_id = data.terraform_remote_state.hpc.aws_vpc_id
+  vpc_id = data.terraform_remote_state.hcp.aws_vpc_id
 }
 
-data "terraform_remote_state" "hpc" {
+data "terraform_remote_state" "hcp" {
   backend = "local"
 
   config = {
