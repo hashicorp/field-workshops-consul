@@ -11,7 +11,7 @@ output "hcp_consul_public_endpoint_url" {
   value = "${hcp_consul_cluster.workshop_hcp_consul.consul_public_endpoint_url}"
 }
 output "hcp_consul_private_endpoint_url" {
-  value = "${hcp_consul_cluster.workshop_hcp_consul.consul_public_endpoint_url}"
+  value = "${hcp_consul_cluster.workshop_hcp_consul.consul_private_endpoint_url}"
 }
 output "hcp_consul_config_file_decoded" {
   value = "${base64decode(hcp_consul_cluster.workshop_hcp_consul.consul_config_file)}"
