@@ -8,6 +8,15 @@ notes:
 - type: text
   contents: Replace this text with your own text
 tabs:
+- title: code - eks
+  type: code
+  hostname: shell
+  path: /root/terraform/tf-deploy-eks-services
+- title: Cloud Consoles
+  type: service
+  hostname: shell
+  path: /
+  port: 80
 - title: Shell
   type: terminal
   hostname: shell
