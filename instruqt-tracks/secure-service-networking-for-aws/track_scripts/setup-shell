@@ -10,12 +10,15 @@ echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
 apt update
 apt install git curl jq gnupg2 vim ca-certificates -y
 
+# Allow silent installs
+export DEBIAN_FRONTEND=noninteractive
+
 #Install NGinX
-# apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ABF5BD827BD9BF62
-# apt-add-repository "deb [arch=amd64] https://nginx.org/packages/ubuntu/ $(lsb_release -cs) nginx"
-# apt-add-repository "deb-src [arch=amd64] deb-src https://nginx.org/packages/ubuntu/ $(lsb_release -cs) nginx"
-# apt update -y
-# apt install nginx -y
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ABF5BD827BD9BF62
+apt-add-repository "deb [arch=amd64] https://nginx.org/packages/ubuntu/ $(lsb_release -cs) nginx"
+apt-add-repository "deb-src [arch=amd64] deb-src https://nginx.org/packages/ubuntu/ $(lsb_release -cs) nginx"
+apt update -y
+apt install nginx -y
 
 # cat << EOF > /etc/nginx/conf.d/hcp_portal.conf
 # server {
@@ -30,8 +33,18 @@ apt install git curl jq gnupg2 vim ca-certificates -y
 # }
 # EOF
 
-# Allow silent installs
-export DEBIAN_FRONTEND=noninteractive
+# Install gomplate
+curl -o /usr/local/bin/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/v2.7.0/gomplate_linux-amd64 && \
+  chmod +x /usr/local/bin/gomplate
+
+git clone https://github.com/instruqt/docker-cloud-client
+cd docker-cloud-client/
+mv index.html.tmpl /var/www/html/
+mv assets/ /var/www/html/
+cd ..
+rm -rf docker-cloud-client/
+gomplate -f /var/www/html/index.html.tmpl -o /var/www/html/index.html
+service nginx start
 
 apt-key adv --fetch-keys https://packages.cloud.google.com/apt/doc/apt-key.gpg
 apt update -y
