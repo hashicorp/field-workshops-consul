@@ -1,5 +1,5 @@
 provider "azurerm" {
-  version = "=2.47.0"
+  version = "=2.92.0"
   features {}
 }
 
