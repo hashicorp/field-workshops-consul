@@ -134,7 +134,7 @@ AZURE_CONSUL_IP=$(terraform output -state /root/terraform/azure-consul-secondary
 cat << EOF > /root/terraform/database-services/terraform.tfvars
 consul_http_addr="http://127.0.0.1:8500"
 EOF
-nohup terraform apply -target=azurerm_postgresql_server.postgres -auto-approve 2>&1 | tee nohup.out &
+nohup terraform apply -target=azurerm_postgresql_flexible_server.postgres -auto-approve 2>&1 | tee nohup.out &
 
 #wait for packer images
 

@@ -1,6 +1,6 @@
 resource "consul_node" "azure-pg" {
   name    = "azure-pg"
-  address = azurerm_postgresql_server.postgres.fqdn
+  address = azurerm_postgresql_flexible_server.postgres.fqdn
 
   meta = {
     "external-node"  = "true"
@@ -17,7 +17,7 @@ resource "consul_service" "azure-pg" {
     check_id = "service:postgres"
     name     = "Postgres health check"
     status   = "passing"
-    tcp      = "${azurerm_postgresql_server.postgres.fqdn}:5432"
+    tcp      = "${azurerm_postgresql_flexible_server.postgres.fqdn}:5432"
     interval = "30s"
     timeout  = "3s"
   }

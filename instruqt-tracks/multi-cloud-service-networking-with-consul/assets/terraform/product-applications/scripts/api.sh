@@ -179,7 +179,7 @@ unzip product_api_go_linux_amd64.zip
 chmod +x /product-api
 cat <<EOF > /conf.json
 {
-  "db_connection": "host=localhost port=5432 user=postgres@${env} password=${postgres_password} dbname=postgres sslmode=disable",
+  "db_connection": "host=127.0.0.1 port=5432 user=postgres password=${postgres_password} dbname=postgres sslmode=require",
   "bind_address": ":9090"
 }
 EOF
