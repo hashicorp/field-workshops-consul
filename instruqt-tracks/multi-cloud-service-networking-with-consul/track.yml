@@ -1379,7 +1379,7 @@ challenges:
 
     ```
     export PGPASSWORD=$(terraform output -state /root/terraform/database-services/terraform.tfstate postgres_password)
-    psql -U postgres@$(terraform output -state /root/terraform/infra/terraform.tfstate env) \
+    psql -U postgres \
       -d postgres \
       -h $(terraform output -state /root/terraform/database-services/terraform.tfstate postgres_fqdn) \
       -c 'SELECT * FROM coffees' \
@@ -1591,4 +1591,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "16131487639325850914"
+checksum: "17308107734533554434"
