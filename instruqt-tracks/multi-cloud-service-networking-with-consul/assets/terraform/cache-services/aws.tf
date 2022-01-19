@@ -5,7 +5,7 @@ resource "aws_elasticache_subnet_group" "default" {
 
 resource "aws_security_group" "redis" {
   name        = "redis-sg"
-  description = "ElastiCache Redis Securtity Group"
+  description = "ElastiCache Redis Security Group"
   vpc_id      = data.terraform_remote_state.infra.outputs.aws_shared_svcs_vpc
 
   ingress {
