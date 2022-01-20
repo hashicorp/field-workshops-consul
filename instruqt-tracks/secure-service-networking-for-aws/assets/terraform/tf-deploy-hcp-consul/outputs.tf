@@ -38,5 +38,5 @@ output "hcp_acl_token_secret_id" {
   value = "${hcp_consul_cluster_root_token.token.secret_id}"
 }
 output "vpc_region" {
-  value = "${aws_region.current}"
+  value = "${data.aws_region.current}"
 }
