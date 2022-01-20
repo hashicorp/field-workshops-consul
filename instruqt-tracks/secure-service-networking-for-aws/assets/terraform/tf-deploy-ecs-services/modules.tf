@@ -20,7 +20,8 @@ module "acl_controller" {
 
 module "example_client_app" {
 #  source  = "hashicorp/consul-ecs/aws//modules/mesh-task"
-  source  = "git::ssh://github.com/hashicorp/terraform-aws-consul-ecs//modules/mesh-task?ref=main"
+  source  = "git::https://github.com/hashicorp/terraform-aws-consul-ecs.git//modules/mesh-task?ref=main"
+
 #  version = "0.2.0"
   consul_ecs_image  = "docker.mirror.hashicorp.services/hashicorpdev/consul-ecs:latest"
 
@@ -78,7 +79,7 @@ module "example_client_app" {
 
 module "example_server_app" {
 #  source  = "hashicorp/consul-ecs/aws//modules/mesh-task"
-  source  = "git::ssh://github.com/hashicorp/terraform-aws-consul-ecs//modules/mesh-task?ref=main"
+  source  = "git::https://github.com/hashicorp/terraform-aws-consul-ecs.git//modules/mesh-task?ref=main"
 #  version = "0.2.0"
   consul_ecs_image  = "docker.mirror.hashicorp.services/hashicorpdev/consul-ecs:latest"
 
