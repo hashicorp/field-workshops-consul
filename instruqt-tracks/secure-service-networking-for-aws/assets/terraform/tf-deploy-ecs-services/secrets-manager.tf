@@ -5,7 +5,8 @@ resource "aws_secretsmanager_secret" "bootstrap_token" {
 
 resource "aws_secretsmanager_secret_version" "bootstrap_token" {
   secret_id     = aws_secretsmanager_secret.bootstrap_token.id
-  secret_string = var.consul_acl_token
+#  secret_string = var.consul_acl_token
+  secret_string = data.terraform_remote_state.hcp.outputs.hcp_acl_token.secret_id
 }
 
 resource "aws_secretsmanager_secret" "gossip_key" {

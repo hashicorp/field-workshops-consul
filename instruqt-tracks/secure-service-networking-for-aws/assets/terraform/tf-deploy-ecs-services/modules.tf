@@ -11,7 +11,7 @@ module "acl_controller" {
     }
   }
   consul_bootstrap_token_secret_arn = aws_secretsmanager_secret.bootstrap_token.arn
-  consul_server_http_addr           = data.terraform_remote_state.hcp.outputs.hcp_consul_private_endpoint_url
+  consul_server_http_addr           = data.terraform_remote_state.hcp.outputs.hcp_consul_public_endpoint_url
   ecs_cluster_arn                   = aws_ecs_cluster.this.arn
   region                            = var.region
   subnets                           = var.private_subnets_ids
@@ -19,8 +19,10 @@ module "acl_controller" {
 }
 
 module "example_client_app" {
-  source  = "hashicorp/consul-ecs/aws//modules/mesh-task"
-  version = "0.2.0"
+#  source  = "hashicorp/consul-ecs/aws//modules/mesh-task"
+  source  = "git::ssh://github.com/hashicorp/terraform-aws-consul-ecs//modules/mesh-task?ref=main"
+#  version = "0.2.0"
+  consul_ecs_image  = "docker.mirror.hashicorp.services/hashicorpdev/consul-ecs:latest"
 
   family            = "${var.name}-example-client-app"
   port              = "9090"
@@ -47,14 +49,18 @@ module "example_client_app" {
         protocol      = "tcp"
       }
     ]
-    cpu         = 0
+    cpu               = 1024
+    memory            = 2048
     mountPoints = []
     volumesFrom = []
   }]
   upstreams = [
     {
-      destination_name = "${var.name}-example-server-app"
-      local_bind_port  = 1234
+#      destination_name = "${var.name}-example-server-app"
+#      local_bind_port  = 1234
+      destinationName = "${var.name}-example-server-app"
+      localBindPort  = 1234
+
     }
   ]
   // Strip away the https prefix from the Consul network address
@@ -71,10 +77,14 @@ module "example_client_app" {
 }
 
 module "example_server_app" {
-  source  = "hashicorp/consul-ecs/aws//modules/mesh-task"
-  version = "0.2.0"
+#  source  = "hashicorp/consul-ecs/aws//modules/mesh-task"
+  source  = "git::ssh://github.com/hashicorp/terraform-aws-consul-ecs//modules/mesh-task?ref=main"
+#  version = "0.2.0"
+  consul_ecs_image  = "docker.mirror.hashicorp.services/hashicorpdev/consul-ecs:latest"
 
   family            = "${var.name}-example-server-app"
+  cpu               = 1024
+  memory            = 2048
   port              = "9090"
   log_configuration = local.example_server_app_log_config
   container_definitions = [{
