@@ -9,19 +9,6 @@ echo "Building .tfvars file"
 
 mkdir /root/config
 
-VPC_ID=`terraform output aws_vpc_id`
-GOSSIP_KEY=`terraform output hcp_consul_config_file | base64 -d | jq -r .gossip`
-CONSUL_ADDR=`terraform output hcp_consul_private_endpoint_url`
-cat << EOF > /root/config/terraform.tfvars
-vpc_id                = "$VPC_ID"
-private_subnets_ids   = []
-public_subnets_ids    = []
-consul_acl_token      = "<token_from_hcp_ui>"
-consul_client_ca_path = "/root/config/hcp_ca.pem"
-consul_cluster_addr   = "$CONSUL_ADDR"
-consul_gossip_key     = "$GOSSIP_KEY"
-EOF
-
 echo "Initializing terraform for HCP Consul deployment challenge"
 
 cd /root/terraform/tf-deploy-hcp-consul/

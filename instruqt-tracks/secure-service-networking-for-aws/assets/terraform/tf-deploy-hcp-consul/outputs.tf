@@ -7,6 +7,9 @@ output "private_subnets" {
 output "public_subnets" {
   value = "${module.vpc.public_subnets}"
 }
+output "hcp_cluster_id" {
+  value = "${hcp_consul_cluster.workshop_hcp_consul.cluster_id}"
+}
 output "hcp_consul_public_endpoint_url" {
   value = "${hcp_consul_cluster.workshop_hcp_consul.consul_public_endpoint_url}"
 }
@@ -25,11 +28,15 @@ output "consul_datacenter" {
 output "hcp_consul_version" {
   value = "${hcp_consul_cluster.workshop_hcp_consul.consul_version}"
 }
-
 output "hcp_consul_ca_file" {
   value = "${hcp_consul_cluster.workshop_hcp_consul.consul_ca_file}"
 }
-
-#output "vpc_ecs" {
-#  value = "${hcp_consul_cluster.workshop_hcp_consul.consul_public_endpoint_url}"
-#}
+output "hcp_acl_token" {
+  value = "${hcp_consul_cluster_root_token.token}"
+}
+output "hcp_acl_token_secret_id" {
+  value = "${hcp_consul_cluster_root_token.token.secret_id}"
+}
+output "vpc_region" {
+  value = "${aws_region.current}"
+}
