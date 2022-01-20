@@ -14,6 +14,11 @@ tabs:
   type: website
   url: https://portal.cloud.hashicorp.com:443/sign-up
   new_window: true
+- title: Cloud Consoles
+  type: service
+  hostname: shell
+  path: /
+  port: 80
 - title: Shell
   type: terminal
   hostname: shell
