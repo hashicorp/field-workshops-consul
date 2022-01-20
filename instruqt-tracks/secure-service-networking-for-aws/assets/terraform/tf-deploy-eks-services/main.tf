@@ -48,8 +48,15 @@ module "eks_consul_client" {
 }
 
 module "demo_app" {
-  source  = "hashicorp/hcp-consul/aws//modules/k8s-demo-app"
-  version = "~> 0.4.2"
+  source  = "./modules/eks-services"
+#  version = "~> 0.4.2"
 
   depends_on = [module.eks_consul_client]
 }
+
+#module "demo_app" {
+#  source  = "hashicorp/hcp-consul/aws//modules/k8s-demo-app"
+#  version = "~> 0.4.2"
+#
+#  depends_on = [module.eks_consul_client]
+#}
