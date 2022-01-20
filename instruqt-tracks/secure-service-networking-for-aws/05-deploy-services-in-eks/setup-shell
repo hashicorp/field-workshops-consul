@@ -6,6 +6,11 @@
 # script. If the exit code is not 0, the script fails. 
 #
 
-echo "This is the setup script"
+echo "Initializing terraform for HCP Consul deployment challenge"
+
+cd /root/terraform/tf-deploy-eks-services/
+terraform init
+
+set-workdir /root/terraform/tf-deploy-eks-services
 
 exit 0
