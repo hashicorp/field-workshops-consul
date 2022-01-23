@@ -27,8 +27,8 @@ module "eks" {
 }
 
 module "eks_consul_client" {
-  source  = "hashicorp/hcp-consul/aws//modules/hcp-eks-client"
-  version = "~> 0.4.2"
+#  source  = "hashicorp/hcp-consul/aws//modules/hcp-eks-client"
+  source  = "./modules/hcp-eks-client"
 
   cluster_id       = data.terraform_remote_state.hcp.outputs.hcp_cluster_id
   consul_hosts     = [substr(data.terraform_remote_state.hcp.outputs.hcp_consul_private_endpoint_url, 8, -1)]
