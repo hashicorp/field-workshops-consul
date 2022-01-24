@@ -3,6 +3,9 @@ global:
   name: consul
   datacenter: ${datacenter}
   image: "hashicorp/consul-enterprise:${consul_version}-ent"
+  adminPartitions:
+    enabled: true
+    name: "eks-services"
   acls:
     manageSystemACLs: true
     bootstrapToken:
@@ -45,7 +48,7 @@ controller:
 
 meshGateway:
   enabled: true
-  
+
 ingressGateways:
   enabled: true
   gateways:
