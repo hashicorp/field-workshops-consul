@@ -33,6 +33,7 @@ server:
 
 client:
   enabled: true
+  exposeGossipPorts: true
   join: ${consul_hosts}
   nodeMeta:
     terraform-module: "hcp-eks-client"
