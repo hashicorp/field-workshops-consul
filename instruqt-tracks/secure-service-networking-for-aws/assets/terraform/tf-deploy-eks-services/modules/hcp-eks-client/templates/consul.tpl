@@ -3,6 +3,7 @@ global:
   name: consul
   datacenter: ${datacenter}
   image: "hashicorp/consul-enterprise:${consul_version}-ent"
+  enableConsulNamespaces: true
   adminPartitions:
     enabled: true
     name: "eks-services"
