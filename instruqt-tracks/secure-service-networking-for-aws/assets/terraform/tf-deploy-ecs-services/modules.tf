@@ -6,7 +6,7 @@ module "acl_controller" {
     logDriver = "awslogs"
     options = {
       awslogs-group         = aws_cloudwatch_log_group.log_group.name
-      awslogs-region        = var.region
+      awslogs-region        = var.vpc_region
       awslogs-stream-prefix = "consul-acl-controller"
     }
   }
