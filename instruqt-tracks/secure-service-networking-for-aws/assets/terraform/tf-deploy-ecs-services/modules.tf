@@ -11,7 +11,6 @@ module "acl_controller" {
     }
   }
   consul_bootstrap_token_secret_arn = aws_secretsmanager_secret.bootstrap_token.arn
-  consul_server_ca_cert_arn         = aws_secretsmanager_secret.consul_ca_cert.arn
   consul_server_http_addr           = data.terraform_remote_state.hcp.outputs.hcp_consul_public_endpoint_url
   ecs_cluster_arn                   = aws_ecs_cluster.this.arn
   region                            = var.vpc_region
@@ -22,8 +21,6 @@ module "acl_controller" {
 module "product-api" {
   source  = "hashicorp/consul-ecs/aws//modules/mesh-task"
   version = "0.3.0"
-  consul_ecs_image  = "docker.mirror.hashicorp.services/hashicorpdev/consul-ecs:latest"
-#  consul_image      = "public.ecr.aws/hashicorp/consul:1.11.2-ent"
   consul_image      = "hashicorp/consul-enterprise:1.11.2-ent"
 
   family            = "${var.name}-product-api"
