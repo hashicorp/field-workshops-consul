@@ -57,28 +57,31 @@ Now we shall write this data to a file as we'll need it later:
 
 ```sh
 VPC_ID=`terraform output aws_vpc_id`
-GOSSIP_KEY=`terraform output hcp_consul_config_file | base64 -d | jq -r .encrypt`
+GOSSIP_KEY=`terraform output -raw hcp_consul_config_file | base64 -d | jq -r .encrypt`
 CONSUL_ADDR=`terraform output hcp_consul_private_endpoint_url`
 PRIVATE_SUBNETS=`terraform output private_subnets`
 PUBLIC_SUBNETS=`terraform output public_subnets`
+ACL_TOKEN=`terraform output hcp_acl_token_secret_id`
 
 cat << EOF > /root/config/terraform.tfvars
-vpc_id                = "$VPC_ID"
+vpc_id                = $VPC_ID
 private_subnets_ids   = $PRIVATE_SUBNETS
 public_subnets_ids    = $PUBLIC_SUBNETS
 consul_client_ca_path = "/root/config/hcp_ca.pem"
-consul_cluster_addr   = "$CONSUL_ADDR"
+consul_cluster_addr   = $CONSUL_ADDR
 consul_gossip_key     = "$GOSSIP_KEY"
-consul_acl_token      = "<token_from_hcp_ui>"
+consul_acl_token      = $ACL_TOKEN
 EOF
 
 ```
 
 ```sh
-terraform output hcp_consul_config_file | base64 -d | jq > /root/config/hcp_client_config.json
+terraform output -raw hcp_consul_config_file | base64 -d | jq > /root/config/hcp_client_config.json
 ```
 
 Now we shall grab the HCP Consul CA for our ECS and EKS deployments:
 ```sh
-terraform output hcp_consul_ca_file | base64 -d > /root/config/hcp_ca.pem
+terraform output -raw hcp_consul_ca_file | base64 -d > /root/config/hcp_ca.pem
 ```
+
+Review the output in the `code - HCP Config` tab.
