@@ -49,8 +49,8 @@ module "product-api" {
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
   acl_secret_name_prefix         = var.name
   consul_datacenter              = data.terraform_remote_state.hcp.outputs.consul_datacenter
-  consul_agent_configuration     = "partition = \"ecs-services\""
-  consul_partition               = "ecs-services"
+#  consul_agent_configuration     = "partition = \"ecs-services\""
+#  consul_partition               = "ecs-services"
 
   depends_on = [module.acl_controller]
 }
