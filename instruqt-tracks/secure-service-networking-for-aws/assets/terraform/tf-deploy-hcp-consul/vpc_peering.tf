@@ -83,11 +83,11 @@ resource "aws_vpc_peering_connection" "eks_ecs_peering" {
 resource "aws_route" "eks2ecs_route" {
   route_table_id            = module.vpc_services_eks.public_route_table_ids[0]
   destination_cidr_block    = module.vpc_services_ecs.vpc_cidr_block
-  vpc_peering_connection_id = aws_vpc_peering_connection_accepter.ecs_peer.vpc_peering_connection_id
+  vpc_peering_connection_id = aws_vpc_peering_connection_accepter.eks_peer.vpc_peering_connection_id
 }
 
 resource "aws_route" "ecs2eks_route" {
   route_table_id            = module.vpc_services_ecs.public_route_table_ids[0]
   destination_cidr_block    = module.vpc_services_eks.vpc_cidr_block
-  vpc_peering_connection_id = aws_vpc_peering_connection_accepter.eks_peer.vpc_peering_connection_id
+  vpc_peering_connection_id = aws_vpc_peering_connection_accepter.ecs_peer.vpc_peering_connection_id
 }
