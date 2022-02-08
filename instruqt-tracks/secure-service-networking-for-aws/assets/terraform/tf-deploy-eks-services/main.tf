@@ -13,7 +13,7 @@ module "eks" {
   cluster_name    = "${data.terraform_remote_state.hcp.outputs.hcp_cluster_id}-eks"
   cluster_version = "1.21"
   subnets         = data.terraform_remote_state.hcp.outputs.public_subnets
-  vpc_id          = data.terraform_remote_state.hcp.outputs.aws_vpc_id
+  vpc_id          = data.terraform_remote_state.hcp.outputs.aws_vpc_eks_id
 
   node_groups = {
     application = {
