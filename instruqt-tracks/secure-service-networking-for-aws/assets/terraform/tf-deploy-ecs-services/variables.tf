@@ -45,7 +45,7 @@ variable "public_subnets_ids" {
   description = "A list of public subnets and their respective ids."
 }
 
-variable "vpc_id" {
+variable "ecs_vpc_id" {
   type        = string
   description = "Your AWS VPC ID."
 }
