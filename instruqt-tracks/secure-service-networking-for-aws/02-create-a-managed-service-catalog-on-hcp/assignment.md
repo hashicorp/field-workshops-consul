@@ -47,7 +47,7 @@ terraform apply -auto-approve
 HCP Consul generates the cregistration file requires for connecting consul agents to the HCP Consul cluster. To read the consul config file, execute the following command:
 
 ```sh
-terraform output hcp_consul_config_file | base64 -d | jq
+terraform output -raw hcp_consul_config_file | base64 -d | jq
 ```
 
 Save the output into a terraform.tfvars file
@@ -56,17 +56,17 @@ Save the output into a terraform.tfvars file
 Now we shall write this data to a file as we'll need it later:
 
 ```sh
-VPC_ID=`terraform output aws_vpc_id`
+ECS_VPC_ID=`terraform output aws_vpc_ecs_id`
 GOSSIP_KEY=`terraform output -raw hcp_consul_config_file | base64 -d | jq -r .encrypt`
 CONSUL_ADDR=`terraform output hcp_consul_private_endpoint_url`
-PRIVATE_SUBNETS=`terraform output private_subnets`
-PUBLIC_SUBNETS=`terraform output public_subnets`
+ECS_PRIVATE_SUBNETS=`terraform output ecs_private_subnets`
+ECS_PUBLIC_SUBNETS=`terraform output ecs_public_subnets`
 ACL_TOKEN=`terraform output hcp_acl_token_secret_id`
 
 cat << EOF > /root/config/terraform.tfvars
-vpc_id                = $VPC_ID
-private_subnets_ids   = $PRIVATE_SUBNETS
-public_subnets_ids    = $PUBLIC_SUBNETS
+ecs_vpc_id            = $ECS_VPC_ID
+private_subnets_ids   = $ECS_PRIVATE_SUBNETS
+public_subnets_ids    = $ECS_PUBLIC_SUBNETS
 consul_client_ca_path = "/root/config/hcp_ca.pem"
 consul_cluster_addr   = $CONSUL_ADDR
 consul_gossip_key     = "$GOSSIP_KEY"
