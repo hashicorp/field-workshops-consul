@@ -8,9 +8,9 @@
 
 echo "Initializing terraform for HCP Consul deployment challenge"
 
-cd /root/terraform/tf-deploy-eks-services-team1/
+cd /root/terraform/tf-deploy-eks-services-prod/
 terraform init
 
-set-workdir /root/terraform/tf-deploy-eks-services-team1
+set-workdir /root/terraform/tf-deploy-eks-services-prod
 
 exit 0

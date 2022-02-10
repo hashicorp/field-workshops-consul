@@ -1,8 +1,8 @@
 ---
-slug: deploy-services-in-eks-team1
+slug: deploy-services-in-eks-dev
 id: 2ontib6im3go
 type: challenge
-title: Deploy Services in EKS for Team 1
+title: Deploy Services in EKS for the Dev Team
 teaser: Let's deploy some microservices on EKS
 notes:
 - type: text
@@ -11,7 +11,7 @@ tabs:
 - title: code - eks
   type: code
   hostname: shell
-  path: /root/terraform/tf-deploy-eks-services-team1
+  path: /root/terraform/tf-deploy-eks-services-dev
 - title: Cloud Consoles
   type: service
   hostname: shell
