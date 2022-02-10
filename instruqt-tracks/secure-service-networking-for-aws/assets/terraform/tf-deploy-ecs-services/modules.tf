@@ -40,7 +40,7 @@ module "product-api" {
       },
       {
         name  = "DB_CONNECTION"
-        value = "host=product-db port=5432 user=postgres password=password dbname=products sslmode=disable"
+        value = "host=localhost port=5432 user=postgres password=password dbname=products sslmode=disable"
       },
       {
         name = "BIND_ADDRESS"
@@ -51,6 +51,7 @@ module "product-api" {
   upstreams = [
     {
       destinationName = "postgres"
+      destinationPartition = "eks-services"
       localBindPort  = 5432
     }
   ]
