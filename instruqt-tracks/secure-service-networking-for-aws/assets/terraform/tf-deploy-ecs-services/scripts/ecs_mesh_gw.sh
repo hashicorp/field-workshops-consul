@@ -33,7 +33,7 @@ chown -R consul:consul /etc/consul.d/
 
 #fix things
 sudo mkdir /etc/envoy
-sudo touch /etc/envoy/consul.token
+sudo echo ${token} > /etc/envoy/consul.token
 sudo touch /etc/consul.d/consul.env
 
 #consul
@@ -61,7 +61,7 @@ EOF
 cat <<EOF> /etc/consul.d/acl.hcl
 acl = {
   tokens = {
-    default = "$${token}"
+    default = "${token}"
   }
 }
 EOF
