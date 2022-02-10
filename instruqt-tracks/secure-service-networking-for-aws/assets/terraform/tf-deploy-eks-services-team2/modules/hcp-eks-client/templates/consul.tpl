@@ -40,10 +40,9 @@ client:
     terraform-module: "hcp-eks-client"
 
 connectInject:
-  transparentProxy:
-    defaultEnabled: true
   enabled: true
-  default: true
+  consulNamespaces:
+    mirroringK8S: true
 
 controller:
   enabled: true
@@ -51,11 +50,6 @@ controller:
 meshGateway:
   enabled: true
 
-ingressGateways:
+dns:
   enabled: true
-  gateways:
-    - name: ingress-gateway
-      service:
-        type: LoadBalancer
-        ports:
-        - port: 8080
+  enableRedirection: true 

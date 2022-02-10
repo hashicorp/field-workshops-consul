@@ -1,12 +1,12 @@
 ---
-slug: deploy-services-in-eks
+slug: deploy-services-in-eks-team1
 id: 2ontib6im3go
 type: challenge
-title: Deploy Services in EKS
-teaser: A short description of the challenge.
+title: Deploy Services in EKS for Team 1
+teaser: Let's deploy some microservices on EKS
 notes:
 - type: text
-  contents: Replace this text with your own text
+  contents: In this section you will create an EKS cluster and deploy some services.
 tabs:
 - title: code - eks
   type: code
@@ -47,4 +47,9 @@ export KUBECONFIG=`terraform output -raw kubeconfig_filename`
 Now verify it works using:
 ```sh
 kubectl get pods
+```
+
+
+```sh
+kubectl apply -f modules/eks-services/services/export.yaml
 ```

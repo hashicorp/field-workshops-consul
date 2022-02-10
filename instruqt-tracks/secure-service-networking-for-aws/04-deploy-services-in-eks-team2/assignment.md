@@ -1,12 +1,12 @@
 ---
-slug: deploy-services-in-eks
-id: 2ontib6im3go
+slug: deploy-services-in-eks-team2
+id: n1oadiz2ylrp
 type: challenge
-title: Deploy Services in EKS
-teaser: A short description of the challenge.
+title: Deploy Services in EKS for Team 2
+teaser: Let's deploy some microservices on EKS
 notes:
 - type: text
-  contents: Replace this text with your own text
+  contents: In this section you will create an EKS cluster and deploy some services.
 tabs:
 - title: code - eks
   type: code
@@ -48,3 +48,7 @@ Now verify it works using:
 ```sh
 kubectl get pods
 ```
+
+ ```sh
+ kubectl apply -f modules/eks-services/services/export.yaml
+ ```
