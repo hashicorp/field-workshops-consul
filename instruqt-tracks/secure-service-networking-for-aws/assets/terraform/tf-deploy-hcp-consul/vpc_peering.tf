@@ -7,7 +7,7 @@ data "aws_region" "current" {}
 // EKS_DEV <> HVN Peering
 resource "hcp_aws_network_peering" "vpc_services_eks_dev" {
   hvn_id          = hcp_hvn.workshop_hvn.hvn_id
-  peering_id      = "${hcp_hvn.workshop_hvn.hvn_id}-eks-peering"
+  peering_id      = "${hcp_hvn.workshop_hvn.hvn_id}-eks-peering-dev"
   peer_vpc_id     = module.vpc_services_eks_dev.vpc_id
   peer_account_id = module.vpc_services_eks_dev.vpc_owner_id
   peer_vpc_region = var.region
@@ -21,7 +21,7 @@ resource "aws_vpc_peering_connection_accepter" "eks_dev_peer" {
 resource "hcp_hvn_route" "peering_route_eks_dev" {
   depends_on       = [aws_vpc_peering_connection_accepter.eks_dev_peer]
   hvn_link         = hcp_hvn.workshop_hvn.self_link
-  hvn_route_id     = "${hcp_hvn.workshop_hvn.hvn_id}-eks-peering-route"
+  hvn_route_id     = "${hcp_hvn.workshop_hvn.hvn_id}-eks-peering-route-dev"
   destination_cidr = module.vpc_services_eks_dev.vpc_cidr_block
   target_link      = hcp_aws_network_peering.vpc_services_eks_dev.self_link
 }
@@ -43,7 +43,7 @@ resource "aws_route" "eks_dev_peering2" {
 // EKS_PROD <> HVN Peering
 resource "hcp_aws_network_peering" "vpc_services_eks_prod" {
   hvn_id          = hcp_hvn.workshop_hvn.hvn_id
-  peering_id      = "${hcp_hvn.workshop_hvn.hvn_id}-eks-peering"
+  peering_id      = "${hcp_hvn.workshop_hvn.hvn_id}-eks-peering-prod"
   peer_vpc_id     = module.vpc_services_eks_prod.vpc_id
   peer_account_id = module.vpc_services_eks_prod.vpc_owner_id
   peer_vpc_region = var.region
@@ -57,7 +57,7 @@ resource "aws_vpc_peering_connection_accepter" "eks_prod_peer" {
 resource "hcp_hvn_route" "peering_route_eks_prod" {
   depends_on       = [aws_vpc_peering_connection_accepter.eks_prod_peer]
   hvn_link         = hcp_hvn.workshop_hvn.self_link
-  hvn_route_id     = "${hcp_hvn.workshop_hvn.hvn_id}-eks-peering-route"
+  hvn_route_id     = "${hcp_hvn.workshop_hvn.hvn_id}-eks-peering-route-prod"
   destination_cidr = module.vpc_services_eks_prod.vpc_cidr_block
   target_link      = hcp_aws_network_peering.vpc_services_eks_prod.self_link
 }
