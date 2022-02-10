@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # This script runs when the platform check the challenge.
 #
@@ -8,7 +8,7 @@
 
 echo "Checking HCP Auth Creds are exported"
 
-source ~/.bashrc
+source /root/.bashrc
 
 if [ -n "$HCP_CLIENT_ID" ] && [ -n "$HCP_CLIENT_SECRET" ]; then 
   echo "Both HCP_CLIENT_ID and HCP_CLIENT_SECRET are set";
