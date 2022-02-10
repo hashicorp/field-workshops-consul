@@ -50,6 +50,15 @@ controller:
 meshGateway:
   enabled: true
 
+ingressGateways:
+  enabled: true
+  gateways:
+    - name: ingress-gateway
+      service:
+        type: LoadBalancer
+        ports:
+        - port: 8080
+
 dns:
   enabled: true
   enableRedirection: true 
