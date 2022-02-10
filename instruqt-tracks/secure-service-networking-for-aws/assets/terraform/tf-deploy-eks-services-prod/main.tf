@@ -10,10 +10,10 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "17.22.0"
 
-  cluster_name    = "${data.terraform_remote_state.hcp.outputs.hcp_cluster_id}-eks-team2"
+  cluster_name    = "${data.terraform_remote_state.hcp.outputs.hcp_cluster_id}-eks-prod"
   cluster_version = "1.21"
-  subnets         = data.terraform_remote_state.hcp.outputs.eks_public_subnets
-  vpc_id          = data.terraform_remote_state.hcp.outputs.aws_vpc_eks_id
+  subnets         = data.terraform_remote_state.hcp.outputs.eks_prod_public_subnets
+  vpc_id          = data.terraform_remote_state.hcp.outputs.aws_vpc_eks_prod_id
 
   node_groups = {
     application = {

@@ -6,7 +6,7 @@ global:
   enableConsulNamespaces: true
   adminPartitions:
     enabled: true
-    name: "eks-services-team2"
+    name: "eks-services-dev"
   acls:
     manageSystemACLs: true
     bootstrapToken:
@@ -49,6 +49,15 @@ controller:
 
 meshGateway:
   enabled: true
+
+ingressGateways:
+  enabled: true
+  gateways:
+    - name: ingress-gateway
+      service:
+        type: LoadBalancer
+        ports:
+        - port: 8080
 
 dns:
   enabled: true
