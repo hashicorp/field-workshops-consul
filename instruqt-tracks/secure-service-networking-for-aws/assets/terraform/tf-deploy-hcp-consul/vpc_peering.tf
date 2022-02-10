@@ -18,7 +18,7 @@ resource "aws_vpc_peering_connection_accepter" "eks_dev_peer" {
   auto_accept               = true
 }
 
-resource "hcp_hvn_route" "peering_route_eks" {
+resource "hcp_hvn_route" "peering_route_eks_dev" {
   depends_on       = [aws_vpc_peering_connection_accepter.eks_dev_peer]
   hvn_link         = hcp_hvn.workshop_hvn.self_link
   hvn_route_id     = "${hcp_hvn.workshop_hvn.hvn_id}-eks-peering-route"
@@ -54,7 +54,7 @@ resource "aws_vpc_peering_connection_accepter" "eks_prod_peer" {
   auto_accept               = true
 }
 
-resource "hcp_hvn_route" "peering_route_eks" {
+resource "hcp_hvn_route" "peering_route_eks_prod" {
   depends_on       = [aws_vpc_peering_connection_accepter.eks_prod_peer]
   hvn_link         = hcp_hvn.workshop_hvn.self_link
   hvn_route_id     = "${hcp_hvn.workshop_hvn.hvn_id}-eks-peering-route"
