@@ -37,9 +37,23 @@ module "product-api" {
       {
         name  = "NAME"
         value = "${var.name}-product-api"
+      },
+      {
+        name  = "DB_CONNECTION"
+        value = "host=product-db port=5432 user=postgres password=password dbname=products sslmode=disable"
+      },
+      {
+        name = "BIND_ADDRESS"
+        value = ":9090"
       }
     ]
   }]
+  upstreams = [
+    {
+      destinationName = "postgres"
+      localBindPort  = 5432
+    }
+  ]
   // Strip away the https prefix from the Consul network address
   retry_join                     = [substr(data.terraform_remote_state.hcp.outputs.hcp_consul_private_endpoint_url, 8, -1)]
   tls                            = true
