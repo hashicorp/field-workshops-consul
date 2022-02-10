@@ -1,6 +1,6 @@
 vpc_id                = "vpc-123456789"
 user_public_ip        = "34.198.78.12"
-region                = "us-east-1"
+vpc_region                = "us-east-1"
 name                  = "hcp-ecs-learn"
 consul_cluster_addr   = "https://dc1.private.consul.98a0dcc3-5473-4e4d-a28e-6c343c498530.aws.hashicorp.cloud"
 consul_datacenter     = "dc1"

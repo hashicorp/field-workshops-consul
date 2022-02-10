@@ -7,15 +7,6 @@ output "eks_private_subnets" {
 output "eks_public_subnets" {
   value = "${module.vpc_services_eks.public_subnets}"
 }
-output "aws_vpc_ecs_id" {
-  value = "${module.vpc_services_ecs.vpc_id}"
-}
-output "ecs_private_subnets" {
-  value = "${module.vpc_services_ecs.private_subnets}"
-}
-output "ecs_public_subnets" {
-  value = "${module.vpc_services_ecs.public_subnets}"
-}
 output "hcp_cluster_id" {
   value = "${hcp_consul_cluster.workshop_hcp_consul.cluster_id}"
 }

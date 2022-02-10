@@ -6,7 +6,7 @@ global:
   enableConsulNamespaces: true
   adminPartitions:
     enabled: true
-    name: "eks-services"
+    name: "eks-services-team2"
   acls:
     manageSystemACLs: true
     bootstrapToken:

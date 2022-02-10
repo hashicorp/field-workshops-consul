@@ -11,7 +11,7 @@ tabs:
 - title: code - eks
   type: code
   hostname: shell
-  path: /root/terraform/tf-deploy-eks-services
+  path: /root/terraform/tf-deploy-eks-services-team1
 - title: Cloud Consoles
   type: service
   hostname: shell
