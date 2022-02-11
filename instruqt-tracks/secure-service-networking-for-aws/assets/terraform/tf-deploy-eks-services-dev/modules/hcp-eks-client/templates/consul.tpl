@@ -1,6 +1,6 @@
 global:
   enabled: false
-  name: consul
+  name: consul-eks-dev
   datacenter: ${datacenter}
   image: "hashicorp/consul-enterprise:${consul_version}-ent"
   enableConsulNamespaces: true
