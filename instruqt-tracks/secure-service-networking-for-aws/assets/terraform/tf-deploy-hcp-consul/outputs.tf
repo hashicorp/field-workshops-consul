@@ -16,6 +16,10 @@ output "eks_prod_private_subnets" {
 output "eks_prod_public_subnets" {
   value = "${module.vpc_services_eks_dev.public_subnets}"
 }
+output "eks_prod_public_route_table_ids" {
+  value = "${module.vpc_services_eks_dev.public_route_table_ids}"
+}
+
 output "hcp_cluster_id" {
   value = "${hcp_consul_cluster.workshop_hcp_consul.cluster_id}"
 }
@@ -50,4 +54,7 @@ output "hcp_acl_token_secret_id" {
 }
 output "vpc_region" {
   value = data.aws_region.current
+}
+output "hcp_hvn" {
+  value = hcp_hvn.workshop_hvn
 }
