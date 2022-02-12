@@ -112,7 +112,7 @@ module "aws_hcp_consul" {
 
 module "eks_consul_client" {
   source  = "./modules/hcp-eks-client"
-  version = "~> 0.6.1"
+#  version = "~> 0.6.1"
 
   cluster_id       = local.hcp_consul_cluster.cluster_id
   consul_hosts     = jsondecode(base64decode(local.hcp_consul_cluster.consul_config_file))["retry_join"]
@@ -131,8 +131,9 @@ module "eks_consul_client" {
 }
 
 module "demo_app" {
-  source  = "hashicorp/hcp-consul/aws//modules/k8s-demo-app"
-  version = "~> 0.6.1"
+#  source  = "hashicorp/hcp-consul/aws//modules/k8s-demo-app"
+#  version = "~> 0.6.1"
+  source  = "./modules/k8s-demo-app"
 
   depends_on = [module.eks_consul_client]
 }
