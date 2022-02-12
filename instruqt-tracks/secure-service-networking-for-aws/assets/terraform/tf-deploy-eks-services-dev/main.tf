@@ -111,7 +111,7 @@ module "aws_hcp_consul" {
 }
 
 module "eks_consul_client" {
-  source  = "hashicorp/hcp-consul/aws//modules/hcp-eks-client"
+  source  = "./modules/hcp-eks-client"
   version = "~> 0.6.1"
 
   cluster_id       = local.hcp_consul_cluster.cluster_id
