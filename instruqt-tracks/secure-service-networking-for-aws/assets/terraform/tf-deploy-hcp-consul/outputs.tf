@@ -17,6 +17,9 @@ output "eks_prod_public_subnets" {
   value = "${module.vpc_services_eks_dev.public_subnets}"
 }
 output "eks_prod_public_route_table_ids" {
+  value = "${module.vpc_services_eks_prod.public_route_table_ids}"
+}
+output "eks_dev_public_route_table_ids" {
   value = "${module.vpc_services_eks_dev.public_route_table_ids}"
 }
 
