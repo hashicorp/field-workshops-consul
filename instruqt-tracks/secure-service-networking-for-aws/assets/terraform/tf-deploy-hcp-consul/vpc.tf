@@ -1,8 +1,8 @@
-module "vpc_services_eks_dev" {
+module "vpc_eks_dev" {
   source = "terraform-aws-modules/vpc/aws"
 
-#  name = "vpc_services_eks"
-  name = "vpc_services_eks_dev"
+#  name = "vpc_eks"
+  name = "vpc_eks_dev"
   cidr = "10.0.0.0/16"
 
 #  azs             = ["us-east-1a", "us-east-1b", "us-east-1c"]
@@ -20,12 +20,12 @@ module "vpc_services_eks_dev" {
   }
 }
 
-#module "vpc_services_ecs" {
-module "vpc_services_eks_prod" {
+#module "vpc_ecs" {
+module "vpc_eks_prod" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = "vpc_services_eks_prod"
-#  name = "vpc_services_ecs"
+  name = "vpc_eks_prod"
+#  name = "vpc_ecs"
   cidr = "10.1.0.0/16"
 
 #  azs             = ["us-east-1a", "us-east-1b", "us-east-1c"]

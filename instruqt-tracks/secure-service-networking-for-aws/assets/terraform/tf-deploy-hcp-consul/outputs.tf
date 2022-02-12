@@ -1,28 +1,27 @@
 output "aws_vpc_eks_dev_id" {
-  value = "${module.vpc_services_eks_dev.vpc_id}"
+  value = "${module.vpc_eks_dev.vpc_id}"
 }
 output "eks_dev_private_subnets" {
-  value = "${module.vpc_services_eks_dev.private_subnets}"
+  value = "${module.vpc_eks_dev.private_subnets}"
 }
 output "eks_dev_public_subnets" {
-  value = "${module.vpc_services_eks_dev.public_subnets}"
+  value = "${module.vpc_eks_dev.public_subnets}"
 }
 output "aws_vpc_eks_prod_id" {
-  value = "${module.vpc_services_eks_dev.vpc_id}"
+  value = "${module.vpc_eks_dev.vpc_id}"
 }
 output "eks_prod_private_subnets" {
-  value = "${module.vpc_services_eks_dev.private_subnets}"
+  value = "${module.vpc_eks_prod.private_subnets}"
 }
 output "eks_prod_public_subnets" {
-  value = "${module.vpc_services_eks_dev.public_subnets}"
+  value = "${module.vpc_eks_prod.public_subnets}"
 }
 output "eks_prod_public_route_table_ids" {
-  value = "${module.vpc_services_eks_prod.public_route_table_ids}"
+  value = "${module.vpc_eks_prod.public_route_table_ids}"
 }
 output "eks_dev_public_route_table_ids" {
-  value = "${module.vpc_services_eks_dev.public_route_table_ids}"
+  value = "${module.vpc_eks_dev.public_route_table_ids}"
 }
-
 output "hcp_cluster_id" {
   value = "${hcp_consul_cluster.workshop_hcp_consul.cluster_id}"
 }
