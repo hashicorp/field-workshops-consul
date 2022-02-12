@@ -1,3 +1,9 @@
+provider "aws" {
+  region = var.region
+}
+
+data "aws_region" "current" {}
+
 module "vpc_eks_dev" {
   source = "terraform-aws-modules/vpc/aws"
 
