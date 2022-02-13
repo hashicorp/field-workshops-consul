@@ -100,7 +100,7 @@ resource "aws_instance" "cts" {
     associate_public_ip_address = true
     tags = {
       Name = "cts-hrs"
-    )
+    }
     user_data                   = data.template_file.init_cts.rendered
     iam_instance_profile        = data.terraform_remote_state.iam.outputs.aws_consul_iam_instance_profile_name
 
