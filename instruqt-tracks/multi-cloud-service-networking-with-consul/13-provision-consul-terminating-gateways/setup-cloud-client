@@ -1,3 +1,11 @@
+#original
+terraform init
+set-workdir /root/terraform/tgw
+pubkey=$(cat ~/.ssh/id_rsa.pub)
+cat << EOF > /root/terraform/tgw/terraform.tfvars
+ssh_public_key="${pubkey}"
+EOF
+
 #!/bin/bash
 # get security group id and save local disk as a file 
 
@@ -17,13 +25,5 @@ export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
 #create the consul & vault policies
 consul acl policy create -name cts -rules @/root/policies/consul/ctspolicy.hcl
 vault write consul/roles/cts policies=cts
-
-#original
-terraform init
-set-workdir /root/terraform/tgw
-pubkey=$(cat ~/.ssh/id_rsa.pub)
-cat << EOF > /root/terraform/tgw/terraform.tfvars
-ssh_public_key="${pubkey}"
-EOF
 
 exit 0
