@@ -73,8 +73,8 @@ sudo vault agent -config=/etc/vault-agent.d/vault.hcl -log-level=debug -exit-aft
 
 #consul
 cat <<EOF > /etc/consul.d/consul.hcl
-datacenter = "aws-ec2"
-primary_datacenter = "aws-ec2"
+datacenter = "aws-us-east-1"
+primary_datacenter = "aws-us-east-1"
 advertise_addr = "$${local_ipv4}"
 client_addr = "0.0.0.0"
 node_name = "$${instance}"
