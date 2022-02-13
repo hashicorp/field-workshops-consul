@@ -182,7 +182,6 @@ cat << EOF > /etc/consul-tf-sync.d/cts.hcl
 log_level = "INFO"
 port = 8558
 syslog {}
-license_path="/etc/consul.d/consul.hclic"
 buffer_period {
   enabled = true
   min = "5s"
