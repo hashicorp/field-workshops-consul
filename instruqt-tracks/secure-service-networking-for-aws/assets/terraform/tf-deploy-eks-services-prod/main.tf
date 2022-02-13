@@ -7,9 +7,9 @@ locals {
   hcp_acl_token_secret_id = data.terraform_remote_state.hcp.outputs.hcp_acl_token_secret_id
   hcp_consul_cluster    = data.terraform_remote_state.hcp.outputs.hcp_consul_cluster
   hvn                   = data.terraform_remote_state.hcp.outputs.hcp_hvn
-  vpc_id                = data.terraform_remote_state.hcp.outputs.aws_vpc_eks_dev_id
-  public_route_table_ids = data.terraform_remote_state.hcp.outputs.eks_dev_public_route_table_ids
-  public_subnets        = data.terraform_remote_state.hcp.outputs.eks_dev_public_subnets
+  vpc_id                = data.terraform_remote_state.hcp.outputs.aws_vpc_eks_prod_id
+  public_route_table_ids = data.terraform_remote_state.hcp.outputs.eks_prod_public_route_table_ids
+  public_subnets        = data.terraform_remote_state.hcp.outputs.eks_prod_public_subnets
 }
 
 terraform {
@@ -83,7 +83,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "17.22.0"
 
-  cluster_name    = "${local.cluster_id}-eks-dev"
+  cluster_name    = "${local.cluster_id}-eks-prod"
   cluster_version = "1.21"
   subnets         = local.public_subnets
   vpc_id          = local.vpc_id
