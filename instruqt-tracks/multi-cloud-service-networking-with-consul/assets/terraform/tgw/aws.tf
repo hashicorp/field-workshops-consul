@@ -107,11 +107,11 @@ resource "aws_instance" "cts" {
     provisioner "file" {
       source      = "security_input.tfvars"
       destination = "/home/ubuntu/security_input.tfvars"
-
+      
     connection {
       type     = "ssh"
       user     = "ubuntu"
-      private_key = data.terraform_remote_state.infra.outputs.aws_ssh_key_name
+      private_key = file("~/.ssh/id_rsa")
       host = self.public_ip
     }
   }
