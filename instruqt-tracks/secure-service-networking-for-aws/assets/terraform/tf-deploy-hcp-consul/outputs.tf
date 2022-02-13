@@ -8,7 +8,7 @@ output "eks_dev_public_subnets" {
   value = "${module.vpc_eks_dev.public_subnets}"
 }
 output "aws_vpc_eks_prod_id" {
-  value = "${module.vpc_eks_dev.vpc_id}"
+  value = "${module.vpc_eks_prod.vpc_id}"
 }
 output "eks_prod_private_subnets" {
   value = "${module.vpc_eks_prod.private_subnets}"
