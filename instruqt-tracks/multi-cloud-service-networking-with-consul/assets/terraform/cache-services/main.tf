@@ -23,3 +23,11 @@ data "terraform_remote_state" "iam" {
     path = "../iam/terraform.tfstate"
   }
 }
+
+data "terraform_remote_state" "esm" {
+  backend = "local"
+
+  config = {
+    path = "../esm/terraform.tfstate"
+  }
+}
