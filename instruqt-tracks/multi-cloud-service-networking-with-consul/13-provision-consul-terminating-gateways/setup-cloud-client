@@ -1,30 +1,29 @@
 #!/bin/bash
+# get security group id and save local disk as a file 
+
 cd /root/terraform/cache-services
-terraform output elasticache_sg > /root/terraform/tgw/sgid.txt
-
+terraform output elasticache_sg > /root/terraform/tgw/sgid.tfvars
 cd /root/terraform/tgw
-
-terraform init
-set-workdir /root/terraform/tgw
-
-pubkey=$(cat ~/.ssh/id_rsa.pub)
-cat << EOF > /root/terraform/tgw/terraform.tfvars
-ssh_public_key="${pubkey}"
+sgid=$(cat sgid.tfvars)
+cat << EOF > /root/terraform/tgw/security_input.tfvars
+security_group_id="${sgid}"
 EOF
-
-cat << EOF > /root/terraform/tgw/sg.txt
-security_group_id =
-EOF
-
-paste sg.txt sgid.txt >> security_input.tfvars
 
 #!/bin/bash
-#creds
+#vault creds
 vault login -method=userpass username=admin password=admin
 export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
 
 #create the consul & vault policies
 consul acl policy create -name cts -rules @/root/policies/consul/ctspolicy.hcl
 vault write consul/roles/cts policies=cts
+
+#original
+terraform init
+set-workdir /root/terraform/tgw
+pubkey=$(cat ~/.ssh/id_rsa.pub)
+cat << EOF > /root/terraform/tgw/terraform.tfvars
+ssh_public_key="${pubkey}"
+EOF
 
 exit 0
