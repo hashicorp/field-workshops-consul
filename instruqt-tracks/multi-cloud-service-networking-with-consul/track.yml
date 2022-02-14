@@ -913,6 +913,23 @@ challenges:
     In this assignment you will provision Consul Terminating Gateways(TGW).
     You can read [the docs](https://www.consul.io/docs/connect/gateways/terminating-gateway) for more information on how TGW works. <br>
 
+    #!/bin/bash
+    # get security group id and save local disk as a file 
+
+    Get and store the security group id as a tfvars file for CTS to use
+    
+    ```
+    cd /root/terraform/cache-services
+    terraform output elasticache_sg > /root/terraform/tgw/sgid.tfvars
+    cd /root/terraform/tgw
+    sgid=$(cat sgid.tfvars)
+    cat << EOF > /root/terraform/tgw/security_input.tfvars
+    security_group_id="${sgid}"
+    EOF
+
+    ```
+    #creds
+
     Get credentials. <br>
 
     ```
@@ -928,7 +945,12 @@ challenges:
     consul acl policy create -name azure-terminating-gateway -rules @/root/policies/consul/azure-tgw.hcl
     vault write consul/roles/azure-tgw policies=azure-terminating-gateway
     ```
-
+    ```
+    Create the consul & vault policies for CTS 
+    
+    consul acl policy create -name cts -rules @/root/policies/consul/ctspolicy.hcl
+    vault write consul/roles/cts policies=cts
+    ```
     Inspect the Terraform, retrieve an operator token, and provision the TGWs. <br>
 
     ```
