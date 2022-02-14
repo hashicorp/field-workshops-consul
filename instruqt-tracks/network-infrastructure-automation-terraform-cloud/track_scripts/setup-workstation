@@ -14,7 +14,7 @@ apt update -y
 curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
 apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 apt update -y
-apt install terraform=1.1.5 consul=1.9.4 vault=1.7.1 -y
+apt install terraform=0.13.4 consul=1.9.4 vault=1.7.1 -y
 
 #make vault run in container
 /sbin/setcap cap_ipc_lock= /usr/bin/vault
