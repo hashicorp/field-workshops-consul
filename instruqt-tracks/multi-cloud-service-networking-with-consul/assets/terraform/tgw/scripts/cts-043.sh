@@ -174,8 +174,10 @@ LimitNOFILE=65536
 WantedBy=multi-user.target
 EOF
 
-#add cts hcl file 
 
+#add token to env for CTS to execute 
+export CONSUL_TOKEN=$(vault read -field token consul/creds/cts)
+#add cts hcl file 
 cat << EOF > /etc/consul-tf-sync.d/cts.hcl
 
 #general
@@ -192,7 +194,6 @@ working_dir = "/opt/consul-tf-sync.d/"
 #Consul connection
 consul {
     address =  "localhost:8500"
-    token   =  {{ with secret "consul/creds/cts" }}"{{ .Data.token }}"{{ end }}
 }
 task {
   name           = "security-group-demo-task"
