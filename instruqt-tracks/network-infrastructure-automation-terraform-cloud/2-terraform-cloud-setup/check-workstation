@@ -1,0 +1,21 @@
+#!/bin/bash -l
+set -e
+
+# Check for terraform credentials
+if [ -f /root/.terraform.d/credentials.tfrc.json ]
+then 
+    echo "Terraform Cloud credentials file found."
+else
+    echo "No Terraform Cloud credentials file found..."
+    terraform login 
+fi
+
+if [ -z "${$ORG}" ]
+then 
+    echo "No Organization found. Please enter your desired Terraform Cloud Organization: \$ORG"
+fi
+
+# Store the ORG in /root/.bashrc
+grep \$ORG /root/.bashrc || echo "export ORG=\"\$ORG\"" >> /root/.bashrc
+
+exit 0

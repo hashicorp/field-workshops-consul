@@ -1,0 +1,15 @@
+#!/bin/sh
+
+#ip & creds
+firewall_ip=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate FirewallIP)
+pa_username=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_username)
+pa_password=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_password)
+
+#check fw
+pa_addr_group=$(curl -sk -u ${pa_username}:${pa_password} "https://${firewall_ip}/restapi/v9.1/Objects/AddressGroups?location=vsys&vsys=vsys1&name=cts-addr-grp-web" | jq -r '.result.entry[0]["@name"]')
+if [ "${pa_addr_group}" != "cts-addr-grp-web" ]; then
+  fail-message "Palo Alto VM Series Firewall 'base configuration' not applied. "
+  exit 1
+fi
+
+exit 0

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo ""
+echo ">>"
+echo ">> Installing Consul Terraform Sync"
+echo ">>"
+
+cd /root/terraform/consul-tf-sync
+terraform apply -auto-approve > /root/terraform/consul-tf-sync/terraform.out
+
+sleep 90
+
+exit 0
