@@ -192,6 +192,7 @@ working_dir = "/opt/consul-tf-sync.d/"
 #Consul connection
 consul {
     address =  "localhost:8500"
+    token   =  {{ with secret "consul/creds/cts" }}"{{ .Data.token }}"{{ end }}
 }
 task {
   name           = "security-group-demo-task"
