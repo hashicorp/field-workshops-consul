@@ -48,13 +48,13 @@ echo 'export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCO
 
 #get assets
 echo "cloning assets..."
-git clone https://github.com/hashicorp/field-workshops-consul.git
-cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/terraform .
-cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/packer .
-cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/apps .
-cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/policies .
-cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/helm .
-rm -rf field-workshops-consul
+git clone https://github.com/ramramhariram/mc-2.git
+cp -r mc-2/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/terraform .
+cp -r mc-2/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/packer .
+cp -r mc-2/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/apps .
+cp -r mc-2/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/policies .
+cp -r mc-2/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/helm .
+rm -rf mc-2
 
 #fix path
 echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
