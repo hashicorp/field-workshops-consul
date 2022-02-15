@@ -3,11 +3,23 @@ slug: deploy-services-in-eks-dev
 id: 2ontib6im3go
 type: challenge
 title: Deploy Services in EKS for the Dev Team
-teaser: Let's deploy some microservices on EKS
+teaser: Let's deploy some microservices on EKS for the development team!
 notes:
+- type: video
+  url: ../assets/video/SSN4AWS-Challenge3.mp4
 - type: text
   contents: In this section you will create an EKS cluster and deploy some services.
 tabs:
+- title: Infrastructure Overview
+  type: website
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/n8-ssn4aws-eks/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-infra-overview.html
+- title: App Architecture Overview
+  type: website
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/n8-ssn4aws-eks/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-app-overview.html
+- title: HCP Consul
+  type: website
+  url: https://portal.cloud.hashicorp.com:443/sign-up
+  new_window: true
 - title: code - eks
   type: code
   hostname: shell
@@ -34,7 +46,16 @@ terraform plan
 
 When ready, deploy with:
 ```sh
-terraform apply -auto-approve
+nohup terraform apply -auto-approve > /root/terraform/tf-deploy-eks-services-dev/eks_dev.out &
+
+```
+
+NOTE: we run this in the background (`nohup` / `&`) so that it continues even if your communication with the Instruqt platform is interrupted.
+
+You can monitor the progress of the deployment using the following command:
+
+```sh
+tail -f /root/terraform/tf-deploy-eks-services-dev/eks_dev.out
 ```
 
 Once the `terraform apply` is running, use the credentials in the `Cloud Consoles` tab to login to AWS. Once logged in, navigate to the `Elastic Kubernetes Service`
@@ -47,9 +68,4 @@ export KUBECONFIG=`terraform output -raw kubeconfig_filename`
 Now verify it works using:
 ```sh
 kubectl get pods
-```
-
-
-```sh
-kubectl apply -f modules/eks-services/services/export.yaml
 ```

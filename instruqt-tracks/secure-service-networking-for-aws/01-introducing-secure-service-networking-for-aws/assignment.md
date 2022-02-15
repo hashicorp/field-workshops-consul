@@ -3,17 +3,27 @@ slug: introducing-secure-service-networking-for-aws
 id: pmdwnnimxkfb
 type: challenge
 title: Introducing Secure Service Networking for AWS
-teaser: For many, Secure Service Networking is tricky on just one platform. Lets look
-  at how we can secure all services acorss multiple platforms.
+teaser: In this workshop you are going to use the HashiCorp Cloud Platform (HCP).
+  Before we create a managed Consul service on HCP we need to create an HCP account
+  and a service principal.
 notes:
-- type: text
-  contents: Secure Service Networking is tricky on just one platform. Lets look at
-    how we're going to secure all services acorss multiple platforms.
+- type: video
+  url: ../assets/video/SSN4AWS-Challenge1.mp4
 tabs:
+- title: Infrastructure Overview
+  type: website
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/n8-ssn4aws-eks/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-infra-overview.html
+- title: App Architecture Overview
+  type: website
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/n8-ssn4aws-eks/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-app-overview.html
 - title: HCP Consul
   type: website
   url: https://portal.cloud.hashicorp.com:443/sign-up
   new_window: true
+- title: code - HCP
+  type: code
+  hostname: shell
+  path: /root/terraform/tf-verify-hcp-auth
 - title: Cloud Consoles
   type: service
   hostname: shell
@@ -25,11 +35,14 @@ tabs:
 difficulty: basic
 timelimit: 600
 ---
+In this workshop you are going to use the HashiCorp Cloud Platform (HCP). Before we create a managed Consul service on HCP we need to create an HCP account and a service principal. We will use the Service Principals "ID" and "Key" in the following Instruqt workshop challenges.
+
 In this Instruqt challenge we are going to:
 
-1. create an HCP (HashiCorp Cloud Platform) account
-2. verify HCP our auth credentials with terrafrom
+1. Create an HCP (HashiCorp Cloud Platform) account
+2. Verify your HCP auth credentials using terrafrom
 
+NOTE:You can find video insructions via the document/notes icon in the top right corner of this web page.
 
 1) Create an HCP Account
 ===

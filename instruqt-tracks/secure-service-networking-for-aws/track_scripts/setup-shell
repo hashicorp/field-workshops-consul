@@ -57,7 +57,7 @@ apt-key adv --fetch-keys https://baltocdn.com/helm/signing.asc
 apt-add-repository "deb https://baltocdn.com/helm/stable/debian/ all main"
 apt update -y
 
-apt install awscli kubectl helm terraform=0.15.5 consul=1.9.4 vault=1.7.1 -y
+apt install awscli kubectl helm terraform=1.1.5 consul=1.11.2 vault=1.7.1 -y
 
 # So kubectl can talk to AWS EKS
 curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator

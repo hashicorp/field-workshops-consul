@@ -3,14 +3,18 @@ slug: create-a-managed-service-catalog-on-hcp
 id: ltqucwm9rxxo
 type: challenge
 title: Create a managed Service Catalog on HCP
-teaser: A short description of the challenge.
+teaser: In this challenge you will create a Consul Cluster on the HashiCorp Cloud
+  Platform (HCP), and two AWS VPCs for "development" and "production" workloads.
 notes:
-- type: text
-  contents: Replace this text with your own text
+- type: video
+  url: ../assets/video/SSN4AWS-Challenge2.mp4
 tabs:
-- title: Workshop Overview
+- title: Infrastructure Overview
   type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/n8-ssn4aws/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-overview.html
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/n8-ssn4aws-eks/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-infra-overview.html
+- title: App Architecture Overview
+  type: website
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/n8-ssn4aws-eks/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-app-overview.html
 - title: HCP Consul
   type: website
   url: https://portal.cloud.hashicorp.com:443/sign-up
@@ -41,8 +45,20 @@ In this section you will use terraform to provision an HCP Consul cluster peered
 When you are ready to provision the resources, in the `shell` tab, execute:
 
 ```sh
-terraform apply -auto-approve
+nohup terraform apply -auto-approve > /root/terraform/tf-deploy-hcp-consul/hcp.out &
 ```
+
+NOTE: we run this in the background (`nohup` / `&`) so that it continues even if your communication with the Instruqt platform is interrupted.
+
+The HPC Consul deployment takes a few minutes to create the resources: consul cluster, vpcs, peering, routes, etc.
+
+You can monitor the progress of the deployment using the following command:
+
+```sh
+tail -f /root/terraform/tf-deploy-hcp-consul/hcp.out
+```
+
+While thats running, lets take a look at what we're building in the `code - HCP` tab.
 
 HCP Consul generates the cregistration file requires for connecting consul agents to the HCP Consul cluster. To read the consul config file, execute the following command:
 
