@@ -3,6 +3,11 @@
 #azure creds
 sleep 30
 
+# HashiCorp Product Versions
+TERRAFORM_VERSION="1.1.4"
+CONSUL_VERSION="1.9.4"
+VAULT_VERSION="1.7.1"
+
 #fix path
 echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
 
@@ -14,7 +19,7 @@ apt update -y
 curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
 apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 apt update -y
-apt install terraform=0.13.2 consul=1.9.4 vault=1.7.1 -y
+apt install terraform=${TERRAFORM_VERSION} consul=${CONSUL_VERSION} vault=${VAULT_VERSION} -y
 
 #make vault run in container
 /sbin/setcap cap_ipc_lock= /usr/bin/vault
