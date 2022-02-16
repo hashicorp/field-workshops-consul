@@ -925,7 +925,7 @@ challenges:
 
     ```
     sgid=$(terraform output -state /root/terraform/cache-services/terraform.tfstate elasticache_sg)
-    cat << EOF > /root/terraform/tgw/security_input.tfvars
+    cat << EOF > /root/terraform/cts/security_input.tfvars
     security_group_id="${sgid}"
     EOF
     ```
@@ -955,8 +955,10 @@ challenges:
     In the other shell, we will start provisioning the TGW. Start with the policy. <br>
 
     ```
-    consul acl policy create -name cts -rules @/root/policies/consul/ctspolicy.hcl
-    vault write consul/roles/cts policies=cts
+    consul acl policy create -name aws-terminating-gateway -rules @/root/policies/consul/aws-tgw.hcl
+    vault write consul/roles/aws-tgw policies=aws-terminating-gateway
+    consul acl policy create -name azure-terminating-gateway -rules @/root/policies/consul/azure-tgw.hcl
+    vault write consul/roles/azure-tgw policies=azure-terminating-gateway
     ```
 
     Inspect the Terraform, and provision the TGWs. <br>
@@ -978,6 +980,12 @@ challenges:
     ```
     consul catalog services -datacenter=aws-us-east-1
     consul catalog services -datacenter=azure-west-us-2
+    ```
+
+    You can also see that the AWS SG was updated.
+
+    ```
+    aws ec2 describe-security-groups --filter Name="group-id",Values="$(terraform output -state /root/terraform/cache-services/terraform.tfstate elasticache_sg)"
     ```
 
     In future assignments you will route traffic to Vault, Redis, and Postgres leveraging the TGW in AWS & Azure.
@@ -1626,4 +1634,4 @@ challenges:
     port: 8080
   difficulty: basic
   timelimit: 300
-checksum: "17263899648001460266"
+checksum: "7077451625762196926"
