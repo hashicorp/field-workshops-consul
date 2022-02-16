@@ -73,7 +73,7 @@ echo "starting optimistic provisioning..."
 #vnets
 cd /root/terraform/vnet
 /usr/bin/terraform init
-cat << EOF > /root/terraform/vnet/terraform.tfvars
+cat << EOF > /root/terraform/vnet/terraform.auto.tfvars
 ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
 EOF
 terraform apply -auto-approve 2>&1 | tee terraform.out
@@ -81,7 +81,7 @@ terraform apply -auto-approve 2>&1 | tee terraform.out
 #consul
 cd /root/terraform/consul-server
 terraform init
-cat << EOF > /root/terraform/consul-server/terraform.tfvars
+cat << EOF > /root/terraform/consul-server/terraform.auto.tfvars
 ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
 EOF
 nohup terraform apply -auto-approve 2>&1 | tee nohup.out &
@@ -89,7 +89,7 @@ nohup terraform apply -auto-approve 2>&1 | tee nohup.out &
 #vault
 cd /root/terraform/vault
 terraform init
-cat << EOF > /root/terraform/vault/terraform.tfvars
+cat << EOF > /root/terraform/vault/terraform.auto.tfvars
 ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
 EOF
 nohup terraform apply -auto-approve 2>&1 | tee nohup.out &
