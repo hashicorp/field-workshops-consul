@@ -1,3 +1,6 @@
+service "cts" {
+   policy = "write"
+}
 service "" {
    policy = "read"
 }

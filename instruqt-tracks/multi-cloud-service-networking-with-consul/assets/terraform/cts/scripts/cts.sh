@@ -23,6 +23,22 @@ EOF
 cat <<EOF> /etc/vault-agent.d/jwt-template.ctmpl
 {{ with secret "identity/oidc/token/consul-aws-us-east-1" }}{{ .Data.token }}{{ end }}
 EOF
+cat <<EOF> /etc/vault-agent.d/cts-service-template.ctmpl
+{
+  "service": {
+    "name": "cts",
+    "token": "{{ with secret "consul/creds/cts" }}{{ .Data.token }}{{ end }}",
+    "port": 8558,
+    "check": {
+      "id": "8558",
+      "name": "CTS TCP on port 8558",
+      "tcp": "localhost:8558",
+      "interval": "5s",
+      "timeout": "3s"
+    }
+  }
+}
+EOF
 cat <<EOF> /etc/vault-agent.d/cts-template.ctmpl
 log_level = "INFO"
 port = 8558
@@ -71,6 +87,11 @@ template {
 template {
   source      = "/etc/vault-agent.d/jwt-template.ctmpl"
   destination = "/etc/consul.d/token"
+  command     = "sudo service consul reload"
+}
+template {
+  source      = "/etc/vault-agent.d/cts-service-template.ctmpl"
+  destination = "/etc/consul.d/cts.json"
   command     = "sudo service consul reload"
 }
 template {
@@ -135,24 +156,6 @@ cat <<EOF> /etc/consul.d/auto.json
 EOF
 sudo systemctl enable consul.service
 sudo systemctl start consul.service
-
-#Monitor CTS as a service
-
-cat << EOF > /etc/consul.d/cts.json
-{
-  "service": {
-    "name": "cts",
-    "port": 8558,
-    "check": {
-      "id": "8558",
-      "name": "CTS TCP on port 8558",
-      "tcp": "localhost:8558",
-      "interval": "5s",
-      "timeout": "3s"
-    }
-  }
-}
-EOF
 
 #!/bin/bash
 

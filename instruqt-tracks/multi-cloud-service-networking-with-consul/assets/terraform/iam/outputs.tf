@@ -6,6 +6,14 @@ output "aws_consul_iam_instance_profile_name" {
   value = aws_iam_instance_profile.consul.name
 }
 
+output "aws_cts_iam_role_arn" {
+  value = aws_iam_role.cts.arn
+}
+
+output "aws_cts_iam_instance_profile_name" {
+  value = aws_iam_instance_profile.cts.name
+}
+
 output "aws_nomad_iam_role_arn" {
   value = aws_iam_role.nomad.arn
 }

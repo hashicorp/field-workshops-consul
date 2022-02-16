@@ -1,31 +1,26 @@
 #!/bin/bash
 
-#!/bin/bash
-# get security group id and save local disk as a file 
-
-cd /root/terraform/cache-services
-terraform output elasticache_sg > /root/terraform/tgw/sgid.tfvars
-cd /root/terraform/tgw
-sgid=$(cat sgid.tfvars)
-cat << EOF > /root/terraform/tgw/security_input.tfvars
-security_group_id="${sgid}"
-EOF
-
 #creds
 vault login -method=userpass username=admin password=admin
 export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
 
-#create the consul & vault policies
+#cts
+sgid=$(terraform output -state /root/terraform/cache-services/terraform.tfstate elasticache_sg)
+cat << EOF > /root/terraform/tgw/security_input.tfvars
+security_group_id="${sgid}"
+EOF
+consul acl policy create -name cts -rules @/root/policies/consul/cts.hcl
+vault write consul/roles/cts policies=cts
+cd /root/terraform/cts
+terraform apply -auto-approve 2>&1 | tee terraform.out
+sleep 120
+
+#tgw
 consul acl policy create -name aws-terminating-gateway -rules @/root/policies/consul/aws-tgw.hcl
 vault write consul/roles/aws-tgw policies=aws-terminating-gateway
 consul acl policy create -name azure-terminating-gateway -rules @/root/policies/consul/azure-tgw.hcl
 vault write consul/roles/azure-tgw policies=azure-terminating-gateway
-
-#create the consul & vault policies
-consul acl policy create -name cts -rules @/root/policies/consul/ctspolicy.hcl
-vault write consul/roles/cts policies=cts
-
-#tf
+cd /root/terraform/tgw
 terraform apply -auto-approve 2>&1 | tee terraform.out
 sleep 120
 
