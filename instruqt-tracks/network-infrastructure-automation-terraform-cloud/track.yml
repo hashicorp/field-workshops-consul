@@ -83,7 +83,7 @@ challenges:
     https://app.terraform.io/signup/account
     If you already have an account you can simply sign in with your existing credentials.
 
-    Use the terraform `login` command to set the credentials file within the `Shell` tab: 
+    Use the terraform `login` command to set the credentials file within the `Shell` tab:
     ```
     terraform login
     ```
@@ -638,4 +638,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-checksum: "4636562734782878520"
+checksum: "4799152888503012371"
