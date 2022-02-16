@@ -47,9 +47,6 @@ fi
 #get assets
 echo "cloning assets..."
 git clone https://github.com/kmruddy/field-workshops-consul.git
-cd field-workshops-consul
-git switch ruddy-add_PAN
-cd ..
 
 cp -r field-workshops-consul/instruqt-tracks/network-infrastructure-automation-terraform-cloud/assets/terraform /root/terraform
 rm -rf field-workshops-consul
