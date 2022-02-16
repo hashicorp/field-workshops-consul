@@ -1,5 +1,13 @@
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "2.0.0"
+    }
+  }
+}
+
 provider "azurerm" {
-  version = "=2.0.0"
   features {}
 }
 
@@ -22,19 +30,19 @@ resource "azurerm_public_ip" "consul" {
 
 # Create network interface
 resource "azurerm_network_interface" "consul" {
-    name                      = "consulserverNIC"
-    location                  = data.terraform_remote_state.vnet.outputs.resource_group_location
-    resource_group_name       = data.terraform_remote_state.vnet.outputs.resource_group_name
+  name                = "consulserverNIC"
+  location            = data.terraform_remote_state.vnet.outputs.resource_group_location
+  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
 
-    ip_configuration {
-        name                          = "consulserverNicConfiguration"
-        subnet_id                     = data.terraform_remote_state.vnet.outputs.shared_svcs_subnets[2]
-        private_ip_address_allocation = "Dynamic"
-    }
+  ip_configuration {
+    name                          = "consulserverNicConfiguration"
+    subnet_id                     = data.terraform_remote_state.vnet.outputs.shared_svcs_subnets[2]
+    private_ip_address_allocation = "Dynamic"
+  }
 
-    tags = {
-        environment = "Instruqt"
-    }
+  tags = {
+    environment = "Instruqt"
+  }
 }
 
 resource "azurerm_lb" "consul" {
@@ -104,8 +112,8 @@ resource "azurerm_lb_rule" "consul" {
 resource "azurerm_virtual_machine" "consul-server-vm" {
   name = "consul-server-vm"
 
-  location            = data.terraform_remote_state.vnet.outputs.resource_group_location
-  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
+  location              = data.terraform_remote_state.vnet.outputs.resource_group_location
+  resource_group_name   = data.terraform_remote_state.vnet.outputs.resource_group_name
   network_interface_ids = [azurerm_network_interface.consul.id]
   vm_size               = "Standard_D1_v2"
 
@@ -124,9 +132,9 @@ resource "azurerm_virtual_machine" "consul-server-vm" {
   }
 
   os_profile {
-    computer_name = "consul-server-vm"
-    admin_username       = "azure-user"
-    custom_data          = file("./scripts/consul-server.sh")
+    computer_name  = "consul-server-vm"
+    admin_username = "azure-user"
+    custom_data    = file("./scripts/consul-server.sh")
   }
 
   os_profile_linux_config {

@@ -4,8 +4,7 @@
 sleep 30
 
 # HashiCorp Product Versions
-TERRAFORM_VERSION_OLD="0.13.2"
-TERRAFORM_VERSION_NEW="1.1.4"
+TERRAFORM_VERSION="1.1.4"
 CONSUL_VERSION="1.9.4"
 VAULT_VERSION="1.7.1"
 
@@ -155,9 +154,5 @@ fi
 #wait for network device boot up
 echo "Network Devices up! Waiting for init processes..."
 sleep 300
-
-#update Terraform version
-apt remove terraform
-apt install terraform=${TERRAFORM_VERSION_NEW}
 
 exit 0

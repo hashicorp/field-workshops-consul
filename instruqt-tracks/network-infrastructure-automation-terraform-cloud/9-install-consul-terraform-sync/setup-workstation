@@ -12,11 +12,11 @@ echo "export bastion_ip=${bastion_ip}" >> ~/.bashrc
 cd /root/terraform/consul-tf-sync/
 
 # add remote backend for Palo Alto Firewall setup
-cat <<-EOF > /root/terraform/consul-tf-sync/remote_backend.tf
+cat << EOF > /root/terraform/consul-tf-sync/remote_backend.tf
 terraform {
   cloud {
     hostname = "app.terraform.io"
-    organization = "\$ORG"
+    organization = "${$ORG}"
     workspaces {
       name = "provision-consul-tf-sync"
     }

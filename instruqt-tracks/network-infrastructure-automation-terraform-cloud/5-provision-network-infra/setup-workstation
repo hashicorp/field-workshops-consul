@@ -2,30 +2,4 @@
 
 set-workdir /root/terraform
 
-# add remote backend for Palo Alto Firewall setup
-cat <<-EOF > /root/terraform/panw-vm/remote_backend.tf
-terraform {
-  cloud {
-    hostname = "app.terraform.io"
-    organization = "\$ORG"
-    workspaces {
-      name = "provision-palo-alto-firewall"
-    }
-  }
-}
-EOF
-
-# add remote backend for Palo Alto Firewall setup
-cat <<-EOF > /root/terraform/bigip/remote_backend.tf
-terraform {
-  cloud {
-    hostname = "app.terraform.io"
-    organization = "\$ORG"
-    workspaces {
-      name = "provision-f5-bigip"
-    }
-  }
-}
-EOF
-
 exit 0

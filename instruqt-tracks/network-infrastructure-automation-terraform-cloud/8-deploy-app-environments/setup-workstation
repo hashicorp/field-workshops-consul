@@ -8,11 +8,11 @@ set-workdir /root/terraform/app
 cd /root/terraform/app
 
 # add remote backend for Palo Alto Firewall setup
-cat <<-EOF > /root/terraform/app/remote_backend.tf
+cat <<EOF > /root/terraform/app/remote_backend.tf
 terraform {
   cloud {
     hostname = "app.terraform.io"
-    organization = "\$ORG"
+    organization = "${$ORG}"
     workspaces {
       name = "deploy-app-environments"
     }

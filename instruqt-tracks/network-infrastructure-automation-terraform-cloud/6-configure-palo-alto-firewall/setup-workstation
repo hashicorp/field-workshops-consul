@@ -52,19 +52,6 @@ Use the following information to access the virtual appliances in this workshop.
 
 EOF
 
-# add remote backend for Palo Alto Firewall setup
-cat <<-EOF > /root/terraform/panw-config/remote_backend.tf
-terraform {
-  cloud {
-    hostname = "app.terraform.io"
-    organization = "\$ORG"
-    workspaces {
-      name = "configure-palo-alto-firewall"
-    }
-  }
-}
-EOF
-
 cd /root/terraform/panw-config
 terraform init
 

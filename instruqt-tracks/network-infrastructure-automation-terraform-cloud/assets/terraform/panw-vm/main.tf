@@ -6,8 +6,16 @@ az vm image terms accept --urn paloaltonetworks:vmseries1:bundle1:latest
 ```
 */
 
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "2.13.0"
+    }
+  }
+}
+
 provider "azurerm" {
-  version = "=2.13.0"
   features {}
 }
 
@@ -23,7 +31,7 @@ data "terraform_remote_state" "vnet" {
   }
 }
 
-resource random_integer "password-length" {
+resource "random_integer" "password-length" {
   min = 12
   max = 25
 }
@@ -83,9 +91,9 @@ resource "azurerm_network_interface" "VNIC0" {
 
 resource "azurerm_network_interface" "VNIC1" {
   name                = "FWeth1-${random_id.suffix.dec}"
-  location             = data.terraform_remote_state.vnet.outputs.resource_group_location
-  resource_group_name  = data.terraform_remote_state.vnet.outputs.resource_group_name
-#  depends_on           = [azurerm_virtual_network.dmz_subnet]
+  location            = data.terraform_remote_state.vnet.outputs.resource_group_location
+  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
+  #  depends_on           = [azurerm_virtual_network.dmz_subnet]
   enable_ip_forwarding = true
 
   ip_configuration {
@@ -96,16 +104,16 @@ resource "azurerm_network_interface" "VNIC1" {
     public_ip_address_id          = azurerm_public_ip.PublicIP_1.id
   }
 
-  tags =  {
+  tags = {
     displayName = join("", list("NetworkInterfaces", "1"))
   }
 }
 
 resource "azurerm_network_interface" "VNIC2" {
   name                = "FWeth2-${random_id.suffix.dec}"
-  location             = data.terraform_remote_state.vnet.outputs.resource_group_location
-  resource_group_name  = data.terraform_remote_state.vnet.outputs.resource_group_name
-#  depends_on           = [azurerm_virtual_network.dmz_subnet]
+  location            = data.terraform_remote_state.vnet.outputs.resource_group_location
+  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
+  #  depends_on           = [azurerm_virtual_network.dmz_subnet]
   enable_ip_forwarding = true
 
   ip_configuration {
@@ -115,16 +123,16 @@ resource "azurerm_network_interface" "VNIC2" {
     private_ip_address            = var.IPAddressDmzNetwork
   }
 
-  tags =  {
+  tags = {
     displayName = join("", list("NetworkInterfaces", "2"))
   }
 }
 
 resource "azurerm_network_interface" "VNIC3" {
   name                = "FWeth3-${random_id.suffix.dec}"
-  location             = data.terraform_remote_state.vnet.outputs.resource_group_location
-  resource_group_name  = data.terraform_remote_state.vnet.outputs.resource_group_name
-#  depends_on           = [azurerm_virtual_network.dmz_subnet]
+  location            = data.terraform_remote_state.vnet.outputs.resource_group_location
+  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
+  #  depends_on           = [azurerm_virtual_network.dmz_subnet]
   enable_ip_forwarding = true
 
   ip_configuration {
@@ -134,7 +142,7 @@ resource "azurerm_network_interface" "VNIC3" {
     private_ip_address            = var.IPAddressAppNetwork
   }
 
-  tags =  {
+  tags = {
     displayName = join("", list("NetworkInterfaces", "3"))
   }
 }
@@ -146,12 +154,12 @@ resource "azurerm_virtual_machine" "PAN_FW_FW" {
   vm_size             = "Standard_D3_v2"
 
   depends_on = [azurerm_network_interface.VNIC0,
-                azurerm_network_interface.VNIC1,
-                azurerm_network_interface.VNIC2,
-                azurerm_network_interface.VNIC3,
-                azurerm_public_ip.PublicIP_0,
-                azurerm_public_ip.PublicIP_1
-                ]
+    azurerm_network_interface.VNIC1,
+    azurerm_network_interface.VNIC2,
+    azurerm_network_interface.VNIC3,
+    azurerm_public_ip.PublicIP_0,
+    azurerm_public_ip.PublicIP_1
+  ]
   plan {
     name      = var.fwSku
     publisher = var.fwPublisher
@@ -180,10 +188,10 @@ resource "azurerm_virtual_machine" "PAN_FW_FW" {
 
   primary_network_interface_id = azurerm_network_interface.VNIC0.id
   network_interface_ids = [azurerm_network_interface.VNIC0.id,
-                           azurerm_network_interface.VNIC1.id,
-                           azurerm_network_interface.VNIC2.id,
-                           azurerm_network_interface.VNIC3.id
-                           ]
+    azurerm_network_interface.VNIC1.id,
+    azurerm_network_interface.VNIC2.id,
+    azurerm_network_interface.VNIC3.id
+  ]
 
   os_profile_linux_config {
     disable_password_authentication = false
