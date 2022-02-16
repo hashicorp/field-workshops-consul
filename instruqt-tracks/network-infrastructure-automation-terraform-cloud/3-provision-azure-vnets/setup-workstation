@@ -3,7 +3,7 @@
 #assignment
 set-workdir /root/terraform/vnet
 
-cat <<-EOF > /root/terraform/vnet/remote_backend.tf
+cat << EOF > /root/terraform/vnet/remote_backend.tf
 terraform {
   cloud {
     hostname = "app.terraform.io"
