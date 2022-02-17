@@ -89,8 +89,8 @@ vault write identity/oidc/role/consul-aws-us-east-1 ttl=30m key=consul client_id
 
 ```
 #reset vault
-/root/terraform/vault/reset_vault.sh
-/root/terraform/vault/setup_vault.sh
+/root/scripts/reset_vault.sh
+/root/scripts/setup_vault.sh
 
 #configure vault
 vault login -method=userpass username=admin password=admin
