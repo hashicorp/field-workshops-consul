@@ -3,13 +3,13 @@
 #get assets
 echo "cloning assets..."
 git clone -b f-add-cts https://github.com/ramramhariram/finalfinalcts.git
-cp -r finalfinalcts/tree/f-add-cts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/terraform .
-cp -r finalfinalcts/tree/f-add-cts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/packer .
-cp -r finalfinalcts/tree/f-add-cts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/apps .
-cp -r finalfinalcts/tree/f-add-cts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/policies .
-cp -r finalfinalcts/tree/f-add-cts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/helm .
-cp -r finalfinalcts/tree/f-add-cts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/scripts .
-rm -rf finalfinalcts/tree/f-add-cts/
+cp -r ramramhariram/finalfinalcts/tree/f-add-cts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/terraform .
+cp -r ramramhariram/finalfinalcts/tree/f-add-cts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/packer .
+cp -r ramramhariram/finalfinalcts/tree/f-add-cts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/apps .
+cp -r ramramhariram/finalfinalcts/tree/f-add-cts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/policies .
+cp -r ramramhariram/finalfinalcts/tree/f-add-cts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/helm .
+cp -r ramramhariram/finalfinalcts/tree/f-add-cts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/scripts .
+rm -rf ramramhariram/finalfinalcts/tree/f-add-cts/
 
 # Ensure we load /etc/profile.d/instruqt-env.sh
 echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
