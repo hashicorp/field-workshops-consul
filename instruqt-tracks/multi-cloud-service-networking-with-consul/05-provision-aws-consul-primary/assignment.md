@@ -1,6 +1,6 @@
 ---
 slug: provision-aws-consul-primary
-id: twxljv179a8b
+id: vqldtentebr8
 type: challenge
 title: Provision AWS Consul Primary Datacenter
 teaser: Run Consul in AWS

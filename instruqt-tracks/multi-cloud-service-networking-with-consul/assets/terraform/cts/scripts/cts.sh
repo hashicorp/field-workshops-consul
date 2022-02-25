@@ -57,7 +57,7 @@ task {
   name           = "security-group-demo-task"
   description    = "allow all redis TCP traffic from specific source to a security group"
   source         = "github.com/ramramhariram/sg-nia-mc"
-  services       = ["aws-us-east-1-terminating-gateway"]
+  services       = ["consul-esm", "aws-us-east-1-terminating-gateway"]
   variable_files = ["/home/ubuntu/security_input.tfvars"]
 }
 driver "terraform" {

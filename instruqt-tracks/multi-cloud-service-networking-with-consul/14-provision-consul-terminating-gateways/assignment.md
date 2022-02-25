@@ -1,6 +1,6 @@
 ---
 slug: provision-consul-terminating-gateways
-id: zc97sjhyj4mw
+id: wqmm2mwmahdf
 type: challenge
 title: Provision Consul Terminating Gateways
 teaser: Configure egress traffic for external services
@@ -46,38 +46,7 @@ vault login -method=userpass username=admin password=admin
 export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
 ```
 
-Next, start provisioning the CTS instance. Store the security group as tfvars file for CTS to use. <br>
-
-```
-sgid=$(terraform output -state /root/terraform/cache-services/terraform.tfstate elasticache_sg)
-cat << EOF > /root/terraform/cts/security_input.tfvars
-security_group_id="${sgid}"
-EOF
-```
-
-Create the policies for the CTS. <br>
-
-```
-consul acl policy create -name cts -rules @/root/policies/consul/cts.hcl
-vault write consul/roles/cts policies=cts
-```
-
-Now create the CTS instance. <br>
-
-```
-cd /root/terraform/cts
-terraform plan
-terraform apply -auto-approve
-```
-
-Wait for the CTS process to start, and then watch the process in one shell.
-
-```
-sleep 60
-ssh ubuntu@$(terraform output aws_cts_public_ip) 'journalctl -u consul-tf-sync -f'
-```
-
-In the other shell, we will start provisioning the TGW. Start with the policy. <br>
+We will start provisioning the TGW. Start with the policy. <br>
 
 ```
 consul acl policy create -name aws-terminating-gateway -rules @/root/policies/consul/aws-tgw.hcl
@@ -96,21 +65,25 @@ terraform apply -auto-approve
 
 You can monitor provisioning with the below commands: <br>
 
-* AWS CTS - `ssh ubuntu@$(terraform output -state /root/terraform/cts/terraform.tfstate aws_cts_public_ip) 'tail -f /var/log/cloud-init-output.log'`
 * AWS TGW - `ssh ubuntu@$(terraform output -state /root/terraform/tgw/terraform.tfstate aws_tgw_public_ip) 'tail -f /var/log/cloud-init-output.log'`
 * Azure TGW - `ssh ubuntu@$(terraform output -state /root/terraform/tgw/terraform.tfstate azure_tgw_public_ip) 'tail -f /var/log/cloud-init-output.log'`
 
-CTS & TGW services are healthy in the catalog. <br>
+TGW services are healthy in the catalog. <br>
 
 ```
 consul catalog services -datacenter=aws-us-east-1
 consul catalog services -datacenter=azure-west-us-2
 ```
 
-You can also see that the AWS SG was updated.
+Finally, just like CTS auto configured the ESM details to the elasticache service's ingress security group rules, CTS will do the same for the terminating gateways in AWS that were just deployed. This is so the data plane reachability is available via these Terminating gateways to the elasticache services <br>
+
+Run the following command to check if that is indeed the case <br>
 
 ```
 aws ec2 describe-security-groups --filter Name="group-id",Values="$(terraform output -state /root/terraform/cache-services/terraform.tfstate elasticache_sg)"
 ```
+You should now see an additional address added, and that is the IP address of the TGW in AWS that was just provisioned. <br>
+
+This is the power of Consul-Terraform-Sync. <br>
 
 In future assignments you will route traffic to Vault, Redis, and Postgres leveraging the TGW in AWS & Azure.

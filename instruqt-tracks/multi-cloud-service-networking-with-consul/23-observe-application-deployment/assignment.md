@@ -1,6 +1,6 @@
 ---
 slug: observe-application-deployment
-id: 4uw4tqxdgnr7
+id: ufvdt1jqv9yn
 type: challenge
 title: Observe Application Deployment
 teaser: Collect metrics and traces across clouds.

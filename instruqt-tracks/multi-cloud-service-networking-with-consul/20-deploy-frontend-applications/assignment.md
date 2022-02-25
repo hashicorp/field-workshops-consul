@@ -1,6 +1,6 @@
 ---
 slug: deploy-frontend-applications
-id: j5wzwxg3ux5r
+id: itysolkckjms
 type: challenge
 title: Deploy Frontend Tier
 teaser: Run Frontend workloads

@@ -1,6 +1,6 @@
 ---
 slug: configure-intentions
-id: q4huxzkhispx
+id: njyqo4xbhv2u
 type: challenge
 title: Configure Intentions
 teaser: Allow selective mTLS between workloads

@@ -1,6 +1,6 @@
 ---
 slug: provision-nomad-scheduler-services
-id: 7jg38ndrb2rq
+id: pghbhsdnqhyb
 type: challenge
 title: Provision Nomad Scheduler Services
 teaser: Deploy Nomad workload infrastructure
