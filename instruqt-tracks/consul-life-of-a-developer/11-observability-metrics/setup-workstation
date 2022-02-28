@@ -55,6 +55,6 @@ spec:
     targetPort: 9090
 EOF
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm install prometheus prometheus-community/prometheus -f /root/prometheus-values.yaml --wait --debug
+helm install prometheus prometheus-community/prometheus -f /root/prometheus-values.yaml --version 15.4.0 --wait --debug
 
 exit 0
