@@ -1,6 +1,0 @@
-#!/bin/bash
-
-set-workdir /root/deployments
-kubectl config use-context k8s1
-
-exit 0
