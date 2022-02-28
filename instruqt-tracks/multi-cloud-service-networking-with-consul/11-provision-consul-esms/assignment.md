@@ -76,7 +76,7 @@ consul catalog services -datacenter=azure-west-us-2
 ```
 Finally, remember that we setup CTS in the previous assigment? This is so once ESM is deployed, its info is automatically added to the service's 'ingress' security groups rules so it can monitor its health etc. <br>
 
-Run the following command to check if that is indeed the case <br>
+Run the following command to check if the private IP of ESM that terraform outputed is now in the security group <br>
 
 ```
 aws ec2 describe-security-groups --filter Name="group-id",Values="$(terraform output -state /root/terraform/cache-services/terraform.tfstate elasticache_sg)"

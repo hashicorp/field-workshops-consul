@@ -82,7 +82,7 @@ Run the following command to check if that is indeed the case <br>
 ```
 aws ec2 describe-security-groups --filter Name="group-id",Values="$(terraform output -state /root/terraform/cache-services/terraform.tfstate elasticache_sg)"
 ```
-You should now see an additional address added, and that is the IP address of the TGW in AWS that was just provisioned. <br>
+You should now see an additional address added, and that is the Private IP address of the TGW in AWS that was just provisioned and outputted by terraform. <br>
 
 This is the power of Consul-Terraform-Sync. <br>
 
