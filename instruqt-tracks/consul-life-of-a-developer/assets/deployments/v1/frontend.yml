@@ -42,4 +42,4 @@ spec:
           env:
             # consul ingress gateway
             - name: NEXT_PUBLIC_PUBLIC_API_URL
-              value: https://k8s1-8080-rzijtess66iv.env.play.instruqt.com
+              value: http://localhost
