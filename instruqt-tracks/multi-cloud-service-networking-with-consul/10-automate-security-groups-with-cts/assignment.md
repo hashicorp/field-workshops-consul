@@ -78,7 +78,7 @@ timelimit: 300
   ssh ubuntu@$(terraform output -state /root/terraform/cts/terraform.tfstate aws_cts_public_ip) 'tail -f /var/log/cloud-init-output.log'
   ```
   Check if CTS services are healthy in the catalog. <br>
-  
+
   ```
   consul catalog services -datacenter=aws-us-east-1
   ```

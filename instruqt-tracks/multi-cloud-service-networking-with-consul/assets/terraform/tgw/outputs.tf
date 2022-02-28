@@ -1,6 +1,6 @@
 
 output "aws_tgw_private_ip" {
-  value = aws_instance.esm.private_ip 
+  value = aws_instance.tgw.private_ip 
 }
 
 output "aws_tgw_public_ip" {
