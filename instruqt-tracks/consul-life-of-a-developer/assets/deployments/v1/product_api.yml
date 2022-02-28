@@ -53,7 +53,7 @@ spec:
             name: conf
       containers:
         - name: product-api
-          image: hashicorpdemoapp/product-api:v0.0.19
+          image: hashicorpdemoapp/product-api:v0.0.20
           volumeMounts:
             - name: config
               mountPath: /app/conf.json
