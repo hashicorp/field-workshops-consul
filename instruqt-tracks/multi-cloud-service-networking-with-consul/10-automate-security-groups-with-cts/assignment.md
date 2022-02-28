@@ -38,48 +38,49 @@ timelimit: 300
 
   Get credentials. <br>
 
-    ```
-    vault login -method=userpass username=admin password=admin
-    export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
-    ```
+  ```
+  vault login -method=userpass username=admin password=admin
+  export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+  ```
 
   Next, to start provisioning the CTS instance, store the security group as tfvars file for CTS to use by running the following commands <br>
 
-    ```
-    sgid=$(terraform output -state /root/terraform/cache-services/terraform.tfstate elasticache_sg)
-    cat << EOF > /root/terraform/cts/security_input.tfvars
-    security_group_id="${sgid}"
-    EOF
-    ```
+  ```
+  sgid=$(terraform output -state /root/terraform/cache-services/terraform.tfstate elasticache_sg)
+  cat << EOF > /root/terraform/cts/security_input.tfvars
+  security_group_id="${sgid}"
+  EOF
+  ```
   Now create the policies for the CTS. <br>
 
-    ```
-    consul acl policy create -name cts -rules @/root/policies/consul/cts.hcl
-    vault write consul/roles/cts policies=cts
-    ```
+  ```
+  consul acl policy create -name cts -rules @/root/policies/consul/cts.hcl
+  vault write consul/roles/cts policies=cts
+  ```
 
   Create the CTS instance now <br>
 
-    ```
-    cd /root/terraform/cts
-    terraform plan
-    terraform apply -auto-approve
-    ```
+  ```
+  cd /root/terraform/cts
+  terraform plan
+  terraform apply -auto-approve
+  ```
   Wait for the CTS process to start, and then watch the process in one shell. <br>
 
-    ```
-    sleep 60
-    ssh ubuntu@$(terraform output aws_cts_public_ip) 'journalctl -u consul-tf-sync -f'
-    ```
+  ```
+  sleep 60
+  ssh ubuntu@$(terraform output aws_cts_public_ip) 'journalctl -u consul-tf-sync -f'
+  ```
 
   You can monitor provisioning with the below commands <br>
 
-    ```
-    ssh ubuntu@$(terraform output -state /root/terraform/cts/terraform.tfstate aws_cts_public_ip) 'tail -f /var/log/cloud-init-output.log'
-    ```
-    Check if CTS services are healthy in the catalog. <br>
-    ```
-    consul catalog services -datacenter=aws-us-east-1
-    ```
+  ```
+  ssh ubuntu@$(terraform output -state /root/terraform/cts/terraform.tfstate aws_cts_public_ip) 'tail -f /var/log/cloud-init-output.log'
+  ```
+  Check if CTS services are healthy in the catalog. <br>
+  
+  ```
+  consul catalog services -datacenter=aws-us-east-1
+  ```
 
   In the next assignment you will deploy Consul ESM to health check services that do not run Consul agents. More importantly you will notice that CTS, that we just deployed, will automatically add the ESM infra's info to the service's security group so it can start monitoring it. <br>
