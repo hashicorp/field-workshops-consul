@@ -31,6 +31,7 @@ spec:
         app: frontend
       annotations:
         consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/enable-metrics-merging: "false"
     spec:
       serviceAccountName: frontend
       containers:
@@ -41,4 +42,4 @@ spec:
           env:
             # consul ingress gateway
             - name: NEXT_PUBLIC_PUBLIC_API_URL
-              value: http://localhost
+              value: https://k8s1-8080-rzijtess66iv.env.play.instruqt.com
