@@ -15,8 +15,8 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_security_group" "consul" {
-  name        = "consul-tgw"
-  description = "consul-tgw"
+  name        = "consul-cts"
+  description = "consul-cts"
   vpc_id      = data.terraform_remote_state.infra.outputs.aws_shared_svcs_vpc
 
   ingress {
@@ -69,25 +69,35 @@ resource "aws_security_group" "consul" {
   }
 }
 
+resource "aws_instance" "cts" {
+    ami                         = data.aws_ami.ubuntu.id
+    instance_type               = "t3.small"
+    key_name                    = data.terraform_remote_state.infra.outputs.aws_ssh_key_name
+    vpc_security_group_ids      = [aws_security_group.consul.id]
+    subnet_id                   = data.terraform_remote_state.infra.outputs.aws_shared_svcs_public_subnets[0]
+    associate_public_ip_address = true
+    tags = {
+      Name = "consul-cts"
+    }
+    user_data                   = data.template_file.init_cts.rendered
+    iam_instance_profile        = data.terraform_remote_state.iam.outputs.aws_cts_iam_instance_profile_name
 
-resource "aws_instance" "tgw" {
-  instance_type               = "t3.small"
-  ami                         = data.aws_ami.ubuntu.id
-  key_name                    = data.terraform_remote_state.infra.outputs.aws_ssh_key_name
-  vpc_security_group_ids      = [aws_security_group.consul.id]
-  subnet_id                   = data.terraform_remote_state.infra.outputs.aws_shared_svcs_public_subnets[0]
-  associate_public_ip_address = true
-  user_data                   = data.template_file.aws_tgw_init.rendered
-  iam_instance_profile        = data.terraform_remote_state.iam.outputs.aws_consul_iam_instance_profile_name
-  tags = {
-    Name = "consul-tgw"
+    provisioner "file" {
+      source      = "security_input.tfvars"
+      destination = "/home/ubuntu/security_input.tfvars"
+
+    connection {
+      type     = "ssh"
+      user     = "ubuntu"
+      private_key = file("~/.ssh/id_rsa")
+      host = self.public_ip
+    }
   }
 }
 
-data "template_file" "aws_tgw_init" {
-  template = file("${path.module}/scripts/aws_tgw.sh")
+data "template_file" "init_cts" {
+  template = file("${path.module}/scripts/cts.sh")
   vars = {
     env = data.terraform_remote_state.infra.outputs.env
   }
 }
-

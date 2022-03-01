@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#creds
+vault login -method=userpass username=admin password=admin
+
+#check the cts token
+vault read consul/creds/cts
+if [ $? -ne 0 ]
+then
+  fail-message "Error checking Consul CTS acl token"
+  exit 1
+fi
+
+#aws_cts
+aws_cts=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/cts?dc=aws-us-east-1&passing=true")
+if [ "$(echo "${aws_cts}" | jq '. | length')" != "1" ]; then
+  fail-message "AWS CTS is not healthy"
+  exit 1
+fi
+
+exit 0
