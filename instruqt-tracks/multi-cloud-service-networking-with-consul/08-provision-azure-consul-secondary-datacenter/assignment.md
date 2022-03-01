@@ -1,6 +1,6 @@
 ---
 slug: provision-azure-consul-secondary-datacenter
-id: nl1karly0ewc
+id: d6ot6p4nover
 type: challenge
 title: Provision Azure Consul Secondary Datacenter
 teaser: Run Consul in Azure

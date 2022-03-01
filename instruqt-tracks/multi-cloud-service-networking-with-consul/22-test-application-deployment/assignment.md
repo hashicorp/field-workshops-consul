@@ -1,6 +1,6 @@
 ---
 slug: test-application-deployment
-id: umya56nbvvwl
+id: cvros0n7xwin
 type: challenge
 title: Test Application Deployment
 teaser: Put it all together

@@ -1,6 +1,6 @@
 ---
 slug: bootstrap-consul-primary
-id: d8aoeym371hu
+id: xgcoxarpfghr
 type: challenge
 title: Bootstrap Consul Primary Datacenter
 teaser: Set up Consul for multi-datacenter

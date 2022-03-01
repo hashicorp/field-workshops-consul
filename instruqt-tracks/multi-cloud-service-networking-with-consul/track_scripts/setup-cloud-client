@@ -2,14 +2,14 @@
 
 #get assets
 echo "cloning assets..."
-git clone -b f-add-cts https://github.com/ramramhariram/finalfinalcts.git
-cp -r finalfinalcts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/terraform .
-cp -r finalfinalcts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/packer .
-cp -r finalfinalcts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/apps .
-cp -r finalfinalcts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/policies .
-cp -r finalfinalcts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/helm .
-cp -r finalfinalcts/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/scripts .
-rm -rf finalfinalcts
+git clone https://github.com/hashicorp/field-workshops-consul.git
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/terraform .
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/packer .
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/apps .
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/policies .
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/helm .
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/scripts .
+rm -rf field-workshops-consul
 
 # Ensure we load /etc/profile.d/instruqt-env.sh
 echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc

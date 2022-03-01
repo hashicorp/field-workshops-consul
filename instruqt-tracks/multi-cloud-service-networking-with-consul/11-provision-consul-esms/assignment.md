@@ -1,6 +1,6 @@
 ---
 slug: provision-consul-esms
-id: l1yrudmrgxmv
+id: 6zucdxs6apfx
 type: challenge
 title: Provision Consul ESMs
 teaser: Create health checks for external services

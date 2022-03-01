@@ -1,7 +1,7 @@
-slug: hrs-nia-draft4-multi-cloud-service-networking-with-consul
-id: oy0gseffmyyc
+slug: multi-cloud-service-networking-with-consul
+id: iklbsgjpisau
 type: track
-title: hrs-nia-draft4-Multi Cloud Service Networking with Consul
+title: Multi Cloud Service Networking with Consul
 teaser: Deploy a multi-cloud service mesh solution with Consul
 description: Run a shared Consul service across multiple clouds and enable self-service
   for application teams.
@@ -14,10 +14,10 @@ tags:
 - nomad
 owner: hashicorp
 developers:
-- hari@hashicorp.com
 - lance@hashicorp.com
+- hari@hashicorp.com
 private: true
 published: true
 show_timer: true
 skipping_enabled: true
-checksum: "5245615644177116956"
+checksum: "17443763991349185612"

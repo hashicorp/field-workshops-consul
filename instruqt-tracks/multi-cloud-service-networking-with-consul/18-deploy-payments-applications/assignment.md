@@ -1,6 +1,6 @@
 ---
 slug: deploy-payments-applications
-id: yocxgyh3ufja
+id: 61deb2gyzmw1
 type: challenge
 title: Deploy Payments Tier
 teaser: Run Payments workloads

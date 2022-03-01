@@ -1,6 +1,6 @@
 ---
 slug: provision-cloud-infra
-id: jypyfo0gmvs0
+id: rsuxogkkdxjl
 type: challenge
 title: Provision Cloud Infrastructure
 teaser: Create cloud VPCs
