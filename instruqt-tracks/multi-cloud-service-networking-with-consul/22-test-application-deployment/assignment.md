@@ -1,6 +1,6 @@
 ---
 slug: test-application-deployment
-id: cvros0n7xwin
+id: vot20dcn1tnu
 type: challenge
 title: Test Application Deployment
 teaser: Put it all together

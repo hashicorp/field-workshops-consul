@@ -1,6 +1,6 @@
 ---
 slug: create-namespaces-and-policies
-id: xwzxblegsfdi
+id: iyxe8utk74fu
 type: challenge
 title: Create Namespaces & Policies
 teaser: Configure multi-tenancy

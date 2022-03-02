@@ -1,9 +1,9 @@
 ---
 slug: automate-security-groups-with-cts
-id: gcyiefsit552
+id: fri1zjookskc
 type: challenge
 title: Automate Security Groups with CTS
-teaser: test
+teaser: Use CTS to automate SGs
 tabs:
 - title: Lab Architecture
   type: website
@@ -19,7 +19,7 @@ tabs:
 - title: Terraform
   type: code
   hostname: cloud-client
-  path: /root/terraform/tgw
+  path: /root/terraform/cts
 - title: Vault
   type: service
   hostname: cloud-client
@@ -51,6 +51,7 @@ timelimit: 300
   security_group_id="${sgid}"
   EOF
   ```
+
   Now create the policies for the CTS. <br>
 
   ```
@@ -64,12 +65,6 @@ timelimit: 300
   cd /root/terraform/cts
   terraform plan
   terraform apply -auto-approve
-  ```
-  Wait for the CTS process to start, and then watch the process in one shell. <br>
-
-  ```
-  sleep 60
-  ssh ubuntu@$(terraform output aws_cts_public_ip) 'journalctl -u consul-tf-sync -f'
   ```
 
   You can monitor provisioning with the below commands <br>

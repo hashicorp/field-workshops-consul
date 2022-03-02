@@ -1,6 +1,6 @@
 ---
 slug: provision-consul-esms
-id: 6zucdxs6apfx
+id: c3rsgmczwdyb
 type: challenge
 title: Provision Consul ESMs
 teaser: Create health checks for external services
@@ -74,7 +74,7 @@ ESM services are now available in your Consul datacenters. <br>
 consul catalog services -datacenter=aws-us-east-1
 consul catalog services -datacenter=azure-west-us-2
 ```
-Finally, remember that we setup CTS in the previous assigment? This is so once ESM is deployed, its info is automatically added to the service's 'ingress' security groups rules so it can monitor its health etc. <br>
+Finally, remember that we setup CTS in the previous assignment? This is so once ESM is deployed, its info is automatically added to the service's 'ingress' security groups rules so it can monitor its health etc. <br>
 
 Run the following command to check if the private IP of ESM that terraform outputed is now in the security group <br>
 

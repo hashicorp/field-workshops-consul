@@ -1,10 +1,12 @@
+#!/bin/bash
+
 #creds
 vault login -method=userpass username=admin password=admin
 export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
 
 #cts
 sgid=$(terraform output -state /root/terraform/cache-services/terraform.tfstate elasticache_sg)
-cat << EOF > /root/terraform/tgw/security_input.tfvars
+cat << EOF > /root/terraform/cts/security_input.tfvars
 security_group_id="${sgid}"
 EOF
 consul acl policy create -name cts -rules @/root/policies/consul/cts.hcl
