@@ -49,7 +49,7 @@ psql -U postgres \
 Check the queue for payments (there will be zero keys). <br>
 
 ```
-ssh -i ~/.ssh/id_rsa ubuntu@$(terraform output -state /root/terraform/infra/terraform.tfstate aws_bastion_ip) \
+ssh -i ~/.ssh/id_rsa ubuntu@$(terraform output -state /root/terraform/tgw/terraform.tfstate aws_tgw_public_ip) \
   "redis-cli -h \
   $(terraform output -state /root/terraform/cache-services/terraform.tfstate -json aws_elasticache_cache_nodes | jq -r .[0].address) -p 6379 keys '*'"
 ```
