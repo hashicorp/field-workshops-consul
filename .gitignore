@@ -40,3 +40,6 @@ override.tf.json
 # example: *tfplan*
 instruqt-tracks/secure-service-networking-for-aws/mesh.pem
 .gitignore
+
+#mac
+ .DS_Store
