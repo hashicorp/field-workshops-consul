@@ -78,16 +78,17 @@ h1 {
 
 <div id="myBtnContainer">
   <button class="btn" onclick="filterSelection('arch')"> Application Architecture </button>
-  <button class="btn" onclick="filterSelection('app')"> Application Traffic </button>
   <button class="btn active" onclick="filterSelection('infra')"> Infrastructure </button>
+  <button class="btn" onclick="filterSelection('CTS')"> CTS workflow </button>
   <button class="btn" onclick="filterSelection('fed')"> WAN Federation Traffic </button>
   <button class="btn" onclick="filterSelection('esm')"> ESM Health Checks </button>
+  <button class="btn" onclick="filterSelection('app')"> Application Traffic </button>
 </div>
 
 <div class="row">
   <div class="column infra">
     <div class="content">
-      <img src="consul-muti-cloud-ws.png" alt="Infrastructure" style="width:100%">
+      <img src="consul-muti-cloud-ws-cts.png" alt="Infrastructure" style="width:100%">
     </div>
   </div>
   <div class="column app">
@@ -108,6 +109,11 @@ h1 {
   <div class="column esm">
     <div class="content">
     <img src="consul-muti-cloud-ws-ext-services.png" alt="ESM Health Checks" style="width:100%">
+    </div>
+  </div>
+  <div class="column CTS">
+    <div class="content">
+    <img src="consul-muti-cloud-ws-cts-flow.png" alt="CTS workflow" style="width:100%">
     </div>
   </div>
 </div>
