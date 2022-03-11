@@ -1,0 +1,15 @@
+#!/bin/bash
+
+
+#!/bin/bash
+#cts
+cd /root/terraform/cts
+terraform init
+pubkey=$(cat ~/.ssh/id_rsa.pub)
+cat << EOF > /root/terraform/cts/terraform.tfvars
+ssh_public_key="${pubkey}"
+EOF
+#dir
+set-workdir /root/terraform/cts
+
+exit 0

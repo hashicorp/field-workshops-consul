@@ -1,0 +1,11 @@
+vpc_id                = "vpc-123456789"
+user_public_ip        = "34.198.78.12"
+vpc_region                = "us-east-1"
+name                  = "hcp-ecs-learn"
+consul_cluster_addr   = "https://dc1.private.consul.98a0dcc3-5473-4e4d-a28e-6c343c498530.aws.hashicorp.cloud"
+consul_datacenter     = "dc1"
+consul_acl_token      = "Your-Token-Here"
+consul_gossip_key     = "You-Consul-Gossip-Key"
+consul_client_ca_path = "./ca.pem"
+private_subnets_ids   = ["subnet-0616bf7e768c34edb", "subnet-0fb76e5be19393244", "subnet-08703bcc77d9d6afe"]
+public_subnets_ids    = ["subnet-0e9959b659b2d4b64", "subnet-072085dcec5e60e60", "subnet-07b34583feab05757"]

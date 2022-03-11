@@ -6,10 +6,6 @@ output "aws_ssh_key_name" {
   value = aws_key_pair.demo.key_name
 }
 
-output "aws_bastion_ip" {
-  value = aws_instance.bastion-shared-svcs.public_ip
-}
-
 output "aws_shared_svcs_vpc" {
   value = module.aws-vpc-shared-svcs.vpc_id
 }

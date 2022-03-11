@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#creds
+vault login -method=userpass username=admin password=admin
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+
+#tgw
+consul acl policy create -name aws-terminating-gateway -rules @/root/policies/consul/aws-tgw.hcl
+vault write consul/roles/aws-tgw policies=aws-terminating-gateway
+consul acl policy create -name azure-terminating-gateway -rules @/root/policies/consul/azure-tgw.hcl
+vault write consul/roles/azure-tgw policies=azure-terminating-gateway
+cd /root/terraform/tgw
+terraform apply -auto-approve 2>&1 | tee terraform.out
+sleep 120
+
+exit 0

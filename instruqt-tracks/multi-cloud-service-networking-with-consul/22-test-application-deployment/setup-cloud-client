@@ -1,0 +1,14 @@
+#!/bin/sh
+
+kubectl config use-context react
+frontend_endpoint=$(kubectl get svc nginx-ingress-controller -o json | jq -r .status.loadBalancer.ingress[0].ip)
+kubectl config use-context graphql
+api_endpoint=$(kubectl get svc consul-graphql-graphql-ingress-gateway -o json | jq -r .status.loadBalancer.ingress[0].ip)
+cat << EOF > /root/app.txt
+APP URL: http://${frontend_endpoint}
+API URL: http://${api_endpoint}:8080
+EOF
+
+
+
+exit 0

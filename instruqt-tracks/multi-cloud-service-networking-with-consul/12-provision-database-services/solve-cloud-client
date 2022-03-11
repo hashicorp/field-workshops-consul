@@ -1,9 +1,0 @@
-#!/bin/bash
-
-vault login -method=userpass username=admin password=admin
-export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
-
-terraform apply -auto-approve 2>&1 | tee terraform.out
-sleep 120
-
-exit 0

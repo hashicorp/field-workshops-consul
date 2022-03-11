@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set-workdir /root/deployments
+kubectl config use-context k8s1
+
+#update the deployment for the instruqt sandbox
+sed -i "s,http://localhost,https://k8s1-8080-$_SANDBOX_ID.env.play.instruqt.com,g" /root/deployments/v1/frontend.yml
+
+exit 0

@@ -1,5 +1,16 @@
 #!/bin/bash
 
+#get assets
+echo "cloning assets..."
+git clone https://github.com/hashicorp/field-workshops-consul.git
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/terraform .
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/packer .
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/apps .
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/policies .
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/helm .
+cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/scripts .
+rm -rf field-workshops-consul
+
 # Ensure we load /etc/profile.d/instruqt-env.sh
 echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
 source /root/.bashrc
@@ -39,22 +50,12 @@ az group create -l westus2 -n packer
 #apt update -y
 #apt install terraform=0.13.5 packer=1.7.0 consul-enterprise=1.10.0+ent vault-enterprise=1.7.1+ent nomad-enterprise=1.0.4+ent libcap-dev jq redis-server -y
 
-#jwt validation
-apt install npm -y
-npm install -g jwt-cli
+#jwt validation - already on machine now with packer
+#apt install npm -y
+#npm install -g jwt-cli
 
 #tf creds
 echo 'export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)' >> /root/.bashrc
-
-#get assets
-echo "cloning assets..."
-git clone https://github.com/hashicorp/field-workshops-consul.git
-cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/terraform .
-cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/packer .
-cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/apps .
-cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/policies .
-cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/helm .
-rm -rf field-workshops-consul
 
 #fix path
 echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc

@@ -7,6 +7,12 @@ then
   fail-message "Error getting AWS Consul IAM role"
   exit 1
 fi
+aws iam get-role --role-name cts-$(terraform output -state /root/terraform/infra/terraform.tfstate env)
+if [ $? -ne 0 ]
+then
+  fail-message "Error getting AWS CTS IAM role"
+  exit 1
+fi
 aws iam get-role --role-name nomad-$(terraform output -state /root/terraform/infra/terraform.tfstate env)
 if [ $? -ne 0 ]
 then

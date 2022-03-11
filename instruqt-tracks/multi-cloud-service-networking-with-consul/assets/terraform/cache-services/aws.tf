@@ -7,14 +7,6 @@ resource "aws_security_group" "redis" {
   name        = "redis-sg"
   description = "ElastiCache Redis Securtity Group"
   vpc_id      = data.terraform_remote_state.infra.outputs.aws_shared_svcs_vpc
-
-  ingress {
-    from_port   = "6379"
-    to_port     = "6379"
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   egress {
     from_port   = "0"
     to_port     = "0"

@@ -90,3 +90,4 @@ data "template_file" "aws_tgw_init" {
     env = data.terraform_remote_state.infra.outputs.env
   }
 }
+

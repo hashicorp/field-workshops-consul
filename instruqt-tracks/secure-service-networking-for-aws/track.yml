@@ -1,0 +1,18 @@
+slug: secure-service-networking-for-aws
+id: 2oz9glafbqxw
+type: track
+title: Secure Service Networking for AWS
+teaser: Implement 'Secure by Default' Service Networking for AWS platforms.
+description: Securing micro-services is extremely complex. Traditional security technologies
+  operate at the platform edge, and not at the inter-service communications behind
+  them. There is a solution, and in this workshop you will implement Secure Service
+  Networking across and within multiple AWS platforms using the HachiCorp Cloud Platform
+  (HCP).
+icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
+tags: []
+owner: hashicorp
+developers:
+- npearce@hashicorp.com
+private: true
+published: true
+checksum: "6297267846999491484"

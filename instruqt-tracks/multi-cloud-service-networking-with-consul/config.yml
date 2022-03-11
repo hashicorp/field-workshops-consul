@@ -1,4 +1,4 @@
-version: "2"
+version: "3"
 containers:
 - name: cloud-client
   image: gcr.io/instruqt-hashicorp/consul-cloud-client:v1.10.2

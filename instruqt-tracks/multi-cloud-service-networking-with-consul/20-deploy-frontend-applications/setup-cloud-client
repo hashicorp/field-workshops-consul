@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#dir
+set-workdir /root/apps
+
+#helm
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+
+#update the deployment for the load balancer
+lb=$(kubectl --context graphql get svc consul-graphql-graphql-ingress-gateway -o json | jq -r .status.loadBalancer.ingress[0].ip)
+sed -i "s,http://localhost,http://${lb}:8080,g" /root/apps/k8s/web/web.yml
+
+exit 0

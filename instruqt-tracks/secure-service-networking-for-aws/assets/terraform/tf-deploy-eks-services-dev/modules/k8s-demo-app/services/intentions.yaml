@@ -1,0 +1,86 @@
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: frontend
+spec:
+  destination:
+    name: frontend
+  sources:
+  - name: ingress-gateway
+    action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: public-api
+spec:
+  # Name of the destination service affected by this ServiceIntentions entry
+  destination:
+    name: public-api
+  # The set of traffic sources affected by this ServiceIntentions entry
+  sources:
+  - name: ingress-gateway
+    action: allow
+  # The first affected traffic source-maps to service name of inbound traffic source
+  - name: frontend
+    # The set of permissions to apply when frontend is the traffic source
+    # The first permission to match in the list is terminal and stops further evaluation.
+    permissions:
+    # Add this to always deny traffic from the frontend service to /health route
+    - action: deny
+      http:
+        pathExact: "/health"
+    # This permission now defines the conditions that should be allowed
+    # Allow traffic to all paths for the GET, PUT, POST, DELETE verbs as long as an
+    # Authorization header is present
+    - action: allow
+      http:
+        pathPrefix: "/"
+        methods:
+        - GET
+        - PUT
+        - POST
+        - DELETE
+        header:
+        - name: "Authorization"
+          present: true
+    # Define a deny intention for all other traffic
+    - action: deny
+      http:
+        pathPrefix: "/"
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: postgres
+spec:
+  destination:
+    name: postgres
+  sources:
+  - name: product-api
+    action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: payments
+spec:
+  destination:
+    name: payments
+  sources:
+  - name: product-api
+    action: allow
+  - name: public-api
+    action: allow
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: product-api
+spec:
+  destination:
+    name: product-api
+  sources:
+  - name: public-api
+    action: allow
