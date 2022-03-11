@@ -2,9 +2,9 @@ slug: consul-enterprise-on-aws
 id: stkflr7xh9ud
 type: track
 title: 'DEPRECATED: Consul on AWS'
-teaser: 'Voir le lien pour la nouvelle piste : https://play.instruqt.com/hashicorp/tracks/multi-cloud-service-networking-with-consul'
-description : Dans ce module, vous allez configurer un service partagé Consul sur AWS et vous connecter
-   applications sur plusieurs plates-formes.
+teaser: 'See link for new track: https://play.instruqt.com/hashicorp/tracks/multi-cloud-service-networking-with-consul'
+description: In this track you will set up a Consul shared service on AWS, and connect
+  applications across multiple platforms.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags: []
 owner: hashicorp
@@ -20,29 +20,29 @@ challenges:
   id: ujbryneafql8
   type: challenge
   title: 'Infrastructure: Provision VPCs'
-  teaser: Créer des VPC pour le service partagé Consul et les équipes de développement
+  teaser: Create VPCs for Consul shared service and Development teams
   assignment: |-
-    Vous pouvez considérer le terminal Cloud CLI comme votre ordinateur portable préchargé avec les informations d'identification d'accès au cloud pour votre entreprise. <br>
+    You can think of the Cloud CLI terminal as your laptop machine preloaded with cloud access credentials for your company. <br>
 
-    À tout moment, vous pouvez utiliser la console AWS pour afficher votre environnement.
-    Les commandes de l'AWS CLI vous seront fournies pour interagir avec AWS tout au long de cet atelier. <br>
+    At any time you can use the AWS console to view your environment.
+    AWS CLI commands will be provided for you to interact with AWS throughout this lab. <br>
 
-    Votre première tâche consiste à configurer des VPC pour chaque équipe.
+    Your first task is setting up VPCs for each team.
 
-    Inspectez le code Terraform, puis provisionnez les VPC.
+    Inspect the Terraform code, and then provision the VPCs.
 
     ```
     terraform plan
     terraform apply -auto-approve
     ```
 
-    Vous remarquerez que vous disposez de trois VPC distincts.
+    You'll notice you have three separate VPCs.
 
     ```
     aws ec2 describe-vpcs
     ```
 
-    Leurs blocs CIDR sont listés ci-dessous:
+    Their CIDR blocks are listed below:
 
     ```
     terraform-vpc-shared-svcs: 10.1.0.0/16
@@ -50,13 +50,13 @@ challenges:
     terraform-vpc-backend: 10.3.0.0/16
     ```
 
-    Le VPC de service partagé exécutera l'infrastructure principale du consul.
-    Vous provisionnerez les serveurs Consul dans ce VPC dans les prochaines affectations.
+    The shared service VPC will run the core Consul infrastructure.
+    You will provision the Consul servers into this VPC in the next few assignments.
   notes:
   - type: text
     contents: |-
-      Dans cette mission, vous vous familiariserez avec le cloud AWS
-      et provisionnez des VPC pour vos services et applications.
+      In this assignment you will familiarize yourself with the AWS cloud
+      environment, and provision VPCs for your services and applications.
   tabs:
   - title: Cloud CLI
     type: terminal
@@ -84,7 +84,7 @@ challenges:
   title: 'Infrastructure: Provision Core Services'
   teaser: A short description of the challenge.
   assignment: |-
-    Vous utiliserez Terraform pour provisionner ces services en arrière-plan pendant que vous configurez Consul dans les prochaines missions. <br>
+    You will use Terraform to provision these services in the background while you set up Consul in the next few assignments. <br>
 
     Start with Vault. <br>
 
