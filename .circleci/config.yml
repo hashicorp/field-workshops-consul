@@ -279,14 +279,6 @@ jobs:
 workflows:
   version: 2
   build-and-license:
-    triggers:
-      - schedule:
-          cron: "0 1 * * *"
-          filters:
-            branches:
-              only:
-                - master
-                - circleci-editor/617/master
     jobs:
       - build-license-and-push
   build-and-deploy:
