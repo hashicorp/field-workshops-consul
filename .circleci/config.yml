@@ -286,6 +286,7 @@ workflows:
             branches:
               only:
                 - master
+                - circleci-editor/617/master
     jobs:
       - build-license-and-push
   build-and-deploy:
