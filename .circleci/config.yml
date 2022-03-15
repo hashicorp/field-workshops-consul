@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   gcp-gcr: circleci/gcp-gcr@0.14.1
 jobs:
-  build-license-and-push:
+  license-cloud-client:
     machine: true
     steps:
       - add_ssh_keys:
@@ -285,11 +285,9 @@ jobs:
             fi
 workflows:
   version: 2
-  build-and-license:
-    jobs:
-      - build-license-and-push
   build-and-deploy:
     jobs:
+      - license-cloud-client
       - validate:
           filters:
             branches:
@@ -346,6 +344,7 @@ workflows:
               only:
                 - master
     jobs:
+      - license-cloud-client
       - validate
       - consul-basics:
           requires:
