@@ -347,7 +347,7 @@ workflows:
             branches:
               only:
                 - master
-  nightly-tests:
+  nightly-build:
     triggers:
       - schedule:
           cron: "0 1 * * *"
