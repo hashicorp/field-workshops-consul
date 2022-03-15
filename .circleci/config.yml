@@ -13,6 +13,7 @@ jobs:
           registry-url: us.gcr.io
       - gcp-gcr/build-image:
           docker-context: instruqt-packer/consul-cloud-client
+          path: instruqt-packer/consul-cloud-client
           image: instruqt-hashicorp/consul-cloud-client
           registry-url: us.gcr.io
   validate:
