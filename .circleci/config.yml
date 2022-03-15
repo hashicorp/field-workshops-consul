@@ -294,7 +294,11 @@ workflows:
   version: 2
   build-and-deploy:
     jobs:
-      - license-cloud-client
+      - license-cloud-client:
+          filters:
+            branches:
+              only:
+                - master
       - validate:
           filters:
             branches:
@@ -324,6 +328,7 @@ workflows:
       - multi-cloud-consul:
           requires:
             - validate
+            - license-cloud-client
           filters:
             branches:
               only:
@@ -365,6 +370,7 @@ workflows:
       - multi-cloud-consul:
           requires:
             - validate
+            - license-cloud-client
       - network-infrastructure-automation:
           requires:
             - validate
