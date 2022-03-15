@@ -15,11 +15,13 @@ jobs:
           registry-url: gcr.io
           docker-context: instruqt-packer/consul-cloud-client
           path: instruqt-packer/consul-cloud-client
-          image: instruqt-hashicorp/consul-cloud-client
+          image: consul-cloud-client
+          tag: $CONSUL_VERSION
           extra_build_args: --build-arg HC_VAULT_LICENSE=$HC_VAULT_LICENSE --build-arg HC_CONSUL_LICENSE=$HC_CONSUL_LICENSE --build-arg PACKER_VERSION=$PACKER_VERSION --build-arg TF_VERSION=$TF_VERSION --build-arg VAULT_VERSION=$VAULT_VERSION --build-arg NOMAD_VERSION=$NOMAD_VERSION --build-arg CONSUL_VERSION=$CONSUL_VERSION
       - gcp-gcr/push-image:
           registry-url: gcr.io
-          image: consul-cloud-client
+          image: instruqt-hashicorp/consul-cloud-client
+          tag: $CONSUL_VERSION
   validate:
     docker:
       - image: docker.mirror.hashicorp.services/ubuntu:bionic
