@@ -5,6 +5,9 @@ jobs:
   build-license-and-push:
     machine: true
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "f3:bb:57:7d:be:ea:de:d0:57:e2:d7:1e:5e:b8:36:d1"
       - run: git clone git@github.com:hashicorp/instruqt-packer.git
       - gcp-gcr/gcr-auth:
           registry-url: us.gcr.io
