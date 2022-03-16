@@ -1,6 +1,6 @@
 ---
 slug: observability-tracing
-id: olkpnjqs2q2r
+id: rmuxawbcexxc
 type: challenge
 title: 'Observability: Tracing'
 teaser: Inspect trace information
