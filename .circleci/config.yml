@@ -36,14 +36,14 @@ jobs:
           command: |
             cd instruqt-tracks/consul-basics
             echo "Running instruqt track validate..."
-            docker run -e INSTRUQT_TOKEN=${{ env.INSTRUQT_TOKEN }} --workdir="/track" --mount type=bind,source="$(pwd)",target=/track instruqt/cli track validate
+            docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --mount type=bind,source="$(pwd)",target=/track instruqt/cli track validate
             echo "Running instruqt track push..."
-            docker run -e INSTRUQT_TOKEN=${{ env.INSTRUQT_TOKEN }} --workdir="/track" --mount type=bind,source="$(pwd)",target=/track instruqt/cli track push --force
+            docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --mount type=bind,source="$(pwd)",target=/track instruqt/cli track push --force
             echo "Running instruqt track test..."
             # Retry instruqt track test up to 3 times
             n=0
             until [ $n -ge 3 ]; do
-              docker run -e INSTRUQT_TOKEN=${{ env.INSTRUQT_TOKEN }} --workdir="/track" --mount type=bind,source="$(pwd)",target=/track instruqt/cli track test --skip-fail-check  && break
+              docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --mount type=bind,source="$(pwd)",target=/track instruqt/cli track test --skip-fail-check  && break
               n=$[$n+1]
               sleep 60
             done
