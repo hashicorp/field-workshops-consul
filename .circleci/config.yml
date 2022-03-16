@@ -41,7 +41,7 @@ jobs:
             docker create -v /track --name track alpine:3.4 /bin/true
             docker cp . track:/track/
             echo "Running instruqt track validate..."
-            docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --volumes-from track instruqt/cli track validate
+            docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track validate
             echo "Running instruqt track push..."
             docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --mount type=bind,source="$(pwd)",target=/track instruqt/cli track push --force
             echo "Running instruqt track test..."
