@@ -1,6 +1,6 @@
 ---
 slug: security-http
-id: 5ylmiomxpvyl
+id: 4ummrb5qra2x
 type: challenge
 title: 'Security: HTTP Traffic'
 teaser: Apply Layer 7 Intentions

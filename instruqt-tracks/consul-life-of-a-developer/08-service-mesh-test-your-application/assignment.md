@@ -1,6 +1,6 @@
 ---
 slug: service-mesh-test-your-application
-id: mbzfwov3rzcj
+id: bfjma8nf17qp
 type: challenge
 title: Service Mesh - Test Your Application
 teaser: Test your deployment
