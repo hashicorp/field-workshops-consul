@@ -26,66 +26,24 @@ jobs:
       NOMAD_VERSION: 1.0.4+ent
       CONSUL_VERSION: 1.10.2+ent
       CONSUL_TAG: v1.10.2
-  validate:
-    docker:
-      - image: docker.mirror.hashicorp.services/ubuntu:bionic
-    steps:
-      - checkout
-      - run:
-          name: Run Instruqt Validate
-          command: |
-            VERSION=$INSTRUQT_VERSION
-            apt -y update
-            apt -y install wget unzip
-            wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
-            cd /tmp
-            unzip instruqt.zip
-            cp instruqt /usr/local/bin/instruqt
-            chmod +x /usr/local/bin/instruqt
-            echo "yes" | instruqt version
-            RETVAL=$?
-            if [[ $RETVAL -ne 0 ]]; then
-              echo "Instruqt is not installed correctly."
-              exit 1
-            else
-              echo "Instruqt is installed and updated to most recent version."
-            fi
-            echo "Running instruqt track validate..."
-            for dir in $(ls -d /root/project/instruqt-tracks/*); do
-              cd $dir && instruqt track validate
-            done
   consul-basics:
     docker:
-      - image: docker.mirror.hashicorp.services/ubuntu:latest
+      - image: cimg/base
     steps:
       - checkout
       - run:
           name: Consul Basics
           command: |
-            VERSION=$INSTRUQT_VERSION
-            apt -y update
-            apt -y install wget unzip
-            wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
-            cd /tmp
-            unzip instruqt.zip
-            cp instruqt /usr/local/bin/instruqt
-            chmod +x /usr/local/bin/instruqt
-            echo "yes" | instruqt version
-            RETVAL=$?
-            if [[ $RETVAL -ne 0 ]]; then
-              echo "Instruqt is not installed correctly."
-              exit 1
-            else
-              echo "Instruqt is installed and updated to most recent version."
-            fi
             cd /root/project/instruqt-tracks/consul-basics
+            echo "Running instruqt track validate..."
+            docker run -e INSTRUQT_TOKEN=${{ env.INSTRUQT_TOKEN }} --workdir="/track" --mount type=bind,source="$(pwd)",target=/track instruqt/cli track validate
             echo "Running instruqt track push..."
-            instruqt track push --force
+            docker run -e INSTRUQT_TOKEN=${{ env.INSTRUQT_TOKEN }} --workdir="/track" --mount type=bind,source="$(pwd)",target=/track instruqt/cli track push --force
             echo "Running instruqt track test..."
             # Retry instruqt track test up to 3 times
             n=0
             until [ $n -ge 3 ]; do
-              instruqt track test --skip-fail-check && break
+              docker run -e INSTRUQT_TOKEN=${{ env.INSTRUQT_TOKEN }} --workdir="/track" --mount type=bind,source="$(pwd)",target=/track instruqt/cli track test --skip-fail-check  && break
               n=$[$n+1]
               sleep 60
             done
@@ -299,50 +257,30 @@ workflows:
             branches:
               only:
                 - master
-      - validate:
-          filters:
-            branches:
-              only:
-                - master
-      - consul-basics:
-          requires:
-            - validate
-          filters:
-            branches:
-              only:
-                - master
+      - consul-basics
       - service-discovery-with-consul:
-          requires:
-            - validate
           filters:
             branches:
               only:
                 - master
       - service-mesh-with-consul:
-          requires:
-            - validate
+          filters:
+            branches:
+              only:
+                - master
+      - network-infrastructure-automation:
+          filters:
+            branches:
+              only:
+                - master
+      - life-of-a-developer:
           filters:
             branches:
               only:
                 - master
       - multi-cloud-consul:
           requires:
-            - validate
             - license-cloud-client
-          filters:
-            branches:
-              only:
-                - master
-      - network-infrastructure-automation:
-          requires:
-            - validate
-          filters:
-            branches:
-              only:
-                - master
-      - life-of-a-developer:
-          requires:
-            - validate
           filters:
             branches:
               only:
@@ -357,23 +295,11 @@ workflows:
                 - master
     jobs:
       - license-cloud-client
-      - validate
-      - consul-basics:
-          requires:
-            - validate
-      - service-discovery-with-consul:
-          requires:
-            - validate
-      - service-mesh-with-consul:
-          requires:
-            - validate
+      - consul-basics
+      - service-discovery-with-consul
+      - service-mesh-with-consul
+      - network-infrastructure-automation
+      - life-of-a-developer
       - multi-cloud-consul:
           requires:
-            - validate
             - license-cloud-client
-      - network-infrastructure-automation:
-          requires:
-            - validate
-      - life-of-a-developer:
-          requires:
-            - validate
