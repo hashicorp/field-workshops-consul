@@ -57,36 +57,26 @@ jobs:
             fi
   service-discovery-with-consul:
     docker:
-      - image: docker.mirror.hashicorp.services/ubuntu:latest
+      - image: cimg/base:2022.03
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.11
       - run:
           name: Service Discovery with Consul
           command: |
-            VERSION=$INSTRUQT_VERSION
-            apt -y update
-            apt -y install wget unzip
-            wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
-            cd /tmp
-            unzip instruqt.zip
-            cp instruqt /usr/local/bin/instruqt
-            chmod +x /usr/local/bin/instruqt
-            echo "yes" | instruqt version
-            RETVAL=$?
-            if [[ $RETVAL -ne 0 ]]; then
-              echo "Instruqt is not installed correctly."
-              exit 1
-            else
-              echo "Instruqt is installed and updated to most recent version."
-            fi
-            cd /root/project/instruqt-tracks/service-discovery-with-consul
+            cd instruqt-tracks/service-discovery-with-consul
+            echo "Copying track files..."
+            docker create -v /track --name track alpine:3.4 /bin/true
+            docker cp . track:/track/
+            echo "Running instruqt track validate..."
+            docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track validate
             echo "Running instruqt track push..."
-            instruqt track push --force
+            docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track push --force
             echo "Running instruqt track test..."
-            # Retry instruqt track test up to 3 times
             n=0
             until [ $n -ge 3 ]; do
-              instruqt track test --skip-fail-check && break
+              docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track test --skip-fail-check  && break
               n=$[$n+1]
               sleep 60
             done
@@ -96,36 +86,26 @@ jobs:
             fi
   service-mesh-with-consul:
     docker:
-      - image: docker.mirror.hashicorp.services/ubuntu:latest
+      - image: cimg/base:2022.03
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.11
       - run:
           name: Service Mesh with Consul
           command: |
-            VERSION=$INSTRUQT_VERSION
-            apt -y update
-            apt -y install wget unzip
-            wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
-            cd /tmp
-            unzip instruqt.zip
-            cp instruqt /usr/local/bin/instruqt
-            chmod +x /usr/local/bin/instruqt
-            echo "yes" | instruqt version
-            RETVAL=$?
-            if [[ $RETVAL -ne 0 ]]; then
-              echo "Instruqt is not installed correctly."
-              exit 1
-            else
-              echo "Instruqt is installed and updated to most recent version."
-            fi
-            cd /root/project/instruqt-tracks/service-mesh-with-consul
+            cd instruqt-tracks/service-mesh-with-consul
+            echo "Copying track files..."
+            docker create -v /track --name track alpine:3.4 /bin/true
+            docker cp . track:/track/
+            echo "Running instruqt track validate..."
+            docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track validate
             echo "Running instruqt track push..."
-            instruqt track push --force
+            docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track push --force
             echo "Running instruqt track test..."
-            # Retry instruqt track test up to 3 times
             n=0
             until [ $n -ge 3 ]; do
-              instruqt track test --skip-fail-check && break
+              docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track test --skip-fail-check  && break
               n=$[$n+1]
               sleep 60
             done
@@ -135,37 +115,27 @@ jobs:
             fi
   multi-cloud-consul:
     docker:
-      - image: ubuntu:latest
+      - image: cimg/base:2022.03
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.11
       - run:
           name: Multi-cloud Consul
           no_output_timeout: 60m
           command: |
-            VERSION=$INSTRUQT_VERSION
-            apt -y update
-            apt -y install wget unzip
-            wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
-            cd /tmp
-            unzip instruqt.zip
-            cp instruqt /usr/local/bin/instruqt
-            chmod +x /usr/local/bin/instruqt
-            echo "yes" | instruqt version
-            RETVAL=$?
-            if [[ $RETVAL -ne 0 ]]; then
-              echo "Instruqt is not installed correctly."
-              exit 1
-            else
-              echo "Instruqt is installed and updated to most recent version."
-            fi
-            cd /root/project/instruqt-tracks/multi-cloud-service-networking-with-consul
+            cd instruqt-tracks/multi-cloud-service-networking-with-consul
+            echo "Copying track files..."
+            docker create -v /track --name track alpine:3.4 /bin/true
+            docker cp . track:/track/
+            echo "Running instruqt track validate..."
+            docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track validate
             echo "Running instruqt track push..."
-            instruqt track push --force
+            docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track push --force
             echo "Running instruqt track test..."
-            # Retry instruqt track test up to 3 times
             n=0
             until [ $n -ge 3 ]; do
-              instruqt track test --skip-fail-check && break
+              docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track test --skip-fail-check  && break
               n=$[$n+1]
               sleep 60
             done
@@ -175,37 +145,27 @@ jobs:
             fi
   network-infrastructure-automation:
     docker:
-      - image: ubuntu:latest
+      - image: cimg/base:2022.03
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.11
       - run:
           name: Network Infrastructure Automation
           no_output_timeout: 60m
           command: |
-            VERSION=$INSTRUQT_VERSION
-            apt -y update
-            apt -y install wget unzip
-            wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
-            cd /tmp
-            unzip instruqt.zip
-            cp instruqt /usr/local/bin/instruqt
-            chmod +x /usr/local/bin/instruqt
-            echo "yes" | instruqt version
-            RETVAL=$?
-            if [[ $RETVAL -ne 0 ]]; then
-              echo "Instruqt is not installed correctly."
-              exit 1
-            else
-              echo "Instruqt is installed and updated to most recent version."
-            fi
-            cd /root/project/instruqt-tracks/network-infrastructure-automation
+            cd instruqt-tracks/network-infrastructure-automation
+            echo "Copying track files..."
+            docker create -v /track --name track alpine:3.4 /bin/true
+            docker cp . track:/track/
+            echo "Running instruqt track validate..."
+            docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track validate
             echo "Running instruqt track push..."
-            instruqt track push --force
+            docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track push --force
             echo "Running instruqt track test..."
-            # Retry instruqt track test up to 3 times
             n=0
             until [ $n -ge 3 ]; do
-              instruqt track test --skip-fail-check && break
+              docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track test --skip-fail-check  && break
               n=$[$n+1]
               sleep 60
             done
@@ -215,36 +175,26 @@ jobs:
             fi
   life-of-a-developer:
     docker:
-      - image: ubuntu:latest
+      - image: cimg/base:2022.03
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.11
       - run:
           name: Life of a Developer
           command: |
-            VERSION=$INSTRUQT_VERSION
-            apt -y update
-            apt -y install wget unzip
-            wget https://github.com/instruqt/cli/releases/download/${VERSION}/instruqt-linux-${VERSION}.zip -O /tmp/instruqt.zip
-            cd /tmp
-            unzip instruqt.zip
-            cp instruqt /usr/local/bin/instruqt
-            chmod +x /usr/local/bin/instruqt
-            echo "yes" | instruqt version
-            RETVAL=$?
-            if [[ $RETVAL -ne 0 ]]; then
-              echo "Instruqt is not installed correctly."
-              exit 1
-            else
-              echo "Instruqt is installed and updated to most recent version."
-            fi
-            cd /root/project/instruqt-tracks/consul-life-of-a-developer
+            cd instruqt-tracks/consul-life-of-a-developer
+            echo "Copying track files..."
+            docker create -v /track --name track alpine:3.4 /bin/true
+            docker cp . track:/track/
+            echo "Running instruqt track validate..."
+            docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track validate
             echo "Running instruqt track push..."
-            instruqt track push --force
+            docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track push --force
             echo "Running instruqt track test..."
-            # Retry instruqt track test up to 3 times
             n=0
             until [ $n -ge 3 ]; do
-              instruqt track test --skip-fail-check && break
+              docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track test --skip-fail-check  && break
               n=$[$n+1]
               sleep 60
             done
@@ -261,7 +211,11 @@ workflows:
             branches:
               only:
                 - master
-      - consul-basics
+      - consul-basics:
+          filters:
+            branches:
+              only:
+                - master
       - service-discovery-with-consul:
           filters:
             branches:
