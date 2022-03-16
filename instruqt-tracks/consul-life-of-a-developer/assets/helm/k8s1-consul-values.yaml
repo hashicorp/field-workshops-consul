@@ -1,7 +1,7 @@
 global:
   name: consul
   datacenter: k8s1
-  image: 'hashicorp/consul:1.10.0'
+  image: 'hashicorp/consul:1.11.4'
   tls:
     enabled: true
     enableAutoEncrypt: true
