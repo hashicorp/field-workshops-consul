@@ -34,7 +34,7 @@ jobs:
       - run:
           name: Consul Basics
           command: |
-            cd /root/project/instruqt-tracks/consul-basics
+            cd instruqt-tracks/consul-basics
             echo "Running instruqt track validate..."
             docker run -e INSTRUQT_TOKEN=${{ env.INSTRUQT_TOKEN }} --workdir="/track" --mount type=bind,source="$(pwd)",target=/track instruqt/cli track validate
             echo "Running instruqt track push..."
