@@ -34,7 +34,7 @@ jobs:
       - setup_remote_docker:
           version: 20.10.11
       - run:
-          name: Consul Basics
+          name: Instruqt 
           command: |
             cd instruqt-tracks/consul-basics
             echo "Copying track files..."
@@ -63,7 +63,7 @@ jobs:
       - setup_remote_docker:
           version: 20.10.11
       - run:
-          name: Service Discovery with Consul
+          name: Instruqt
           command: |
             cd instruqt-tracks/service-discovery-with-consul
             echo "Copying track files..."
@@ -92,7 +92,7 @@ jobs:
       - setup_remote_docker:
           version: 20.10.11
       - run:
-          name: Service Mesh with Consul
+          name: Instruqt
           command: |
             cd instruqt-tracks/service-mesh-with-consul
             echo "Copying track files..."
@@ -121,7 +121,7 @@ jobs:
       - setup_remote_docker:
           version: 20.10.11
       - run:
-          name: Multi-cloud Consul
+          name: Instruqt
           no_output_timeout: 60m
           command: |
             cd instruqt-tracks/multi-cloud-service-networking-with-consul
@@ -151,7 +151,7 @@ jobs:
       - setup_remote_docker:
           version: 20.10.11
       - run:
-          name: Network Infrastructure Automation
+          name: Instruqt
           no_output_timeout: 60m
           command: |
             cd instruqt-tracks/network-infrastructure-automation
@@ -181,7 +181,7 @@ jobs:
       - setup_remote_docker:
           version: 20.10.11
       - run:
-          name: Life of a Developer
+          name: Instruqt
           command: |
             cd instruqt-tracks/consul-life-of-a-developer
             echo "Copying track files..."
