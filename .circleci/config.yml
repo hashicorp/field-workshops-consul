@@ -28,7 +28,7 @@ jobs:
       CONSUL_TAG: v1.10.2
   consul-basics:
     docker:
-      - image: cimg/base
+      - image: cimg/base:2022.03
     steps:
       - checkout
       - run:
