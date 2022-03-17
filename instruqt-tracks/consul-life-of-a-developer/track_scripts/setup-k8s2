@@ -16,7 +16,4 @@ done
 echo "source /usr/share/bash-completion/bash_completion" >> /root/.bashrc
 echo "complete -F __start_kubectl k" >> /root/.bashrc
 
-#dashboard token
-kubectl get secret -n kubernetes-dashboard $(kubectl get sa -n kubernetes-dashboard admin-user -o json | jq -r .secrets[0].name) -o json | jq -r .data.token | base64 -d > /root/dashboard-token.txt
-
 exit 0

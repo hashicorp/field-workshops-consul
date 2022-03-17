@@ -10,8 +10,8 @@ tabs:
   hostname: workstation
 - title: K8s1 - Dashboard Token
   type: code
-  hostname: k8s1
-  path: /root/dashboard-token.txt
+  hostname: workstation
+  path: /root/k8s1-dashboard-token.txt
 - title: K8s1 - Dashboard
   type: service
   hostname: k8s1
