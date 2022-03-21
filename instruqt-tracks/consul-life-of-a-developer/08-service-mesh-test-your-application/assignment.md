@@ -65,7 +65,7 @@ The gateway will inspect the SNI headers and forward it along to the correct des
 Inspect the SNI value for this service now. <br>
 
 ```
-kubectl exec deploy/payments-api-v1 -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."dynamic_active_clusters"? | select(. != null)[1]]'
+kubectl exec deploy/payments-api-v1 -c envoy-sidecar -- wget -qO- 127.0.0.1:19000/config_dump | jq '[.. |."dynamic_active_clusters"? | select(. != null)[2]]'
 ```
 
 Now that you understand the internals of the cross cluster routing, let's test the application so you can make sure it works. <br>
