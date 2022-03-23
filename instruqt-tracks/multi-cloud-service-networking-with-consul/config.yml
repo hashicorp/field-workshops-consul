@@ -10,7 +10,6 @@ containers:
   - 8080
   - 16686
   environment:
-    CONSUL_HELM_VERSION: v0.41.1
     CONSUL_VERSION: 1.11.4+ent
     ENVOY_VERSION: 1.20.2
     NOMAD_VERSION: 1.0.4+ent
