@@ -1,6 +1,6 @@
 ---
 slug: automate-security-groups-with-cts
-id: fri1zjookskc
+id: xvfolhxufuwv
 type: challenge
 title: Automate Security Groups with CTS
 teaser: Use CTS to automate SGs

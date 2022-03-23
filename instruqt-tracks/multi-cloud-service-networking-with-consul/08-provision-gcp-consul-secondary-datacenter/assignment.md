@@ -1,6 +1,6 @@
 ---
 slug: provision-gcp-consul-secondary-datacenter
-id: def2vcu1xmjq
+id: tf0mpf7tjjbq
 type: challenge
 title: Provision GCP Consul Secondary Datacenter
 teaser: Run Consul in GKE
@@ -90,7 +90,7 @@ Next, deploy the Consul servers. You can review the configuration in the code ed
 
 ```
 kubectl create secret generic consul-ent-license --from-literal="key=$(cat /etc/consul.hclic)"
-helm install hashicorp hashicorp/consul -f /root/helm/gke-consul-values.yaml --debug --wait --version 0.33.0
+helm install hashicorp hashicorp/consul -f /root/helm/gke-consul-values.yaml --debug --wait --version $CONSUL_HELM_VERSION
 ```
 
 Check that all three clusters are federated.

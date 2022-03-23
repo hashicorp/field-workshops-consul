@@ -1,7 +1,7 @@
 global:
   enabled: false
   name: consul-graphql
-  image: 'hashicorp/consul-enterprise:1.10.2-ent'
+  image: 'hashicorp/consul-enterprise:1.11.4-ent'
   datacenter: gcp-us-central-1
   acls:
       manageSystemACLs: true

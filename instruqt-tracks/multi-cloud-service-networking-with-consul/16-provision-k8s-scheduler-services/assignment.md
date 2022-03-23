@@ -1,6 +1,6 @@
 ---
 slug: provision-k8s-scheduler-services
-id: abf0py1yysbv
+id: n4mdpgq3pxhl
 type: challenge
 title: Provision K8s Scheduler Services
 teaser: Deploy K8s workload infrastructure
@@ -65,7 +65,7 @@ kubectl config use-context react
 kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
 kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
 kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
-helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f /root/helm/react-consul-values.yaml --debug --wait --timeout 10m --version 0.33.0
+helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f /root/helm/react-consul-values.yaml --debug --wait --timeout 10m --version $CONSUL_HELM_VERSION
 helm list -a
 ```
 
@@ -79,7 +79,7 @@ kubectl config use-context graphql
 kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
 kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
 kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
-helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_graphql_endpoint)" -f /root/helm/graphql-consul-values.yaml --debug --wait --timeout 10m --version 0.33.0
+helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_graphql_endpoint)" -f /root/helm/graphql-consul-values.yaml --debug --wait --timeout 10m --version $CONSUL_HELM_VERSION
 helm list -a
 ```
 

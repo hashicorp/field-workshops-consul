@@ -1,6 +1,6 @@
 ---
 slug: provision-consul-terminating-gateways
-id: zgy6lji1stib
+id: a8nay3xnf0wi
 type: challenge
 title: Provision Consul Terminating Gateways
 teaser: Configure egress traffic for external services

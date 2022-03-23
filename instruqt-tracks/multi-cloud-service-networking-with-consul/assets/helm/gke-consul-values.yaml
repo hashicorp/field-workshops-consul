@@ -1,7 +1,7 @@
 global:
   name: consul
   datacenter: gcp-us-central-1
-  image: 'hashicorp/consul-enterprise:1.10.2-ent'
+  image: 'hashicorp/consul-enterprise:1.11.4-ent'
   tls:
     enabled: true
     caCert:
@@ -21,6 +21,9 @@ global:
       secretKey: replicationToken
   federation:
     enabled: true
+  enterpriseLicense:
+      secretName: 'consul-ent-license'
+      secretKey: 'key'
 ui:
   enabled: true
   service:
@@ -45,9 +48,6 @@ server:
   ports:
     serflan:
       port: 9301
-  enterpriseLicense:
-      secretName: 'consul-ent-license'
-      secretKey: 'key'
 client:
   enabled: true
   exposeGossipPorts: true
