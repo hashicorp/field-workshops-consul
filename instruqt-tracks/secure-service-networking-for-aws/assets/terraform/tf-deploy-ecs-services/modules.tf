@@ -1,7 +1,10 @@
 module "acl_controller" {
-  source  = "hashicorp/consul-ecs/aws//modules/acl-controller"
-  version = "0.3.0"
-
+#  source  = "hashicorp/consul-ecs/aws//modules/acl-controller"
+#  version = "0.3.0"
+  source = "git::https://github.com/hashicorp/terraform-aws-consul-ecs.git//modules/acl-controller?ref=cthain-add-ns-at"
+  consul_ecs_image                  = "docker.mirror.hashicorp.services/hashicorpdev/consul-ecs:cfe3df3"
+  consul_partitions_enabled         = true
+  consul_partition                  = "ecs-services"
   log_configuration = {
     logDriver = "awslogs"
     options = {
@@ -18,41 +21,47 @@ module "acl_controller" {
   name_prefix                       = var.name
 }
 
-module "product-api" {
-  source  = "hashicorp/consul-ecs/aws//modules/mesh-task"
-  version = "0.3.0"
-  consul_image      = "hashicorp/consul-enterprise:1.11.2-ent"
+module "public-api" {
+#  source  = "hashicorp/consul-ecs/aws//modules/mesh-task"
+#  version = "0.3.0"
+  source = "git::https://github.com/hashicorp/terraform-aws-consul-ecs.git//modules/mesh-task?ref=cthain-add-ns-at"
+  consul_image      = "hashicorp/consul-enterprise:1.11.4-ent"
+  consul_ecs_image                  = "docker.mirror.hashicorp.services/hashicorpdev/consul-ecs:cfe3df3"
+#  consul_partitions_enabled         = "-partitions-enabled"
+  consul_partition                  = "ecs-services"
+  consul_namespace                  = "default"
 
-  family            = "${var.name}-product-api"
+  family            = "${var.name}-public-api"
   cpu               = 1024
   memory            = 2048
   port              = "9090"
   log_configuration = local.product-api_log_config
   container_definitions = [{
     name             = "product-api"
-    image            = "hashicorpdemoapp/product-api:v0.0.19"
+    image            = "hashicorpdemoapp/public-api:v0.0.5"
     essential        = true
     logConfiguration = local.product-api_log_config
     environment = [
       {
-        name  = "NAME"
-        value = "${var.name}-product-api"
+        name  = "PAYMENT_API_URI"
+        value = "http://payments:9090"
       },
       {
-        name  = "DB_CONNECTION"
-        value = "host=localhost port=5432 user=postgres password=password dbname=products sslmode=disable"
+        name  = "PRODUCT_API_URI"
+        value = "http://product-api:9090"
       },
       {
         name = "BIND_ADDRESS"
-        value = ":9090"
+        value = ":8080"
       }
     ]
   }]
   upstreams = [
     {
-      destinationName = "postgres"
-      destinationPartition = "eks-services"
-      localBindPort  = 5432
+      destinationName = "product-api"
+      destinationPartition = "eks-dev"
+      destinationNamespace = "default"
+      localBindPort  = 9090
     }
   ]
   // Strip away the https prefix from the Consul network address
@@ -64,8 +73,6 @@ module "product-api" {
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
   acl_secret_name_prefix         = var.name
   consul_datacenter              = data.terraform_remote_state.hcp.outputs.consul_datacenter
-#  consul_agent_configuration     = "partition = \"ecs-services\""
-#  consul_partition               = "ecs-services"
 
   depends_on = [module.acl_controller]
 }

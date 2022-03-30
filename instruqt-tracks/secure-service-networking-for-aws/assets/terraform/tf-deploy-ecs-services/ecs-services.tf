@@ -21,10 +21,10 @@
 
 # The server app is part of the service mesh. It's called
 # by the client app.
-resource "aws_ecs_service" "product-api" {
-  name            = "${var.name}-product-api"
+resource "aws_ecs_service" "public-api" {
+  name            = "${var.name}-public-api"
   cluster         = aws_ecs_cluster.this.arn
-  task_definition = module.product-api.task_definition_arn
+  task_definition = module.public-api.task_definition_arn
   desired_count   = 1
   network_configuration {
     subnets = var.private_subnets_ids

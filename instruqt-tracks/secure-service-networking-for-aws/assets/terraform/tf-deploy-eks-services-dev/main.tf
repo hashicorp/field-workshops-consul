@@ -81,14 +81,17 @@ data "aws_eks_cluster_auth" "cluster" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "17.22.0"
+#  version = "17.22.0"
+  version = "18.8.1"
 
   cluster_name    = "${local.cluster_id}-eks-dev"
   cluster_version = "1.21"
-  subnets         = local.public_subnets
+#  subnets         = local.public_subnets
+  subnet_ids         = local.public_subnets
   vpc_id          = local.vpc_id
 
-  node_groups = {
+#  node_groups = {
+  eks_managed_node_groups = {
     application = {
       name_prefix      = "hashicups"
       instance_types   = ["t3a.medium"]
@@ -151,9 +154,9 @@ output "consul_url" {
   )
 }
 
-output "kubeconfig_filename" {
-  value = abspath(module.eks.kubeconfig_filename)
-}
+#output "kubeconfig_filename" {
+#  value = abspath(module.eks.kubeconfig_filename)
+#}
 
 output "hashicups_url" {
   value = module.demo_app.hashicups_url
