@@ -8,6 +8,8 @@ locals {
   hcp_consul_cluster    = data.terraform_remote_state.hcp.outputs.hcp_consul_cluster
   hvn                   = data.terraform_remote_state.hcp.outputs.hcp_hvn
   vpc_id                = data.terraform_remote_state.hcp.outputs.aws_vpc_eks_prod_id
+  vpc_owner_id          = data.terraform_remote_state.hcp.outputs.eks_prod_vpc_owner_id
+  vpc_cidr_block        = data.terraform_remote_state.hcp.outputs.eks_prod_vpc_cidr_block
   public_route_table_ids = data.terraform_remote_state.hcp.outputs.eks_prod_public_route_table_ids
   public_subnets        = data.terraform_remote_state.hcp.outputs.eks_prod_public_subnets
 }
@@ -97,17 +99,6 @@ module "eks" {
       min_capacity     = 3
     }
   }
-}
-
-module "aws_hcp_consul" {
-  source  = "hashicorp/hcp-consul/aws"
-  version = "~> 0.6.1"
-
-  hvn                = local.hvn
-  vpc_id             = local.vpc_id
-  subnet_ids         = local.public_subnets
-  route_table_ids    = local.public_route_table_ids
-  security_group_ids = [module.eks.cluster_primary_security_group_id]
 }
 
 module "eks_consul_client" {

@@ -8,6 +8,8 @@ locals {
   hcp_consul_cluster    = data.terraform_remote_state.hcp.outputs.hcp_consul_cluster
   hvn                   = data.terraform_remote_state.hcp.outputs.hcp_hvn
   vpc_id                = data.terraform_remote_state.hcp.outputs.aws_vpc_ecs_id
+  vpc_owner_id          = data.terraform_remote_state.hcp.outputs.ecs_vpc_owner_id
+  vpc_cidr_block        = data.terraform_remote_state.hcp.outputs.ecs_vpc_cidr_block
   private_route_table_ids = data.terraform_remote_state.hcp.outputs.ecs_private_route_table_ids
   private_subnets        = data.terraform_remote_state.hcp.outputs.ecs_private_subnets
   public_route_table_ids = data.terraform_remote_state.hcp.outputs.ecs_public_route_table_ids
@@ -31,13 +33,3 @@ module "aws_hcp_consul" {
 #  security_group_ids = [data.aws_security_group.vpc_default.id]
 }
 
-module "aws_hcp_consul" {
-  subnet_ids = concat(
-    module.vpc.private_subnets,
-    module.vpc.public_subnets,
-  )
-  route_table_ids = concat(
-    module.vpc.private_route_table_ids,
-    module.vpc.public_route_table_ids,
-  )
-}
