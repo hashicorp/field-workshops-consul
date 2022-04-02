@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#make vault run in instruqt container
+setcap cap_ipc_lock= /usr/bin/vault
+
 #check licenses
 echo "checking licenses..."
 vault license inspect /etc/vault.hclic
@@ -80,9 +83,6 @@ cat << EOF > ~/.ssh/config
 Host *
     StrictHostKeyChecking no
 EOF
-
-#make vault run in instruqt container
-setcap cap_ipc_lock= /usr/bin/vault
 
 #optimistic provisioning
 
