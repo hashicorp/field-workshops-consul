@@ -2,8 +2,10 @@ locals {
   hcp_acl_token_secret_id = data.terraform_remote_state.hcp.outputs.hcp_acl_token_secret_id
   hcp_consul_cluster    = data.terraform_remote_state.hcp.outputs.hcp_consul_cluster
   vpc_id                = data.terraform_remote_state.vpc.outputs.eks_dev_aws_vpc_id
+  vpc_cidr_block        = data.terraform_remote_state.vpc.outputs.eks_dev_vpc_cidr_block
   public_subnets        = data.terraform_remote_state.vpc.outputs.eks_dev_public_subnets
 }
+
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
