@@ -12,7 +12,6 @@ locals {
 }
 
 
-
 ## Peering between HCP HVNs and VPCs
 
 ### HCP HVN to ECS Dev
@@ -27,7 +26,7 @@ resource "hcp_aws_network_peering" "ecs_dev_peer" {
   peer_vpc_id     = local.ecs_dev_vpc_id
   peer_account_id = local.ecs_dev_vpc_owner_id
   peer_vpc_region = var.region
-  peering_id      = local.hvn.hvn_id
+  peering_id      = "${local.hvn.hvn_id}-to-vpc-ecs-dev"
 }
 
 ### HCP HVN to EKS Dev
@@ -42,7 +41,7 @@ resource "hcp_aws_network_peering" "eks_dev_peer" {
   peer_vpc_id     = local.eks_dev_vpc_id
   peer_account_id = local.eks_dev_vpc_owner_id
   peer_vpc_region = var.region
-  peering_id      = local.hvn.hvn_id
+  peering_id      = "${local.hvn.hvn_id}-to-vpc-eks-dev"
 }
 
 ### HCP HVN to EKS Prod
@@ -57,7 +56,7 @@ resource "hcp_aws_network_peering" "eks_prod_peer" {
   peer_vpc_id     = local.eks_prod_vpc_id
   peer_account_id = local.eks_prod_vpc_owner_id
   peer_vpc_region = var.region
-  peering_id      = local.hvn.hvn_id
+  peering_id      = "${local.hvn.hvn_id}-to-vpc-eks-prod"
 }
 
 
@@ -86,8 +85,8 @@ resource "hcp_hvn_route" "hvn_to_vpc_eks_prod" {
 }
 
 
-
 ## Routes from VPCs to HCP HVN
+
 resource "aws_route" "hvn_to_ecs_dev" {
   count                     = length(local.ecs_dev_route_table_ids)
   route_table_id            = local.ecs_dev_route_table_ids[count.index]
