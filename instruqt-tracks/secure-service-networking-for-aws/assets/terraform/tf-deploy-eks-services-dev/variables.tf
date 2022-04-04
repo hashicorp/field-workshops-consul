@@ -5,13 +5,13 @@ variable "region" {
 }
 
 variable "env" {
-  description = "eks_dev"
+  description = "Environment"
   type        = string
-  default     = "workshop-hcp-consul"
+  default     = "eks_dev"
 
 }
 
-var "cluster_id" {
+variable "cluster_id" {
   description = ""
   type        = string
   default     = "workshop-hcp-consul"

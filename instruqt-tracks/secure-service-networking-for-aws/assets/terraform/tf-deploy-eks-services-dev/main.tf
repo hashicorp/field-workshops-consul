@@ -1,42 +1,20 @@
 locals {
   hcp_acl_token_secret_id = data.terraform_remote_state.hcp.outputs.hcp_acl_token_secret_id
   hcp_consul_cluster    = data.terraform_remote_state.hcp.outputs.hcp_consul_cluster
-  vpc_id                = data.terraform_remote_state.hcp.outputs.aws_vpc_eks_dev_id
-  vpc_owner_id          = data.terraform_remote_state.hcp.outputs.eks_dev_vpc_owner_id
-  vpc_cidr_block        = data.terraform_remote_state.hcp.outputs.eks_dev_vpc_cidr_block
-  public_route_table_ids = data.terraform_remote_state.hcp.outputs.eks_dev_public_route_table_ids
-  public_subnets        = data.terraform_remote_state.hcp.outputs.eks_dev_public_subnets
-}
-
-data "terraform_remote_state" "hcp" {
-  backend = "local"
-
-  config = {
-    path = "/root/terraform/tf-deploy-hcp-consul/terraform.tfstate"
-  }
-}
-
-data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_id
-}
-
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_id
+  vpc_id                = data.terraform_remote_state.vpc.outputs.eks_dev_aws_vpc_id
+  public_subnets        = data.terraform_remote_state.vpc.outputs.eks_dev_public_subnets
 }
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "17.24.0"
-#  version = "18.17.1"
 
   cluster_name    = "${var.cluster_id}-${var.env}"
   cluster_version = "1.21"
   subnets         = local.public_subnets
-#  subnet_ids         = local.public_subnets
   vpc_id          = local.vpc_id
 
   node_groups = {
-#  eks_managed_node_groups = {
     application = {
       name_prefix      = "hashicups"
       instance_types   = ["t3a.medium"]
@@ -49,7 +27,6 @@ module "eks" {
 
 module "eks_consul_client" {
   source  = "./modules/hcp-eks-client"
-#  version = "~> 0.6.1"
 
   cluster_id       = local.hcp_consul_cluster.cluster_id
   consul_hosts     = jsondecode(base64decode(local.hcp_consul_cluster.consul_config_file))["retry_join"]
@@ -68,8 +45,6 @@ module "eks_consul_client" {
 }
 
 module "demo_app" {
-#  source  = "hashicorp/hcp-consul/aws//modules/k8s-demo-app"
-#  version = "~> 0.6.1"
   source  = "./modules/k8s-demo-app"
 
   depends_on = [module.eks_consul_client]
