@@ -1,6 +1,6 @@
 ---
 slug: introducing-secure-service-networking-for-aws
-id: pmdwnnimxkfb
+id: 50asaqnuwyso
 type: challenge
 title: Introducing Secure Service Networking for AWS
 teaser: In this workshop you are going to use the HashiCorp Cloud Platform (HCP).

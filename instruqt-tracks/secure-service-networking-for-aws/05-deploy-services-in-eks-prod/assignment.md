@@ -1,12 +1,12 @@
 ---
-slug: deploy-services-in-eks-dev
-id: 2ontib6im3go
+slug: deploy-services-in-eks-prod
+id: 7xdtkpy7fswe
 type: challenge
-title: Deploy Services in EKS for the Dev Team
-teaser: Let's deploy some microservices on EKS for the development team!
+title: Deploy Services in EKS for the Prod Deployment
+teaser: Let's deploy some microservices on EKS for the production deployment!
 notes:
 - type: video
-  url: ../assets/video/SSN4AWS-Challenge3.mp4
+  url: ../assets/video/SSN4AWS-Challenge4.mp4
 - type: text
   contents: In this section you will create an EKS cluster and deploy some services.
 tabs:
@@ -23,7 +23,11 @@ tabs:
 - title: code - eks
   type: code
   hostname: shell
-  path: /root/terraform/tf-deploy-eks-services-dev
+  path: /root/terraform/tf-deploy-eks-services-prod
+- title: code - ecs
+  type: code
+  hostname: shell
+  path: /root/terraform/tf-deploy-ecs-services
 - title: Cloud Consoles
   type: service
   hostname: shell
@@ -46,8 +50,7 @@ terraform plan
 
 When ready, deploy with:
 ```sh
-nohup terraform apply -auto-approve > /root/terraform/tf-deploy-eks-services-dev/eks_dev.out &
-
+nohup terraform apply -auto-approve > /root/terraform/tf-deploy-eks-services-prod/eks_prod.out &
 ```
 
 NOTE: we run this in the background (`nohup` / `&`) so that it continues even if your communication with the Instruqt platform is interrupted.
@@ -55,7 +58,7 @@ NOTE: we run this in the background (`nohup` / `&`) so that it continues even if
 You can monitor the progress of the deployment using the following command:
 
 ```sh
-tail -f /root/terraform/tf-deploy-eks-services-dev/eks_dev.out
+tail -f /root/terraform/tf-deploy-eks-services-prod/eks_prod.out
 ```
 
 Once the `terraform apply` is running, use the credentials in the `Cloud Consoles` tab to login to AWS. Once logged in, navigate to the `Elastic Kubernetes Service`

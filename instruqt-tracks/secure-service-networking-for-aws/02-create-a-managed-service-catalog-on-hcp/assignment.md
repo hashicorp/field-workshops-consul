@@ -1,6 +1,6 @@
 ---
 slug: create-a-managed-service-catalog-on-hcp
-id: ltqucwm9rxxo
+id: ioxdjbcxbbqa
 type: challenge
 title: Create a managed Service Catalog on HCP
 teaser: In this challenge you will create a Consul Cluster on the HashiCorp Cloud
@@ -78,6 +78,21 @@ terraform output -raw hcp_consul_config_file | base64 -d | jq > /root/config/hcp
 Now we shall grab the HCP Consul CA for our EKS deployments:
 ```sh
 terraform output -raw hcp_consul_ca_file | base64 -d > /root/config/hcp_ca.pem
+```
+
+Execute the following command to save the environment variabled for our ECS cluster:
+```sh
+cd /root/terraform/tf-deploy-hcp-consul
+GOSSIP_KEY=`terraform output -raw hcp_consul_config_file | base64 -d | jq -r .encrypt`
+CONSUL_ADDR=`terraform output hcp_consul_private_endpoint_url`
+ACL_TOKEN=`terraform output hcp_acl_token_secret_id`
+
+cat << EOF > /root/config/hcp_consul.tfvars
+consul_client_ca_path = "/root/config/hcp_ca.pem"
+consul_cluster_addr   = $CONSUL_ADDR
+consul_gossip_key     = "$GOSSIP_KEY"
+consul_acl_token      = $ACL_TOKEN
+EOF
 ```
 
 Review the output in the `code - HCP Config` tab.
