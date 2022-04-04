@@ -31,10 +31,9 @@ output "hcp_acl_token_secret_id" {
   value = hcp_consul_cluster_root_token.token.secret_id
   sensitive = true
 }
-output "vpc_region" {
-  value = data.aws_region.current
-}
+#output "vpc_region" {
+#  value = data.aws_region.current
+#}
 output "hcp_hvn" {
   value = hcp_hvn.workshop_hvn
 }
-

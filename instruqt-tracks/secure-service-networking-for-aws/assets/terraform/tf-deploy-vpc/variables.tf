@@ -1,4 +1,5 @@
 ## Globals
+
 variable "region" {
   description = "The region of the HCP HVN and Consul cluster."
   type        = string
@@ -15,6 +16,22 @@ variable "route_id" {
   description = "The ID of the HCP HVN route."
   type        = string
   default     = "workshop-hvn-route"
+}
+
+
+
+
+## HCP Credentials
+
+variable "hcp_client_id" {
+  description = "The ID of the HCP principal."
+  type        = string
+  default     = ""
+}
+variable "hcp_client_secret" {
+  description = "The Secret of the HCP principal."
+  type        = string
+  default     = ""
 }
 
 
