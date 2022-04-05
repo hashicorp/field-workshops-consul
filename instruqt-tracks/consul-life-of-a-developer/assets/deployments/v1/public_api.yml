@@ -36,7 +36,7 @@ spec:
       serviceAccountName: public-api
       containers:
         - name: public-api
-          image: hashicorpdemoapp/public-api:v0.0.6
+          image: hashicorpdemoapp/public-api:v0.0.7
           ports:
             - containerPort: 8080
           env:
@@ -50,3 +50,11 @@ spec:
               value: "http://payments-api:8080"
             - name : JAEGER_ENDPOINT
               value: http://jaeger-collector:14268/api/traces
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 10
+            failureThreshold: 2
