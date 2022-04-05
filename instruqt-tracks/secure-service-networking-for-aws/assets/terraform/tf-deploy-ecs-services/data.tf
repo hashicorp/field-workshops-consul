@@ -22,3 +22,11 @@ data "terraform_remote_state" "hcp" {
     path = "/root/terraform/tf-deploy-hcp-consul/terraform.tfstate"
   }
 }
+
+data "terraform_remote_state" "vpc" {
+  backend = "local"
+
+  config = {
+    path = "/root/terraform/tf-deploy-vpc/terraform.tfstate"
+  }
+}

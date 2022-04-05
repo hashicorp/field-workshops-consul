@@ -1,8 +1,6 @@
 module "acl_controller" {
-#  source  = "hashicorp/consul-ecs/aws//modules/acl-controller"
-#  version = "0.3.0"
-  source = "git::https://github.com/hashicorp/terraform-aws-consul-ecs.git//modules/acl-controller?ref=cthain-add-ns-at"
-  consul_ecs_image                  = "docker.mirror.hashicorp.services/hashicorpdev/consul-ecs:cfe3df3"
+  source  = "hashicorp/consul-ecs/aws//modules/acl-controller"
+  version = "0.4.0"
   consul_partitions_enabled         = true
   consul_partition                  = "ecs-services"
   log_configuration = {
@@ -17,17 +15,14 @@ module "acl_controller" {
   consul_server_http_addr           = data.terraform_remote_state.hcp.outputs.hcp_consul_private_endpoint_url
   ecs_cluster_arn                   = aws_ecs_cluster.this.arn
   region                            = var.vpc_region
-  subnets                           = var.private_subnets_ids
+  subnets                           = data.terraform_remote_state.vpc.outputs.ecs_dev_private_subnets
   name_prefix                       = var.name
 }
 
 module "public-api" {
-#  source  = "hashicorp/consul-ecs/aws//modules/mesh-task"
-#  version = "0.3.0"
-  source = "git::https://github.com/hashicorp/terraform-aws-consul-ecs.git//modules/mesh-task?ref=cthain-add-ns-at"
+  source  = "hashicorp/consul-ecs/aws//modules/mesh-task"
+  version = "0.3.0"
   consul_image      = "hashicorp/consul-enterprise:1.11.4-ent"
-  consul_ecs_image                  = "docker.mirror.hashicorp.services/hashicorpdev/consul-ecs:cfe3df3"
-#  consul_partitions_enabled         = "-partitions-enabled"
   consul_partition                  = "ecs-services"
   consul_namespace                  = "default"
 
