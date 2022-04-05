@@ -1,8 +1,8 @@
 locals {
+  hcp_hvn_cidr_block      = data.terraform_remote_state.hcp.outputs.hcp_hvn.cidr_block
   hcp_acl_token_secret_id = data.terraform_remote_state.hcp.outputs.hcp_acl_token_secret_id
   hcp_consul_cluster    = data.terraform_remote_state.hcp.outputs.hcp_consul_cluster
   vpc_id                = data.terraform_remote_state.vpc.outputs.eks_prod_aws_vpc_id
-  vpc_cidr_block        = data.terraform_remote_state.vpc.outputs.eks_prod_vpc_cidr_block
   public_subnets        = data.terraform_remote_state.vpc.outputs.eks_prod_public_subnets
 }
 

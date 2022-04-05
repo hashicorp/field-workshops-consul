@@ -31,7 +31,7 @@ resource "aws_security_group_rule" "hcp_consul_existing_grp" {
   description       = local.hcp_consul_security_groups[count.index].description
   protocol          = local.hcp_consul_security_groups[count.index].protocol
   security_group_id = local.hcp_consul_security_groups[count.index].security_group_id
-  cidr_blocks       = [local.vpc_cidr_block]
+  cidr_blocks       = [local.hcp_hvn_cidr_block]
   from_port         = local.hcp_consul_security_groups[count.index].port
   to_port           = local.hcp_consul_security_groups[count.index].port
   type              = "ingress"
