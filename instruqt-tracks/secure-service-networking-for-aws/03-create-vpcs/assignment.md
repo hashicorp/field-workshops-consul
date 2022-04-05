@@ -18,7 +18,7 @@ tabs:
   type: website
   url: https://portal.cloud.hashicorp.com:443/sign-up
   new_window: true
-- title: code - ecs
+- title: code - VPC
   type: code
   hostname: shell
   path: /root/terraform/tf-deploy-vpc
