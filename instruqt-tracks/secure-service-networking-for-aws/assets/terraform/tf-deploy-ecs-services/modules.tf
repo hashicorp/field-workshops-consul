@@ -7,15 +7,15 @@ module "acl_controller" {
     logDriver = "awslogs"
     options = {
       awslogs-group         = aws_cloudwatch_log_group.log_group.name
-      awslogs-region        = var.vpc_region
+      awslogs-region        = var.region
       awslogs-stream-prefix = "consul-acl-controller"
     }
   }
   consul_bootstrap_token_secret_arn = aws_secretsmanager_secret.bootstrap_token.arn
-  consul_server_http_addr           = data.terraform_remote_state.hcp.outputs.hcp_consul_private_endpoint_url
+  consul_server_http_addr           = local.hcp_consul_private_endpoint_url
   ecs_cluster_arn                   = aws_ecs_cluster.this.arn
-  region                            = var.vpc_region
-  subnets                           = data.terraform_remote_state.vpc.outputs.ecs_dev_private_subnets
+  region                            = var.region
+  subnets                           = local.ecs_dev_private_subnets
   name_prefix                       = var.name
 }
 
@@ -60,14 +60,14 @@ module "public-api" {
     }
   ]
   // Strip away the https prefix from the Consul network address
-  retry_join                     = [substr(data.terraform_remote_state.hcp.outputs.hcp_consul_private_endpoint_url, 8, -1)]
+  retry_join                     = [substr(local.hcp_consul_private_endpoint_url, 8, -1)]
   tls                            = true
   consul_server_ca_cert_arn      = aws_secretsmanager_secret.consul_ca_cert.arn
   gossip_key_secret_arn          = aws_secretsmanager_secret.gossip_key.arn
   acls                           = true
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
   acl_secret_name_prefix         = var.name
-  consul_datacenter              = data.terraform_remote_state.hcp.outputs.consul_datacenter
+  consul_datacenter              = local.consul_datacenter
 
   depends_on = [module.acl_controller]
 }

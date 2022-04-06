@@ -9,7 +9,7 @@ module "vpc_ecs_dev" {
   public_subnets  = var.ecs_dev_public_subnets
 
   enable_nat_gateway = true
-  enable_vpn_gateway = true
+  single_nat_gateway = true
 
   tags = {
     Terraform = "true"

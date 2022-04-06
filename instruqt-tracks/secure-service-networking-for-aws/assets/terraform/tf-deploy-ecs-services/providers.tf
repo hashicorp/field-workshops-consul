@@ -16,14 +16,14 @@ terraform {
 }
 
 provider "aws" {
-  region = var.vpc_region
+  region = var.region
   default_tags {
     tags = var.default_tags
   }
 }
 
 provider "consul" {
-  address    = data.terraform_remote_state.hcp.outputs.hcp_consul_public_endpoint_url
-  datacenter = data.terraform_remote_state.hcp.outputs.consul_datacenter
-  token      = data.terraform_remote_state.hcp.outputs.hcp_acl_token_secret_id
+  address    = local.hcp_consul_public_endpoint_url
+  datacenter = local.consul_datacenter
+  token      = local.hcp_acl_token_secret_id
 }

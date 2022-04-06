@@ -4,7 +4,7 @@ variable "name" {
   default     = "consul-ecs"
 }
 
-variable "vpc_region" {
+variable "region" {
   description = "AWS region."
   type        = string
   default     = "us-west-2"
@@ -33,6 +33,7 @@ variable "consul_gossip_key" {
 variable "consul_client_ca_path" {
   type        = string
   description = "The path to your Consul CA certificate."
+  default = "/root/config/hcp_ca.pem"
 }
 
 variable "ecs_dev_private_subnets" {
