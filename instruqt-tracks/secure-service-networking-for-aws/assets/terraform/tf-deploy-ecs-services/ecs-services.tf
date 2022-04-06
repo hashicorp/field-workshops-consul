@@ -27,7 +27,7 @@ resource "aws_ecs_service" "public-api" {
   task_definition = module.public-api.task_definition_arn
   desired_count   = 1
   network_configuration {
-    subnets = var.private_subnets_ids
+    subnets = var.ecs_dev_private_subnets
   }
   launch_type            = "FARGATE"
   propagate_tags         = "TASK_DEFINITION"

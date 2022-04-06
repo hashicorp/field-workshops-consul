@@ -45,11 +45,6 @@ variable "public_subnets_ids" {
   description = "A list of public subnets and their respective ids."
 }
 
-variable "ecs_vpc_id" {
-  type        = string
-  description = "Your AWS VPC ID."
-}
-
 variable "user_public_ip" {
   description = "Your Public IP. This is used in the load balancer security groups to ensure only you can access the Consul UI and example application."
   type        = string

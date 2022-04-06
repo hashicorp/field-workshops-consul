@@ -1,6 +1,6 @@
 locals {
   consul_gossip_key = jsondecode(base64decode(data.terraform_remote_state.hcp.outputs.hcp_consul_cluster.consul_config_file))["encrypt"]
-  hcp_acl_token     = data.terraform_remote_state.hcp.outputs.hcp_acl_token.secret_id
+  hcp_acl_token     = data.terraform_remote_state.hcp.outputs.hcp_acl_token_secret_id
 }
 
 resource "aws_secretsmanager_secret" "bootstrap_token" {
