@@ -11,8 +11,7 @@ data "aws_caller_identity" "current" {}
 
 data "aws_security_group" "vpc_default" {
   name   = "default"
-#  vpc_id = var.vpc_id
-  vpc_id = data.terraform_remote_state.hcp.outputs.aws_vpc_ecs_id
+  vpc_id = data.terraform_remote_state.hcp.outputs.ecs_dev_aws_vpc_id
 }
 
 data "terraform_remote_state" "hcp" {

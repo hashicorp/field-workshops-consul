@@ -1,14 +1,7 @@
 locals {
   vpc_region            = "us-west-2"
-  hvn_region            = "us-west-2"
-  cluster_id            = "workshop-hcp-consul"
-  hvn_id                = "workshop-hvn"
-  hcp_cluster_token_root_token = data.terraform_remote_state.hcp.outputs.hcp_acl_token
-  hcp_acl_token_secret_id = data.terraform_remote_state.hcp.outputs.hcp_acl_token_secret_id
-  hcp_consul_cluster    = data.terraform_remote_state.hcp.outputs.hcp_consul_cluster
   hvn                   = data.terraform_remote_state.hcp.outputs.hcp_hvn
   vpc_id                = data.terraform_remote_state.hcp.outputs.aws_vpc_ecs_id
-  vpc_owner_id          = data.terraform_remote_state.hcp.outputs.ecs_vpc_owner_id
   vpc_cidr_block        = data.terraform_remote_state.hcp.outputs.ecs_vpc_cidr_block
   private_route_table_ids = data.terraform_remote_state.hcp.outputs.ecs_private_route_table_ids
   private_subnets        = data.terraform_remote_state.hcp.outputs.ecs_private_subnets
