@@ -21,7 +21,7 @@ module "acl_controller" {
 
 module "public-api" {
   source  = "hashicorp/consul-ecs/aws//modules/mesh-task"
-  version = "0.3.0"
+  version = "0.4.0"
   consul_image      = "hashicorp/consul-enterprise:1.11.4-ent"
   consul_partition                  = "ecs-services"
   consul_namespace                  = "default"
