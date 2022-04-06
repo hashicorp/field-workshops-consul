@@ -35,12 +35,12 @@ variable "consul_client_ca_path" {
   description = "The path to your Consul CA certificate."
 }
 
-variable "private_subnets_ids" {
+variable "ecs_dev_private_subnets" {
   type        = list(string)
   description = "A list of private subnets and their respective ids."
 }
 
-variable "public_subnets_ids" {
+variable "ecs_dev_public_subnets" {
   type        = list(string)
   description = "A list of public subnets and their respective ids."
 }

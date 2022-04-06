@@ -1,3 +1,9 @@
+// Create Admin Partition and Namespace for the client
+resource "consul_admin_partition" "ecs-services" {
+  name        = "ecs-services"
+  description = "Partition for ecs service"
+}
+
 
 //FIXME: 
 // https://registry.terraform.io/providers/hashicorp/consul/latest/docs/resources/config_entry
