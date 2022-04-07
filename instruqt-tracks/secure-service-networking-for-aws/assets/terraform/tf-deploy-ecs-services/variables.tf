@@ -9,41 +9,11 @@ variable "region" {
   type        = string
   default     = "us-west-2"
 }
-variable "consul_cluster_addr" {
-  type        = string
-  description = "The network address of your Consul cluster. "
-}
-
-#variable "consul_datacenter" {
-#  type        = string
-#  description = "The name of your Consul datacenter."
-#  default     = "dc1"
-#}
-
-variable "consul_acl_token" {
-  type        = string
-  description = "Your Consul ACL token with __ permissions."
-}
-
-variable "consul_gossip_key" {
-  type        = string
-  description = "Your Consul gossip encryption key."
-}
 
 variable "consul_client_ca_path" {
   type        = string
   description = "The path to your Consul CA certificate."
   default = "/root/config/hcp_ca.pem"
-}
-
-variable "ecs_dev_private_subnets" {
-  type        = list(string)
-  description = "A list of private subnets and their respective ids."
-}
-
-variable "ecs_dev_public_subnets" {
-  type        = list(string)
-  description = "A list of public subnets and their respective ids."
 }
 
 variable "user_public_ip" {
