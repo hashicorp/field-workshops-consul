@@ -40,12 +40,14 @@ locals {
   ecs_dev_aws_vpc_id = data.terraform_remote_state.vpc.outputs.ecs_dev_aws_vpc_id
   ecs_dev_vpc_owner_id = data.terraform_remote_state.vpc.outputs.ecs_dev_vpc_owner_id
   ecs_dev_vpc_cidr_block = data.terraform_remote_state.vpc.outputs.ecs_dev_vpc_cidr_block
+  ecs_dev_default_route_table_id = data.terraform_remote_state.vpc.outputs.ecs_dev_default_route_table_id
   ecs_dev_public_route_table_ids = data.terraform_remote_state.vpc.outputs.ecs_dev_public_route_table_ids
   ecs_dev_private_subnets = data.terraform_remote_state.vpc.outputs.ecs_dev_private_subnets
   ecs_dev_public_subnets = data.terraform_remote_state.vpc.outputs.ecs_dev_public_subnets
   eks_dev_aws_vpc_id = data.terraform_remote_state.vpc.outputs.eks_dev_aws_vpc_id
   eks_dev_vpc_owner_id = data.terraform_remote_state.vpc.outputs.eks_dev_vpc_owner_id
   eks_dev_vpc_cidr_block = data.terraform_remote_state.vpc.outputs.eks_dev_vpc_cidr_block
+  eks_dev_default_route_table_id = data.terraform_remote_state.vpc.outputs.eks_dev_default_route_table_id
   eks_dev_public_route_table_ids = data.terraform_remote_state.vpc.outputs.eks_dev_public_route_table_ids
   eks_dev_public_subnets = data.terraform_remote_state.vpc.outputs.eks_dev_public_subnets
 }

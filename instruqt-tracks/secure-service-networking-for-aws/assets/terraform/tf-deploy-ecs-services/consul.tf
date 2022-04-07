@@ -22,7 +22,6 @@ resource "consul_config_entry" "proxy_defaults" {
 
 resource "consul_config_entry" "exported_ecs_services" {
   kind = "exported-services"
-#  partition = "ecs-services"
   # Note that only "global" is currently supported for proxy-defaults and that
   # Consul will override this attribute if you set it to anything else.
   name = "ecs-services"
@@ -30,16 +29,19 @@ resource "consul_config_entry" "exported_ecs_services" {
   config_json = jsonencode({
     Services = [
       {
-        Name = "consul-ecs-public-api"
+        Name = "product-api"
+        Partition = "eks-dev"
         Namespace = "default"
         Consumers = [
           {
-            Partition = "eks-dev"
+            Partition = "ecs-services"
           },
         ]
       }
     ]
   })
+  ## Need to force config_config_entry to wait @Consul provider 2.15.0
+  depends_on = [consul_admin_partition.ecs-services]
 }
 
 #resource "consul_config_entry" "exported_eks_dev_services" {
