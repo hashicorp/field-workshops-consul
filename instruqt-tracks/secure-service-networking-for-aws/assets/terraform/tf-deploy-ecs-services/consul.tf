@@ -4,6 +4,17 @@ resource "consul_admin_partition" "ecs-services" {
   description = "Partition for ecs service"
 }
 
+resource "consul_config_entry" "proxy_defaults" {
+
+  kind = "proxy-defaults"
+  name = "global"
+
+  config_json = jsonencode({
+    MeshGateway = {
+      Mode = "local"
+    }
+  })
+}
 
 //FIXME: 
 // https://registry.terraform.io/providers/hashicorp/consul/latest/docs/resources/config_entry
