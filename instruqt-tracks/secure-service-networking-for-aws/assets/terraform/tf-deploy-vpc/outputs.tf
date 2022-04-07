@@ -24,6 +24,9 @@ output "eks_dev_public_route_table_ids" {
   value = module.vpc_eks_dev.public_route_table_ids
 }
 
+output "eks_dev_default_vpc_main_route_table_id" {
+  value = module.vpc_eks_dev.default_vpc_main_route_table_id
+}
 
 
 ## EKS Prod
@@ -52,6 +55,9 @@ output "eks_prod_public_route_table_ids" {
   value = module.vpc_eks_prod.public_route_table_ids
 }
 
+output "eks_prod_default_vpc_main_route_table_id" {
+  value = module.vpc_eks_prod.default_vpc_main_route_table_id
+}
 
 
 ## ECS Dev
@@ -82,4 +88,8 @@ output "ecs_dev_public_route_table_ids" {
 
 output "ecs_dev_private_route_table_ids" {
   value = module.vpc_ecs_dev.private_route_table_ids
+}
+
+output "ecs_dev_default_vpc_main_route_table_id" {
+  value = module.vpc_ecs_dev.default_vpc_main_route_table_id
 }
