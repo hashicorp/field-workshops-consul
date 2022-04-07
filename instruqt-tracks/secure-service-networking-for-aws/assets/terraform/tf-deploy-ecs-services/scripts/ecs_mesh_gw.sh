@@ -52,6 +52,7 @@ data_dir = "/opt/consul/data"
 ports = {
   grpc = 8502
 }
+partition = "${partition}"
 EOF
 
 cat <<EOF> /etc/consul.d/hcp_config.hcl
@@ -84,7 +85,7 @@ Description=Envoy
 After=network-online.target
 Wants=consul.service
 [Service]
-ExecStart=/usr/bin/consul connect envoy -expose-servers -gateway=mesh -register -service "mesh-gateway" -address "$${local_ipv4}:443" -wan-address "$${public_ipv4}:443" -token-file /etc/envoy/consul.token -- -l debug
+ExecStart=/usr/bin/consul connect envoy -gateway=mesh -partition "ecs-services" -register -service "mesh-gateway" -address "$${local_ipv4}:8443" -token-file /etc/envoy/consul.token -- -l debug
 Restart=always
 RestartSec=5
 StartLimitIntervalSec=0

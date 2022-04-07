@@ -31,6 +31,7 @@ data "template_file" "aws_mgw_init" {
     agent_config = file("/root/config/hcp_client_config.json")
     token = local.hcp_acl_token_secret_id
     ca = file("/root/config/hcp_ca.pem")
+    partition = "ecs-services"
   }
 }
 
