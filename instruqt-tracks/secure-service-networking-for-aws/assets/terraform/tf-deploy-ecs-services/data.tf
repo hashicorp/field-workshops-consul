@@ -38,6 +38,14 @@ locals {
   consul_gossip_key = jsondecode(base64decode(data.terraform_remote_state.hcp.outputs.hcp_consul_cluster.consul_config_file))["encrypt"]
   hcp_acl_token     = data.terraform_remote_state.hcp.outputs.hcp_acl_token_secret_id
   ecs_dev_aws_vpc_id = data.terraform_remote_state.vpc.outputs.ecs_dev_aws_vpc_id
+  ecs_dev_vpc_owner_id = data.terraform_remote_state.vpc.outputs.ecs_dev_vpc_owner_id
+  ecs_dev_vpc_cidr_block = data.terraform_remote_state.vpc.outputs.ecs_dev_vpc_cidr_block
+  ecs_dev_public_route_table_ids = data.terraform_remote_state.vpc.outputs.ecs_dev_public_route_table_ids
   ecs_dev_private_subnets = data.terraform_remote_state.vpc.outputs.ecs_dev_private_subnets
   ecs_dev_public_subnets = data.terraform_remote_state.vpc.outputs.ecs_dev_public_subnets
+  eks_dev_aws_vpc_id = data.terraform_remote_state.vpc.outputs.eks_dev_aws_vpc_id
+  eks_dev_vpc_owner_id = data.terraform_remote_state.vpc.outputs.eks_dev_vpc_owner_id
+  eks_dev_vpc_cidr_block = data.terraform_remote_state.vpc.outputs.eks_dev_vpc_cidr_block
+  eks_dev_public_route_table_ids = data.terraform_remote_state.vpc.outputs.eks_dev_public_route_table_ids
+  eks_dev_public_subnets = data.terraform_remote_state.vpc.outputs.eks_dev_public_subnets
 }
