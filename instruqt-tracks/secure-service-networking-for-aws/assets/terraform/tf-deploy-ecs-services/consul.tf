@@ -34,14 +34,12 @@ resource "consul_config_entry" "exported_ecs_services" {
         Namespace = "default"
         Consumers = [
           {
-            Partition = "ecs-services"
+            Partition = consul_admin_partition.ecs-services.name
           },
         ]
       }
     ]
   })
-  ## Need to force config_config_entry to wait @Consul provider 2.15.0
-  depends_on = [consul_admin_partition.ecs-services]
 }
 
 #resource "consul_config_entry" "exported_eks_dev_services" {

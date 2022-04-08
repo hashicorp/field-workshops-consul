@@ -1,11 +1,11 @@
-resource "aws_security_group" "example_client_app_alb" {
-  name   = "${var.name}-example-client-app-alb"
+resource "aws_security_group" "frontend" {
+  name   = "${var.name}-frontend-alb"
   vpc_id = local.ecs_dev_aws_vpc_id
 
   ingress {
     description = "Access to example client application."
-    from_port   = 9090
-    to_port     = 9090
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["${var.user_public_ip}"]
   }
@@ -23,8 +23,17 @@ resource "aws_security_group_rule" "ingress_from_client_alb_to_ecs" {
   from_port                = 0
   to_port                  = 65535
   protocol                 = "tcp"
-  source_security_group_id = aws_security_group.example_client_app_alb.id
+  source_security_group_id = aws_security_group.frontend.id
   security_group_id        = data.aws_security_group.vpc_default.id
+}
+
+resource "aws_security_group_rule" "eks_dev_mesh_gateway_ingress" {
+  type                     = "ingress"
+  from_port                = 8443
+  to_port                  = 8443
+  protocol                 = "tcp"
+  cidr_blocks              = [ local.ecs_dev_vpc_cidr_block ]
+  security_group_id        = local.eks_dev_cluster_primary_security_group_id
 }
 
 

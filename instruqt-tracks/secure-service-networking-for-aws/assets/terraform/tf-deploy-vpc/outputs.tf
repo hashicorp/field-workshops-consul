@@ -20,6 +20,10 @@ output "eks_dev_public_subnets" {
   value = module.vpc_eks_dev.public_subnets
 }
 
+output "eks_dev_private_route_table_ids" {
+  value = module.vpc_eks_dev.private_route_table_ids
+}
+
 output "eks_dev_public_route_table_ids" {
   value = module.vpc_eks_dev.public_route_table_ids
 }
@@ -49,6 +53,10 @@ output "eks_prod_private_subnets" {
 
 output "eks_prod_public_subnets" {
   value = module.vpc_eks_prod.public_subnets
+}
+
+output "eks_prod_private_route_table_ids" {
+  value = module.vpc_eks_prod.private_route_table_ids
 }
 
 output "eks_prod_public_route_table_ids" {
