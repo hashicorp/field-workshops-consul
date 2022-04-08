@@ -8,7 +8,7 @@ resource "aws_lb" "frontend" {
 
 resource "aws_lb_target_group" "frontend" {
   name                 = "${var.name}-frontend-app"
-  port                 = 9090
+  port                 = 3000
   protocol             = "HTTP"
   vpc_id               = local.ecs_dev_aws_vpc_id
   target_type          = "ip"
@@ -24,7 +24,7 @@ resource "aws_lb_target_group" "frontend" {
 
 resource "aws_lb_listener" "frontend" {
   load_balancer_arn = aws_lb.frontend.arn
-  port              = "9090"
+  port              = "80"
   protocol          = "HTTP"
   default_action {
     type             = "forward"

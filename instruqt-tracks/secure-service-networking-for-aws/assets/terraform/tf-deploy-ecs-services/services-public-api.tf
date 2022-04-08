@@ -25,7 +25,7 @@ module "public-api" {
   log_configuration = local.product-api_log_config
   container_definitions = [{
     name             = "product-api"
-    image            = "hashicorpdemoapp/public-api:v0.0.6"
+    image            = "hashicorpdemoapp/public-api:v0.0.7"
     essential        = true
     logConfiguration = local.product-api_log_config
     environment = [
@@ -48,6 +48,7 @@ module "public-api" {
       destinationName = "product-api"
       destinationPartition = "eks-dev"
       destinationNamespace = "default"
+      meshGateway = "local"
       localBindPort  = 9090
     }
   ]

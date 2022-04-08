@@ -37,7 +37,7 @@ module "frontend" {
   log_configuration        = local.frontend_log_config
   container_definitions = [{
     name             = "frontend"
-    image            = "hashicorpdemoapp/frontend:v1.0.2"
+    image            = "hashicorpdemoapp/frontend:v1.0.3"
     essential        = true
     logConfiguration = local.frontend_log_config
     environment = [{
