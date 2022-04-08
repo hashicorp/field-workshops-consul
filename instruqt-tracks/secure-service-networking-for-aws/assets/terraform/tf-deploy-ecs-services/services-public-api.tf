@@ -8,7 +8,7 @@ resource "aws_ecs_service" "public-api" {
   }
   launch_type            = "FARGATE"
   propagate_tags         = "TASK_DEFINITION"
-#  enable_execute_command = true
+  enable_execute_command = true
 }
 
 module "public-api" {
@@ -21,7 +21,7 @@ module "public-api" {
   family            = "${var.name}-public-api"
   cpu               = 1024
   memory            = 2048
-  port              = "9090"
+  port              = "8080"
   log_configuration = local.product-api_log_config
   container_definitions = [{
     name             = "product-api"
@@ -31,21 +31,39 @@ module "public-api" {
     environment = [
       {
         name  = "PAYMENT_API_URI"
-        value = "http://payments:9090"
+        value = "http://localhost:9090"
       },
       {
         name  = "PRODUCT_API_URI"
-        value = "http://product-api:9090"
+        value = "http://localhost:9091"
       },
       {
         name = "BIND_ADDRESS"
         value = ":8080"
       }
     ]
+    linuxParameters = {
+      initProcessEnabled = true
+    }
+    portMappings = [
+      {
+        containerPort = 8080
+        hostPort      = 8080
+        protocol      = "tcp"
+      }
+    ]
+
   }]
   upstreams = [
     {
       destinationName = "product-api"
+      destinationPartition = "eks-dev"
+      destinationNamespace = "default"
+      meshGateway = "local"
+      localBindPort  = 9091
+    },
+    {
+      destinationName = "payments"
       destinationPartition = "eks-dev"
       destinationNamespace = "default"
       meshGateway = "local"
@@ -62,5 +80,6 @@ module "public-api" {
   acl_secret_name_prefix         = var.name
   consul_datacenter              = local.consul_datacenter
 
+  additional_task_role_policies = [aws_iam_policy.execute_command.arn]
   depends_on = [module.acl_controller]
 }

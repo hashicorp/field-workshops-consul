@@ -20,7 +20,7 @@ resource "consul_config_entry" "proxy_defaults" {
 // https://registry.terraform.io/providers/hashicorp/consul/latest/docs/resources/config_entry
 // https://www.consul.io/docs/connect/config-entries/exported-services
 
-resource "consul_config_entry" "exported_ecs_services" {
+resource "consul_config_entry" "exported_eks_services" {
   kind = "exported-services"
   # Note that only "global" is currently supported for proxy-defaults and that
   # Consul will override this attribute if you set it to anything else.
@@ -30,6 +30,16 @@ resource "consul_config_entry" "exported_ecs_services" {
     Services = [
       {
         Name = "product-api"
+        Partition = "eks-dev"
+        Namespace = "default"
+        Consumers = [
+          {
+            Partition = consul_admin_partition.ecs-services.name
+          },
+        ]
+      },
+      {
+        Name = "payments"
         Partition = "eks-dev"
         Namespace = "default"
         Consumers = [

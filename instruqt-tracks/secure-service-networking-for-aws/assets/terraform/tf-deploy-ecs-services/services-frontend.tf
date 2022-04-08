@@ -19,7 +19,7 @@ resource "aws_ecs_service" "frontend" {
     container_name   = "frontend"
     container_port   = local.frontend_port
   }
-#  enable_execute_command = true
+  enable_execute_command = true
 }
 
 module "frontend" {
@@ -43,7 +43,14 @@ module "frontend" {
     environment = [{
       name  = "NAME"
       value = local.frontend_name
+    },
+    {
+      name  = "NEXT_PUBLIC_PUBLIC_API_URL"
+      value = "http://localhost:8080"
     }]
+    linuxParameters = {
+      initProcessEnabled = true
+    }
     portMappings = [
       {
         containerPort = local.frontend_port
@@ -70,6 +77,7 @@ module "frontend" {
   acl_secret_name_prefix         = var.name
   consul_datacenter              = local.consul_datacenter
 
+  additional_task_role_policies = [aws_iam_policy.execute_command.arn]
   depends_on = [module.acl_controller]
 
 }

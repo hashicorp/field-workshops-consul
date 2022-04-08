@@ -46,5 +46,4 @@ resource "aws_iam_policy" "execute_command" {
   ]
 }
 EOF
-
 }
