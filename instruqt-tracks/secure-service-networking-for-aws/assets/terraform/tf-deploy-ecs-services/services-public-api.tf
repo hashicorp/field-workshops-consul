@@ -1,5 +1,5 @@
 resource "aws_ecs_service" "public-api" {
-  name            = "${var.name}-public-api"
+  name            = "public-api"
   cluster         = aws_ecs_cluster.this.arn
   task_definition = module.public-api.task_definition_arn
   desired_count   = 1
@@ -18,16 +18,16 @@ module "public-api" {
   consul_partition                  = "ecs-services"
   consul_namespace                  = "default"
 
-  family            = "${var.name}-public-api"
+  family            = "public-api"
   cpu               = 1024
   memory            = 2048
   port              = "8080"
-  log_configuration = local.product-api_log_config
+  log_configuration = local.public-api_log_config
   container_definitions = [{
-    name             = "product-api"
+    name             = "public-api"
     image            = "hashicorpdemoapp/public-api:v0.0.7"
     essential        = true
-    logConfiguration = local.product-api_log_config
+    logConfiguration = local.public-api_log_config
     environment = [
       {
         name  = "PAYMENT_API_URI"
@@ -59,15 +59,19 @@ module "public-api" {
       destinationName = "product-api"
       destinationPartition = "eks-dev"
       destinationNamespace = "default"
-      meshGateway = "local"
       localBindPort  = 9091
+      meshGateway = {
+        mode = "local"
+      }
     },
     {
       destinationName = "payments"
       destinationPartition = "eks-dev"
       destinationNamespace = "default"
-      meshGateway = "local"
       localBindPort  = 9090
+      meshGateway = {
+        mode = "local"
+      }
     }
   ]
   // Strip away the https prefix from the Consul network address
@@ -77,7 +81,7 @@ module "public-api" {
   gossip_key_secret_arn          = aws_secretsmanager_secret.gossip_key.arn
   acls                           = true
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
-  acl_secret_name_prefix         = var.name
+#  acl_secret_name_prefix         = var.name
   consul_datacenter              = local.consul_datacenter
 
   additional_task_role_policies = [aws_iam_policy.execute_command.arn]

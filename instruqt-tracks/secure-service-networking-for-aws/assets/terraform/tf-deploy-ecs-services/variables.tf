@@ -31,3 +31,43 @@ variable "default_tags" {
     tutorial    = "Serverless Consul service mesh with ECS and HCP"
   }
 }
+
+variable "target_group_settings" {
+  default = {
+    elb = {
+      services = [
+        {
+          name                 = "frontend"
+          service_type         = "http"
+          protocol             = "HTTP"
+          target_group_type    = "ip"
+          port                 = "80"
+          deregistration_delay = 30
+          health = {
+            healthy_threshold   = 2
+            unhealthy_threshold = 2
+            interval            = 30
+            timeout             = 29
+            path                = "/"
+          }
+        },
+        {
+          name                 = "public-api"
+          service_type         = "http"
+          protocol             = "HTTP"
+          target_group_type    = "ip"
+          port                 = "8081"
+          deregistration_delay = 30
+          health = {
+            healthy_threshold   = 2
+            unhealthy_threshold = 2
+            interval            = 30
+            timeout             = 29
+            path                = "/"
+            port                = "8081"
+          },
+        },
+      ]
+    }
+  }
+}

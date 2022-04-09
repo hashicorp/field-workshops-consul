@@ -1,10 +1,10 @@
 locals {
-  frontend_name = "${var.name}-frontend"
-  frontend_port = 80
+  frontend_name = "frontend"
+  frontend_port = 3000
 }
 
 resource "aws_ecs_service" "frontend" {
-  name            = "${var.name}-frontend"
+  name            = local.frontend_name
   cluster         = aws_ecs_cluster.this.arn
   task_definition = module.frontend.task_definition_arn
   desired_count   = 1
@@ -16,7 +16,7 @@ resource "aws_ecs_service" "frontend" {
   propagate_tags = "TASK_DEFINITION"
   load_balancer {
     target_group_arn = aws_lb_target_group.frontend.arn
-    container_name   = "frontend"
+    container_name   = local.frontend_name
     container_port   = local.frontend_port
   }
   enable_execute_command = true
@@ -30,24 +30,26 @@ module "frontend" {
   consul_namespace         = "default"
 
 #  requires_compatibilities = ["FARGATE"]
-  family                   = "${var.name}-frontend"
+  family                   = "frontend"
   cpu               = 1024
   memory            = 2048
-  port                     = "80"
+  port                     = "3000"
   log_configuration        = local.frontend_log_config
   container_definitions = [{
-    name             = "frontend"
+    name             = local.frontend_end
     image            = "hashicorpdemoapp/frontend:v1.0.3"
     essential        = true
     logConfiguration = local.frontend_log_config
     environment = [{
-      name  = "NAME"
-      value = local.frontend_name
-    },
-    {
-      name  = "NEXT_PUBLIC_PUBLIC_API_URL"
-      value = "http://localhost:8080"
-    }]
+        name  = "NAME"
+        value = local.frontend_name
+      },
+      {
+        name = "NEXT_PUBLIC_PUBLIC_API_URL",
+        #value = "${hcp_consul_cluster.example.consul_public_endpoint_url}:8081"
+        value = "http://${aws_lb.frontend.dns_name}:8081"
+      }
+    ]
     linuxParameters = {
       initProcessEnabled = true
     }
@@ -64,8 +66,8 @@ module "frontend" {
   }]
   upstreams = [
     {
-      destinationName = "consul-ecs-public-api"
-      localBindPort  = 8080
+      destinationName = "public-api"
+      localBindPort  = 8081
     }
   ]
   retry_join                     = [substr(local.hcp_consul_private_endpoint_url, 8, -1)]
@@ -74,7 +76,6 @@ module "frontend" {
   gossip_key_secret_arn          = aws_secretsmanager_secret.gossip_key.arn
   acls                           = true
   consul_client_token_secret_arn = module.acl_controller.client_token_secret_arn
-  acl_secret_name_prefix         = var.name
   consul_datacenter              = local.consul_datacenter
 
   additional_task_role_policies = [aws_iam_policy.execute_command.arn]

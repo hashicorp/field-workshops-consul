@@ -1,5 +1,5 @@
 resource "aws_secretsmanager_secret" "bootstrap_token" {
-  name                    = "${var.name}-bootstrap-token"
+  name                    = "bootstrap-token"
   recovery_window_in_days = 0
 }
 
@@ -9,7 +9,7 @@ resource "aws_secretsmanager_secret_version" "bootstrap_token" {
 }
 
 resource "aws_secretsmanager_secret" "gossip_key" {
-  name                    = "${var.name}-gossip-key"
+  name                    = "gossip-key"
   recovery_window_in_days = 0
 }
 
@@ -19,7 +19,7 @@ resource "aws_secretsmanager_secret_version" "gossip_key" {
 }
 
 resource "aws_secretsmanager_secret" "consul_ca_cert" {
-  name                    = "${var.name}-consul-ca-cert"
+  name                    = "consul-ca-cert"
   recovery_window_in_days = 0
 }
 

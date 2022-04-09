@@ -16,5 +16,4 @@ module "acl_controller" {
   ecs_cluster_arn                   = aws_ecs_cluster.this.arn
   region                            = var.region
   subnets                           = local.ecs_dev_private_subnets
-  name_prefix                       = var.name
 }
