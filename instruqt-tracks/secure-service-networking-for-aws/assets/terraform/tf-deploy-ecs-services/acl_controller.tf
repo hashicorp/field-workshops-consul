@@ -2,7 +2,8 @@ module "acl_controller" {
   source  = "hashicorp/consul-ecs/aws//modules/acl-controller"
   version = "0.4.0"
   consul_partitions_enabled         = true
-  consul_partition                  = "ecs-services"
+  consul_partition                  = "ecs-dev"
+  name_prefix                       = var.name
   log_configuration = {
     logDriver = "awslogs"
     options = {

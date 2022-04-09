@@ -31,7 +31,7 @@ data "template_file" "aws_mgw_init" {
     agent_config = file("/root/config/hcp_client_config.json")
     token = local.hcp_acl_token_secret_id
     ca = file("/root/config/hcp_ca.pem")
-    partition = "ecs-services"
+    partition = "ecs-dev"
   }
 }
 
@@ -39,13 +39,9 @@ resource "aws_instance" "mesh_gateway" {
   instance_type               = "t3.small"
   ami                         = data.aws_ami.ubuntu.id
   key_name                    = module.key_pair.key_pair_key_name
-#  key_name                    = data.terraform_remote_state.infra.outputs.aws_ssh_key_name
-#  vpc_security_group_ids      = [aws_security_group.consul.id]
   subnet_id                   = local.ecs_dev_public_subnets[0]
   associate_public_ip_address = true
   user_data                   = data.template_file.aws_mgw_init.rendered
-#  user_data                   = file("${path.module}/scripts/ecs_mesh_gw.sh")
-#  iam_instance_profile        = data.terraform_remote_state.iam.outputs.aws_consul_iam_instance_profile_name
   tags = {
     Name = "consul-mgw"
   }

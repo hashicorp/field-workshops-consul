@@ -85,7 +85,7 @@ Description=Envoy
 After=network-online.target
 Wants=consul.service
 [Service]
-ExecStart=/usr/bin/consul connect envoy -gateway=mesh -partition "ecs-services" -register -service "mesh-gateway" -address "$${local_ipv4}:8443" -token-file /etc/envoy/consul.token -- -l debug
+ExecStart=/usr/bin/consul connect envoy -gateway=mesh -partition "${partition}" -register -service "mesh-gateway" -address "$${local_ipv4}:8443" -token-file /etc/envoy/consul.token -- -l debug
 Restart=always
 RestartSec=5
 StartLimitIntervalSec=0

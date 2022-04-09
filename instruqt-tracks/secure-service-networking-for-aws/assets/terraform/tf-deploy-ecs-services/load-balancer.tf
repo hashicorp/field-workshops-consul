@@ -1,54 +1,65 @@
-resource "aws_lb" "frontend" {
-  name               = "frontend-app"
+resource "aws_lb" "hashicups" {
+  name               = "hashicups"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.frontend.id]
   subnets            = local.ecs_dev_public_subnets
 }
 
-#resource "aws_lb_target_group" "frontend" {
-#  name                 = "frontend-app"
-#  port                 = 3000
-#  protocol             = "HTTP"
-#  vpc_id               = local.ecs_dev_aws_vpc_id
-#  target_type          = "ip"
-#  deregistration_delay = 10
-#  health_check {
-#    path                = "/"
-#    healthy_threshold   = 2
-#    unhealthy_threshold = 10
-#    timeout             = 30
-#    interval            = 60
-#  }
-#}
 
-resource "aws_lb_target_group" "hashicups" {
+## HashiCups Frontend
 
-  for_each             = { for service in var.target_group_settings.elb.services : service.name => service }
-  name                 = each.value.name
-  port                 = each.value.port
-  protocol             = each.value.protocol
-  target_type          = each.value.target_group_type
+resource "aws_lb_listener" "frontend" {
+  load_balancer_arn = aws_lb.hashicups.arn
+  port              = 80
+  protocol          = "HTTP"
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.frontend.arn
+  }
+}
+
+resource "aws_lb_target_group" "frontend" {
+  name                 = "frontend"
+  port                 = 80
+  protocol             = "HTTP"
   vpc_id               = local.ecs_dev_aws_vpc_id
-  deregistration_delay = 10
+  target_type          = "ip"
+  deregistration_delay = 30
   health_check {
     path                = "/"
     healthy_threshold   = 2
     unhealthy_threshold = 10
     timeout             = 30
     interval            = 60
-    // Try function added due to public-api not listening on the default traffic ports but port 8080
-    port                = try(each.value.health.port, "traffic-port")
   }
 }
 
-resource "aws_lb_listener" "hashicups" {
-  for_each          = aws_lb_target_group.hashicups
-  load_balancer_arn = aws_lb.frontend.arn
-  port              = each.value.port
-  protocol          = each.value.protocol
+
+## HashiCups Public API
+
+resource "aws_lb_listener" "public-api" {
+  load_balancer_arn = aws_lb.hashicups.arn
+  port              = 8081
+  protocol          = "HTTP"
   default_action {
     type             = "forward"
-    target_group_arn = each.value.arn
+    target_group_arn = aws_lb_target_group.public-api.arn
   }
-} 
+}
+
+resource "aws_lb_target_group" "public-api" {
+  name                 = "public-api"
+  port                 = 8081
+  protocol             = "HTTP"
+  vpc_id               = local.ecs_dev_aws_vpc_id
+  target_type          = "ip"
+  deregistration_delay = 30
+  health_check {
+    path                = "/"
+    healthy_threshold   = 2
+    unhealthy_threshold = 10
+    timeout             = 30
+    interval            = 60
+  }
+}
