@@ -1,5 +1,5 @@
 output "client_lb_address" {
-  value = "http://${aws_lb.frontend.dns_name}/"
+  value = "http://${aws_lb.hashicups.dns_name}/"
 }
 
 output "key_pair_key_name" {
