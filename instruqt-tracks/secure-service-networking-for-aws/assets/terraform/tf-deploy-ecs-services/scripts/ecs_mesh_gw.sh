@@ -96,42 +96,4 @@ EOF
 sudo systemctl enable envoy.service
 sudo systemctl start envoy.service
 
-
-cat <<EOF> /home/ubuntu/export-eks.hcl
-Kind = "exported-services"
-Partition = "eks-services"
-Name = "eks-services"
-
-Services = [
-  {
-    Name      = "*"
-    Namespace = "*"
-    Consumers = [
-        {
-            Partition  = "default"
-        }
-    ]
-  }
-]
-EOF
-
-cat <<EOF> /home/ubuntu/export-default.hcl
-Kind = "exported-services"
-Partition = "default"
-Name = "default"
-
-Services = [
-  {
-    Name      = "*"
-    Namespace = "*"
-    Consumers = [
-        {
-            Partition  = "eks-services"
-        }
-    ]
-  }
-]
-EOF
-
-
 exit 0

@@ -47,4 +47,3 @@ resource "consul_config_entry" "exported_eks_services" {
     ]
   })
 }
-
