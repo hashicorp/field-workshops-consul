@@ -19,7 +19,7 @@ resource "consul_config_entry" "public_api_intention" {
 }
 
 resource "consul_config_entry" "product_api_intention" {
-  name = local.product_api_name
+  name = "product-api"
   kind = "service-intentions"
   partition = "eks-dev"
   namespace = "default"
