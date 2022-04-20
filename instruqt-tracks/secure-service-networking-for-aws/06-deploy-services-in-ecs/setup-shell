@@ -8,9 +8,9 @@
 
 echo "Initializing terraform for ECS cluster deployment challenge"
 
-cd /root/terraform/tf-deploy-ecs-services-prod/
+cd /root/terraform/tf-deploy-ecs-services-dev/
 terraform init
 
-set-workdir /root/terraform/tf-deploy-ecs-services-prod
+set-workdir /root/terraform/tf-deploy-ecs-services-dev
 
 exit 0

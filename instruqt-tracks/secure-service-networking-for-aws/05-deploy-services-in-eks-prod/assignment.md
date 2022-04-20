@@ -13,9 +13,6 @@ tabs:
 - title: Infrastructure Overview
   type: website
   url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/n8-ssn4aws-eks/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-infra-overview.html
-- title: App Architecture Overview
-  type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/n8-ssn4aws-eks/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-app-overview.html
 - title: HCP Consul
   type: website
   url: https://portal.cloud.hashicorp.com:443/sign-up
@@ -24,10 +21,6 @@ tabs:
   type: code
   hostname: shell
   path: /root/terraform/tf-deploy-eks-services-prod
-- title: code - ecs
-  type: code
-  hostname: shell
-  path: /root/terraform/tf-deploy-ecs-services
 - title: Cloud Consoles
   type: service
   hostname: shell

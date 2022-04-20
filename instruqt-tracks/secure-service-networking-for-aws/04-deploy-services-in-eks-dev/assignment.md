@@ -13,9 +13,6 @@ tabs:
 - title: Infrastructure Overview
   type: website
   url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/n8-ssn4aws-eks/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-infra-overview.html
-- title: App Architecture Overview
-  type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/n8-ssn4aws-eks/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-app-overview.html
 - title: HCP Consul
   type: website
   url: https://portal.cloud.hashicorp.com:443/sign-up
@@ -47,7 +44,6 @@ terraform plan
 When ready, deploy with:
 ```sh
 nohup terraform apply -auto-approve > /root/terraform/tf-deploy-eks-services-dev/eks_dev.out &
-
 ```
 
 NOTE: we run this in the background (`nohup` / `&`) so that it continues even if your communication with the Instruqt platform is interrupted.

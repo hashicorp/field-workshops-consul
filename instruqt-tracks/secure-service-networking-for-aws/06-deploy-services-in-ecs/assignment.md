@@ -11,17 +11,14 @@ tabs:
 - title: Infrastructure Overview
   type: website
   url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/n8-ssn4aws-eks/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-infra-overview.html
-- title: App Architecture Overview
-  type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/n8-ssn4aws-eks/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-app-overview.html
 - title: HCP Consul
   type: website
   url: https://portal.cloud.hashicorp.com:443/sign-up
   new_window: true
-- title: code - ecs
+- title: code - ECS
   type: code
   hostname: shell
-  path: /root/terraform/tf-deploy-ecs-services
+  path: /root/terraform/tf-deploy-ecs-services-dev
 - title: Cloud Consoles
   type: service
   hostname: shell
@@ -33,26 +30,55 @@ tabs:
 difficulty: basic
 timelimit: 600
 ---
-ECS words go here.
+# Deploy the HashiCups Frontend and Public API
 
-Now we shall write this data to a file as we'll need it later:
+We are going to deploy these two internet facing services onto the ECS platform using terraform. Execute `terraform plan` and review the infrastructure you will create:
 
 ```sh
-ECS_VPC_ID=`terraform output aws_vpc_ecs_id`
-GOSSIP_KEY=`terraform output -raw hcp_consul_config_file | base64 -d | jq -r .encrypt`
-CONSUL_ADDR=`terraform output hcp_consul_private_endpoint_url`
-ECS_PRIVATE_SUBNETS=`terraform output ecs_private_subnets`
-ECS_PUBLIC_SUBNETS=`terraform output ecs_public_subnets`
-ACL_TOKEN=`terraform output hcp_acl_token_secret_id`
-
-cat << EOF > /root/config/terraform.tfvars
-ecs_vpc_id            = $ECS_VPC_ID
-private_subnets_ids   = $ECS_PRIVATE_SUBNETS
-public_subnets_ids    = $ECS_PUBLIC_SUBNETS
-consul_client_ca_path = "/root/config/hcp_ca.pem"
-consul_cluster_addr   = $CONSUL_ADDR
-consul_gossip_key     = "$GOSSIP_KEY"
-consul_acl_token      = $ACL_TOKEN
-EOF
-
+terraform plan
 ```
+
+When ready, deploy this infrastructure with:
+
+```sh
+terraform apply -auto-approve
+```
+
+Open the link HashiCups URL in the terraform output. Note that the app does not work - only the front-end loads. This is because the service mesh behind the font-end adheres to Zero Trust Service Networking principles, and applies them both within a single platform, as we saw with k8s, and across platforms, as we see now for cross platform communications between ECS and EKS.
+
+To enable this Securie Service Networking we must specify cross-partition 'Intentions' - rules that determin which service can reach what.
+
+In the Consul Web Interface, navigate to the Intenions section. We are going to create two intentions:
+1) allow the public-api service to communicate with the products-api service.
+2) allow the public-api service to communicate with the payments service.
+
+
+# Allow public-api to reach products-api
+
+1) Click "Create"
+2) On the left (source) select:
+   1) Service: "public-api"
+   2) Namespace: "default"
+   3) Partition: "ecs-dev"
+3) On the right (desintation) select:
+   1) *Type: "product-api"
+   2) Namespace: "default"
+   3) Partition: "eks-dev"
+
+*The UI does not perform service lookups outside of its partition so you need to know the remote partitions service name.
+
+# Allow public-api to reach payments
+
+1) Click "Create"
+2) On the left (source) select:
+   1) Service: "public-api"
+   2) Namespace: "default"
+   3) Partition: "ecs-dev"
+3) On the right (desintation) select:
+   1) *Type: "payments"
+   2) Namespace: "default"
+   3) Partition: "eks-dev"
+
+*The UI does not perform service lookups outside of its partition so you need to know the remote partitions service name.
+
+
