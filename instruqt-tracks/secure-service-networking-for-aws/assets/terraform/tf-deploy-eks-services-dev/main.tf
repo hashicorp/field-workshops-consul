@@ -6,15 +6,15 @@ locals {
   public_subnets          = data.terraform_remote_state.vpc.outputs.eks_dev_public_subnets
 }
 
-
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "17.24.0"
 
-  cluster_name    = "${var.cluster_id}-${var.env}"
-  cluster_version = "1.21"
-  subnets         = local.public_subnets
-  vpc_id          = local.vpc_id
+  cluster_name             = "${var.cluster_id}-${var.env}"
+  cluster_version          = "1.21"
+  subnets                  = local.public_subnets
+  vpc_id                   = local.vpc_id
+  wait_for_cluster_timeout = 420
 
   node_groups = {
     application = {
