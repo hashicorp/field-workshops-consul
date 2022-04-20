@@ -3,17 +3,15 @@ slug: create-vpcs
 id: a7wrqx5dznir
 type: challenge
 title: Create VPCs
-teaser: A short description of the challenge.
+teaser: Now we create the VPCs and peer them with HCP.
 notes:
 - type: text
-  contents: Replace this text with your own text
+  contents: In this challenge we'll create three VPCs and peer each of them with the
+    HashiCorp Virtual Network (HVN) so they can communicate with HCP Consul.
 tabs:
 - title: Infrastructure Overview
   type: website
   url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/n8-ssn4aws-eks/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-infra-overview.html
-- title: App Architecture Overview
-  type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/n8-ssn4aws-eks/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-app-overview.html
 - title: HCP Consul
   type: website
   url: https://portal.cloud.hashicorp.com:443/sign-up
@@ -33,27 +31,20 @@ tabs:
 difficulty: basic
 timelimit: 600
 ---
-In this challenge we are going to create VPCs that will be used for both developement and prodution deployments across both EKS (Elastic K8s Service) and ECS (Elasting Container Service).
+In this challenge we are going to create three VPCs, which will be used in the following steps. In addition to creating the VPCs we shall peer them, using AWS VPC Peering, and setup the relevant routes, to ensure that services deployed in the VOCs can reach Consul.
+
+To see on overview of the infrastructure we're going to deploy, execute the following command:
 
 ```sh
 terraform plan
 ```
 
+Next we can start the VPC creation, by executing:
+
 ```sh
 terraform apply -auto-approve
 ```
 
+While that's running, take a look at the terraform deployment in `code - VPC`.
 
-Execute the following command to save the environment variabled for our ECS cluster:
-```sh
-cd /root/terraform/tf-deploy-hcp-consul
-ECS_VPC_ID=`terraform output aws_vpc_eks_dev_id`
-ECS_PRIVATE_SUBNETS=`terraform output eks_dev_private_subnets`
-ECS_PUBLIC_SUBNETS=`terraform output eks_dev_public_subnets`
-
-cat << EOF > /root/config/vpc.tfvars
-ecs_vpc_id            = $ECS_VPC_ID
-private_subnets_ids   = $ECS_PRIVATE_SUBNETS
-public_subnets_ids    = $ECS_PUBLIC_SUBNETS
-EOF
-```
+When it's finished, click the green *Check* button at the bottom to progress to the next Instruqt challenge.

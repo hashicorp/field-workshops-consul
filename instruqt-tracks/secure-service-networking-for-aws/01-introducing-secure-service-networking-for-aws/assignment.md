@@ -3,9 +3,8 @@ slug: introducing-secure-service-networking-for-aws
 id: 50asaqnuwyso
 type: challenge
 title: Introducing Secure Service Networking for AWS
-teaser: In this workshop you are going to use the HashiCorp Cloud Platform (HCP).
-  Before we create a managed Consul service on HCP we need to create an HCP account
-  and a service principal.
+teaser: Before we create a managed Consul service on HCP we need to create an HCP
+  account and a service principal.
 notes:
 - type: video
   url: ../assets/video/SSN4AWS-Challenge1.mp4
@@ -35,14 +34,16 @@ tabs:
 difficulty: basic
 timelimit: 600
 ---
-In this workshop you are going to use the HashiCorp Cloud Platform (HCP). Before we create a managed Consul service on HCP we need to create an HCP account and a service principal. We will use the Service Principals "ID" and "Key" in the following Instruqt workshop challenges.
+In this workshop you are going to use the HashiCorp Cloud Platform (HCP) to securely interconnect services across the platforms shown in the `Infrastructure Overview` tab. Before we create a managed Consul service on HCP we need to create an HCP account and a service principal. We will use the Service Principals "ID" and "Key" in the following Instruqt workshop challenges.
 
 In this Instruqt challenge we are going to:
 
 1. Create an HCP (HashiCorp Cloud Platform) account
 2. Verify your HCP auth credentials using terrafrom
 
-NOTE:You can find video insructions via the document/notes icon in the top right corner of this web page.
+NOTE: You can find video insructions via the document/notes icon in the top right corner of this web page.
+
+Continue with the steps below:
 
 1) Create an HCP Account
 ===
