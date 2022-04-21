@@ -1,6 +1,6 @@
 ---
 slug: deploy-services-in-ecs
-id: vnf3bam3dtxl
+id: 3gyjmcjn2wwb
 type: challenge
 title: Deploy Services in ECS for the New Dev team
 teaser: Now we are going to deploy an ECS cluster for the new front-end team, which
@@ -69,7 +69,7 @@ While this is running we can review what terraform is building. Navigate to the 
 
 Once the `terraform apply` has completed you may move onto the next section below.
 
-NOTE: the `hashicups_url` will not work yet as ECS is still launching the ECS tasks. It shall be running shortly. 
+NOTE: the `hashicups_url` will not work yet as ECS is still launching the ECS tasks. It shall be running shortly.
 
 2) Review the ECS deployment
 ===
@@ -82,7 +82,7 @@ Now that we have a cluster running, and ECS Tasks defined, we'll take a look at 
 4. In the Consul UI, navigate to the *"ecs-dev"* partition (you may need to reload the page). Once the `mesh-init` task has bootstrapped the environment, the services have launched and registered themselves, they will appear here. You should see `frontend`, `public-api`, and `mesh-gateway` services.
 5. In the left-hand navigation pane, click on *"Intentions"*. Note that the intetions list the source and destination partitions, allowing communications across the Consul Admin Partitions.
 
-If you're ECS Tasks are now up and running (you can check in AWS Console) the Hashicups URL should now load. Once this is loaded, and the application is running, you may progress to the next setion below. 
+If you're ECS Tasks are now up and running (you can check in AWS Console) the Hashicups URL should now load. Once this is loaded, and the application is running, you may progress to the next setion below.
 
 3) Review the cross-platform Mesh Gateway access
 ===
@@ -102,7 +102,7 @@ In this final section we will recap what we've built here.
    1. In the Consul UI, via the left-hand navigation pane, select "*Intentions*".
    2. In the list, click on the Intention with the "Source" `public-api` and the destination `product-api`.
    3. In the next screen that loads, select **"DENY"**, and click Save.
-   4. Return to the HashiCups demonstration application and reload the page. Due to browser caching you may need to reload twice. You shoud now see a message altering you that it is "Unable to query all coffees". 
+   4. Return to the HashiCups demonstration application and reload the page. Due to browser caching you may need to reload twice. You shoud now see a message altering you that it is "Unable to query all coffees".
    5. Return the intention back to the "ALLOW" state, click Save, and reload the app once again.
 
 NOTE: this Service Identity model UX is the same with 1 instance of a service, as we have in this simple lab environment, or 1000 instances of the service. The policies, intentions, and communications are a facet of service identity.
