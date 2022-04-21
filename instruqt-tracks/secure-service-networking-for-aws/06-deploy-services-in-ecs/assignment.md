@@ -13,7 +13,7 @@ notes:
 tabs:
 - title: Infrastructure Overview
   type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/n8-ssn4aws-eks/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-infra-overview.html
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-infra-overview.html
 - title: HCP Consul
   type: website
   url: https://portal.cloud.hashicorp.com:443/sign-up
@@ -31,7 +31,7 @@ tabs:
   type: terminal
   hostname: shell
 difficulty: basic
-timelimit: 600
+timelimit: 900
 ---
 In this challenge we're going to build an Elastic Container Service (ECS) Cluster in its own VPC – the far right VPC in the `Infrastructue Overview` diagram. Upon this ECS cluster we will deploy the HashiCups "frontend" and "public-api" services, which will have upstreams to the *"product-api"* and *"payments"* services in the EKS dev cluster.
 

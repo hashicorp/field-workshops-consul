@@ -34,7 +34,7 @@ tabs:
   type: terminal
   hostname: shell
 difficulty: basic
-timelimit: 600
+timelimit: 900
 ---
 In this chellenge we're going to use terraform to deploy HCP Consul - a control-plane for multi-plaform secure, service networking. There are two parts:
 
