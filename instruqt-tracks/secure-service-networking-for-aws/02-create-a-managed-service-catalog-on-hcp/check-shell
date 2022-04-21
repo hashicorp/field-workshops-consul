@@ -8,4 +8,6 @@
 
 echo "This is the check script"
 
+# Check the cert exists on disk
+
 exit 0

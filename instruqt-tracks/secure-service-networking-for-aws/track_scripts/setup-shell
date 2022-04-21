@@ -20,18 +20,6 @@ apt-add-repository "deb-src [arch=amd64] deb-src https://nginx.org/packages/ubun
 apt update -y
 apt install nginx -y
 
-# cat << EOF > /etc/nginx/conf.d/hcp_portal.conf
-# server {
-#   listen 81;
-#   location / {
-#     proxy_pass https://portal.cloud.hashicorp.com:443;
-#     proxy_set_header Host portal.cloud.hashicorp.com;
-#     proxy_ssl_server_name on;
-#     proxy_redirect off;
-#   }
-#   access_log /var/log/nginx/hcp_portal.log;
-# }
-# EOF
 
 # Install gomplate
 curl -o /usr/local/bin/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/v2.7.0/gomplate_linux-amd64 && \

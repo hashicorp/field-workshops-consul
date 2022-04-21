@@ -5,8 +5,8 @@ metadata:
   name: ingress-gateway
 spec:
   listeners:
-    - port: 8080
+    - port: 80
       protocol: http
       services:
-        - name: frontend
+        - name: nginx
           hosts: ["*"]

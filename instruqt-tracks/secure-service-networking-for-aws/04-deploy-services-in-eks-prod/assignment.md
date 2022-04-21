@@ -1,26 +1,22 @@
 ---
 slug: deploy-services-in-eks-prod
-id: n1oadiz2ylrp
+id: lbpoczg7sfip
 type: challenge
 title: Deploy Services in EKS for the Prod Deployment
 teaser: Let's deploy some microservices on EKS for the production deployment!
 notes:
-- type: video
-  url: ../assets/video/SSN4AWS-Challenge4.mp4
 - type: text
-  contents: In this section you will create an EKS cluster and deploy some services.
+  contents: In this section you will create the Production EKS cluster and deploy
+    some services.
 tabs:
 - title: Infrastructure Overview
   type: website
   url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-infra-overview.html
-- title: App Architecture Overview
-  type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-app-overview.html
 - title: HCP Consul
   type: website
   url: https://portal.cloud.hashicorp.com:443/sign-up
   new_window: true
-- title: code - eks
+- title: code - EKS Prod
   type: code
   hostname: shell
   path: /root/terraform/tf-deploy-eks-services-prod
@@ -33,12 +29,22 @@ tabs:
   type: terminal
   hostname: shell
 difficulty: basic
-timelimit: 10000
+timelimit: 600
 ---
+In this challenge we're going to build the customer-facing prouction deployment.
 
-Take a look at the terraform code in the `code - eks` tab. In this challenge we will privision on EKS cluster.
+We will:
+1. Create an EKS (K8s) cluster and deploy a microservices-based application
+2. Verify the installation
 
-Review what the terraform is going to do with:
+
+
+1) Deploy EKS Prod and Services
+===
+
+We are now going to create an EKS cluster upon which we will deploy a microservices-based application called **HashiCups**, as depicted in the far left of the `Infrastructure Overview` diagram.
+
+First, review the infrastructure you will build with the following command:
 
 ```sh
 terraform plan
@@ -57,14 +63,34 @@ You can monitor the progress of the deployment using the following command:
 tail -f /root/terraform/tf-deploy-eks-services-prod/eks_prod.out
 ```
 
-Once the `terraform apply` is running, use the credentials in the `Cloud Consoles` tab to login to AWS. Once logged in, navigate to the `Elastic Kubernetes Service`
+While that is runnning, lets take a closer look at what we're creating:
+1. Take a look at the terraform code in the `code - EKS Prod` tab.
+   1. In the root directory you will see how we create the EKS Cluster - `main.tf`.
+   2. In the `./modules/hcp-eks-client` directoy you can see the helm chart that installs consul onto EKS.
+   3. In the `./modules/k8s-demo-app/services/` directory you can see the services we're deploying.
 
-Before using kubectl we need to specify the location of the kubeconfig file returned by terraform, using the following command:
+2. In the AWS Console tab type "EKS" and select "Elastic Kubernetes Service" to monitor what we're building on AWS. Once the cluster has been created you can click on the cluster name and:
+   1. View the nodes upon which k8s is running in the *Overview* tab.
+   2. View both k8s core services and the demonstration app's deployed microservices in the *Workloads* tab.
+
+2) Verify the installation
+===
+
+Once the `terraform apply` is complete you should see five `terraform output` values. Please follow these steps:
+
+1. In a sperate tab/window, navigate to the HCP Consul Admin UI using the `consul_url`.
+2. To login to consul you will need the `consul_root_token`. To retrieve this, execute: `terraform output consul_root_token`
+3. In the HCP Consul UI, select **eks-prod** from the *"Admin Partitions"* list (you may need to reload the page). You should see your newly deployed services registering themselves.
+4. On the left-hand navigation pane, click *"Intentions"* to see the strict security model. Not the L7 (HTTP) intentions for the frontend security.
+5. In *"Services"*, click on the `frontend` service to see how the `intentions` security model is allowing strict communication flows between services.
+6. In a sperate tab/window, navigate to the the microservice-based demonstration application, HashiCups, using the `hashicups_url` output value.
+7. Next, we are going to use `kubectl` command to list the k8s pods we have just deployed. Before using the `kubectl` command we need `export` the location of the `kubeconfig` file returned by terraform as an environment variable. To do this execute the following command:
+
 ```sh
 export KUBECONFIG=`terraform output -raw kubeconfig_filename`
 ```
 
-Now verify it works using:
+Now you can verify it works using:
 ```sh
 kubectl get pods
 ```
