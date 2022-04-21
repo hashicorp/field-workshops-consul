@@ -31,7 +31,9 @@ tabs:
 difficulty: basic
 timelimit: 600
 ---
-In this challenge we are going to create three VPCs, which will be used in the following steps. In addition to creating the VPCs we shall peer them, using AWS VPC Peering, and setup the relevant routes, to ensure that services deployed in the VOCs can reach Consul.
+In this challenge we are going to create three VPCs, which will be used in the following steps to provision two EKS clusters and one ECS cluster, per the `Infrastructure Overview` diagram.
+
+In addition to creating these VPCs, to ensure that services deployed within them can reach Consul, we shall use AWS VPC Peering to peer the VPCs with the HashiCorp Virtual Network (HVN) and setup the relevant routes between the VPCs and the HVN.
 
 To see on overview of the infrastructure we're going to deploy, execute the following command:
 
@@ -39,12 +41,16 @@ To see on overview of the infrastructure we're going to deploy, execute the foll
 terraform plan
 ```
 
-Next we can start the VPC creation, by executing:
+Next we can start the VPC creation, peering, and routing, by executing:
 
 ```sh
 terraform apply -auto-approve
 ```
 
-While that's running, take a look at the terraform deployment in `code - VPC`.
+While that's running, take a look at the terraform deployment in `code - VPC`. Note the `routes.tf` to see the interconnectivity configuration.
 
-When it's finished, click the green *Check* button at the bottom to progress to the next Instruqt challenge.
+You may also wish to switch to your **AWS Console** browser tab and navigate to the VPC secion (Type "VPC" in the search tool). From the "VPC Dashboard" you should start to see the VPCs, subnets, routes, etc, being created by the terraform modules.
+
+**NOTE:** this lab is being built in the "us-west-2" region. If you are not seeing resources in AWS Console make sure you have selected `US West (Oregon) us-west-2` in the drop-down menu at the top right of your screen.
+
+When the `terraform apply` is finished click the green *Check* button to progress to the next Instruqt challenge.
