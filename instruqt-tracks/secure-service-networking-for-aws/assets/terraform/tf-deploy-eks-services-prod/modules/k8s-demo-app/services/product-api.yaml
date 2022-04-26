@@ -74,6 +74,8 @@ spec:
           env:
             - name: "CONFIG_FILE"
               value: "/config/conf.json"
+            - name : JAEGER_ENDPOINT
+              value: http://otel-collector:9411
           livenessProbe:
             httpGet:
               path: /health

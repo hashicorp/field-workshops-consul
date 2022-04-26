@@ -1,6 +1,6 @@
 ---
 slug: create-vpcs
-id: fwkurownabyw
+id: vwiywo7jpnew
 type: challenge
 title: Create VPCs
 teaser: Now we create the VPCs and peer them with HCP.

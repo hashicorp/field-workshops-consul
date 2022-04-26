@@ -1,6 +1,6 @@
 ---
 slug: deploy-services-in-eks-dev
-id: gshxmxhjzlzy
+id: jxxyxph7vk79
 type: challenge
 title: Deploy Services in EKS for the Dev Team
 teaser: Let's deploy some microservices on EKS for the development team!

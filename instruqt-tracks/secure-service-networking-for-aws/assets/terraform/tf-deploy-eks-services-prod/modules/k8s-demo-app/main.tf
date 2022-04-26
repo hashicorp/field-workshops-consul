@@ -14,13 +14,25 @@ data "kubectl_path_documents" "manifests" {
   pattern = "${path.module}/services/*.yaml"
 }
 
+data "kubectl_path_documents" "lightstep" {
+  pattern = "${path.module}/lightstep/*.yaml"
+}
+
 resource "kubectl_manifest" "applications" {
   # count     = length(data.kubectl_path_documents.manifests.documents)
   # For some reason using the above line returns a count not known until apply
   # error, even though the files are static. This needs to be kept in sync with
   # the YAML files defined in the services/ directory.
-  count     = 28
+  count     = 30
   yaml_body = element(data.kubectl_path_documents.manifests.documents, count.index)
+}
+resource "kubectl_manifest" "lightstep" {
+  # count     = length(data.kubectl_path_documents.manifests.documents)
+  # For some reason using the above line returns a count not known until apply
+  # error, even though the files are static. This needs to be kept in sync with
+  # the YAML files defined in the services/ directory.
+  count     = 7
+  yaml_body = element(data.kubectl_path_documents.lightstep.documents, count.index)
 }
 
 data "kubernetes_service" "ingress" {
