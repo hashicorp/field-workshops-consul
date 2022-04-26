@@ -1,5 +1,23 @@
 #!/bin/bash
 
+#make vault run in instruqt container
+setcap cap_ipc_lock= /usr/bin/vault
+
+#check licenses
+echo "checking licenses..."
+vault license inspect /etc/vault.hclic
+if [ $? -ne 0 ]
+then
+  fail-message "Vault license is not valid."
+  exit 1
+fi
+consul license inspect /etc/consul.hclic
+if [ $? -ne 0 ]
+then
+  fail-message "Consul license is not valid."
+  exit 1
+fi
+
 #get assets
 echo "cloning assets..."
 git clone https://github.com/hashicorp/field-workshops-consul.git
@@ -65,9 +83,6 @@ cat << EOF > ~/.ssh/config
 Host *
     StrictHostKeyChecking no
 EOF
-
-#make vault run in instruqt container
-setcap cap_ipc_lock= /usr/bin/vault
 
 #optimistic provisioning
 

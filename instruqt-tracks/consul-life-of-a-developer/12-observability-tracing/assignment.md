@@ -1,6 +1,6 @@
 ---
 slug: observability-tracing
-id: olkpnjqs2q2r
+id: rmuxawbcexxc
 type: challenge
 title: 'Observability: Tracing'
 teaser: Inspect trace information
@@ -21,7 +21,7 @@ tabs:
   type: service
   hostname: k8s1
   path: /
-  port: 30080
+  port: 8080
   new_window: true
 - title: Grafana - UI
   type: service

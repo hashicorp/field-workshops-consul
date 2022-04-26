@@ -54,4 +54,12 @@ ingressGateways:
       service:
         type: LoadBalancer
         ports:
-        - port: 8080
+        - port: 80
+
+meshGateway:
+  enabled: true
+  replicas: 1
+
+dns:
+  enabled: true
+  enableRedirection: true

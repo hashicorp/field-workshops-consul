@@ -1,6 +1,6 @@
 ---
 slug: security-tcp
-id: bbfwscljmhzz
+id: 52jhymbd7kki
 type: challenge
 title: 'Security: TCP Traffic'
 teaser: Apply Layer 4 Intentions
@@ -24,7 +24,7 @@ tabs:
   type: service
   hostname: k8s1
   path: /
-  port: 30080
+  port: 8080
   new_window: true
 - title: Lab Architecture
   type: website

@@ -1,6 +1,6 @@
 ---
 slug: traffic-management-request-routing
-id: olcwgzsryftu
+id: bmlhlnkswqaf
 type: challenge
 title: 'Traffic Management: Request Routing'
 teaser: Apply advanced routing patterns
@@ -10,8 +10,8 @@ tabs:
   hostname: workstation
 - title: K8s1 - Dashboard Token
   type: code
-  hostname: k8s1
-  path: /root/dashboard-token.txt
+  hostname: workstation
+  path: /root/k8s1-dashboard-token.txt
 - title: K8s1 - Dashboard
   type: service
   hostname: k8s1

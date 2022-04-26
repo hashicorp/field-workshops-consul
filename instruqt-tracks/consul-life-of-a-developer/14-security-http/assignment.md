@@ -1,6 +1,6 @@
 ---
 slug: security-http
-id: 5ylmiomxpvyl
+id: 4ummrb5qra2x
 type: challenge
 title: 'Security: HTTP Traffic'
 teaser: Apply Layer 7 Intentions
@@ -24,7 +24,7 @@ tabs:
   type: service
   hostname: k8s1
   path: /
-  port: 30080
+  port: 8080
   new_window: true
 - title: Lab Architecture
   type: website

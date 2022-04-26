@@ -1,6 +1,6 @@
 ---
 slug: service-mesh-service-discovery
-id: 9f9aymz7s6xa
+id: 6g4ky4xdgapb
 type: challenge
 title: 'Service Mesh: Service Discovery'
 teaser: Scale up & Scale Down

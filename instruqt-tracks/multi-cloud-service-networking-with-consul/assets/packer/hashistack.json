@@ -2,7 +2,10 @@
   "variables": {
     "azure_subscription_id": "{{ env `INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SUBSCRIPTION_ID` }}",
     "azure_client_id": "{{ env `INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SPN_ID` }}",
-    "azure_client_secret": "{{ env `INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SPN_PASSWORD` }}"
+    "azure_client_secret": "{{ env `INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SPN_PASSWORD` }}",
+    "vault_version": "{{ env `VAULT_VERSION` }}",
+    "nomad_version": "{{ env `NOMAD_VERSION` }}",
+    "consul_version": "{{ env `CONSUL_VERSION` }}"
   },
   "builders": [
     {
@@ -64,6 +67,9 @@
   "provisioners": [
     {
       "type": "shell",
+      "environment_vars": ["VAULT_VERSION={{ user `vault_version`}}",
+                     "NOMAD_VERSION={{ user `nomad_version`}}",
+                     "CONSUL_VERSION={{ user `consul_version`}}"],
       "script": "scripts/aws.sh",
       "only": [
         "amazon-ebs-ubuntu-bionic"
@@ -71,6 +77,9 @@
     },
     {
       "type": "shell",
+      "environment_vars": ["VAULT_VERSION={{ user `vault_version`}}",
+                     "NOMAD_VERSION={{ user `nomad_version`}}",
+                     "CONSUL_VERSION={{ user `consul_version`}}"],
       "script": "scripts/azure.sh",
       "only": [
         "azure-ubuntu-bionic"

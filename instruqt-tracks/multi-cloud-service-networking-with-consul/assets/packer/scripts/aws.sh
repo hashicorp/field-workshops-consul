@@ -9,7 +9,7 @@ sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(l
 
 #install packages
 sudo apt update -y
-sudo apt install awscli consul-enterprise=1.10.2+ent vault-enterprise=1.8.0+ent nomad-enterprise=1.0.4+ent docker.io jq unzip redis-server -y
+sudo apt install awscli consul-enterprise=$CONSUL_VERSION vault-enterprise=$VAULT_VERSION nomad-enterprise=$NOMAD_VERSION docker.io jq unzip redis-server -y
 
 #pgk checks
 #aws cli

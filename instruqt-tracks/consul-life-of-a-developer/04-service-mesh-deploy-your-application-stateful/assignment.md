@@ -1,6 +1,6 @@
 ---
 slug: service-mesh-deploy-your-application-stateful
-id: 5tex6qnmgudx
+id: fis3ruykqodk
 type: challenge
 title: Service Mesh - Deploy Your Application -  Stateful
 teaser: Deploy Application Storage
@@ -10,8 +10,8 @@ tabs:
   hostname: workstation
 - title: K8s2 - Dashboard Token
   type: code
-  hostname: k8s2
-  path: /root/dashboard-token.txt
+  hostname: workstation
+  path: /root/k8s2-dashboard-token.txt
 - title: K8s2 - Dashboard
   type: service
   hostname: k8s2

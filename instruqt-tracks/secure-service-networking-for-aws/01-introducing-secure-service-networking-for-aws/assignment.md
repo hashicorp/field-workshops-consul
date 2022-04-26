@@ -1,14 +1,13 @@
 ---
 slug: introducing-secure-service-networking-for-aws
-id: pmdwnnimxkfb
+id: 6cyn7rf2j33y
 type: challenge
 title: Introducing Secure Service Networking for AWS
-teaser: In this workshop you are going to use the HashiCorp Cloud Platform (HCP).
-  Before we create a managed Consul service on HCP we need to create an HCP account
-  and a service principal.
+teaser: Before we create a managed Consul service on HCP we need to create an HCP
+  account and a service principal.
 notes:
-- type: video
-  url: ../assets/video/SSN4AWS-Challenge1.mp4
+- type: text
+  contents: In this challenge you will create an HCP account and a service principal.
 tabs:
 - title: Infrastructure Overview
   type: website
@@ -33,18 +32,22 @@ tabs:
   type: terminal
   hostname: shell
 difficulty: basic
-timelimit: 600
+timelimit: 300
 ---
-In this workshop you are going to use the HashiCorp Cloud Platform (HCP). Before we create a managed Consul service on HCP we need to create an HCP account and a service principal. We will use the Service Principals "ID" and "Key" in the following Instruqt workshop challenges.
+In this workshop you are going to use the HashiCorp Cloud Platform (HCP) to securely interconnect services within, and across, the AWS EKS and ECS platforms shown in the `Infrastructure Overview` tab.
+
+Before we deploy a managed Consul service on HCP we need to create an HCP account and a service principal. We will use the Service Principals "Client ID" and "Client Secret" in the following Instruqt workshop challenges.
 
 In this Instruqt challenge we are going to:
 
-1. Create an HCP (HashiCorp Cloud Platform) account
+1. Create HashiCorp Cloud Platform (HCP) auth credentials
 2. Verify your HCP auth credentials using terrafrom
 
-NOTE:You can find video insructions via the document/notes icon in the top right corner of this web page.
+NOTE: You can find video insructions via the document/notes icon in the top right corner of this web page.
 
-1) Create an HCP Account
+Continue with the steps below:
+
+1) Create HCP Auth Credentials
 ===
 
 First navigate to the *HCP Consul* tab - this will open a new window.
@@ -76,22 +79,35 @@ First navigate to the *HCP Consul* tab - this will open a new window.
     export HCP_CLIENT_SECRET=<your-hcp-client-secret>
     ```
 
+The HCP Terraform Provider will use these variables to connect to the HCP platform.
+
+
 2. Test if these credentials work by executing the following command in the Instruqt `shell` tab:
 
    ```sh
    terraform apply -auto-approve
    ```
 
-    If there is something wrong with the credentials you will receive an authentication error. Verify your credentials and re-export them. If you still enconter authentication issues try recreating the service principal from the previous step and copying the new id and secret.
+    If there is something wrong with the credentials you will receive an authentication error:
 
-    If everything worked you will see a wall of text describing the resources terraform is ready to provision for you. You are ready to proceed.
+    **If the variables aren't set:**
+
+    `Error: unable to create HCP api client: invalid config: client ID not provided`
+
+    **If the Client ID or Client Secret are invalid:**
+
+    `Error: unable to get project from credentials: unable to fetch organization list: Get "https://api.cloud.hashicorp.com/resource-manager/2019-12-10/organizations": oauth2: cannot fetch token: 401 Unauthorized`
+
+    Verify your credentials and re-export them. If you still enconter authentication issues try recreating the service principal from the previous step and copying the new id and secret.
+
+    If everything worked you will see terraform output showing a list of available consul versions on HCP You are ready to proceed.
 
 
-3. Variables are not preserved across Instrqut challenges. Either you can re-`export` them as variables (as above) when needed, you can write them to a `terraform.tfvars` file, or you can persist them throughout the workship by writting them to your .bashrc file with the following commands:
+3. Variables are not preserved across Instrqut workshop challenges. Either you can re-`export` them as variables (as above) when needed, you can write them to a `terraform.tfvars` file, or you can persist them throughout the workshop by writting them to your .bashrc file with the following commands:
 
     ```sh
     echo "export HCP_CLIENT_ID=$HCP_CLIENT_ID" >> ~/.bashrc
     echo "export HCP_CLIENT_SECRET=$HCP_CLIENT_SECRET" >> ~/.bashrc
     ```
 
-> **NOTE:** this lab environment is not shared and is automatically destroyed when finished. To ensure your HCP account remains secure you should consider deleting the service principal you created above when you have finished this workshop. You can create new service principal for further testing/experimentation. Read more about HCP Auth here: https://registry.terraform.io/providers/hashicorp/hcp/latest/docs/guides/auth#two-options-to-configure-the-provider
+> **NOTE:** this lab environment is not shared and is automatically destroyed when finished. To ensure your HCP account remains secure you should consider deleting the service principal's Client ID/Secret you created above when you have finished this workshop. You can create a new Client ID/Secret for further testing/experimentation at any time. Read more about HCP Auth here: https://registry.terraform.io/providers/hashicorp/hcp/latest/docs/guides/auth#two-options-to-configure-the-provider

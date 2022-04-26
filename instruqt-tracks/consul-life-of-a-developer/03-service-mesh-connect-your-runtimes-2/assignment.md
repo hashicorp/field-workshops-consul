@@ -1,6 +1,6 @@
 ---
 slug: service-mesh-connect-your-runtimes-2
-id: 7myytdfzgmp6
+id: 7gpp19me4try
 type: challenge
 title: Service Mesh - Connect Your Runtimes - Part 2s
 teaser: Connect Stateful K8s Cluster
@@ -10,8 +10,8 @@ tabs:
   hostname: workstation
 - title: K8s2 - Dashboard Token
   type: code
-  hostname: k8s2
-  path: /root/dashboard-token.txt
+  hostname: workstation
+  path: /root/k8s2-dashboard-token.txt
 - title: K8s2- Dashboard
   type: service
   hostname: k8s2

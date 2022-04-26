@@ -28,8 +28,3 @@ variable "cloud_provider" {
   type        = string
   default     = "aws"
 }
-variable "route_id" {
-  description = "The ID of the HCP HVN route."
-  type        = string
-  default     = "workshop-hvn-route"
-}

@@ -1,6 +1,6 @@
 ---
 slug: service-mesh-deploy-your-application-stateless
-id: db2no1mjypbf
+id: kw3bi3smandq
 type: challenge
 title: Service Mesh - Deploy Your Application - Stateless
 teaser: Deploy reactive and API components
@@ -10,8 +10,8 @@ tabs:
   hostname: workstation
 - title: K8s1 - Dashboard Token
   type: code
-  hostname: k8s1
-  path: /root/dashboard-token.txt
+  hostname: workstation
+  path: /root/k8s1-dashboard-token.txt
 - title: K8s1 - Dashboard
   type: service
   hostname: k8s1
