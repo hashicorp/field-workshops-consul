@@ -8,7 +8,7 @@ terraform {
     }
     hcp = {
       source  = "hashicorp/hcp"
-      version = "~> 0.21.1"
+      version = "~> 0.26.0"
     }
   }
   provider_meta "hcp" {
