@@ -43,6 +43,8 @@ data:
     chaos.monkey.watcher.actuatorHealth=true
     chaos.monkey.assaults.exceptionsActive=true
     chaos.monkey.assaults.level=1
+    spring.redis.host=payments-queue
+    spring.redis.port=6379
 ---
 apiVersion: apps/v1
 kind: Deployment

@@ -16,4 +16,6 @@ developers:
 - jona@hashicorp.com
 private: true
 published: true
-checksum: "1977157399283505123"
+show_timer: true
+skipping_enabled: true
+checksum: "15458103701656535462"

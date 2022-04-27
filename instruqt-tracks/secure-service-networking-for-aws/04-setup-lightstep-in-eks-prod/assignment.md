@@ -1,10 +1,10 @@
 ---
-slug: deploy-services-in-ecs
-id: ysuih829d08o
+slug: setup-lightstep-in-eks-prod
+id: cvrsnfh0aqib
 type: challenge
-title: Deploy Services in ECS for the New Dev team
-teaser: Now we are going to deploy an ECS cluster for the new front-end team, which
-  will use the EKS backend, securely...
+title: Setup lightstep in EKS
+teaser: Now we are going to install the otel collector and set some proxy defaults
+  to enable tracing
 notes:
 - type: text
   contents: In this section we're going to create an ECS cluster and deploy only the
@@ -31,7 +31,7 @@ tabs:
   type: terminal
   hostname: shell
 difficulty: basic
-timelimit: 900
+timelimit: 1800
 ---
 In this challenge we're going to build an Elastic Container Service (ECS) Cluster in its own VPC – the far right VPC in the `Infrastructue Overview` diagram. Upon this ECS cluster we will deploy the HashiCups "frontend" and "public-api" services, which will have upstreams to the *"product-api"* and *"payments"* services in the EKS dev cluster.
 
