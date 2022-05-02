@@ -32,7 +32,7 @@ tabs:
   type: terminal
   hostname: shell
 difficulty: basic
-timelimit: 900
+timelimit: 1200
 ---
 In this workshop you are going to use the HashiCorp Cloud Platform (HCP) to securely interconnect services within, and across, the AWS EKS and ECS platforms shown in the `Infrastructure Overview` tab.
 
