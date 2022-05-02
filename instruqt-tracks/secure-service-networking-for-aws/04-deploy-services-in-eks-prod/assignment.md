@@ -29,7 +29,7 @@ tabs:
   type: terminal
   hostname: shell
 difficulty: basic
-timelimit: 900
+timelimit: 1200
 ---
 In this challenge we're going to build the customer-facing prouction deployment.
 
