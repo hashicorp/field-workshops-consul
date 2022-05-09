@@ -1,6 +1,6 @@
 ---
 slug: introducing-secure-service-networking-for-aws
-id: 2quycyydnzoe
+id: 6cyn7rf2j33y
 type: challenge
 title: Introducing Secure Service Networking for AWS
 teaser: Before we create a managed Consul service on HCP we need to create an HCP
@@ -32,7 +32,7 @@ tabs:
   type: terminal
   hostname: shell
 difficulty: basic
-timelimit: 1800
+timelimit: 1200
 ---
 In this workshop you are going to use the HashiCorp Cloud Platform (HCP) to securely interconnect services within, and across, the AWS EKS and ECS platforms shown in the `Infrastructure Overview` tab.
 

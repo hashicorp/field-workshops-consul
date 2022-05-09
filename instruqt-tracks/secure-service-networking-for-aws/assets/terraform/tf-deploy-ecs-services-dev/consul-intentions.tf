@@ -1,7 +1,7 @@
 resource "consul_config_entry" "public_api_intention" {
   name = local.public_api_name
   kind = "service-intentions"
-  partition = "ecs-dev"
+  partition = consul_admin_partition.ecs-dev.name
   namespace = "default"
 
   config_json = jsonencode({
@@ -32,7 +32,7 @@ resource "consul_config_entry" "product_api_intention" {
         Precedence = 9
         Type       = "consul"
         Namespace  = "default"
-        Partition  = "eks-dev"
+        Partition  = consul_admin_partition.ecs-dev.name
       }
     ]
   })
@@ -52,7 +52,7 @@ resource "consul_config_entry" "payments_intention" {
         Precedence = 9
         Type       = "consul"
         Namespace  = "default"
-        Partition  = "eks-dev"
+        Partition  = consul_admin_partition.ecs-dev.name
       }
     ]
   })

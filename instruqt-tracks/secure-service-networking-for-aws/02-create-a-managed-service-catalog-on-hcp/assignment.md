@@ -1,6 +1,6 @@
 ---
 slug: create-a-managed-service-catalog-on-hcp
-id: x1yg0lgejgh9
+id: ytwitm5k88ks
 type: challenge
 title: Create a managed Service Catalog on HCP
 teaser: In this challenge you will create a Consul Cluster on the HashiCorp Cloud
@@ -34,7 +34,7 @@ tabs:
   type: terminal
   hostname: shell
 difficulty: basic
-timelimit: 1800
+timelimit: 1200
 ---
 In this chellenge we're going to use terraform to deploy HCP Consul - a control-plane for multi-plaform secure, service networking. There are two parts:
 

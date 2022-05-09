@@ -1,6 +1,6 @@
 ---
 slug: deploy-services-in-ecs
-id: ysuih829d08o
+id: 3gyjmcjn2wwb
 type: challenge
 title: Deploy Services in ECS for the New Dev team
 teaser: Now we are going to deploy an ECS cluster for the new front-end team, which
@@ -31,7 +31,7 @@ tabs:
   type: terminal
   hostname: shell
 difficulty: basic
-timelimit: 1800
+timelimit: 1200
 ---
 In this challenge we're going to build an Elastic Container Service (ECS) Cluster in its own VPC – the far right VPC in the `Infrastructue Overview` diagram. Upon this ECS cluster we will deploy the HashiCups "frontend" and "public-api" services, which will have upstreams to the *"product-api"* and *"payments"* services in the EKS dev cluster.
 

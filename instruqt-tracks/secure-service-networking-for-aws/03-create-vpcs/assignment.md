@@ -1,6 +1,6 @@
 ---
 slug: create-vpcs
-id: vwiywo7jpnew
+id: fwkurownabyw
 type: challenge
 title: Create VPCs
 teaser: Now we create the VPCs and peer them with HCP.
@@ -29,7 +29,7 @@ tabs:
   type: terminal
   hostname: shell
 difficulty: basic
-timelimit: 1800
+timelimit: 1200
 ---
 In this challenge we are going to create three VPCs, which will be used in the following steps to provision two EKS clusters and one ECS cluster, per the `Infrastructure Overview` diagram.
 
