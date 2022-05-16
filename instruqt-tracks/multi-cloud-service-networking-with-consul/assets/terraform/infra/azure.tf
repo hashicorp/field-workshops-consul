@@ -1,6 +1,6 @@
 resource "azurerm_resource_group" "instruqt" {
   name     = "instruqt-${random_string.env.result}"
-  location = "West US 2"
+  location = "West US 1"
 }
 
 module "azure-shared-svcs-network" {
