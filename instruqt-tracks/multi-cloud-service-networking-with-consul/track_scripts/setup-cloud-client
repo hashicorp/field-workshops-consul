@@ -58,7 +58,7 @@ aws configure set default.region us-east-1
 aws ec2 create-default-vpc
 
 #azure packer setup
-az group create -l westus2 -n packer
+az group create -l westus3 -n packer
 
 #cloud client packages - already on machine now with packer
 #apt update -y
