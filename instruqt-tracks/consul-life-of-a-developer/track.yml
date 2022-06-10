@@ -1,5 +1,5 @@
 slug: consul-life-of-a-developer
-id: aoub5e2nrioo
+id: 7ieskbdl1fke
 type: track
 title: 'Consul: Life of a Developer'
 teaser: Build, Test, and Deploy Applications with HashiCorp Consul.
@@ -9,8 +9,9 @@ tags: []
 owner: hashicorp
 developers:
 - lance@hashicorp.com
+- hari@hashicorp.com
 private: true
 published: true
 show_timer: true
 skipping_enabled: true
-checksum: "9017204642515175710"
+checksum: "2032359557772946896"

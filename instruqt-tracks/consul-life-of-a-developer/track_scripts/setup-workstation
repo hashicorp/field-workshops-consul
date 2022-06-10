@@ -241,4 +241,10 @@ if [ "$leader" != "200" ]; then
   exit 1
 fi
 
+#creating kubectl namespaces to default to "default"
+kubectl config use-context k8s1
+kubectl config set-context --current --namespace=default 
+kubectl config use-context k8s2
+kubectl config set-context --current --namespace=default 
+
 exit 0

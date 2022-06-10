@@ -1,6 +1,6 @@
 ---
 slug: traffic-management-request-routing
-id: bmlhlnkswqaf
+id: offfxtkfwwnu
 type: challenge
 title: 'Traffic Management: Request Routing'
 teaser: Apply advanced routing patterns

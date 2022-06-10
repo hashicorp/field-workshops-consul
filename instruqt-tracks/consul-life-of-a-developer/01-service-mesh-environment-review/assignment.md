@@ -1,6 +1,6 @@
 ---
 slug: service-mesh-environment-review
-id: 8nmk95wj6ftw
+id: rg5oxrbqewzh
 type: challenge
 title: Service Mesh - Environment Review
 teaser: Learn about HashiCups

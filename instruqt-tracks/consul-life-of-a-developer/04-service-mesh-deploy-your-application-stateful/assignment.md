@@ -1,6 +1,6 @@
 ---
 slug: service-mesh-deploy-your-application-stateful
-id: fis3ruykqodk
+id: vfwmluj1zx8a
 type: challenge
 title: Service Mesh - Deploy Your Application -  Stateful
 teaser: Deploy Application Storage
