@@ -6,6 +6,9 @@ terraform apply -auto-approve 2>&1 | tee terraform.out
 
 sleep 15
 
+# IL-378
+for kubevar in $(env | awk -F=  '/^KUBERNETES_/ { print $1;};'); do unset $kubevar; done
+
 #helm config
 gcloud container clusters get-credentials \
   $(terraform output -state /root/terraform/gcp-consul-secondary/terraform.tfstate gcp_gke_cluster_shared_name) \

@@ -29,6 +29,10 @@ cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with
 cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/scripts .
 rm -rf field-workshops-consul
 
+# IL-378
+# This looks weird Because Quoting(TM)
+echo 'for kubevar in $(env | awk -F=  '"'"'/^KUBERNETES_/ { print $1;};'"'"'); do unset $kubevar; done' >> /root/.bashrc
+
 # Ensure we load /etc/profile.d/instruqt-env.sh
 echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
 source /root/.bashrc
