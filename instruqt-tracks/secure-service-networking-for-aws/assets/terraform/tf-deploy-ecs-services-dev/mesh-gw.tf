@@ -38,7 +38,7 @@ data "template_file" "aws_mgw_init" {
 resource "aws_instance" "mesh_gateway" {
   instance_type               = "t3.small"
   ami                         = data.aws_ami.ubuntu.id
-  key_name                    = module.key_pair.key_pair_key_name
+  key_name                    = module.key_pair.key_pair_name
   subnet_id                   = local.ecs_dev_public_subnets[0]
   associate_public_ip_address = true
   user_data                   = data.template_file.aws_mgw_init.rendered

@@ -1,6 +1,6 @@
 ---
 slug: introducing-secure-service-networking-for-aws
-id: 6cyn7rf2j33y
+
 type: challenge
 title: Introducing Secure Service Networking for AWS
 teaser: Before we create a managed Consul service on HCP we need to create an HCP

@@ -46,8 +46,8 @@ module "eks_consul_client" {
   depends_on = [module.eks]
 }
 
-module "demo_app" {
-  source  = "./modules/k8s-demo-app"
-
-  depends_on = [module.eks_consul_client]
-}
+#module "demo_app" {
+##  source  = "./modules/k8s-demo-app"
+#
+#  depends_on = [module.eks_consul_client]
+#}

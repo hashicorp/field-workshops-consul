@@ -1,7 +1,7 @@
-slug: secure-service-networking-for-aws
-id: 2oz9glafbqxw
+slug: secure-service-networking-for-aws-presto
+
 type: track
-title: Secure Service Networking for AWS
+title: Secure Service Networking for AWS - Presto
 teaser: Implement 'Secure by Default' Service Networking for AWS platforms.
 description: Securing micro-services is extremely complex. Traditional security technologies
   operate at the platform edge, and not at the inter-service communications behind
@@ -14,5 +14,4 @@ owner: hashicorp
 developers:
 - npearce@hashicorp.com
 private: true
-published: true
-checksum: "15672926476548538670"
+published: false

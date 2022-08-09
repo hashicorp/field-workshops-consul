@@ -1,6 +1,6 @@
 ---
 slug: deploy-services-in-ecs
-id: 3gyjmcjn2wwb
+
 type: challenge
 title: Deploy Services in ECS for the New Dev team
 teaser: Now we are going to deploy an ECS cluster for the new front-end team, which

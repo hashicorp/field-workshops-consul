@@ -26,3 +26,7 @@ output "next_steps" {
 output "eks_dev_cluster_primary_security_group_id" {
   value = module.eks.cluster_primary_security_group_id
 }
+
+output "helm_chart" {
+  value = module.eks_consul_client.helm_chart
+}
