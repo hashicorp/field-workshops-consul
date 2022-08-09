@@ -12,8 +12,8 @@ icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
 tags: []
 owner: hashicorp
 developers:
-- ppresto@hashicorp.com
 - npearce@hashicorp.com
+- ppresto@hashicorp.com
 private: true
 published: false
-checksum: "6881608821148279412"
+checksum: "4083522819125327505"
