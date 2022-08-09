@@ -1,5 +1,5 @@
 slug: secure-service-networking-for-aws-presto
-
+id: byjrf6fbjzoj
 type: track
 title: Secure Service Networking for AWS - Presto
 teaser: Implement 'Secure by Default' Service Networking for AWS platforms.
@@ -12,6 +12,8 @@ icon: https://storage.googleapis.com/instruqt-frontend/img/tracks/default.png
 tags: []
 owner: hashicorp
 developers:
+- ppresto@hashicorp.com
 - npearce@hashicorp.com
 private: true
 published: false
+checksum: "6881608821148279412"

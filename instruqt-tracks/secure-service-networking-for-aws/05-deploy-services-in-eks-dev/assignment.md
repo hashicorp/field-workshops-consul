@@ -1,6 +1,6 @@
 ---
 slug: deploy-services-in-eks-dev
-
+id: tmwuy5iy4zl6
 type: challenge
 title: Deploy Services in EKS for the Dev Team
 teaser: Let's deploy some microservices on EKS for the development team!
@@ -61,7 +61,7 @@ While that is runnning, lets take a look at what's different with this deploymen
 3) Connect to EKS
 ===
 
-Once the `terraform apply` is complete connect to EKS to finish installing the helm chart and services. 
+Once the `terraform apply` is complete connect to EKS to finish installing the helm chart and services.
 ```sh
 export KUBECONFIG=`terraform output -raw kubeconfig_filename`
 ```
@@ -71,7 +71,7 @@ Use helm to add the hashicorp repo and install the consul client.
 terraform output -raw helm_chart | base64 -d > helm.values
 helm repo add hashicorp https://helm.releases.hashicorp.com
 helm install consul hashicorp/consul --version 0.42.0 --values helm.values
-helm status
+helm status consul
 ```
 
 verify all the pods are up and running.
@@ -81,18 +81,18 @@ kubectl get pods
 
 Once the EKS cluster has been bootstrapped into HCP Consul install the services.
 ```sh
-kubectl apply -f /root/terraform/tf-deploy-eks-services-dev/k9s-demo-app/services
+kubectl apply -f /root/terraform/tf-deploy-eks-services-dev/modules/k8s-demo-app/services/
 ```
-Everything should be deployed and starting up.  If tokens or urls are needed to access Consul or Hashicups run
+
+Everything should be deployed and starting up.  Give it a minute and then try to access Hashicups at the ingress gateway url.  Note the newer interface in the dev environmemt.
 ```
-terraform output
+echo "http://$(kubectl get svc consul-eks-dev-ingress-gateway -o json | jq -r '.status.loadBalancer.ingress[].hostname')"
 ```
+
 
 1. In a sperate tab/window, navigate to the HCP Consul Admin UI using the `consul_url`.
 2. To login to consul you will need the `consul_root_token`. To retrieve this, execute: `terraform output consul_root_token`
 3. In the HCP Consul UI, select **eks-dev** from the *"Admin Partitions"* list (you may need to reload the page). You should see your newly deployed services registering themselves, and also the **Mesh Gateway**!
-4. On the left-hand navigation pane, click *"Intentions"* to see the strict security model. Not the L7 (HTTP) intentions for the frontend security.
+4. On the left-hand navigation pane, click *"Intentions"* to see the strict security model. Note the L7 (HTTP) intentions for the frontend security.
 5. In *"Services"*, click on the `frontend` service to see how the `intentions` security model is allowing strict communication flows between services.
-6. In a sperate tab/window, navigate to the the microservice-based demonstration application, HashiCups, using the `hashicups_url` output value. Note the newer interface in the dev environmemt.
-7. Next, we are going to use `kubectl` command to list the k8s pods we have just deployed. Before using the `kubectl` command we need `export` the location of the `kubeconfig` file returned by terraform as an environment variable. To do this execute the following command:
 

@@ -1,6 +1,6 @@
 ---
 slug: create-a-managed-service-catalog-on-hcp
-
+id: mvnpq5punucf
 type: challenge
 title: Create a managed Service Catalog on HCP
 teaser: In this challenge you will create a Consul Cluster on the HashiCorp Cloud
