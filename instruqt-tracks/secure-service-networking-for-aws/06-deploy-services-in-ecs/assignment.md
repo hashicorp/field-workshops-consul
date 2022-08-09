@@ -31,7 +31,7 @@ tabs:
   type: terminal
   hostname: shell
 difficulty: basic
-timelimit: 1200
+timelimit: 7200
 ---
 In this challenge we're going to build an Elastic Container Service (ECS) Cluster in its own VPC – the far right VPC in the `Infrastructue Overview` diagram. Upon this ECS cluster we will deploy the HashiCups "frontend" and "public-api" services, which will have upstreams to the *"product-api"* and *"payments"* services in the EKS dev cluster.
 
