@@ -1,7 +1,7 @@
-slug: secure-service-networking-for-aws-august
-id: lmywlxlwmcxm
+slug: secure-service-networking-for-aws
+
 type: track
-title: Secure Service Networking for AWS - August
+title: Secure Service Networking for AWS
 teaser: Implement 'Secure by Default' Service Networking for AWS platforms.
 description: Securing micro-services is extremely complex. Traditional security technologies
   operate at the platform edge, and not at the inter-service communications behind
@@ -16,4 +16,3 @@ developers:
 - ppresto@hashicorp.com
 private: true
 published: true
-checksum: "3394009919660117789"
