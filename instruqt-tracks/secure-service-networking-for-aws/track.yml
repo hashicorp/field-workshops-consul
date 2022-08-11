@@ -1,7 +1,7 @@
-slug: secure-service-networking-for-aws
+slug: secure-service-networking-for-aws-sebby-branch-demo
 
 type: track
-title: Secure Service Networking for AWS
+title: Secure Service Networking for AWS-sebby-branch-demo
 teaser: Implement 'Secure by Default' Service Networking for AWS platforms.
 description: Securing micro-services is extremely complex. Traditional security technologies
   operate at the platform edge, and not at the inter-service communications behind
@@ -14,5 +14,6 @@ owner: hashicorp
 developers:
 - npearce@hashicorp.com
 - ppresto@hashicorp.com
+- sebastian.maniak@hashicorp.com
 private: true
 published: true
