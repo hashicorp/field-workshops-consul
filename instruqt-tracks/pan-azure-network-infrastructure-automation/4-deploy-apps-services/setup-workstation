@@ -1,0 +1,5 @@
+#!/bin/sh
+
+set-workdir /root/terraform
+
+exit 0

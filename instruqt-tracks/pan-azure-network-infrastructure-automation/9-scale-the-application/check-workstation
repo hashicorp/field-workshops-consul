@@ -1,0 +1,21 @@
+#!/bin/bash
+
+echo "Checking App Scale-down has executed..."
+
+#get rg
+rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+
+status=$(az vmss show -g "${rg}" --name web-vmss | jq -r '.provisioningState')
+if [ "${status}" != "Updating" ] && [ "${status}" != "Succeeded" ] ; then
+  fail-message "App scale-down has not been executed. Please run the terraform command provided. Current state is: ${status}"
+  exit 1
+fi
+
+#check the app still works
+app=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080)
+if [ "${app}" != "200" ]; then
+  fail-message "App did not return a 200."
+  exit 1
+fi
+
+exit 0

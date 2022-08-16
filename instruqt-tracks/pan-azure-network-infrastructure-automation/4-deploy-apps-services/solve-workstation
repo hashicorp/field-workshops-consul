@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#panw
+cd /root/terraform/panw-vm
+terraform apply -auto-approve 2>&1 | tee /root/terraform/panw-vm/terraform.out
+
+#f5
+cd /root/terraform/bigip
+terraform apply -auto-approve 2>&1 | tee /root/terraform/bigip/terraform.out
+
+exit 0

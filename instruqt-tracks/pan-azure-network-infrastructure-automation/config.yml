@@ -1,0 +1,18 @@
+version: "2"
+containers:
+- name: workstation
+  image: gcr.io/instruqt/cloud-client
+  shell: /bin/bash
+  ports:
+  - 80
+  - 8080
+  - 8200
+  - 8500
+  - 443
+  - 8443
+  - 8558
+  memory: 2048
+azure_subscriptions:
+- name: consul
+  roles:
+  - Owner

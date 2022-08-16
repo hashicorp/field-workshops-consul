@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#dir
+set-workdir /root/terraform
+
+#profile
+bastion_ip=$(terraform output -state /root/terraform/vnet/terraform.tfstate bastion_ip)
+echo "export bastion_ip=${bastion_ip}" >> ~/.bashrc
+
+exit 0

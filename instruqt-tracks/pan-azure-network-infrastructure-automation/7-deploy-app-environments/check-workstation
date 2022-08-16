@@ -1,0 +1,36 @@
+#!/bin/bash
+
+echo "Checking App Deployment..."
+
+#rg
+rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+
+#check web
+status=$(az vmss show -g "${rg}" --name web-vmss | jq -r '.provisioningState')
+if [ "${status}" != "Creating" ] && [ "${status}" != "Updating" ] && [ "${status}" != "Succeeded" ] ; then
+  fail-message "App is not provisioning/provisioned. Wait a few moments and try again. Current state is: ${status}"
+  exit 1
+fi
+
+#check app
+status=$(az vmss show -g "${rg}" --name app-vmss | jq -r '.provisioningState')
+if [ "${status}" != "Creating" ] && [ "${status}" != "Updating" ] && [ "${status}" != "Succeeded" ] ; then
+  fail-message "App is not provisioning/provisioned. Wait a few moments and try again. Current state is: ${status}"
+  exit 1
+fi
+
+#check web
+web=$(curl -s "${CONSUL_HTTP_ADDR}/v1/health/service/web?passing=true")
+if [ "$(echo "${web}" | jq '. | length')" != "2" ]; then
+  fail-message "Web is not healthy"
+  exit 1
+fi
+
+#check app
+app=$(curl -s "${CONSUL_HTTP_ADDR}/v1/health/service/app?passing=true")
+if [ "$(echo "${app}" | jq '. | length')" != "2" ]; then
+  fail-message "App is not healthy"
+  exit 1
+fi
+
+exit 0

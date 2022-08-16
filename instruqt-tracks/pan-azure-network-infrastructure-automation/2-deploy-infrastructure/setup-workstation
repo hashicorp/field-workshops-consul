@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#assignment
+set-workdir /root/terraform/vnet
+
+exit 0

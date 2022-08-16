@@ -1,0 +1,35 @@
+#!/bin/bash
+
+echo ""
+echo ""
+echo ">>--------------------------------<<"
+echo ">> Core Services: Deploying Vault <<"
+echo ">>--------------------------------<<"
+
+cd /root/terraform/vault
+terraform apply -refresh=false -auto-approve > /root/terraform/vault/terraform.out
+
+echo ""
+echo ""
+echo ">>-------------------------------<<"
+echo ">> Core Services: Vault Deployed <<"
+echo ">>-------------------------------<<"
+
+echo ""
+echo ""
+echo ">>----------------------------------------<<"
+echo ">> Core Services: Deploying Consul Server <<"
+echo ">>----------------------------------------<<"
+
+cd /root/terraform/consul-server
+terraform apply -refresh=false -auto-approve > /root/terraform/consul-server/terraform.out
+
+echo ""
+echo ""
+echo ">>---------------------------------------<<"
+echo ">> Core Services: Consul Server Deployed <<"
+echo ">>---------------------------------------<<"
+
+sleep 60
+
+exit 0

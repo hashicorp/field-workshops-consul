@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#creds
+vault login -method=userpass username=nia password=Password1
+
+#secrets
+vault kv get secret/f5
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get F5 secret."
+  exit 1
+fi
+
+vault kv get secret/pan
+if [ $? -ne 0 ]
+then
+  fail-message "Could not get PAN secret."
+  exit 1
+fi
+
+exit 0

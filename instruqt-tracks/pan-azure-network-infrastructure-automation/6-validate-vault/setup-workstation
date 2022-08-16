@@ -1,0 +1,123 @@
+#!/bin/bash
+
+
+#nginx
+set-workdir /root/terraform/vault
+
+vault_lb=$(terraform output -state=/root/terraform/vault/terraform.tfstate vault_lb)
+echo "export VAULT_ADDR=http://${vault_lb}" >> ~/.bashrc
+cat << EOF > /etc/nginx/conf.d/vault.conf
+server {
+  listen 8200;
+  location / {
+    proxy_pass http://${vault_lb};
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_http_version 1.1;
+    proxy_set_header Connection "";
+    proxy_read_timeout 180;
+    proxy_redirect off;
+  }
+  access_log /var/log/nginx/vault.log;
+}
+EOF
+consul_lb=$(terraform output -state=/root/terraform/consul-server/terraform.tfstate consul_external_ip)
+echo "export CONSUL_HTTP_ADDR=http://${consul_lb}" >> ~/.bashrc
+cat << EOF > /etc/nginx/conf.d/consul.conf
+server {
+  listen 8500;
+  location / {
+    proxy_pass http://${consul_lb}:80;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_http_version 1.1;
+    proxy_set_header Connection "";
+    proxy_read_timeout 180;
+    proxy_redirect off;
+  }
+  access_log /var/log/nginx/consul.log;
+}
+EOF
+/usr/sbin/service nginx reload
+
+rm -f /access.md
+bastion_ip=$(terraform output -state /root/terraform/vnet/terraform.tfstate bastion_ip)
+firewall_ip=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate FirewallIP)
+firewall_mgmt_ip=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate FirewallIPURL)
+pa_username=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_username)
+pa_password=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_password)
+
+bigip_mgmt_url=$(terraform output -state /root/terraform/bigip/terraform.tfstate mgmt_url)
+f5_username=$(terraform output -state /root/terraform/bigip/terraform.tfstate f5_username)
+f5_password=$(terraform output -state /root/terraform/bigip/terraform.tfstate f5_password)
+
+app_fqdn=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate WebFQDN)
+app_ip=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate WebIP)
+#inital vault
+export VAULT_ADDR=http://${vault_lb}
+vault login root
+vault kv put secret/pan password=$(terraform output -state=/root/terraform/panw-vm/terraform.tfstate pa_password)
+vault kv put secret/f5 password=$(terraform output -state=/root/terraform/bigip/terraform.tfstate f5_password)
+vault auth enable userpass
+vault write auth/userpass/users/operations password=Password1 policies=ops token_ttl=8h
+vault write auth/userpass/users/backend password=Password1 policies=backend token_ttl=30m
+vault write auth/userpass/users/nia password=Password1 policies=nia token_ttl=30m
+vault secrets enable consul
+
+echo 'path "secret/*" {
+  capabilities = ["list"]
+}
+path "secret/data/consul" {
+  capabilities = ["create", "read", "update", "delete"]
+}
+path "consul/*"
+{
+  capabilities = ["create", "read", "update", "delete"]
+}' | vault policy write ops -
+
+echo 'path "consul/creds/backend-developer"
+{
+  capabilities = ["read"]
+}' | vault policy write backend -
+
+echo 'path "secret/*" {
+  capabilities = ["list"]
+}
+path "secret/data/pan" {
+  capabilities = ["create", "read", "update", "delete"]
+}
+path "secret/data/f5" {
+  capabilities = ["create", "read", "update", "delete"]
+}' | vault policy write nia -
+
+vault_token=$(vault token create -field token -policy nia -period 8h -orphan)
+
+cat <<EOF > /access.md
+# Access Information
+
+Use the following information to access the virtual appliances in this workshop.
+
+## Palo Alto Firewall
+
+* Palo Alto Firewall Management Address: ${firewall_mgmt_ip}
+* Palo Alto Firewall Management Username: ${pa_username}
+* Palo Alto Firewall Management Password: ${pa_password}
+
+## F5 BIG-IP:
+
+* BIG-IP Management Address: ${bigip_mgmt_url}
+* BIG-IP Management Username: ${f5_username}
+* BIG-IP Management Password: ${f5_password}
+
+## App Access
+
+* Web Application FQDN = ${app_fqdn}
+* Web Application IP = ${app_ip}
+
+## Vault Access
+
+* Token: ${vault_token}
+
+EOF
+
+unset VAULT_TOKEN
+
+exit 0
