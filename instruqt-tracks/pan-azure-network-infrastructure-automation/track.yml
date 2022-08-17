@@ -37,7 +37,7 @@ challenges:
       Objective: Review the environment you will build in Azure using Terraform, and manage using Consul Terraform Sync.
   assignment: |
     "In this workshop, we will build the infrastructure depicted in the 'NIA - Traffic Flow' tab on the left, but before we do, let's quickly review the operational challenges we are going to address.
-
+    
     ## Navigate to the "NetOps - Operational Pattern" tab.
 
     In this diagram we have a two-tier application running on virtual machines that use Consul for Service Discovery. New virtual machines are frequently added and removed to handle scaling requirements. The overworked NetOps and SecOps teams have to frequently reconfigure the load balancers and firewalls.
@@ -58,13 +58,13 @@ challenges:
   tabs:
   - title: NetOps - Operational Pattern
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/1.NIA-Workshop-NetOps.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/appflows.html
   - title: NIA - Operational Pattern
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/1.NIA-Workshop-CTS.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/niaflow.html
   - title: NIA - Traffic Flow
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/1.NIA-Workshop-NetOps_Traffic.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/mainimage.html
   difficulty: basic
   timelimit: 300
 - slug: 2-deploy-infrastructure
@@ -94,10 +94,7 @@ challenges:
     terraform init
     terraform plan
     terraform apply -auto-approve
-
     ```
-
-    Note: You will be promted to add your own email and a specific name you want of your azure resource group
 
     The following will be deployed: 
   
@@ -115,7 +112,7 @@ challenges:
   tabs:
   - title: Current Lab Setup
     type: website
-    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/network-infrastructure-automation/assets/images/mainimage.png
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/mainimage.png
   - title: Terraform Code
     type: code
     hostname: workstation
@@ -183,9 +180,9 @@ challenges:
     Each of these Dynamic Address groups belogs to a security policy that is being managed by our security team using Terraform with an Infrastrucure as Code framework.
 
   tabs:
-  - title: Current lab setup
+  - title: VNets lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/3.NIA-Workshop-Core_Svcs.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/build2.html
   - title: Core Infra Terraform Code
     type: code
     hostname: workstation
@@ -236,7 +233,7 @@ challenges:
   tabs:
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/4.NIA-Workshop-F5_PA.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/appflow.html
   - title: App Terraform Code
     type: code
     hostname: workstation
@@ -281,7 +278,7 @@ challenges:
   tabs:
   - title: Provision CTS
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/4.NIA-Workshop-F5_PA.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/build3.html
   - title: Terraform Code
     type: code
     hostname: workstation
@@ -321,7 +318,7 @@ challenges:
   tabs:
   - title: Current lab setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/6.NIA-Workshop-Tokens.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/build3.html
   - title: Shell
     type: terminal
     hostname: workstation
