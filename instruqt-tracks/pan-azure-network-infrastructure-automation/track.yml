@@ -20,7 +20,7 @@ developers:
 private: true
 published: true
 show_timer: true
-skipping_enabled: true
+skipping_enabled: false
 challenges:
 - slug: 1-review-lab-objectives
 
@@ -71,7 +71,7 @@ challenges:
 - slug: 2-deploy-infrastructure
 
   type: challenge
-  title: Day 0-Deploy the Infrastructure
+  title: Day-0 Deploy the Infrastructure
   teaser: 
   notes:
   - type: text
@@ -110,6 +110,35 @@ challenges:
 
     NOTE: Palo Alto takes about 6+ mins to deploy in azure
 
+    To get specific outputs, In the `Shell` tab, execute the following commands:
+
+    Consul IP
+
+    ```
+    terraform output consul_lb
+    ```
+    
+    Vault Management IP
+
+    ```
+    terraform output vault_lb
+    ```
+
+    Vault Management IP
+
+    ```
+    terraform output vault_lb
+    ```
+
+    Palo Alto Management IP
+    
+    ```
+    terraform output https_paloalto_mgmt_ip
+    ```
+
+    Continue to configuring the PAN Firewall
+
+
   tabs:
   - title: Current Lab Setup
     type: website
@@ -138,7 +167,7 @@ challenges:
     contents: |
       Terraform allows you to document, share, and deploy environments in one workflow by using Infrastructure as Code!
 
-      The following challange will configure Palo Alto security policies.
+      The following challange will configure Palo Alto Security policies, Objects, IPs, Vlans, NATs, Address Groups ...etc
   assignment: |
     Next objective is to configure the Palo Alto Firewall and HashiCorp Vault
 
@@ -167,6 +196,9 @@ challenges:
     3. Click on the "COMMIT" button in the top right corner.. this will show you the changes deployed using Terraform
     4. Click on Commit 
 
+    Note: To view Address Groups in your PAN
+    * You can view these under Policies -> Security, and Objects -> Access Groups
+
     Note: You have 2 options with Terraform and PAN.. you can automatically push configs using a commit script made by Palo Alto or you can use the method we just did. 
 
     Explore the Palo Alto:
@@ -175,6 +207,11 @@ challenges:
     * cts-addr-grp-logging
     * cts-addr-grp-web
     * cts-addr-grp-db
+
+    To view outputs. In the `Shell` tab, configure the PAN OS by running the following commands:
+    ```
+    terraform output
+    ```
 
     Note: There are no IP address in these dynamic address groups, they will be populated once we deploy our network infrastructure automation service.
 
