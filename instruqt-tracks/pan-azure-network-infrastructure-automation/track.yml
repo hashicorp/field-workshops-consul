@@ -112,7 +112,7 @@ challenges:
   tabs:
   - title: Current Lab Setup
     type: website
-    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/mainimage.png
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/mainimage.html
   - title: Terraform Code
     type: code
     hostname: workstation

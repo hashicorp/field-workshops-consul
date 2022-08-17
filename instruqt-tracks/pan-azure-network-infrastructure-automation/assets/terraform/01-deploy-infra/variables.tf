@@ -7,7 +7,7 @@ variable "location" {
 variable "owner" {
   description = "Owner"
   type        = string
-  default "azurepan@consulterraformsync.com"
+  default = "azurepan@consulterraformsync.com"
 }
 
 variable "resource_group_name" {
