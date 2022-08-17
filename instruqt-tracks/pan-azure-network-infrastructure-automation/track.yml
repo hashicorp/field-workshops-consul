@@ -329,7 +329,7 @@ challenges:
     Inside the consul-terraform-server you can execute the following commands to see consul-terraform-sync logs 
     ```
     sudo journalctl -u consul-tf-sync.service -f
-    ``1
+    ```
 
     Log into your Consul server GUI/HTTP to validate that Consul-Terraform-Sync was registered with cosnul
 
