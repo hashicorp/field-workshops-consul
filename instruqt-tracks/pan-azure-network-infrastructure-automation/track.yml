@@ -261,13 +261,18 @@ challenges:
     * API Servers
     * DB Servers
 
-    All of the services/apps will be registerd with Consul. Consul will be our source of truth, our service registry that shows what is online and offline.
+    Log into the Consul server GUI/HTTPS and verify that you have nodes and services online. Once all services are green try to access the web site that deployed to ensure everything is working.
 
-    Log into the Consul server and verify that you have nodes and services online. Once all services are green try to access the web site that deployed to ensure everything is working.
+    Note: If you need to see the consul http url type in the 'Shell'
+    ```
+    terraform output
+    ```
+
+    All of the services/apps will be registerd with Consul. Consul will be our source of truth, our service registry that shows what is online and offline.
 
     **Next** 
 
-    Now that we have our entire infrastrucute online, let's eleavate this and deploy idenrity based workflow/automation using Consul Terraform Sync.
+    Now, we have our entire infrastructure online, let's eleavate this and deploy identity based workflow/automation using Consul Terraform Sync.
 
   tabs:
   - title: Current lab setup
