@@ -319,6 +319,12 @@ challenges:
     terraform apply -auto-approve
     ```
 
+    When its complete SSH into the Consul-Terraform-Server. The Terraform output will give you the command to log into the server.
+
+    example..  (IP will be different for fall) 
+    ```
+    
+    ```
 
     Log into your Consul server to validate that Consul-Terraform-Sync was registered with cosnul
 
@@ -349,22 +355,44 @@ challenges:
 - slug: 6-scale-the-application
 
   type: challenge
-  title: Day 2 Ops scale the app
+  title: Day 2 
   teaser: Let's see the CTS magic in action
   notes:
   - type: text
     contents: |
-      Let's perform some day 2 operations.
+      We are heading into the prime time for our application and we will need to scale up the app to ensure we can handle to load during this busy period.
   assignment: |
-    Let's scale our apps to ensure  
+    The application team has been asked to increase the app and web servers. 
     
-    In the `Shell` tab, deploy CTS by running the following commands:
+    Using Terraform the application sets the app_count and web_count to 3.
+    
+    In the `Shell 1` tab, execute the following: 
 
     ```
     terraform apply -var app_count=3 -var web_count=3 -auto-approve
     ```
 
-    After the Terraform run completes, you can monitor the status of your nodes and services using the Consul UI. Once all of the new instances are online and healthy, you can revisit some of the things we reviewed in the previous exercises.
+    After the Terraform run completes, you can monitor the status of your nodes and services using the Consul UI. 
+    Once all of the new instances are online and healthy, you can revisit some of the things we reviewed in the previous exercises.
+
+    Validate that CTS added those servers to there specific Address Groups
+    * log into the PAN FW using the GUI/HTTPS, select OBJECTS > Address Groups 
+    * look at the _web or _api address group by click "more.." and you will see the new IPs deployed.
+
+
+    Explore: 
+    Change the count and add more db to be deployed. Watch Consule Terraform Sync in action.
+
+    ```
+    terraform apply -var app_count=2 -var web_count=4 -var db_count=3 -auto-approve
+    ```
+    
+    In the `Shell 2` tab, ssh into your CTS server: 
+    ```
+    
+
+
+
 
     This concludes the final step in the Network Infrastructure Automation workshop.
 
@@ -372,7 +400,10 @@ challenges:
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/build3.html
-  - title: Shell
+  - title: Shell 1
+    type: terminal
+    hostname: workstation
+  - title: Shell 2
     type: terminal
     hostname: workstation
   - title: Terraform Code
