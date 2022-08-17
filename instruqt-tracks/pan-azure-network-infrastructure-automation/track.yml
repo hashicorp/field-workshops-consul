@@ -185,10 +185,11 @@ challenges:
     3. Consul MGMT IP
 
     Next Explore Vault: Explore Vault and Retrieve PAN Password
-    1. Log into your VAULT server using "root" token
-    2. Under Secrets Select "net_infra" 
-    3. In the net_infra secrets engine select "paloalto"
-    4. This will provide you Palo Alot username and password
+    1. Log into your VAULT server with the "root" token
+    2. Take some time to explore VAULT
+    3. Find the PAN crendetials in the Secrets Engine called "net_infra" 
+    4. In the net_infra secrets engine select "paloalto"
+    5. This will provide you Palo Alot username and password
 
     Next Explore Pan and Commit changes:
     1. Log into the Palo Alto Management IP using the credenitals from your VAULT server
