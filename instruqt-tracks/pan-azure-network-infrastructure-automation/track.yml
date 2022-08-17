@@ -22,7 +22,7 @@ published: true
 show_timer: true
 skipping_enabled: true
 challenges:
-- slug: 1-Workshop-Overview
+- slug: 1-review-lab-objectives
 
   type: challenge
   title: Workshop Overview
