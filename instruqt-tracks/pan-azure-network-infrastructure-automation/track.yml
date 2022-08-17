@@ -325,7 +325,7 @@ challenges:
   - title: Shell
     type: terminal
     hostname: workstation
- - title: Terraform Code
+  - title: Terraform Code
     type: code
     hostname: workstation
     path: /root/terraform/03-deploy-apps
