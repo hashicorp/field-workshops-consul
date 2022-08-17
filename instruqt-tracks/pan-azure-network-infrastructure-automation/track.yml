@@ -307,7 +307,9 @@ challenges:
   - type: text
     contents: Now we elevate your network infrastructure automation by deploying Consul Terraform Sync to focus on Day 2 network operations.
   assignment: |-
-    Let's deploy Consul-Terraform-Sync service 
+    Let's deploy Consul-Terraform-Sync service. Things happen quickly!! 
+
+    Once CTS is deployed and registered with Consul, it will automatically update the Dynamic Address Groups in the PAN.
     
     In the `Shell` tab, deploy CTS by running the following commands:
 
@@ -316,6 +318,7 @@ challenges:
     terraform plan
     terraform apply -auto-approve
     ```
+
 
     Log into your Consul server to validate that Consul-Terraform-Sync was registered with cosnul
 
@@ -346,7 +349,7 @@ challenges:
 - slug: 6-scale-the-application
 
   type: challenge
-  title: Day 2 ops scale the app
+  title: Day 2 Ops scale the app
   teaser: Let's see the CTS magic in action
   notes:
   - type: text
