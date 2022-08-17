@@ -319,12 +319,17 @@ challenges:
     terraform apply -auto-approve
     ```
 
-    When its complete SSH into the Consul-Terraform-Server. The Terraform output will give you the command to log into the server.
+    When its complete, you can SSH into the Consul-Terraform-Server. The Terraform output will give you the command to log into the server.
 
     example..  (IP will be different for fall) 
     ```
-    
+    ssh -i cts.pem azureuser@$x.x.x.x
     ```
+
+    Inside the consul-terraform-server you can execute the following commands to see consul-terraform-sync logs 
+    ```
+    sudo journalctl -u consul-tf-sync.service -f
+    ``1
 
     Log into your Consul server GUI/HTTP to validate that Consul-Terraform-Sync was registered with cosnul
 
@@ -366,35 +371,47 @@ challenges:
   assignment: |
     The application team has been asked to increase the app and web servers. 
     
-    Using Terraform the application sets the app_count and web_count to 3.
+    Using Terraform the application sets the app_count and web_count to 3. Let's see this live in action.
     
-    In the `Shell 1` tab, execute the following: 
+    In the `Shell 1` tab, log into the consul-terraform-sync server to run logs: 
 
     ```
-    terraform apply -var app_count=3 -var web_count=3 -auto-approve
+    cd ~/root/terraform/04-network-automation
+    terraform outputs 
+    ```
+    
+    SSH into your cconsul-terraform-sync server using the output from above. Once your logged in run the following command, this will show us the magic.
+
+    ```
+    sudo journalctl -u consul-tf-sync.service -f
     ```
 
-    After the Terraform run completes, you can monitor the status of your nodes and services using the Consul UI. 
-    Once all of the new instances are online and healthy, you can revisit some of the things we reviewed in the previous exercises.
+    
+    Jump into `Shell 2` tab, to change scale your application. Execute the following command.
 
-    Validate that CTS added those servers to there specific Address Groups
+    ```
+    terraform apply -var app_count=3 -var web_count=2 -var db_count=2 -auto-approve
+    ```
+
+    Jump back to `Shell 1' to see consul-terraform-sync in action
+
+    You can also monitor the status of the applictions inside Consul GUI/HTTP. 
+
+    Validate that CTS added those servers to there specific Address Groups by logging into your palo alto firewall.
     * log into the PAN FW using the GUI/HTTPS, select OBJECTS > Address Groups 
     * look at the _web or _api address group by click "more.." and you will see the new IPs deployed.
 
 
     Explore: 
-    Change the count and add more db to be deployed. Watch Consule Terraform Sync in action.
+    Change the count and add more or less db to be deployed. Watch Consule Terraform Sync in action.
 
     ```
     terraform apply -var app_count=2 -var web_count=4 -var db_count=3 -auto-approve
     ```
-    
-    In the `Shell 2` tab, ssh into your CTS server: 
-    ```
-    
 
+    The resources for this lab will self-destruct in 8 hours, but to save a little money, **please scale the application back down.**
 
-
+    Re-run Terraform, and monitor the various integration points once again. We'll do so in the background so that you can move on whenever you're ready.
 
     This concludes the final step in the Network Infrastructure Automation workshop.
 

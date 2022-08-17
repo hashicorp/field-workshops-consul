@@ -32,6 +32,14 @@ resource "random_string" "ctsparticipant" {
   numeric = false
 }
 
+resource "azurerm_public_ip" "cts" {
+  name                = "cts-ip"
+  resource_group_name = data.terraform_remote_state.environment.outputs.azurerm_resource_group
+  location = data.terraform_remote_state.environment.outputs.location
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
 resource "azurerm_network_interface" "ctsnic" {
   name                = "ctsnic"
   resource_group_name = data.terraform_remote_state.environment.outputs.azurerm_resource_group
@@ -43,6 +51,50 @@ resource "azurerm_network_interface" "ctsnic" {
     private_ip_address_allocation = "Dynamic"
   }
 }
+
+
+resource "azurerm_lb" "cts" {
+  name                = "cts-lb"
+  resource_group_name = data.terraform_remote_state.environment.outputs.azurerm_resource_group
+  location = data.terraform_remote_state.environment.outputs.location
+
+  sku = "Standard"
+
+  frontend_ip_configuration {
+    name                 = "consulctsconfiguration"
+    public_ip_address_id = azurerm_public_ip.cts.id
+  }
+}
+
+
+resource "azurerm_lb_backend_address_pool" "cts" {
+  loadbalancer_id = azurerm_lb.cts.id
+  name            = "ctsBackEndAddressPool"
+}
+
+resource "azurerm_network_interface_backend_address_pool_association" "cts" {
+  network_interface_id    = azurerm_network_interface.ctsnic.id
+  ip_configuration_name   = "consulctsconfiguration"
+  backend_address_pool_id = azurerm_lb_backend_address_pool.cts.id
+}
+
+resource "azurerm_lb_probe" "cts" {
+  loadbalancer_id = azurerm_lb.cts.id
+  name            = "cts-http"
+  port            = 22
+}
+
+resource "azurerm_lb_rule" "cts" {
+  loadbalancer_id                = azurerm_lb.cts.id
+  name                           = "cts"
+  protocol                       = "Tcp"
+  frontend_port                  = 22
+  backend_port                   = 22
+  frontend_ip_configuration_name = "consulctsconfiguration"
+  probe_id                       = azurerm_lb_probe.cts.id
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.cts.id]
+}
+
 
 
 resource "azurerm_linux_virtual_machine" "consul-terraform-sync" {
