@@ -33,8 +33,9 @@ challenges:
       Every journey begins with a single step!
 
       Setting up your environment... Your Azure account will be ready in ~5 minutes.
-
-      Objective: Review the environment you will build in Azure using Terraform, and manage using Consul Terraform Sync.
+      
+      Objective: 
+        * Review the environment you will build in Azure using Terraform, and manage Palo Alto Firewall Security Policies and Address Groups using Consul Terraform Sync.
   assignment: |
     "In this workshop, we will build the infrastructure depicted in the 'NIA - Traffic Flow' tab on the left, but before we do, let's quickly review the operational challenges we are going to address.
     
