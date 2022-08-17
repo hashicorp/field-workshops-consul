@@ -261,7 +261,9 @@ challenges:
     * API Servers
     * DB Servers
 
-    Log into the Consul server GUI/HTTPS and verify that you have nodes and services online. Once all services are green try to access the web site that deployed to ensure everything is working.
+    Log into the Consul server GUI/HTTPS and verify that you have nodes and services online. 
+    NOTE: It will take 2-3 minutes to get all the apps online.
+    Once all services are green try to access the web site that deployed to ensure everything is working.
 
     Note: If you need to see the consul http url type in the 'Shell'
     ```
