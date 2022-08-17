@@ -326,9 +326,11 @@ challenges:
     
     ```
 
-    Log into your Consul server to validate that Consul-Terraform-Sync was registered with cosnul
+    Log into your Consul server GUI/HTTP to validate that Consul-Terraform-Sync was registered with cosnul
 
-    Next..let's see if the magic worked... Log into the Palo Alto Firewall and take a look in the "Objects" tab and click on "Address Group". Select any address group and click on the "more.." button. 
+    Next..let's see if the magic worked... 
+    
+    Log into the Palo Alto Firewall and take a look in the "Objects" tab and click on "Address Group". Select any address group and click on the "more.." button. 
     What do you see?
 
     You will notice that Consul-Terraform-Sync has automatically add the IPs of the nodes that are registered in Consul.
@@ -410,16 +412,6 @@ challenges:
     type: code
     hostname: workstation
     path: /root/terraform/03-deploy-apps
-  - title: Consul
-    type: service
-    hostname: workstation
-    path: /
-    port: 8500
-  - title: Vault
-    type: service
-    hostname: workstation
-    path: /
-    port: 8200
   - title: Cloud Consoles
     type: service
     hostname: workstation
