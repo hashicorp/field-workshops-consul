@@ -33,12 +33,12 @@ resource "panos_security_rule_group" "allow_vault_app_network" {
     position_keyword = "top"
     #position_reference = panos_security_rule_group.deny_all.rule.0.name
     rule {
-        name = "Vault to App VNet"
+        name = "Allow Access to Vault Server"
         source_zones = [panos_zone.private_zone.name]
-        source_addresses = ["10.2.1.0/24"]
+        source_addresses =  ["cts-addr-grp-api","cts-addr-grp-web","cts-addr-grp-db"]
         source_users = ["any"]
         destination_zones = [panos_zone.private_zone.name]
-        destination_addresses = ["any"]
+        destination_addresses = [data.terraform_remote_state.deploy-infra.outputs.vault_ip]
         applications = ["any"]
         services = ["any"]
         categories = ["any"]
@@ -50,12 +50,29 @@ resource "panos_security_rule_group" "allow_consul_app_network" {
     position_keyword = "top"
     #position_reference = panos_security_rule_group.deny_all.rule.0.name
     rule {
-        name = "Consul to App VNet"
+        name = "Allow Access to Consul Server"
         source_zones = [panos_zone.private_zone.name]
-        source_addresses = ["10.2.2.0/24"]
+        source_addresses = ["10.0.0.0/8"]
         source_users = ["any"]
         destination_zones = [panos_zone.private_zone.name]
-        destination_addresses = ["10.3.0.0/16"]
+        destination_addresses = [data.terraform_remote_state.deploy-infra.outputs.consul_ip]
+        applications = ["any"]
+        services = ["any"]
+        categories = ["any"]
+        action = "allow"
+    }
+}
+
+
+resource "panos_security_rule_group" "cts-addr-grp-logging" {
+    position_keyword = "top"
+    rule {
+        name = "Allow traffic to the logging servers"
+        source_zones = [panos_zone.private_zone.name]
+        source_addresses = ["cts-addr-grp-api","cts-addr-grp-web","cts-addr-grp-db"]
+        source_users = ["any"]
+        destination_zones = [panos_zone.private_zone.name]
+        destination_addresses = ["cts-addr-grp-logging"]
         applications = ["any"]
         services = ["any"]
         categories = ["any"]
@@ -72,7 +89,72 @@ resource "panos_security_rule_group" "allow_app_sharedservice_consul" {
         source_addresses = ["10.3.0.0/16"]
         source_users = ["any"]
         destination_zones = [panos_zone.private_zone.name]
-        destination_addresses = ["10.2.2.0/24"]
+        destination_addresses = ["10.2.0.0/16"]
+        applications = ["any"]
+        services = ["any"]
+        categories = ["any"]
+        action = "allow"
+    }
+}
+
+resource "panos_security_rule_group" "allow_sharedservice_app" {
+    position_keyword = "top"
+    #position_reference = panos_security_rule_group.deny_all.rule.0.name
+    rule {
+        name = "Shared Service to App VNet"
+        source_zones = [panos_zone.private_zone.name]
+        source_addresses = ["10.2.0.0/16"]
+        source_users = ["any"]
+        destination_zones = [panos_zone.private_zone.name]
+        destination_addresses = ["10.3.0.0/16"]
+        applications = ["any"]
+        services = ["any"]
+        categories = ["any"]
+        action = "allow"
+    }
+}
+
+resource "panos_security_rule_group" "alow_web_access_api" {
+    position_keyword = "top"
+    rule {
+        name = "Allow Web Access to API"
+        source_zones = [panos_zone.private_zone.name]
+        source_addresses = ["cts-addr-grp-web"]
+        source_users = ["any"]
+        destination_zones = [panos_zone.private_zone.name]
+        destination_addresses = ["cts-addr-grp-api"]
+        applications = ["any"]
+        services = ["any"]
+        categories = ["any"]
+        action = "allow"
+    }
+}
+
+resource "panos_security_rule_group" "allow_cts_pan" {
+    position_keyword = "top"
+    rule {
+        name = "Allow CTS to PAN"
+        source_zones = [panos_zone.private_zone.name]
+        source_addresses = ["any"]
+        source_users = ["any"]
+        destination_zones = [panos_zone.private_zone.name]
+        destination_addresses = ["any"]
+        applications = ["any"]
+        services = ["any"]
+        categories = ["any"]
+        action = "allow"
+    }
+}
+
+resource "panos_security_rule_group" "alow_api_access_db" {
+    position_keyword = "top"
+    rule {
+        name = "Allow API Access to DB"
+        source_zones = [panos_zone.private_zone.name]
+        source_addresses = ["cts-addr-grp-api"]
+        source_users = ["any"]
+        destination_zones = [panos_zone.private_zone.name]
+        destination_addresses = ["cts-addr-grp-db"]
         applications = ["any"]
         services = ["any"]
         categories = ["any"]
@@ -81,11 +163,13 @@ resource "panos_security_rule_group" "allow_app_sharedservice_consul" {
 }
 
 
+
+
 resource "panos_security_rule_group" "out_traffic" {
     position_keyword = "top"
     #position_reference = panos_security_rule_group.deny_all.rule.0.name
     rule {
-        name = "Allow outoging traffic"
+        name = "Allow outgoing traffic"
         source_zones = [panos_zone.private_zone.name]
         source_addresses = ["any"]
         source_users = ["any"]
@@ -97,70 +181,3 @@ resource "panos_security_rule_group" "out_traffic" {
         action = "allow"
     }
 }
-
-# resource "panos_security_rule_group" "deny_all" {
-#     position_keyword = "bottom"
-#     rule {
-#         name = "Deny everything else"
-#         source_zones = ["any"]
-#         source_addresses = ["any"]
-#         source_users = ["any"]
-#         destination_zones = ["any"]
-#         destination_addresses = ["any"]
-#         applications = ["any"]
-#         services = ["any"]
-#         categories = ["any"]
-#         action = "deny"
-#     }
-# }
-
-# resource "panos_security_rule_group" "egressout" {
-#   rule {
-#     name                  = "egressout"
-#     source_zones          = [panos_zone.private_zone.name]
-#     source_addresses      = ["any"]
-#     source_users          = ["any"]
-#     destination_zones     = [panos_zone.public_zone.name]
-#     destination_addresses = ["any"]
-#     applications          = ["any"]
-#     services              = ["any"]
-#     categories            = ["any"]
-#     action                = "allow"
-#   }
-# }
-
-# resource "panos_service_object" "api" {
-#     name = "api_service"
-#     protocol = "tcp"
-#     destination_port = "9094"
-# }
-
-
-# resource "panos_security_rule_group" "api-security" {
-#   rule {
-#     name                  = "api-security"
-#     source_zones          = [panos_zone.private_zone.name]
-#     source_addresses      = ["10.3.0.6"]
-#     source_users          = ["any"]
-#     destination_zones     = [panos_zone.private_zone.name]
-#     destination_addresses = ["10.3.1.6"]
-#     applications          = ["any"]
-#     services              = [panos_service_object.api.name]
-#     categories            = ["any"]
-#     action                = "deny"
-#   }
-# }
-# resource "panos_security_rule_group" "serf_traffic" {
-#   rule {
-#     name                  = "serf_traffic"
-#     source_zones          = [panos_zone.private_zone.name]
-#     source_addresses      = ["any"]
-#     source_users          = ["any"]
-#     destination_zones     = [panos_zone.private_zone.name]
-#     destination_addresses = ["any"]
-#     applications          = ["any"]
-#     services              = [panos_service_group.serf.name]
-#     categories            = ["any"]
-#     action                = "allow"
-#   }
-# }

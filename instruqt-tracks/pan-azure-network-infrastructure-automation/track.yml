@@ -66,8 +66,8 @@ challenges:
 - slug: 2-deploy-infrastructure
 
   type: challenge
-  title: Provision Azure VNETs
-  teaser: Deploy basic network infrastructure using Terraform
+  title: Day 0-Deploy the Infrastructure
+  teaser: 
   notes:
   - type: text
     contents: |

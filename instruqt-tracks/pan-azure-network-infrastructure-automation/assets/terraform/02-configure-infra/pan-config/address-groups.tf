@@ -24,3 +24,11 @@ resource "panos_address_group" "cts-addr-grp-db" {
     dynamic_match = "db"
 #    dynamic_match = "'web' and 'app'"  # Example of multi-tag
 }
+
+# Dynamic Address Group
+resource "panos_address_group" "cts-addr-grp-logging" {
+    name = "cts-addr-grp-logging"
+    description = "logging Servers"
+    dynamic_match = "logging"
+#    dynamic_match = "'web' and 'app'"  # Example of multi-tag
+}

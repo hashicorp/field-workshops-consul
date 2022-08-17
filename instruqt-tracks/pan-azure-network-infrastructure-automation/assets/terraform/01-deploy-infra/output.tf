@@ -8,6 +8,9 @@ output "logging-ip" {
 output "vault_lb" {
   value = "http://${module.sharedservices.vault_lb}"
 }
+output "vault_lb2" {
+  value = module.sharedservices.vault_lb
+}
 
 output "vault_ip" {
   value = module.sharedservices.vault_ip

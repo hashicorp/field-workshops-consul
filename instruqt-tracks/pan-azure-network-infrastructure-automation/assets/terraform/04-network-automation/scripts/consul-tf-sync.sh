@@ -3,12 +3,22 @@ local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
 
 #Utils
 sudo apt-get install unzip
-sudo apt-get install unzip
 sudo apt-get update
 sudo apt-get install software-properties-common
 sudo add-apt-repository universe
 sudo apt-get update
 sudo apt-get jq
+sudo apt-get install curl gnupg lsb-release
+sudo curl --fail --silent --show-error --location https://apt.releases.hashicorp.com/gpg | \
+      gpg --dearmor | \
+      sudo dd of=/usr/share/keyrings/hashicorp-archive-keyring.gpg
+
+sudo echo "deb [arch=amd64 signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+ sudo tee -a /etc/apt/sources.list.d/hashicorp.list
+
+sudo apt-get update
+
+sudo apt-get install consul-terraform-sync
 
 #vault env
 export VAULT_ADDR="http://${vault_addr}"
@@ -31,37 +41,28 @@ sudo mv consul /usr/local/bin/
 consul -autocomplete-install
 complete -C /usr/local/bin/consul consul
 
-#Install Consul Terraform Sync
-
-export CTS_CONSUL_VERSION="0.6.0"
-export CONSUL_URL="https://releases.hashicorp.com/consul-terraform-sync"
-
-
-curl --silent --remote-name \
-  ${CONSUL_URL}/${CTS_CONSUL_VERSION}/consul-terraform-sync_${CTS_CONSUL_VERSION}_linux_amd64.zip
-
-curl --silent --remote-name \
-  ${CONSUL_URL}/${CTS_CONSUL_VERSION}/consul-terraform-sync_${CTS_CONSUL_VERSION}_SHA256SUMS
-
-curl --silent --remote-name \
-  ${CONSUL_URL}/${CTS_CONSUL_VERSION}/consul-terraform-sync_${CTS_CONSUL_VERSION}_SHA256SUMS.sig
-
-#Unzip the downloaded package and move the consul binary to /usr/bin/. Check consul is available on the system path.
-
-unzip consul-terraform-sync_${CTS_CONSUL_VERSION}_linux_amd64.zip
-sudo chown root:root consul-terraform-sync
-mv consul-terraform-sync /usr/local/bin/consul-terraform-sync
-
-#Create config dir cts
-sudo mkdir --parents /etc/consul-tf-sync.d
-sudo chown --recursive consul:consul /etc/consul-tf-sync.d
-sudo mkdir --parents /opt/consul-tf-sync.d
-sudo chown --recursive consul:consul /opt/consul-tf-sync.d
 
 #Create Consul User
 sudo useradd --system --home /etc/consul.d --shell /bin/false consul
 sudo mkdir --parents /opt/consul
 sudo chown --recursive consul:consul /opt/consul
+
+
+#Create config dir
+sudo mkdir --parents /etc/consul.d
+sudo touch /etc/consul.d/consul.hcl
+sudo chown --recursive consul:consul /etc/consul.d
+sudo chmod 640 /etc/consul.d/consul.hcl
+
+#Install consul terraform sync user and groups
+
+sudo useradd --system --home /etc/consul-tf-sync.d --shell /bin/false consul-nia
+sudo mkdir -p /opt/consul-tf-sync.d && sudo mkdir -p /etc/consul-tf-sync.d
+
+sudo chown --recursive consul-nia:consul-nia /opt/consul-tf-sync.d && \
+sudo chmod -R 0750 /opt/consul-tf-sync.d && \
+sudo chown --recursive consul-nia:consul-nia /etc/consul-tf-sync.d && \
+sudo chmod -R 0750 /etc/consul-tf-sync.d
 
 #Create Systemd Config
 sudo cat << EOF > /etc/systemd/system/consul.service
@@ -83,38 +84,33 @@ LimitNOFILE=65536
 WantedBy=multi-user.target
 EOF
 
-#Create config dir
-sudo mkdir --parents /etc/consul.d
-sudo touch /etc/consul.d/consul.hcl
-sudo chown --recursive consul:consul /etc/consul.d
-sudo chmod 640 /etc/consul.d/consul.hcl
 
 
 #consul config
 cat << EOF > /etc/consul.d/consul.hcl
 data_dir = "/opt/consul"
-datacenter = "AcademyDC1"
+datacenter = "academyDC1"
 retry_join = ["${consul_server_ip}"]
 EOF
 
-cat << EOF > /etc/consul.d/cts.hcl
-service {
-  id      = "cts"
-  name    = "cts"
-  tags    = ["production","cts"]
-  port    = 8558
-  check {
-    id       = "cts"
-    name     = "CTS TCP on port 8558"
-    tcp      = "localhost:8558"
-    interval = "10s"
-    timeout  = "1s"
-  }
-}
-EOF
+# cat << EOF > /etc/consul.d/cts.hcl
+# service {
+#   id      = "cts"
+#   name    = "cts"
+#   tags    = ["production","cts"]
+#   port    = 8558
+#   check {
+#     id       = "cts"
+#     name     = "CTS TCP on port 8558"
+#     tcp      = "localhost:8558"
+#     interval = "10s"
+#     timeout  = "1s"
+#   }
+# }
+# EOF
 
 
-#Create Systemd Config for Consul Terraform Sync
+# #Create Systemd Config for Consul Terraform Sync
 sudo cat << EOF > /etc/systemd/system/consul-tf-sync.service
 [Unit]
 Description="HashiCorp Consul Terraform Sync - A Network Infra Automation solution"
@@ -123,9 +119,9 @@ Requires=network-online.target
 After=network-online.target
 
 [Service]
-User=consul
-Group=consul
-ExecStart=/usr/local/bin/consul-terraform-sync start -config-file=/etc/consul-tf-sync.d/consul-tf-sync-secure.hcl
+User=root
+Group=root
+ExecStart=/usr/bin/consul-terraform-sync start -config-file=/etc/consul-tf-sync.d/consul-tf-sync-secure.hcl
 KillMode=process
 Restart=always
 LimitNOFILE=65536
@@ -134,9 +130,10 @@ LimitNOFILE=65536
 WantedBy=multi-user.target
 EOF
 
+
 cat << EOF > /etc/consul-tf-sync.d/consul-tf-sync-secure.hcl
 # Global Config Options
-
+working_dir = "/opt/consul-tf-sync.d/"
 log_level = "info"
 buffer_period {
   min = "5s"
@@ -166,13 +163,15 @@ vault {
 driver "terraform" {
   log = true
   path = "/opt/consul-tf-sync.d/"
-  #working_dir = "/opt/consul-tf-sync.d/"
   required_providers {
     panos = {
       source = "PaloAltoNetworks/panos"
     }
   }
 }
+
+## Network Infrastructure Options
+
 
 ## Network Infrastructure Options
 
@@ -190,12 +189,12 @@ terraform_provider "panos" {
 
 # # Firewall operations task
 task {
-  name = "DAG_Web_App"
+  name = "Dynamic_Address_Group_PaloAlto_FW"
   description = "Automate population of dynamic address group"
   module = "github.com/maniak-academy/panos-nia-dag"
   providers = ["panos.panos1"]
   condition "services" {
-    names = ["web","api","db"]
+    names = ["web", "api", "db", "logging"]
   }  
   variable_files = ["/etc/consul-tf-sync.d/panos.tfvars"]
 }
@@ -210,5 +209,8 @@ sudo systemctl enable consul
 sudo service consul start
 sudo service consul status
 sudo systemctl enable consul-tf-sync
-sudo service consul-tf-sync restart
+sudo service consul-tf-sync start
 sudo service consul-tf-sync status
+
+
+

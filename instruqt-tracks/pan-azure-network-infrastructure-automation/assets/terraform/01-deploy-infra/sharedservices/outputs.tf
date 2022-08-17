@@ -6,7 +6,6 @@ output "vault_ip" {
   value = azurerm_network_interface.vault.private_ip_address
 }
 
-
 output "bastion_ip" {
   value = azurerm_public_ip.bastion.ip_address
 }
@@ -14,7 +13,6 @@ output "bastion_ip" {
 output "logging_ip" {
   value = azurerm_public_ip.logging.ip_address
 }
-
 
 output "consul_lb" {
   value = azurerm_public_ip.consul.ip_address

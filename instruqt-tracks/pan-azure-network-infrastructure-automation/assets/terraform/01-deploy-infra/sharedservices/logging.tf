@@ -86,7 +86,10 @@ resource "azurerm_linux_virtual_machine" "logging" {
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
-  custom_data = base64encode(file("${path.module}/scripts/logging.sh"))
+  custom_data = base64encode(templatefile("${path.module}/scripts/logging.sh", { 
+    consul_server_ip = azurerm_network_interface.consul.private_ip_address,
+    CONSUL_VERSION = "1.12.2" 
+  }))
 
   computer_name                   = "logging-vm"
   admin_username                  = "azureuser"

@@ -1,5 +1,16 @@
 #!/bin/bash
 
+#cloud client packages
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+apt update -y
+apt install software-properties-common -y
+apt update -y
+curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+apt update -y
+apt install terraform=1.2.7 consul=1.12.2 vault -y
+
+
 #assignment
 set-workdir /root/terraform/01-deploy-infra
 

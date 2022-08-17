@@ -223,6 +223,17 @@ security_rule {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+   security_rule {
+    name                       = "LOGGING"
+    priority                   = 1011
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Udp"
+    source_port_range          = "*"
+    destination_port_range     = "5140"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
 }
 
 resource "azurerm_network_interface_security_group_association" "consul" {
