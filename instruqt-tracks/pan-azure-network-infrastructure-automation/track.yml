@@ -63,7 +63,7 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/1.NIA-Workshop-NetOps_Traffic.html
   difficulty: basic
   timelimit: 300
-- slug: 2-provision-azure-vnets
+- slug: 2-deploy-infrastructure
 
   type: challenge
   title: Provision Azure VNETs
@@ -118,7 +118,7 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-- slug: 3-provision-core-services
+- slug: 3-configure-infra
 
   type: challenge
   title: Provision Core Services
@@ -176,7 +176,7 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-- slug: 4-provision-network-infra
+- slug: 4-deploy-apps-services
 
   type: challenge
   title: Provision F5 BIG-IP & Palo Alto Firewall
@@ -235,7 +235,7 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-- slug: 5-configure-palo-alto-firewall
+- slug: 5-network-automation
 
   type: challenge
   title: Configure Palo Alto Firewall
@@ -349,7 +349,7 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
-- slug: 7-deploy-app-environments
+- slug: 6-scale-the-application
 
   type: challenge
   title: Deploy App environments

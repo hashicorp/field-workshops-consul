@@ -31,14 +31,15 @@ module "vault" {
 }
 
 
-# resource "null_resource" "pan" {
-#   depends_on = [module.pan-config]
+resource "null_resource" "pan" {
+  depends_on = [module.pan-config]
 
-#   triggers = {
-#     always_run = "${timestamp()}"
-#   }
+  triggers = {
+    always_run = "${timestamp()}"
+  }
 
-#   provisioner "local-exec" {
-#     command = "/Users/sebbycorp/Documents/Projects/paloalto/medium-consul-palo-alto-nia/config-infra/panos_commit/panos-commit -config /Users/sebbycorp/Documents/Projects/paloalto/medium-consul-palo-alto-nia/config-infra/panos_commit/panos-commit.json -force"
-#   }
-# }
+  provisioner "local-exec" {
+    command = "/root/terraform/02-configure-infra/panos_commit/panos-commit -config /root/terraform/02-configure-infra/panos_commit/panos-commit/panos-commit.json -force"
+  }
+}
+

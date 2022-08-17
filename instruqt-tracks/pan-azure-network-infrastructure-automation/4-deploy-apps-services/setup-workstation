@@ -1,5 +1,5 @@
 #!/bin/sh
 
-set-workdir /root/terraform
+set-workdir /root/terraform/03-deploy-apps
 
 exit 0
