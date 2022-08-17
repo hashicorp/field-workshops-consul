@@ -376,8 +376,8 @@ challenges:
     In the `Shell 1` tab, log into the consul-terraform-sync server to run logs: 
 
     ```
-    cd ~/root/terraform/04-network-automation
-    terraform outputs 
+    cd /root/terraform/04-network-automation
+    terraform output
     ```
     
     SSH into your cconsul-terraform-sync server using the output from above. Once your logged in run the following command, this will show us the magic.
