@@ -7,9 +7,11 @@ variable "location" {
 variable "owner" {
   description = "Owner"
   type        = string
+  default "azurepan@consulterraformsync.com"
 }
 
 variable "resource_group_name" {
   description = "Name of the Resource Group to create. If not provided, it will be auto-generated."
   type        = string
+  default = "hashicorp-pan-consul-nia"
 }
