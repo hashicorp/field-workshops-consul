@@ -275,7 +275,11 @@ challenges:
     **Next** 
 
     Now, we have our entire infrastructure online, let's eleavate this and deploy identity based workflow/automation using Consul Terraform Sync.
+    
 
+    **Troubleshooting Tips:
+    * If you didn't commit your PAN configurations.. the apps will not start
+    * 
   tabs:
   - title: Current lab setup
     type: website
