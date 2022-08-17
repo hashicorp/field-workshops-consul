@@ -2,7 +2,7 @@ slug: pan-azure-network-infrastructure-automation
 
 version: 0.0.1
 type: track
-title: pan-azure-network-infrastructure-automation
+title: Palo Alto Firewall Network Infrastructure Automation with Consul-Terraform-Sync Workshop
 teaser: Palo Alto Networks Next Generation Firewalls and Consul-Terraform-Sync Workshop
 description: In this workshop you'll learn how to automate the provisioning and management
   of traditional network infrastructure using Terraform, Vault Consul, and Consul Terraform
@@ -32,7 +32,9 @@ challenges:
     contents: |-
       Every journey begins with a single step!
 
-      Step 1: Review the environment you will build in Azure using Terraform, and manage using Consul Terraform Sync.
+      Setting up your environment... Your Azure account will be ready in ~5 minutes.
+
+      Objective: Review the environment you will build in Azure using Terraform, and manage using Consul Terraform Sync.
   assignment: |
     "In this workshop, we will build the infrastructure depicted in the 'NIA - Traffic Flow' tab on the left, but before we do, let's quickly review the operational challenges we are going to address.
 
@@ -76,36 +78,44 @@ challenges:
       Setting up your environment... Your Azure account will be ready in ~5 minutes.
       Keep an eye on the bottom right corner to know when you can get started.
   assignment: |-
-    In this assignment you will provision the VNets in the "Current Lab Setup" tab that will used in the following assignments.
+    In this assignment you will start by installing Terraform
 
-    The "Terraform Code" tab contains all of the Infrastructure as Code (IaC) templates used by Terraform to build the VNETs. Feel free to look over the code!
+    In the `Shell` tab, execute the following command to install Terraform:
 
-    In the `Shell` tab, deploy the Azure VNETs by running the following commands:
     ```
+    apt-get install terraform
+    ``` 
+    
+    The "Terraform Code" tab contains all of the Infrastructure as Code (IaC) templates used by Terraform to build the Infrastructure. Feel free to look over the code!
+    
+    In the `Shell` tab, deploy the Azure Infrastructure by running the following commands:
+
+    ```
+    terraform init
     terraform plan
     terraform apply -auto-approve
 
     ```
 
-    Their CIDR blocks are listed below:
-    ```
-    shared-svcs-vnet: 10.2.0.0/16
-    app-vnet: 10.3.0.0/16
-    ```
+    Note: You will be promted to add your own email and a specific name you want of your azure resource group
 
-    The subnets created within 'app-vnet' are as follows:
-    ```
-    MGMT: 10.3.1.0/24
-    INTERNET: 10.3.2.0/24
-    DMZ: 10.3.3.0/24
-    APP: 10.3.4.0/24
-    ```
+    The following will be deployed: 
+  
+    * Azure VNets/Subnets/Routing
+    * Palo Alto Firewall in it's own VNET
+    * Vault - Secrets Management
+    * Consul - Service Registry and Discovery (Source of truth)
+    * Bastion Server
+    * Logging Server
 
-    You will leverage these VNETs in the next few assignments.
+    This is part of our Day 0 deployment in an Infrastructure as Code World.
+
+    NOTE: Palo Alto takes about 6+ mins to deploy in azure
+
   tabs:
   - title: Current Lab Setup
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/2.NIA-Workshop-VNETs.html
+    url: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/network-infrastructure-automation/assets/images/mainimage.png
   - title: Terraform Code
     type: code
     hostname: workstation
@@ -119,43 +129,57 @@ challenges:
     path: /
     port: 80
   difficulty: basic
-  timelimit: 3000
+  timelimit: 600
 - slug: 3-configure-infra
 
   type: challenge
-  title: Provision Core Services
-  teaser: Provision Vault and Consul using Terraform
+  title: Configure the Network Infrastructure
+  teaser: Configure the Palo Alto Firewall with appropriate IPs, NATs, Security Policies, Rules..etc
   notes:
   - type: text
     contents: |
       Terraform allows you to document, share, and deploy environments in one workflow by using Infrastructure as Code!
+
+      The following challange will configure Palo Alto security policies.
   assignment: |
-    With the VNETs provisioned, you are now ready to deploy Consul, Vault, and a Bastion Host used to access various services in future challenges.
+    Next objective is to configure the Palo Alto Firewall and HashiCorp Vault
 
-    Terraform will be used to provision each resource.
+    In the `Shell` tab, deploy the Azure Infrastructure by running the following commands:
 
-    ## HashiCorp Vault
-    Vault is a secrets management solution that we will use to securely store sensitive information such as usernames, passwords, certificates, and tokens.
-
-    You can review the Terraform templates used to deploy Vault, in the 'Vault Terraform Code' tab.
-
-    When ready, switch to the `Shell` tab and run the following commands:
     ```
-    cd /root/terraform/vault
+    terraform init
     terraform plan
     terraform apply -auto-approve
     ```
 
-    ## Consul
-    Let's provision Consul server.<br>
-    In the `Shell` tab run the following commands.
+    When Terraform finishes the output will provide links to access the following: 
+    1. Vault - Store the PAN username and Password
+    2. Palo Alto Management IP
+    3. Consul MGMT IP
 
-     ```
-     cd /root/terraform/consul-server
-     terraform plan
-     terraform apply -auto-approve
+    Next Explore Vault: Explore Vault and Retrieve PAN Password
+    1. Log into your VAULT server using "root" token
+    2. Under Secrets Select "net_infra" 
+    3. In the net_infra secrets engine select "paloalto"
+    4. This will provide you Palo Alot username and password
 
-     ```
+    Next Explore Pan and Commit changes:
+    1. Log into the Palo Alto Management IP using the credenitals from your VAULT server
+    2. Once, your logged in (note.. you might need to dismiss some popups)
+    3. Click on the "COMMIT" button in the top right corner.. this will show you the changes deployed using Terraform
+    4. Click on Commit 
+
+    Note: You have 2 options with Terraform and PAN.. you can automatically push configs using a commit script made by Palo Alto or you can use the method we just did. 
+
+    Explore the Palo Alto:
+    You will notice that we built many security policies and create 4 dynamic address groups:
+    * cts-addr-grp-api
+    * cts-addr-grp-logging
+    * cts-addr-grp-web
+    * cts-addr-grp-db
+
+    Each of these Dynamic Address groups belogs to a security policy that is being managed by our security team using Terraform with an Infrastrucure as Code framework.
+
   tabs:
   - title: Current lab setup
     type: website
@@ -177,8 +201,8 @@ challenges:
 - slug: 4-deploy-apps-services
 
   type: challenge
-  title: Deploy Apps
-  teaser: Deploy the apppppsssss
+  title: Deploy our applications and services
+  teaser: Next we will deploy the following services web, api and db.
   notes:
   - type: text
     contents: |
