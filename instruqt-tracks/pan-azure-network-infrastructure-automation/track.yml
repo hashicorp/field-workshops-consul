@@ -3,15 +3,17 @@ slug: pan-azure-network-infrastructure-automation
 version: 0.0.1
 type: track
 title: pan-azure-network-infrastructure-automation
-teaser: Automate the provisioning and ongoing management of network infrastructure.
+teaser: Palo Alto Networks Next Generation Firewalls and Consul-Terraform-Sync Workshop
 description: In this workshop you'll learn how to automate the provisioning and management
-  of traditional network infrastructure using Terraform, Consul, and Consul Terraform
+  of traditional network infrastructure using Terraform, Vault Consul, and Consul Terraform
   Sync. Eliminate exposure to operational overhead and security risk while accelerating
   the deployment and scaling of applications and services.
-icon: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/NIA-CTS-Icon.png
+icon: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/network-infrastructure-automation/assets/images/mainimage.png
 tags:
 - consul
 - NIA
+- cts
+- terraform
 owner: hashicorp
 developers:
 - sebastian.maniak@hashicorp.com
@@ -20,17 +22,17 @@ published: true
 show_timer: true
 skipping_enabled: true
 challenges:
-- slug: 1-review-lab-objectives
+- slug: 1-Workshop-Overview
 
   type: challenge
-  title: Review Lab Objectives
-  teaser: Before we begin, lets quickly review the architecture.
+  title: Workshop Overview
+  teaser: Before we begin, lets quickly review the architecture and understand what we are trying to accomplish.
   notes:
   - type: text
     contents: |-
       Every journey begins with a single step!
 
-      Step 1, review the environment you will build using Terraform, and manage using Consul Terraform Sync.
+      Step 1: Review the environment you will build in Azure using Terraform, and manage using Consul Terraform Sync.
   assignment: |
     "In this workshop, we will build the infrastructure depicted in the 'NIA - Traffic Flow' tab on the left, but before we do, let's quickly review the operational challenges we are going to address.
 
@@ -107,7 +109,7 @@ challenges:
   - title: Terraform Code
     type: code
     hostname: workstation
-    path: /root/terraform/vnet
+    path: /root/terraform/01-deploy-infra
   - title: Shell
     type: terminal
     hostname: workstation
@@ -158,14 +160,10 @@ challenges:
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/3.NIA-Workshop-Core_Svcs.html
-  - title: Vault Terraform Code
+  - title: Core Infra Terraform Code
     type: code
     hostname: workstation
-    path: /root/terraform/vault
-  - title: Consul Server Code
-    type: code
-    hostname: workstation
-    path: /root/terraform/consul-server
+    path: /root/terraform/02-configure-infra
   - title: Shell
     type: terminal
     hostname: workstation
@@ -179,8 +177,8 @@ challenges:
 - slug: 4-deploy-apps-services
 
   type: challenge
-  title: Provision F5 BIG-IP & Palo Alto Firewall
-  teaser: Provision an F5 BIG-IP VE & Palo Alto Firewall using Terraform
+  title: Deploy Apps
+  teaser: Deploy the apppppsssss
   notes:
   - type: text
     contents: |
@@ -217,14 +215,10 @@ challenges:
   - title: Current lab setup
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/network-infrastructure-automation/assets/images/4.NIA-Workshop-F5_PA.html
-  - title: Palo Alto Terraform Code
+  - title: App Terraform Code
     type: code
     hostname: workstation
-    path: /root/terraform/panw-vm
-  - title: F5 BIG-IP Terraform Code
-    type: code
-    hostname: workstation
-    path: /root/terraform/bigip
+    path: /root/terraform/03-deploy-apps
   - title: Shell
     type: terminal
     hostname: workstation
@@ -238,7 +232,7 @@ challenges:
 - slug: 5-network-automation
 
   type: challenge
-  title: Configure Palo Alto Firewall
+  title: Deploy Event driven network automation
   teaser: Provision a Palo Alto VM-Series Firewall using Terraform.
   notes:
   - type: text
@@ -276,14 +270,10 @@ challenges:
   - title: Terraform Code
     type: code
     hostname: workstation
-    path: /root/terraform/panw-config
+    path: /root/terraform/04-network-automation
   - title: Shell
     type: terminal
     hostname: workstation
-  - title: Access Info
-    type: code
-    hostname: workstation
-    path: /access.md
   - title: Cloud Consoles
     type: service
     hostname: workstation
@@ -291,10 +281,10 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 300
-- slug: 6-validate-vault
+- slug: 6-scale-day2
 
   type: challenge
-  title: Validate Vault & Consul
+  title: Day 2 ops scale the app
   teaser: Verify Vault, and Consul are operational
   notes:
   - type: text
