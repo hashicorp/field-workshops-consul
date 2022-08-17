@@ -58,10 +58,10 @@ challenges:
   tabs:
   - title: NetOps - Operational Pattern
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/appflows.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/appflow.html
   - title: NIA - Operational Pattern
     type: website
-    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/niaflow.html
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/build3.html
   - title: NIA - Traffic Flow
     type: website
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/mainimage.html
