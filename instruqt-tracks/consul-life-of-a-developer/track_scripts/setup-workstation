@@ -1,7 +1,17 @@
 #!/bin/bash
 
+while [ ! -f /opt/instruqt/bootstrap/host-bootstrap-completed ]
+do
+    echo "Waiting for Instruqt to finish booting the virtual machine"
+    sleep 1
+done
+
 #fix path
 echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
+
+#fix kubevars
+echo "unset -v \$(compgen -e | grep KUBERNETES)" >> /root/.bashrc
+source /root/.bashrc
 
 #install kubectl
 export DEBIAN_FRONTEND=noninteractive
@@ -40,6 +50,7 @@ sed -i 's/127.0.0.1/k8s2/g' /tmp/k8s2_kube_config.yaml
 #merge them & set the context
 mkdir -p ~/.kube/
 KUBECONFIG=/tmp/k8s1_kube_config.yaml:/tmp/k8s2_kube_config.yaml kubectl config view --merge --flatten > ~/.kube/config
+chmod 600 ~/.kube/config
 kubectl config use-context k8s1
 
 #helm install

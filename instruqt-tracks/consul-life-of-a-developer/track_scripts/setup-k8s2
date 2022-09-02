@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Wait for the Instruqt host bootstrap to finish
-until [ -f /opt/instruqt/bootstrap/host-bootstrap-completed ]
+while [ ! -f /opt/instruqt/bootstrap/host-bootstrap-completed ]
 do
+    echo "Waiting for Instruqt to finish booting the virtual machine"
     sleep 1
 done
 
