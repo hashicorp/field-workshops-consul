@@ -1,6 +1,5 @@
 ---
 slug: observability-metrics
-id: 3yb13v3q60lf
 type: challenge
 title: 'Observability: Metrics'
 teaser: Collect Application Metrics

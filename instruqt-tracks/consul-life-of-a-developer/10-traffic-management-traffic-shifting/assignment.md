@@ -1,6 +1,5 @@
 ---
 slug: traffic-management-traffic-shifting
-id: bdzwgt3pzhsw
 type: challenge
 title: 'Traffic Management: Traffic Shifting'
 teaser: Test multiple versions of your application

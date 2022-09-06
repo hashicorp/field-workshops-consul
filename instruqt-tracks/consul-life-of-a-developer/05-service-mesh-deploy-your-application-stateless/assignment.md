@@ -1,6 +1,5 @@
 ---
 slug: service-mesh-deploy-your-application-stateless
-id: kw3bi3smandq
 type: challenge
 title: Service Mesh - Deploy Your Application - Stateless
 teaser: Deploy reactive and API components
