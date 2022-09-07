@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-collector
+  labels:
+    app: opentelemetry
+    component: otel-collector
+data:
+  otel-collector-config: |
+    extensions:
+        health_check:
+
+    receivers:
+        zipkin:
+        k8s_cluster:
+          auth_type: serviceAccount
+          node_conditions_to_report: [Ready, MemoryPressure]
+        otlp:
+          protocols:
+              grpc:
+              http:
+
+    exporters:
+        logging:
+            loglevel: debug
+
+        # configuring otlp to public satellites
+        otlp:
+          endpoint: "ingest.lightstep.com:443"
+          headers:
+            "lightstep-access-token": "aLtWo9yC3JoegocpsmglL9gE/k//08FdOll0mZEYHyF/qPJWKO9KKhjm6lAd8Z9C+jXO39jch6er0K627fKyrq/jfXJEKyua0kSJlNDC"
+
+    processors:
+        batch:
+
+    service:
+        extensions: [health_check]
+        pipelines:
+          traces:
+            receivers: [otlp,zipkin]
+            exporters: [logging, otlp]
+            processors: [batch]
+          metrics:
+            receivers: [otlp, k8s_cluster]
+            exporters: [logging, otlp]

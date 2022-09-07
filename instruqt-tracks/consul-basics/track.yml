@@ -341,7 +341,7 @@ challenges:
 
     ```
     consul acl token create -description "app agent token" \
-      -policy-name app
+      -policy-name application
     ```
 
     Finally apply the token to make it active.

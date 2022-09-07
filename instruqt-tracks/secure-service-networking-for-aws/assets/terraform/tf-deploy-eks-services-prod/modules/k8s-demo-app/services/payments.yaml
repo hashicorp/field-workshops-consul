@@ -25,6 +25,27 @@ metadata:
 spec:
   protocol: "http"
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payments-properties-conf-v1
+data:
+  application.properties: |
+    app.storage=redis
+    app.encryption.enabled=false
+    opentracing.jaeger.http-sender.url=http://otel-collector:9411
+    opentracing.jaeger.include-jaeger-env-tags=true
+    logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter=DEBUG
+    opentracing.jaeger.enable-b3-propagation=true
+    spring.profiles.active=chaos-monkey
+    spring.main.allow-bean-definition-overriding=true
+    chaos.monkey.enabled=false
+    chaos.monkey.watcher.actuatorHealth=true
+    chaos.monkey.assaults.exceptionsActive=true
+    chaos.monkey.assaults.level=1
+    spring.redis.host=payments-queue
+    spring.redis.port=6379
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -44,8 +65,16 @@ spec:
         consul.hashicorp.com/connect-inject: "true"
     spec:
       serviceAccountName: payments
+      volumes:
+        - name: properties-conf
+          configMap:
+            name: payments-properties-conf-v1
       containers:
         - name: payments
           image: hashicorpdemoapp/payments:v0.0.16
+          volumeMounts:
+            - name: properties-conf
+              mountPath: /config/application.properties
+              subPath: application.properties
           ports:
             - containerPort: 8080

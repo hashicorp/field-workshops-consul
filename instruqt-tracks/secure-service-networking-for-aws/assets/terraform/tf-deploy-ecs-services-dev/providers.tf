@@ -6,7 +6,7 @@ terraform {
     }
     hcp = {
       source  = "hashicorp/hcp"
-      version = ">= 0.18.0"
+      version = ">= 0.26.0"
     }
     consul = {
       source = "hashicorp/consul"

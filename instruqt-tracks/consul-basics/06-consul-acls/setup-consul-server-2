@@ -25,7 +25,7 @@ EOF
 
 cat <<-EOF > /consul/policies/app.hcl
 # app.hcl
-node "App" {
+node "Application" {
   policy = "write"
 }
 EOF
