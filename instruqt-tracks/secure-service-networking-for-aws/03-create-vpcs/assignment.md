@@ -29,7 +29,7 @@ tabs:
   type: terminal
   hostname: shell
 difficulty: basic
-timelimit: 1200
+timelimit: 2400
 ---
 In this challenge we are going to create three VPCs, which will be used in the following steps to provision two EKS clusters and one ECS cluster, per the `Infrastructure Overview` diagram.
 

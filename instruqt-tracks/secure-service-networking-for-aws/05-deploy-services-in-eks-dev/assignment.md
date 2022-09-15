@@ -28,7 +28,7 @@ tabs:
   type: terminal
   hostname: shell
 difficulty: basic
-timelimit: 1200
+timelimit: 2400
 ---
 In this challenge we're going to build a second EKS cluster, in a separate VPC, for the development team. In this cluster we shall deploy a newer version of the HashiCups demonstration application.
 
