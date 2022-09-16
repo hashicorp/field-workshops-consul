@@ -4,10 +4,10 @@ provider "azurerm" {
 }
 
 resource "random_string" "participant" {
-  length  = 4
-  special = false
-  upper   = false
-  number  = false
+  length   = 4
+  special  = false
+  upper    = false
+  numeric  = false
 }
 
 resource "azurerm_resource_group" "instruqt" {
