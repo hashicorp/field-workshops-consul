@@ -18,6 +18,12 @@ resource "azurerm_postgresql_flexible_server" "postgres" {
   sku_name   = "B_Standard_B1ms"
 }
 
+resource "azurerm_postgresql_flexible_server_configuration" "extensions" {
+  name      = "azure.extensions"
+  server_id = azurerm_postgresql_flexible_server.postgres.id
+  value     = "PGCRYPTO"
+}
+
 resource "azurerm_postgresql_flexible_server_firewall_rule" "postgres" {
   name             = "AllowAll"
   server_id        = azurerm_postgresql_flexible_server.postgres.id

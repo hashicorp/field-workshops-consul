@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Note: override these when testing from a different repo and/or branch
+#       The `-b` option to `git clone` is useful for pulling from the
+#       non-default branch
+
+ASSET_REPO="https://github.com/hashicorp/field-workshops-consul.git"
+ASSET_REPO_FETCH_OPTIONS=""
+
+# END OPTIONS
+
 #make vault run in instruqt container
 setcap cap_ipc_lock= /usr/bin/vault
 
@@ -20,7 +29,8 @@ fi
 
 #get assets
 echo "cloning assets..."
-git clone https://github.com/hashicorp/field-workshops-consul.git
+echo "git clone ${ASSET_REPO_FETCH_OPTIONS} ${ASSET_REPO}"
+git clone ${ASSET_REPO_FETCH_OPTIONS} ${ASSET_REPO}
 cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/terraform .
 cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/packer .
 cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/apps .
