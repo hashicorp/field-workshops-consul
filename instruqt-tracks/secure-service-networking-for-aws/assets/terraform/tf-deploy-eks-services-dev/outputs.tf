@@ -15,9 +15,9 @@ output "kubeconfig_filename" {
   value = abspath(module.eks.kubeconfig_filename)
 }
 
-output "hashicups_url" {
-  value = module.demo_app.hashicups_url
-}
+#output "hashicups_url" {
+#  value = module.demo_app.hashicups_url
+#}
 
 output "next_steps" {
   value = "Hashicups Application will be ready in ~2 minutes. Use 'terraform output consul_root_token' to retrieve the root token."
@@ -25,4 +25,8 @@ output "next_steps" {
 
 output "eks_dev_cluster_primary_security_group_id" {
   value = module.eks.cluster_primary_security_group_id
+}
+
+output "helm_chart" {
+  value = module.eks_consul_client.helm_chart
 }

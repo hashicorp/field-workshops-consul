@@ -1,6 +1,6 @@
 ---
 slug: deploy-services-in-eks-prod
-id: lbpoczg7sfip
+
 type: challenge
 title: Deploy Services in EKS for the Prod Deployment
 teaser: Let's deploy some microservices on EKS for the production deployment!
@@ -11,7 +11,7 @@ notes:
 tabs:
 - title: Infrastructure Overview
   type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-infra-overview.html
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-infra-eks-prod-lab.html
 - title: HCP Consul
   type: website
   url: https://portal.cloud.hashicorp.com:443/sign-up
@@ -55,11 +55,17 @@ When ready, deploy with:
 nohup terraform apply -auto-approve > /root/terraform/tf-deploy-eks-services-prod/eks_prod.out &
 ```
 
-NOTE: we run this in the background (`nohup` / `&`) so that it continues even if your communication with the Instruqt platform is interrupted.
+NOTE: EKS clusters take approximately 15 minutes to create and you will be asked to create a second cluster for dev in the next challenge.  To only wait once kick off the dev build in the background now.
+```
+cd /root/terraform/tf-deploy-eks-services-dev
+terraform init
+nohup terraform apply -auto-approve > /root/terraform/tf-deploy-eks-services-dev/eks_dev.out &
+```
 
-You can monitor the progress of the deployment using the following command:
+Monitor the progress of the EKS Prod deployment using the following command:
 
 ```sh
+cd /root/terraform/tf-deploy-eks-services-prod
 tail -f /root/terraform/tf-deploy-eks-services-prod/eks_prod.out
 ```
 

@@ -1,6 +1,6 @@
 ---
 slug: create-vpcs
-id: fwkurownabyw
+
 type: challenge
 title: Create VPCs
 teaser: Now we create the VPCs and peer them with HCP.
@@ -11,7 +11,7 @@ notes:
 tabs:
 - title: Infrastructure Overview
   type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-infra-overview.html
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/secure-service-networking-for-aws/assets/images/ssn4aws-infra-vpc.html
 - title: HCP Consul
   type: website
   url: https://portal.cloud.hashicorp.com:443/sign-up
