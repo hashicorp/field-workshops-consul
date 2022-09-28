@@ -55,7 +55,7 @@ When ready, deploy with:
 nohup terraform apply -auto-approve > /root/terraform/tf-deploy-eks-services-prod/eks_prod.out &
 ```
 
-NOTE: EKS clusters take approximately 15 minutes to create and you will be asked to create a second cluster for dev in the next challenge.  To only wait once kick off the dev build in the background now or .
+NOTE: EKS clusters take approximately 15 minutes to create and you will be asked to create a second cluster for dev in the next challenge.  To only wait once kick off the dev build in the background now.
 ```
 cd /root/terraform/tf-deploy-eks-services-dev
 terraform init

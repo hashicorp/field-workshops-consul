@@ -62,8 +62,7 @@ source /root/.bashrc
 
 #get assets
 echo "cloning assets..."
-#git clone https://github.com/hashicorp/field-workshops-consul.git
-git clone --branch ssnfa-stability https://github.com/hashicorp/field-workshops-consul.git
+git clone https://github.com/hashicorp/field-workshops-consul.git
 cp -r field-workshops-consul/instruqt-tracks/secure-service-networking-for-aws/assets/terraform /root/terraform
 rm -rf field-workshops-consul
 
