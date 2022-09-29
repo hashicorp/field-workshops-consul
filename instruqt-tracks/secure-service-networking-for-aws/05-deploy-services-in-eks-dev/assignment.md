@@ -1,6 +1,6 @@
 ---
 slug: deploy-services-in-eks-dev
-
+id: braybkxyrlzu
 type: challenge
 title: Deploy Services in EKS for the Dev Team
 teaser: Let's deploy some microservices on EKS for the development team!
@@ -30,47 +30,40 @@ tabs:
 difficulty: basic
 timelimit: 2400
 ---
-In this challenge we're going to build a second EKS cluster, in a separate VPC, for the development team. In this cluster we shall deploy a newer version of the HashiCups demonstration application.
+We already deployed this second EKS cluster in the previous step, in a separate VPC, for the development team. In this cluster we shall deploy Consul and newer version of the HashiCups demonstration application.
 
 We will:
-1. Create an EKS (K8s) cluster and deploy the newer microservices-based application
-2. Verify the installation
+1. Install Consul agents onto k8s
+2. Install the HashiCups Dev services
+3. Verify the installation
 
 
-1) Deploy EKS Dev and Newer Services
+1) Install Consul agents onto k8s
 ===
 
-This deployment, depicted in the center of the `Infrastructure Overview` diagram, is very similar to the previous cluster, so we shall get the terraform deployment started first, before reviewing the differences, with the following command:
-```sh
-nohup terraform apply -auto-approve > /root/terraform/tf-deploy-eks-services-dev/eks_dev.out &
-```
-
-You can monitor the progress of the deployment using the following command:
-
-```sh
-tail -f /root/terraform/tf-deploy-eks-services-dev/eks_dev.out
-```
-
-**NOTE:** Unlike the *prod* environment, this cluster supports communication with services outside of EKS using a Consul Mesh Gateway, show in the `Infrastructure Overview` diagram. Mesh Gateways support cross-cluster communication in addition to navigating around challenges like overlapping IP Address ranges.
-
-While that is runnning, lets take a look at what's different with this deployment. Navigate to the `code - EKS Dev` tab:
-1. In the `./modules/hcp-eks-client` directoy you can see the helm chart to install consul onto EKS. Take a look in `./modules/hcp-eks-client/templates/consul.tpl`. Note the unique `name` and `adminParitions.name:` We shall see a new partition created in the HCP Consul UI with this partition name. Also note that near the bottom of the helm chart we have enabled `meshGateway` in this install. The **Mesh Gateway** will enable cross-partition communication in a later workshop challenge.  You will manually install the helm chart next.
-
-2. In the `./modules/k8s-demo-app/services/` directory there's a different list of services for the new version of HashiCups.  After installing the helm chart you will use kubectl to install these services and finish the deployment of the EKS cluster.
-
-3) Connect to EKS
-===
-
-Once the `terraform apply` is complete connect to EKS to finish installing the helm chart and services.
 ```sh
 export KUBECONFIG=`terraform output -raw kubeconfig_filename`
 ```
 
-Use helm to add the hashicorp repo and install the consul client.
+Verify you can communicate with the EKS Dev cluster:
+```sh
+kubectl get pods
+```
+
+Terraform has generated the helm chart value for you, which we shall now extract and save to a local file:
+
 ```sh
 terraform output -raw helm_chart | base64 -d > helm.values
+```
+
+Use helm to add the hashicorp repo and install the consul client.
+```sh
 helm repo add hashicorp https://helm.releases.hashicorp.com
 helm install consul hashicorp/consul --version 0.42.0 --values helm.values
+```
+
+Verify the consul installation:
+```sh
 helm status consul
 ```
 
@@ -79,10 +72,23 @@ verify all the pods are up and running.
 kubectl get pods
 ```
 
-Once the EKS cluster has been bootstrapped into HCP Consul install the services.
+**NOTE:** Unlike the *prod* environment, this cluster supports communication with services outside of EKS using a Consul Mesh Gateway, show in the `Infrastructure Overview` diagram. Mesh Gateways support cross-cluster communication in addition to navigating around challenges like overlapping IP Address ranges.
+
+
+2) Install the HashiCups Dev services
+===
+
+Once the EKS cluster has been bootstrapped into HCP Consul (the previous step) you can install the services. To do so, execute the following command:
+
 ```sh
 kubectl apply -f /root/terraform/tf-deploy-eks-services-dev/modules/k8s-demo-app/services/
 ```
+
+You can review the services in the following directort `./modules/k8s-demo-app/services/`.
+
+
+3) Verify the installation
+===
 
 Everything should be deployed and starting up.  Give it a minute and then try to access Hashicups at the ingress gateway url.  Note the newer interface in the dev environmemt.
 ```
@@ -95,4 +101,3 @@ echo "http://$(kubectl get svc consul-eks-dev-ingress-gateway -o json | jq -r '.
 3. In the HCP Consul UI, select **eks-dev** from the *"Admin Partitions"* list (you may need to reload the page). You should see your newly deployed services registering themselves, and also the **Mesh Gateway**!
 4. On the left-hand navigation pane, click *"Intentions"* to see the strict security model. Note the L7 (HTTP) intentions for the frontend security.
 5. In *"Services"*, click on the `frontend` service to see how the `intentions` security model is allowing strict communication flows between services.
-

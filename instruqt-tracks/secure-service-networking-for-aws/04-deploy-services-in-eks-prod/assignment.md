@@ -1,6 +1,6 @@
 ---
 slug: deploy-services-in-eks-prod
-
+id: fyzi1u3wljsx
 type: challenge
 title: Deploy Services in EKS for the Prod Deployment
 teaser: Let's deploy some microservices on EKS for the production deployment!
@@ -55,12 +55,16 @@ When ready, deploy with:
 nohup terraform apply -auto-approve > /root/terraform/tf-deploy-eks-services-prod/eks_prod.out &
 ```
 
-NOTE: EKS clusters take approximately 15 minutes to create and you will be asked to create a second cluster for dev in the next challenge.  To only wait once kick off the dev build in the background now.
+---
+
+*NOTE:* EKS clusters take approximately 15 minutes to create. To save time we are now also going to create the EKS Dev cluster that we will use in the next challenge. To start the EKS Dev cluster creation in the background now, execute the following:
 ```
 cd /root/terraform/tf-deploy-eks-services-dev
 terraform init
 nohup terraform apply -auto-approve > /root/terraform/tf-deploy-eks-services-dev/eks_dev.out &
 ```
+
+---
 
 Monitor the progress of the EKS Prod deployment using the following command:
 
@@ -78,6 +82,7 @@ While that is runnning, lets take a closer look at what we're creating:
 2. In the AWS Console tab type "EKS" and select "Elastic Kubernetes Service" to monitor what we're building on AWS. Once the cluster has been created you can click on the cluster name and:
    1. View the nodes upon which k8s is running in the *Overview* tab.
    2. View both k8s core services and the demonstration app's deployed microservices in the *Workloads* tab.
+
 
 2) Verify the installation
 ===
