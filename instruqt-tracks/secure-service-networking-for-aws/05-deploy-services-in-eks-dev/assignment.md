@@ -62,9 +62,9 @@ helm repo add hashicorp https://helm.releases.hashicorp.com
 helm install consul hashicorp/consul --version 0.42.0 --values helm.values
 ```
 
-Verify the consul installation:
+*OPTIONAL:* Verify the consul installation:
 ```sh
-helm status consul
+helm get all consul | less
 ```
 
 verify all the pods are up and running.
