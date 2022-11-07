@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euvxo pipefail
 
 #creds
 vault login -method=userpass username=admin password=admin
