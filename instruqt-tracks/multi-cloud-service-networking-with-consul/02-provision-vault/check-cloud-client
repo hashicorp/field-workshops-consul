@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euvxo pipefail
 
 #aws
 vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)

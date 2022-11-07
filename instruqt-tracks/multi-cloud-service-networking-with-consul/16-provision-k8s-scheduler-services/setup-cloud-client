@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euvxo pipefail
 
 set-workdir /root/terraform/k8s-scheduler-services
 

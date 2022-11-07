@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euvxo pipefail
 
 #provision K8s clusters
 export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)

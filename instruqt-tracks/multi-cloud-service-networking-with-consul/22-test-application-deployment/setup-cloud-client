@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+set -euvxo pipefail
 
 kubectl config use-context react
 frontend_endpoint=$(kubectl get svc nginx-ingress-controller -o json | jq -r .status.loadBalancer.ingress[0].ip)

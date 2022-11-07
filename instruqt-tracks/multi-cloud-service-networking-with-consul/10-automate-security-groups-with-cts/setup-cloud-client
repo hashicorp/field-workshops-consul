@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euvxo pipefail
 
 
 #!/bin/bash

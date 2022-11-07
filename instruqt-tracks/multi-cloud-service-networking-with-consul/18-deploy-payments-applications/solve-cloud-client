@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euvxo pipefail
 
 nomad run /root/apps/nomad/payments-api.hcl
 sleep 90

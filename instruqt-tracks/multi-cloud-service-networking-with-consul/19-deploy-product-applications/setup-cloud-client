@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euvxo pipefail
 
 cd /root/terraform/product-applications
 terraform init

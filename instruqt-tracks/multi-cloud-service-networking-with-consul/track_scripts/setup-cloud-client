@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euvxo pipefail
 
 # Note: override these when testing from a different repo and/or branch
 #       The `-b` option to `git clone` is useful for pulling from the
@@ -8,6 +9,8 @@ ASSET_REPO="https://github.com/hashicorp/field-workshops-consul.git"
 ASSET_REPO_FETCH_OPTIONS=""
 
 # END OPTIONS
+
+echo "##### INSTRUQT PARTICIPANT ID ${INSTRUQT_PARTICIPANT_ID}"
 
 #make vault run in instruqt container
 setcap cap_ipc_lock= /usr/bin/vault

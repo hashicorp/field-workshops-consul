@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euvxo pipefail
 
 #dir
 set-workdir /root/terraform/gcp-consul-secondary

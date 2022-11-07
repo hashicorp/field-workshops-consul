@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euvxo pipefail
 
 #ui access
 consul_lb=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip)
