@@ -1,7 +1,8 @@
-slug: zzz-thomas-il-493-network-infrastructure-automation-update
+slug: network-infrastructure-automation
+id: zd9iqr8wyub0
 version: 0.0.1
 type: track
-title: ZZZ Thomas IL-493 Network Infrastructure Automation - Update
+title: Network Infrastructure Automation - Update
 teaser: Automate the provisioning and ongoing management of network infrastructure.
 description: In this workshop you'll learn how to automate the provisioning and management
   of traditional network infrastructure using Terraform, Consul, and Consul Terraform
@@ -16,12 +17,14 @@ developers:
 - lance@hashicorp.com
 - npearce@hashicorp.com
 - raj@hashicorp.com
+- thomas@hashicorp.com
 private: true
 published: true
 show_timer: true
 skipping_enabled: true
 challenges:
 - slug: 1-review-lab-objectives
+  id: xuq4qb0mo9v1
   type: challenge
   title: Review Lab Objectives
   teaser: Before we begin, lets quickly review the architecture.
@@ -64,6 +67,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 2-provision-azure-vnets
+  id: dwo2s5mw6ona
   type: challenge
   title: Provision Azure VNETs
   teaser: Deploy basic network infrastructure using Terraform
@@ -118,6 +122,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 3-provision-core-services
+  id: dlsjgdoiu2ua
   type: challenge
   title: Provision Core Services
   teaser: Provision Vault and Consul using Terraform
@@ -175,6 +180,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 4-provision-network-infra
+  id: qm7eoyy10e00
   type: challenge
   title: Provision F5 BIG-IP & Palo Alto Firewall
   teaser: Provision an F5 BIG-IP VE & Palo Alto Firewall using Terraform
@@ -233,6 +239,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 5-configure-palo-alto-firewall
+  id: 7vltkulroiy8
   type: challenge
   title: Configure Palo Alto Firewall
   teaser: Provision a Palo Alto VM-Series Firewall using Terraform.
@@ -288,6 +295,7 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 6-validate-vault
+  id: l6orpveiedpr
   type: challenge
   title: Validate Vault & Consul
   teaser: Verify Vault, and Consul are operational
@@ -345,6 +353,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 7-deploy-app-environments
+  id: wvgbbfknw4fz
   type: challenge
   title: Deploy App environments
   teaser: Deploy a 2-tier VM based application to the cloud.
@@ -406,6 +415,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 8-install-consul-terraform-sync
+  id: 4pa4nyish9os
   type: challenge
   title: Deploy 'Consul Terraform Sync'
   teaser: Now we are going install Consul Terraform Sync and bring dynamic service
@@ -499,6 +509,7 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: 9-scale-the-application
+  id: 7ffmbpmxzn1p
   type: challenge
   title: Scale the application
   teaser: Let Consul take care of routine adds/moves/changes of services instances.
@@ -595,3 +606,4 @@ challenges:
     port: 80
   difficulty: basic
   timelimit: 3000
+checksum: "14590901449097205310"
