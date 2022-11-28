@@ -18,7 +18,7 @@ until [ $n -ge 20 ]; do
     echo $status
 
     if [ "${status}" != "Creating" ] && [ "${status}" != "Updating" ] && [ "${status}" != "Succeeded" ] ; then
-      echo "consul-terraform-sync instance is not provisioned. Wait a few moments and try again. Current state is: ${status}"
+      echo "consul-terraform-sync instance is not provisioned, current state is: ${status}. Sleeping and retrying."
       sleep 60
       n=$[$n+1]
       continue
@@ -27,7 +27,7 @@ until [ $n -ge 20 ]; do
     #check the app works
     app=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080)
     if [ "${app}" != "200" ]; then
-      echo "App did not return a 200, returned ${app}"
+      echo "App did not return a 200, returned ${app}. Sleeping and retrying."
       n=$[$n+1]
       sleep 60
       continue
