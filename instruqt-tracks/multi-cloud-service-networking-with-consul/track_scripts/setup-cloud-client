@@ -6,7 +6,7 @@ set -euvxo pipefail
 #       non-default branch
 
 ASSET_REPO="https://github.com/hashicorp/field-workshops-consul.git"
-ASSET_REPO_FETCH_OPTIONS=""
+ASSET_REPO_FETCH_OPTIONS="-b IL-493"
 
 # END OPTIONS
 
