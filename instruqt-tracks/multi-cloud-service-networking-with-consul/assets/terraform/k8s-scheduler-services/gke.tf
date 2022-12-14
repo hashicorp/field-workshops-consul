@@ -17,6 +17,11 @@ resource "google_container_cluster" "graphql" {
     }
   }
 
+  # IL-495
+  min_master_version = "1.21.14-gke.8500"
+  node_version       = "1.21.14-gke.8500"
+  # IL-495
+
   node_config {
     service_account = data.terraform_remote_state.iam.outputs.gcp_consul_service_account_email
     oauth_scopes = [
@@ -57,6 +62,11 @@ resource "google_container_cluster" "react" {
       issue_client_certificate = false
     }
   }
+
+  # IL-495
+  min_master_version = "1.21.14-gke.8500"
+  node_version       = "1.21.14-gke.8500"
+  # IL-495
 
   node_config {
     service_account = data.terraform_remote_state.iam.outputs.gcp_consul_service_account_email
