@@ -17,6 +17,24 @@ resource "google_container_cluster" "shared" {
     }
   }
 
+  # IL-495
+  min_master_version = "1.21.14-gke.8500"
+  node_version       = "1.21.14-gke.8500"
+  # GKE mandates at least 48hr of maintenance window in a 32 day period.
+  # We don't want upgrades during a lab, so we use the below values.
+  # Choose two six-hour windows on Saturday and Sunday.
+  # The earliest maintenance would start would be on a Saturday at 3am
+  # in Honolulu, the latest would be Monday 4am in Tokyo, to pick locales
+  # roughly at either end of time zone offsets
+  maintenance_policy {
+    recurring_window {
+      start_time = "2022-12-11T13:00:00Z"
+      end_time   = "2022-12-11T19:00:00Z"
+      recurrence = "FREQ=WEEKLY;WKST=SU;BYDAY=SA,SU"
+    }
+  }
+  # IL-495
+
   node_config {
     service_account = data.terraform_remote_state.iam.outputs.gcp_consul_service_account_email
     oauth_scopes = [
