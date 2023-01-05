@@ -7,7 +7,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "f3:bb:57:7d:be:ea:de:d0:57:e2:d7:1e:5e:b8:36:d1"
+            - "48:10:57:91:8e:07:e8:57:d8:18:24:7c:03:6e:fa:19"
       - run: git clone git@github.com:hashicorp/instruqt-packer.git
       - gcp-gcr/gcr-auth
       - gcp-gcr/build-image:
