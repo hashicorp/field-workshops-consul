@@ -46,12 +46,18 @@ rm -rf field-workshops-consul
 # This looks weird Because Quoting(TM)
 echo 'for kubevar in $(env | awk -F=  '"'"'/^KUBERNETES_/ { print $1;};'"'"'); do unset $kubevar; done' >> /root/.bashrc
 
+# IL-522 - Fix GKE auth in Multi-Cloud Workshop
+echo 'export USE_GKE_GCLOUD_AUTH_PLUGIN=True' >> /root/.bashrc
+apt update -y
+apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+apt-get --only-upgrade -y install google-cloud-sdk kubectl
+# END IL-522
+
 # Ensure we load /etc/profile.d/instruqt-env.sh
 echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
 source /root/.bashrc
 
-#wait at least five minutes for Azure User to propagate
-#az upgrade -y
+# Azure account setup
 az account clear
 echo "Logging in with Azure SPN..."
 n=0
@@ -66,16 +72,27 @@ if [ $n -ge 5 ]; then
   exit 1
 fi
 
-#wait more because Azure
-echo "Waiting extra for Azure..."
-sleep 180
-
 #aws setup
 aws configure set default.region us-east-1
 aws ec2 create-default-vpc
 
 #azure packer setup
-az group create -l westus3 -n packer
+echo "azure packer setup"
+n=0
+until [ $n -ge 5 ]; do
+    az group create -l westus3 -n packer
+    if [ $? -ne 0 ]; then
+	n=$[$n+1]
+	sleep 60
+    else
+	break
+    fi
+done
+if [ $n -ge 5 ]; then
+    fail-message "azure packer setup failed"
+    exit 1
+fi
+
 
 #cloud client packages - already on machine now with packer
 #apt update -y
@@ -194,8 +211,10 @@ n=0
 until [ $n -ge 5 ]; do
   echo "Fetching Azure Image..."
   azure_vm=$(az image list -g packer | jq -r .[0].tags.name)
-  if [ "${azure_vm}" = "Hashistack" ]; then
-    break
+  if [ $? -eq 0 ]; then
+      if [ "${azure_vm}" = "Hashistack" ]; then
+	break
+      fi
   fi
   n=$[$n+1]
   sleep 60
@@ -214,8 +233,6 @@ cat << EOF > /root/terraform/vault/terraform.tfvars
 ssh_public_key="${pubkey}"
 EOF
 terraform apply -auto-approve 2>&1 | tee terraform.out
-echo "Waiting for Vault..."
-sleep 300
 
 #run pre-flight checks
 echo "Running pre-flight checks..."
@@ -232,15 +249,27 @@ fi
 
 #azure vpc
 echo "Verifying Azure VNETs"
-rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
-vnet_count=$(az network vnet list -g "${rg}" | jq '. | length')
-if [ -z "$vnet_count" ]; then
-      fail-message "Could not get Azure VNets. Check your Terraform."
-      exit 1
-fi
-if [ "$vnet_count" != "2" ]; then
-  fail-message "Azure VNETs did not provision successful."
-  exit 1
+n=0
+until [ $n -ge 5 ]; do
+    rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
+    vnet_count=$(az network vnet list -g "${rg}" | jq '. | length')
+    if [ -z "$vnet_count" ]; then
+	fail-message "Could not get Azure VNets. Check your Terraform."
+	sleep 60
+	n=$[$n+1]
+	continue
+    fi
+    if [ "$vnet_count" != "2" ]; then
+      fail-message "Azure VNETs did not provision successful."
+      sleep 60
+      n=$[$n+1]
+      continue
+    fi
+    break
+done
+if [ $n -ge 5 ]; then
+    fail-message "Azure VNET check failed"
+    exit 1
 fi
 
 #gcp vpc
@@ -267,23 +296,35 @@ then
 fi
 
 #check azure roles
-rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
-az identity show \
-  --name consul-$(terraform output -state /root/terraform/infra/terraform.tfstate env) \
-  --resource-group "${rg}"
-if [ $? -ne 0 ]
-then
-  fail-message "Error getting Azure Consul IAM role"
-  exit 1
-fi
-rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
-az identity show \
-  --name product-api-$(terraform output -state /root/terraform/infra/terraform.tfstate env) \
-  --resource-group "${rg}"
-if [ $? -ne 0 ]
-then
-  fail-message "Error getting Azure Consul IAM role"
-  exit 1
+n=0
+until [ $n -ge 5 ]; do
+    rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
+    az identity show \
+      --name consul-$(terraform output -state /root/terraform/infra/terraform.tfstate env) \
+      --resource-group "${rg}"
+    if [ $? -ne 0 ]
+    then
+      fail-message "Error getting Azure Consul IAM role"
+      n=$[$n+1]
+      sleep 60
+      continue
+    fi
+    rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
+    az identity show \
+      --name product-api-$(terraform output -state /root/terraform/infra/terraform.tfstate env) \
+      --resource-group "${rg}"
+    if [ $? -ne 0 ]
+    then
+      fail-message "Error getting Azure Consul IAM role"
+      n=$[$n+1]
+      sleep 60
+      continue
+    fi
+    break
+done
+if [ $n -ge 5 ]; then
+    fail-message "Azure role check failed"
+    exit 1
 fi
 
 #check gcp roles
@@ -296,29 +337,53 @@ fi
 
 #vault
 #aws
-vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
-echo "Vault Load balancer is: ${vault_lb}"
-if [ -z "${vault_lb}" ]; then
-  fail-message "AWS Vault is not provisioned yet"
-  exit 1
-fi
-vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://${vault_lb}:8200/v1/sys/health)
-if [ "${vault_api}" != "501" ]; then
-  fail-message "AWS Vault service did not return a 501. Please wait a few moments and try again."
-  exit 1
+n=0
+until [ $n -ge 5 ]; do
+    vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
+    echo "Vault Load balancer is: ${vault_lb}"
+    if [ -z "${vault_lb}" ]; then
+      fail-message "AWS Vault is not provisioned yet"
+      n=$[$n+1]
+      sleep 60
+      continue
+    fi
+    vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://${vault_lb}:8200/v1/sys/health)
+    if [ "${vault_api}" != "501" ]; then
+      fail-message "AWS Vault service did not return a 501. Please wait a few moments and try again."
+      n=$[$n+1]
+      sleep 60
+      continue
+    fi
+    break
+done
+if [ $n -ge 5 ]; then
+    fail-message "AWS Vault check failed"
+    exit 1
 fi
 
 #azure
-vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate azure_vault_ip)
-echo "Vault Load balancer is: ${vault_lb}"
-if [ -z "${vault_lb}" ]; then
-  fail-message "Azure Vault is not provisioned yet"
-  exit 1
-fi
-vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://${vault_lb}:8200/v1/sys/health)
-if [ "${vault_api}" != "501" ]; then
-  fail-message "Azure Vault service did not return a 501. Please wait a few moments and try again."
-  exit 1
+n=0
+until [ $n -ge 5 ]; do
+    vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate azure_vault_ip)
+    echo "Vault Load balancer is: ${vault_lb}"
+    if [ -z "${vault_lb}" ]; then
+      fail-message "Azure Vault is not provisioned yet"
+      n=$[$n+1]
+      sleep 60
+      continue
+    fi
+    vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://${vault_lb}:8200/v1/sys/health)
+    if [ "${vault_api}" != "501" ]; then
+      fail-message "Azure Vault service did not return a 501. Please wait a few moments and try again."
+      n=$[$n+1]
+      sleep 60
+      continue
+    fi
+    break
+done
+if [ $n -ge 5 ]; then
+    fail-message "Azure vault check failed"
+    exit 1
 fi
 
 exit 0
