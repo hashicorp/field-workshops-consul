@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+ Copyright (c) HashiCorp, Inc.
+ SPDX-License-Identifier: MPL-2.0
+-->
+
 <policy integrity_check="a7a92d552def70dea7e69f1b61deeab1" bigip_version="14.1.0" name="/Consul_SD/Web/WAF_Policy">
   <type>Security</type>
   <policy_version>

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "hcp_consul_cluster" {
   value = "${hcp_consul_cluster.workshop_hcp_consul}"
   sensitive = true

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 module "acl_controller" {
   source  = "hashicorp/consul-ecs/aws//modules/acl-controller"
   version = "0.4.0"

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "FirewallIP" {
   value = azurerm_public_ip.PublicIP_0.ip_address
 }

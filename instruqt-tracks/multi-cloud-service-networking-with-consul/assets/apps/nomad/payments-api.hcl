@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 job "payments-api" {
   datacenters = ["aws-us-east-1"]
   group "payments-api" {

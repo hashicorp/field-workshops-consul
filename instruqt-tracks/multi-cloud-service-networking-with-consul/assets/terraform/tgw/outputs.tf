@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 output "aws_tgw_private_ip" {
   value = aws_instance.tgw.private_ip 

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 FROM mariadb:latest
 
 RUN echo "Installing Consul onto database server."

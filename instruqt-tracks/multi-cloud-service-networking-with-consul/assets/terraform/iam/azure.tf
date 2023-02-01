@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "azurerm_user_assigned_identity" "consul" {
   location            = data.terraform_remote_state.infra.outputs.azure_rg_location
   resource_group_name = data.terraform_remote_state.infra.outputs.azure_rg_name

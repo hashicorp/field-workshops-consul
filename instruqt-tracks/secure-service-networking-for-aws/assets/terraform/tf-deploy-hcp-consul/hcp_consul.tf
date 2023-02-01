@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 // Pin the version
 terraform {
   required_version = ">= 1.0.0"

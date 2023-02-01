@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "aws_vault_ip" {
   value = aws_instance.vault.public_ip
 }

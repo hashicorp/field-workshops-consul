@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "random_uuid" "consul_master_token" {}
 resource "random_uuid" "consul_agent_server_token" {}
 resource "random_uuid" "consul_snapshot_token" {}

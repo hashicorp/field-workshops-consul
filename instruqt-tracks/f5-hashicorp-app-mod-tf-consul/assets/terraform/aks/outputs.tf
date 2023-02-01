@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "aks_client_certificate" {
   value = azurerm_kubernetes_cluster.aks.kube_config.0.client_certificate
 }

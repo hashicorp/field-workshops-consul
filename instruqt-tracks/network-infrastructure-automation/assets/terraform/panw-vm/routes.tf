@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "azurerm_route_table" "PAN_FW_RT_Trust" {
   name                = var.routeTableTrust
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location

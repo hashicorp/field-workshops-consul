@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "consul_config_entry" "aws-terminating_gateway" {
   name = "aws-us-east-1-terminating-gateway"
   kind = "terminating-gateway"

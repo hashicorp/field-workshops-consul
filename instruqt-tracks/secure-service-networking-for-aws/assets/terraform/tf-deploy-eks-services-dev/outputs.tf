@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "consul_root_token" {
   value     = local.hcp_acl_token_secret_id
   sensitive = true

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "kubernetes_secret" "consul_secrets" {
   metadata {
     name = "${var.cluster_id}-hcp"

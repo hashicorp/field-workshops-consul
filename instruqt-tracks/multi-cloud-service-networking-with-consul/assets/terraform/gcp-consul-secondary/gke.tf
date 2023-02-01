@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "google_container_cluster" "shared" {
   provider           = google-beta
   project            = var.gcp_project_id

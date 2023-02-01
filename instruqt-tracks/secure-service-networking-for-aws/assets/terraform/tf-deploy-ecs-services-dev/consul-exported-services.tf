@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 // Create Admin Partition and Namespace for the client
 resource "consul_admin_partition" "ecs-dev" {
   name        = "ecs-dev"
