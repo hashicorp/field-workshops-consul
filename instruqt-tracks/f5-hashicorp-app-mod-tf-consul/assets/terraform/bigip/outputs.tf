@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "mgmt_url" {
   value = "https://${azurerm_public_ip.sip_public_ip.ip_address}:8443/"
 }

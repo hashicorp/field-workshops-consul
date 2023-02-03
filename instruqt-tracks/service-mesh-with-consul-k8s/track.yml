@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 slug: service-mesh-with-consul-k8s
 id: ygz7z7sj3nyn
 type: track

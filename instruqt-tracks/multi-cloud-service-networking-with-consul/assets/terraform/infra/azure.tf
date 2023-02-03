@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "azurerm_resource_group" "instruqt" {
   name     = "instruqt-${random_string.env.result}"
   location = "West US 3"

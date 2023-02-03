@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 locals {
   hvn                       = data.terraform_remote_state.hcp.outputs.hcp_hvn
   ecs_dev_vpc_id            = module.vpc_ecs_dev.vpc_id

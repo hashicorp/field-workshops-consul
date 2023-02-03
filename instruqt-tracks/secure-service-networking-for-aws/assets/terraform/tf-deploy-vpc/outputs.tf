@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 ## EKS Dev
 
 output "eks_dev_aws_vpc_id" {

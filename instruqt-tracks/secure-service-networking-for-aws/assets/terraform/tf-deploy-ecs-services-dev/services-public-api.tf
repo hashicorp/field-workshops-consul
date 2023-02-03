@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 locals {
   public_api_name = "public-api"
   public_api_port = 8081

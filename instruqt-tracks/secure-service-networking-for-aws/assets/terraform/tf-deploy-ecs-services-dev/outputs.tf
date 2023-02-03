@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "client_lb_address" {
   value = "http://${aws_lb.hashicups.dns_name}/"
 }

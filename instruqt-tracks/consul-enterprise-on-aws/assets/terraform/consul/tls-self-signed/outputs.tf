@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "consul_tls_config" {
   value = {
     ca_cert = tls_self_signed_cert.shared_ca.cert_pem

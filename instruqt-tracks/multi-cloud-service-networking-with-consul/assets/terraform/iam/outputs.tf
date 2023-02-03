@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "aws_consul_iam_role_arn" {
   value = aws_iam_role.consul.arn
 }

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 module "gcp-vpc-shared-svcs" {
   source       = "terraform-google-modules/network/google"
   project_id   = var.gcp_project_id

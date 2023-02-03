@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_security_group" "vault_lb" {
   vpc_id = data.terraform_remote_state.vpc.outputs.shared_svcs_vpc
 

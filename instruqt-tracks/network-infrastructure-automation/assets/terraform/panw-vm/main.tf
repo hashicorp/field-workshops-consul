@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 /*
 Using the AzCLI, accept the offer terms prior to deployment. This only
 need to be done once per subscription

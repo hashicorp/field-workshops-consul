@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_iam_instance_profile" "instance_profile" {
   name_prefix = "${random_id.environment_name.hex}-consul"
   role        = aws_iam_role.instance_role.name

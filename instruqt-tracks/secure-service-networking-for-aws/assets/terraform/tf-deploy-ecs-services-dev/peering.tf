@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 ## Peering between EKS Dev VPC and ECS Dev VPC
 
 resource "aws_vpc_peering_connection" "ecs_dev_to_eks_dev" {

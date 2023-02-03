@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_security_group" "frontend" {
   name   = "frontend-alb"
   vpc_id = local.ecs_dev_aws_vpc_id

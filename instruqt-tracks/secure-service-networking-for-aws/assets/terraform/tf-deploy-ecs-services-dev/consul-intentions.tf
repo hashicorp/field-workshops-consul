@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "consul_config_entry" "public_api_intention" {
   name = local.public_api_name
   kind = "service-intentions"

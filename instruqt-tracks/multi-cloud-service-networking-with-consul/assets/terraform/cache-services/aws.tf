@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_elasticache_subnet_group" "default" {
   name       = "redis-cache-subnet-${data.terraform_remote_state.infra.outputs.env}"
   subnet_ids = [data.terraform_remote_state.infra.outputs.aws_shared_svcs_private_subnets[0]]

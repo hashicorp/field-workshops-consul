@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 #hashicorp packages
 curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -

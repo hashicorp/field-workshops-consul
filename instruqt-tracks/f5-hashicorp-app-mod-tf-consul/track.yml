@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 slug: f5-hashicorp-app-mod-tf-consul
 id: mi8hobhrlh96
 version: 0.0.1

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_secretsmanager_secret" "bootstrap_token" {
   name                    = "bootstrap-token"
   recovery_window_in_days = 0

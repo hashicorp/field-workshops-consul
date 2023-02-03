@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 locals {
   aws_suffix = random_string.rand_aws_suffix.result
   ecs_name = "consul-ecs-${random_string.rand_aws_suffix.result}"

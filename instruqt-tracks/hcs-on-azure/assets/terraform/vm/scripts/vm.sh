@@ -1,4 +1,7 @@
 #!/bin/bash -ex
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 apt-get update -y
 apt-get upgrade -y

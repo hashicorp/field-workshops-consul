@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "consul_node" "azure-pg" {
   name    = "azure-pg"
   address = azurerm_postgresql_flexible_server.postgres.fqdn

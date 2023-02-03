@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "helm_chart" {
     value = base64encode(templatefile("${path.module}/templates/consul.tpl", {
       datacenter       = var.datacenter

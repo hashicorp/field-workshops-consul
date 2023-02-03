@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_s3_bucket" "consul_data" {
   count  = var.enable_snapshots ? 1 : 0
   bucket = "${random_id.environment_name.hex}-consul-data"
