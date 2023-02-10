@@ -111,7 +111,7 @@ resource "azurerm_virtual_machine" "vault" {
   location              = data.terraform_remote_state.infra.outputs.azure_rg_location
   resource_group_name   = data.terraform_remote_state.infra.outputs.azure_rg_name
   network_interface_ids = [azurerm_network_interface.vault.id]
-  vm_size               = "Standard_DS3_v2"
+  vm_size               = "Standard_DS2_v2"
 
   identity {
     type = "SystemAssigned"
