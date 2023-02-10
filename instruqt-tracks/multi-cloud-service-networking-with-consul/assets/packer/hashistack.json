@@ -61,7 +61,7 @@
         "os-version": "bionic"
       },
       "location": "Central US",
-      "vm_size": "Standard_DS2_v2"
+      "vm_size": "Standard_DS3_v2"
     }
   ],
   "provisioners": [
