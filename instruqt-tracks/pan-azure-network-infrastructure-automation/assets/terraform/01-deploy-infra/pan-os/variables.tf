@@ -12,14 +12,14 @@ variable "FromGatewayLogin" {
 }
 
 variable "IPAddressPublicNetwork" {
-  default = "10.1.0.5"
+  default = "10.1.2.5"
 }
 variable "IPAddressPrivatedNetwork" {
   default = "10.1.1.5"
 }
 
 variable "IPAddressMgmtNetwork" {
-  default = "10.1.2.5"
+  default = "10.1.0.5"
 }
 variable "routeTableWeb" {
   default = "Web-to-FW"
