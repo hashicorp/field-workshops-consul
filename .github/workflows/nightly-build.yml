@@ -1,1 +1,4 @@
-# bogus empty file IL-559
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+name: hashicorp/field-workshops-consul/nightly-build
+on: workflow_dispatch
