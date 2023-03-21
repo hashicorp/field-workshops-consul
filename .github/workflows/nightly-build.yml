@@ -2,3 +2,8 @@
 # SPDX-License-Identifier: MPL-2.0
 name: hashicorp/field-workshops-consul/nightly-build
 on: workflow_dispatch
+jobs:
+  this-is-so-stupid:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "this is so stupid"
