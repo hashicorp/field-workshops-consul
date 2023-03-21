@@ -1,9 +1,9 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
 name: hashicorp/field-workshops-consul/nightly-build
-on:
-  schedule:
-  - cron: 37 1 * * *
+on: workflow_dispatch
+##   schedule:
+##   - cron: 37 1 * * *
 env:
   # See IL-559 for information about the source of these
   # secrets and variables
