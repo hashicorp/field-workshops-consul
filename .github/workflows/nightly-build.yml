@@ -29,7 +29,9 @@ jobs:
     steps:
     - name: Checkout Source
       id: checkout-source
-      run: git clone git@github.com:hashicorp/instruqt-packer.git
+      uses: actions/checkout@v3
+      with:
+        repository: hashicorp/instruqt-packer
     - name: Write GCloud Key
       id: write-gcloud-key
       run: echo "${GCLOUD_SERVICE_KEY}" > "${HOME}"/gcloud.json
