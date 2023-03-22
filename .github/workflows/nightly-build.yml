@@ -61,10 +61,9 @@ jobs:
     steps:
     - name: Checkout Source
       id: checkout-source
-      working-directory: ${GITHUB_WORKSPACE}
       uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
       with:
-        path: field-workshops-consul
+        path: ${GITHUB_WORKSPACE}/field-workshops-consul
     - name: Get Instruqt CLI
       id: get-instruqt-cli
       working-directory: ${GITHUB_WORKSPACE}
