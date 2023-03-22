@@ -61,23 +61,16 @@ jobs:
     - name: Get Instruqt CLI
       id: get-instruqt-cli
       run: |-
-        curl -LO https://github.com/instruqt/cli/releases/download/2074-4823fd3/instruqt-linux-2074-4823fd3.zip
-        unzip instruqt-linux-2074-4823fd3.zip
+        curl -Lo instruqt.zip ${{ vars.INSTRUQT_CLI_URI }}
+        unzip instruqt.zip
         mkdir -p ${HOME}/.local/bin/
         mv instruqt ${HOME}/.local/bin/
         chmod +x ${HOME}/.local/bin/instruqt
         echo "${HOME}/.local/bin" >> ${GITHUB_PATH}
-    - name: wtf
-      run: |-
-        env | grep GITHUB
-        ls -lR
-        echo "Home: ${HOME} Path: ${PATH}"
-        pwd
     - name: Instruqt Validate
       id: instruqt-validate
       working-directory: instruqt-tracks/consul-basics
       run: |-
-        pwd
         instruqt track validate
     - name: Instruqt Push
       id: instruqt-push
