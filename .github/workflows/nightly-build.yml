@@ -51,3 +51,33 @@ jobs:
     - name: Push container
       id: push-container
       run: docker push gcr.io/${GOOGLE_PROJECT_ID}/consul-cloud-client:${CONSUL_TAG}
+  consul-basics:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu
+    steps:
+    - name: Checkout Source
+      id: checkout-source
+      uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+    - name: Instruqt
+      id: instruqt
+      run: |-
+        cd ${GITHUB_WORKSPACE}/instruqt-tracks/consul-basics
+        echo "Copying track files..."
+        docker create -v /track --name track alpine:3.4 /bin/true
+        docker cp . track:/track/
+        echo "Running instruqt track validate..."
+        docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track validate
+        echo "Running instruqt track push..."
+        docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track push --force
+        echo "Running instruqt track test..."
+        n=0
+        until [ $n -ge 3 ]; do
+          docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track test --skip-fail-check  && break
+          n=$[$n+1]
+          sleep 60
+        done
+        if [ $n -ge 3 ]; then
+          echo "Instruqt track test failed three times."
+          exit 1
+        fi
