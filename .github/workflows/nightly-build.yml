@@ -55,30 +55,29 @@ jobs:
       run: docker push gcr.io/${GOOGLE_PROJECT_ID}/consul-cloud-client:${CONSUL_TAG}
   consul-basics:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ${GITHUB_WORKSPACE}/field-workshops-consul/instruqt-tracks/consul-basics
     steps:
     - name: Checkout Source
       id: checkout-source
       uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
       with:
-        path: ${GITHUB_WORKSPACE}/field-workshops-consul
+        path: field-workshops-consul
     - name: Get Instruqt CLI
       id: get-instruqt-cli
-      working-directory: ${GITHUB_WORKSPACE}
       run: |-
         curl -LO https://github.com/instruqt/cli/releases/download/2074-4823fd3/instruqt-linux-2074-4823fd3.zip
         unzip instruqt-linux-2074-4823fd3.zip
         chmod +x instruqt
     - name: Instruqt Validate
       id: instruqt-validate
+      working-directory: ${GITHUB_WORKSPACE}/field-workshops-consul/instruqt-tracks/consul-basic
       run: ${GITHUB_WORKSPACE}/instruqt track validate
     - name: Instruqt Push
       id: instruqt-push
+      working-directory: ${GITHUB_WORKSPACE}/field-workshops-consul/instruqt-tracks/consul-basic
       run: ${GITHUB_WORKSPACE}/instruqt track push --force
     - name: Instruqt Test Loop
       id: instruqt-test
+      working-directory: ${GITHUB_WORKSPACE}/field-workshops-consul/instruqt-tracks/consul-basic
       run: |-
         n=0
         until [ $n -ge 3 ]; do
