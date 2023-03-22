@@ -69,15 +69,15 @@ jobs:
         chmod +x instruqt
     - name: Instruqt Validate
       id: instruqt-validate
-      working-directory: ${GITHUB_WORKSPACE}/field-workshops-consul/instruqt-tracks/consul-basic
+      working-directory: field-workshops-consul/instruqt-tracks/consul-basic
       run: ${GITHUB_WORKSPACE}/instruqt track validate
     - name: Instruqt Push
       id: instruqt-push
-      working-directory: ${GITHUB_WORKSPACE}/field-workshops-consul/instruqt-tracks/consul-basic
+      working-directory: field-workshops-consul/instruqt-tracks/consul-basic
       run: ${GITHUB_WORKSPACE}/instruqt track push --force
     - name: Instruqt Test Loop
       id: instruqt-test
-      working-directory: ${GITHUB_WORKSPACE}/field-workshops-consul/instruqt-tracks/consul-basic
+      working-directory: field-workshops-consul/instruqt-tracks/consul-basic
       run: |-
         n=0
         until [ $n -ge 3 ]; do
