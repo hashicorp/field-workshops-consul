@@ -54,40 +54,9 @@ jobs:
       run: docker push gcr.io/${GOOGLE_PROJECT_ID}/consul-cloud-client:${CONSUL_TAG}
   consul-basics:
     runs-on: ubuntu-latest
-    steps:
-    - name: Checkout Source
-      id: checkout-source
-      uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
-    - name: Get Instruqt CLI
-      id: get-instruqt-cli
-      run: |-
-        curl -Lo instruqt.zip ${{ vars.INSTRUQT_CLI_URI }}
-        unzip instruqt.zip
-        mkdir -p ${HOME}/.local/bin/
-        mv instruqt ${HOME}/.local/bin/
-        chmod +x ${HOME}/.local/bin/instruqt
-        echo "${HOME}/.local/bin" >> ${GITHUB_PATH}
-    - name: Instruqt Validate
-      id: instruqt-validate
-      working-directory: instruqt-tracks/consul-basics
-      run: |-
-        instruqt track validate
-    - name: Instruqt Push
-      id: instruqt-push
-      working-directory: instruqt-tracks/consul-basics
-      run: instruqt track push --force
-    - name: Instruqt Test Loop
-      id: instruqt-test
-      working-directory: instruqt-tracks/consul-basics
-      run: |-
-        n=0
-        until [ $n -ge 3 ]; do
-          echo "Test ${n}"
-          instruqt track test --skip-fail-check && break
-          n$[$n+1]
-          sleep 60
-        done
-        if [ $n -ge 3 ]; then
-          echo "Instruqt track test failed after ${n} attempts"
-          exit 1
-        fi
+    uses: .github/workflows/instruqt-track-test.yml
+    with:
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
+      working_directory: "instruqt-tracks/consul-basics"
+    secrets:
+      INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
