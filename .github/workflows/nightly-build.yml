@@ -75,17 +75,17 @@ jobs:
         pwd
     - name: Instruqt Validate
       id: instruqt-validate
-      working-directory: instruqt-tracks/consul-basic
+      working-directory: instruqt-tracks/consul-basics
       run: |-
         pwd
         instruqt track validate
     - name: Instruqt Push
       id: instruqt-push
-      working-directory: instruqt-tracks/consul-basic
+      working-directory: instruqt-tracks/consul-basics
       run: instruqt track push --force
     - name: Instruqt Test Loop
       id: instruqt-test
-      working-directory: instruqt-tracks/consul-basic
+      working-directory: instruqt-tracks/consul-basics
       run: |-
         n=0
         until [ $n -ge 3 ]; do
