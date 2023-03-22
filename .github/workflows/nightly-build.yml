@@ -5,8 +5,7 @@ on: workflow_dispatch
 ##   schedule:
 ##   - cron: 37 1 * * *
 env:
-  # See IL-559 for information about the source of these
-  # secrets and variables
+  # See IL-559 for information about the source of these # secrets and variables
   GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY }}
   GOOGLE_COMPUTE_REGION: ${{ vars.GOOGLE_COMPUTE_REGION }}
   GOOGLE_PROJECT_ID: ${{ vars.GOOGLE_PROJECT_ID }}
@@ -59,8 +58,6 @@ jobs:
     - name: Checkout Source
       id: checkout-source
       uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
-      with:
-        path: field-workshops-consul
     - name: Get Instruqt CLI
       id: get-instruqt-cli
       run: |-
@@ -70,6 +67,11 @@ jobs:
         mv instruqt ${HOME}/.local/bin/
         chmod +x ${HOME}/.local/bin/instruqt
         echo "${HOME}/.local/bin" >> ${GITHUB_PATH}
+    - name: wtf
+      run: |-
+        env | grep GITHUB
+        echo $PATH
+        ls -lR
     - name: Instruqt Validate
       id: instruqt-validate
       working-directory: field-workshops-consul/instruqt-tracks/consul-basic
