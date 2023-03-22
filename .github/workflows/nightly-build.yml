@@ -71,7 +71,7 @@ jobs:
     steps:
     - name: Change to Track Directory
       id: track-directory
-      run: cd ${GITHUB_WORKSPACE}/instruqt-tracks/consul-basics
+      run: cd ${GITHUB_WORKSPACE}/field-workshops-consul/instruqt-tracks/consul-basics
     - name: Instruqt Validate
       id: instruqt-validate
       run: ${GITHUB_WORKSPACE}/instruqt track validate
