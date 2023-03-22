@@ -32,6 +32,8 @@ jobs:
       uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
       with:
         repository: hashicorp/instruqt-packer
+        token: ${{ secrets.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT }}
+        path: instruqt-packer
     - name: Write GCloud Key
       id: write-gcloud-key
       run: echo "${GCLOUD_SERVICE_KEY}" > "${HOME}"/gcloud.json
@@ -48,4 +50,4 @@ jobs:
       run: docker build --build-arg HC_VAULT_LICENSE=${HC_VAULT_LICENSE} --build-arg HC_CONSUL_LICENSE=${HC_CONSUL_LICENSE} --build-arg PACKER_VERSION=${PACKER_VERSION} --build-arg TF_VERSION=${TF_VERSION} --build-arg VAULT_VERSION=${VAULT_VERSION} --build-arg NOMAD_VERSION=${NOMAD_VERSION} --build-arg CONSUL_VERSION=${CONSUL_VERSION} --build-arg ENVOY_VERSION=${ENVOY_VERSION} -f instruqt-packer/consul-cloud-client/Dockerfile -t gcr.io/${GOOGLE_PROJECT_ID}/consul-cloud-client:${CONSUL_TAG} instruqt-packer/consul-cloud-client
     - name: Push container
       id: push-container
-      run: docker push gcr.io/${GOOGLE_PROJECT_ID}/consul-cloud-client:${consul_version}
+      run: docker push gcr.io/${GOOGLE_PROJECT_ID}/consul-cloud-client:${CONSUL_TAG}
