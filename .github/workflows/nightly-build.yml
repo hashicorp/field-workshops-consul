@@ -66,15 +66,18 @@ jobs:
       run: |-
         curl -LO https://github.com/instruqt/cli/releases/download/2074-4823fd3/instruqt-linux-2074-4823fd3.zip
         unzip instruqt-linux-2074-4823fd3.zip
-        chmod +x instruqt
+        mkdir -p ${HOME}/.local/bin/
+        mv instruqt ${HOME}/.local/bin/
+        chmod +x ${HOME}/.local/bin/instruqt
+        echo "${HOME}/.local/bin" >> ${GITHUB_PATH}
     - name: Instruqt Validate
       id: instruqt-validate
       working-directory: field-workshops-consul/instruqt-tracks/consul-basic
-      run: ${GITHUB_WORKSPACE}/instruqt track validate
+      run: instruqt track validate
     - name: Instruqt Push
       id: instruqt-push
       working-directory: field-workshops-consul/instruqt-tracks/consul-basic
-      run: ${GITHUB_WORKSPACE}/instruqt track push --force
+      run: instruqt track push --force
     - name: Instruqt Test Loop
       id: instruqt-test
       working-directory: field-workshops-consul/instruqt-tracks/consul-basic
@@ -82,7 +85,7 @@ jobs:
         n=0
         until [ $n -ge 3 ]; do
           echo "Test ${n}"
-          ${GITHUB_WORKSPACE}/instruqt track test --skip-fail-check && break
+          instruqt track test --skip-fail-check && break
           n$[$n+1]
           sleep 60
         done
