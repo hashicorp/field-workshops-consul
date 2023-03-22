@@ -54,7 +54,7 @@ jobs:
       run: docker push gcr.io/${GOOGLE_PROJECT_ID}/consul-cloud-client:${CONSUL_TAG}
   consul-basics:
     runs-on: ubuntu-latest
-    uses: .github/workflows/instruqt-track-test.yml
+    uses: ./.github/workflows/instruqt-track-test.yml
     with:
       INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
       working_directory: "instruqt-tracks/consul-basics"
