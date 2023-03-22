@@ -70,12 +70,15 @@ jobs:
     - name: wtf
       run: |-
         env | grep GITHUB
-        echo $PATH
         ls -lR
+        echo "Home: ${HOME} Path: ${PATH}"
+        pwd
     - name: Instruqt Validate
       id: instruqt-validate
       working-directory: instruqt-tracks/consul-basic
-      run: instruqt track validate
+      run: |-
+        pwd
+        instruqt track validate
     - name: Instruqt Push
       id: instruqt-push
       working-directory: instruqt-tracks/consul-basic
