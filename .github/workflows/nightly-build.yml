@@ -64,16 +64,16 @@ jobs:
       run: |-
         cd ${GITHUB_WORKSPACE}/instruqt-tracks/consul-basics
         echo "Copying track files..."
-        docker create -v /track --name track alpine:3.4 /bin/true
-        docker cp . track:/track/
+        /usr/bin/docker create -v /track --name track alpine:3.4 /bin/true
+        /usr/bin/docker cp . track:/track/
         echo "Running instruqt track validate..."
-        docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track validate
+        /usr/bin/docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track validate
         echo "Running instruqt track push..."
-        docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track push --force
+        /usr/bin/docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track push --force
         echo "Running instruqt track test..."
         n=0
         until [ $n -ge 3 ]; do
-          docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track test --skip-fail-check  && break
+          /usr/bin/docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track test --skip-fail-check  && break
           n=$[$n+1]
           sleep 60
         done
