@@ -53,33 +53,41 @@ jobs:
     - name: Push container
       id: push-container
       run: docker push gcr.io/${GOOGLE_PROJECT_ID}/consul-cloud-client:${CONSUL_TAG}
-  consul-basics:
+  prepare-track-tests:
     runs-on: ubuntu-latest
-    container:
-      image: ubuntu
-    steps:
     - name: Checkout Source
       id: checkout-source
       uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
-    - name: Instruqt
-      id: instruqt
+    - name: Get Instruqt CLI
+      id: get-instruqt-cli
       run: |-
-        cd ${GITHUB_WORKSPACE}/instruqt-tracks/consul-basics
-        echo "Copying track files..."
-        /usr/bin/docker create -v /track --name track alpine:3.4 /bin/true
-        /usr/bin/docker cp . track:/track/
-        echo "Running instruqt track validate..."
-        /usr/bin/docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track validate
-        echo "Running instruqt track push..."
-        /usr/bin/docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track push --force
-        echo "Running instruqt track test..."
+        curl -LO https://github.com/instruqt/cli/releases/download/2074-4823fd3/instruqt-linux-2074-4823fd3.zip
+        unzip instruqt-linux-2074-4823fd3.zip
+        chmod +x instruqt
+  consul-basics:
+    runs-on: ubuntu-latest
+    needs: prepare-track-tests
+    steps:
+    - name: Change to Track Directory
+      id: track-directory
+      run: cd ${GITHUB_WORKSPACE}/instruqt-tracks/consul-basics
+    - name: Instruqt Validate
+      id: instruqt-validate
+      run: ${GITHUB_WORKSPACE}/instruqt track validate
+    - name: Instruqt Push
+      id: instruqt-push
+      run: ${GITHUB_WORKSPACE}/instruqt track push --force
+    - name: Instruqt Test Loop
+      id: instruqt-test
+      run: |-
         n=0
         until [ $n -ge 3 ]; do
-          /usr/bin/docker run -e INSTRUQT_TOKEN=$INSTRUQT_TOKEN --workdir="/track" --volumes-from track instruqt/cli track test --skip-fail-check  && break
-          n=$[$n+1]
+          echo "Test ${n}"
+          ${GITHUB_WORKSPACE}/instruqt track test --skip-fail-check && break
+          n$[$n+1]
           sleep 60
         done
         if [ $n -ge 3 ]; then
-          echo "Instruqt track test failed three times."
+          echo "Instruqt track test failed after ${n} attempts"
           exit 1
         fi
