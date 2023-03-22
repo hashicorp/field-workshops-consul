@@ -16,6 +16,8 @@ env:
 jobs:
   license-cloud-client:
     runs-on: ubuntu-latest
+    ### XXX REMOVE
+    if: false
     env:
       # See IL-559 for information about the setting of these
       # variables
