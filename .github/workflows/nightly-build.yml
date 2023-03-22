@@ -53,7 +53,7 @@ jobs:
     - name: Push container
       id: push-container
       run: docker push gcr.io/${GOOGLE_PROJECT_ID}/consul-cloud-client:${CONSUL_TAG}
-  prepare-track-tests:
+  consul-basics:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Source
@@ -65,15 +65,9 @@ jobs:
         curl -LO https://github.com/instruqt/cli/releases/download/2074-4823fd3/instruqt-linux-2074-4823fd3.zip
         unzip instruqt-linux-2074-4823fd3.zip
         chmod +x instruqt
-  consul-basics:
-    runs-on: ubuntu-latest
-    needs: prepare-track-tests
-    steps:
-    - name: ls
-      run: ls -lR ${GITHUB_WORKSPACE}
     - name: Change to Track Directory
       id: track-directory
-      run: cd ${GITHUB_WORKSPACE}/field-workshops-consul/instruqt-tracks/consul-basics
+      run: cd field-workshops-consul/instruqt-tracks/consul-basics
     - name: Instruqt Validate
       id: instruqt-validate
       run: ${GITHUB_WORKSPACE}/instruqt track validate
