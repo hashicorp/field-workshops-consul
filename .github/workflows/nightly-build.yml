@@ -67,6 +67,7 @@ jobs:
         curl -LO https://github.com/instruqt/cli/releases/download/2074-4823fd3/instruqt-linux-2074-4823fd3.zip
         unzip instruqt-linux-2074-4823fd3.zip
         chmod +x instruqt
+    - run: ls -lR
     - name: Change to Track Directory
       id: track-directory
       run: cd field-workshops-consul/instruqt-tracks/consul-basics
