@@ -1,17 +1,18 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
 name: hashicorp/field-workshops-consul/instruqt-track-test
-on: workflow_call
-  inputs:
-    INSTRUQT_CLI_URI:
-      required: true
-      type: string
-    working_directory:
-      required: true
-      type: string
-  secrets:
-    INSTRUQT_TOKEN:
-      required: true
+on:
+  workflow_call:
+    inputs:
+      INSTRUQT_CLI_URI:
+        required: true
+        type: string
+      working_directory:
+        required: true
+        type: string
+    secrets:
+      INSTRUQT_TOKEN:
+        required: true
 env:
   # See IL-559 for information about the source of these # secrets and variables
   INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
