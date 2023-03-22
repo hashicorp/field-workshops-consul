@@ -59,3 +59,39 @@ jobs:
       working_directory: "instruqt-tracks/consul-basics"
     secrets:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
+  service-discovery-with-consul:
+    uses: ./.github/workflows/instruqt-track-test.yml
+    with:
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
+      working_directory: "instruqt-tracks/service-discovery-with-consul"
+    secrets:
+      INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
+  service-mesh-with-consul:
+    uses: ./.github/workflows/instruqt-track-test.yml
+    with:
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
+      working_directory: "instruqt-tracks/service-mesh-with-consul"
+    secrets:
+      INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
+  multi-cloud-consul:
+    uses: ./.github/workflows/instruqt-track-test.yml
+    needs: license-cloud-client
+    with:
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
+      working_directory: "instruqt-tracks/multi-cloud-service-networking-with-consul"
+    secrets:
+      INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
+  network-infrastructure-automation:
+    uses: ./.github/workflows/instruqt-track-test.yml
+    with:
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
+      working_directory: "instruqt-tracks/network-infrastructure-automation"
+    secrets:
+      INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
+  life-of-a-developer:
+    uses: ./.github/workflows/instruqt-track-test.yml
+    with:
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
+      working_directory: "instruqt-tracks/consul-life-of-a-developer"
+    secrets:
+      INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
