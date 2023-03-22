@@ -34,8 +34,8 @@ jobs:
         echo "${HOME}/.local/bin" >> ${GITHUB_PATH}
     - name: Instruqt Validate
       id: instruqt-validate
-      run: |-
-        instruqt track validate
+      working-directory: ${{ inputs.working_directory }}
+      run: instruqt track validate
     - name: Instruqt Push
       id: instruqt-push
       working-directory: ${{ inputs.working_directory }}
