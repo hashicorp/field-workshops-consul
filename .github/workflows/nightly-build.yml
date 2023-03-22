@@ -69,6 +69,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: prepare-track-tests
     steps:
+    - name: ls
+      run: ls -lR ${GITHUB_WORKSPACE}
     - name: Change to Track Directory
       id: track-directory
       run: cd ${GITHUB_WORKSPACE}/field-workshops-consul/instruqt-tracks/consul-basics
