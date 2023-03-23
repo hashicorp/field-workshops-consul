@@ -65,7 +65,6 @@ jobs:
     uses: ./.github/workflows/instruqt-track-common-prep.yml
     with:
       INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
-      working_directory: "instruqt-tracks/consul-basics"
   consul-basics:
     uses: ./.github/workflows/instruqt-track-test.yml
     needs: common-prep
