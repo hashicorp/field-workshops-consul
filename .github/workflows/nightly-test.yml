@@ -24,7 +24,6 @@ jobs:
   # the configuration changes
   license-cloud-client:
     runs-on: ubuntu-latest
-    if: false     # XXX remove
     permissions: {}
     env:
       # See IL-559 for information about the setting of these
@@ -70,7 +69,6 @@ jobs:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
   service-discovery-with-consul:
     uses: ./.github/workflows/instruqt-track-test.yml
-    if: false     # XXX remove
     with:
       working_directory: "instruqt-tracks/service-discovery-with-consul"
       INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
@@ -78,7 +76,6 @@ jobs:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
   service-mesh-with-consul:
     uses: ./.github/workflows/instruqt-track-test.yml
-    if: false     # XXX remove
     with:
       working_directory: "instruqt-tracks/service-mesh-with-consul"
       INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
@@ -86,7 +83,6 @@ jobs:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
   multi-cloud-consul:
     uses: ./.github/workflows/instruqt-track-test.yml
-    if: false     # XXX remove
     needs: license-cloud-client
     with:
       working_directory: "instruqt-tracks/multi-cloud-service-networking-with-consul"
@@ -95,7 +91,6 @@ jobs:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
   network-infrastructure-automation:
     uses: ./.github/workflows/instruqt-track-test.yml
-    if: false     # XXX remove
     with:
       working_directory: "instruqt-tracks/network-infrastructure-automation"
       INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
@@ -103,7 +98,6 @@ jobs:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
   life-of-a-developer:
     uses: ./.github/workflows/instruqt-track-test.yml
-    if: false     # XXX remove
     with:
       working_directory: "instruqt-tracks/consul-life-of-a-developer"
       INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
