@@ -1,0 +1,20 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+name: hashicorp/field-workshops-consul/deploy-consul-basics
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - ${{ vars.DEPLOY_BRANCH }}
+    paths:
+      - 'instruqt-tracks/consul-basics/**'
+permissions:
+  contents: read
+jobs:
+  deploy-track:
+    uses: ./.github/workflows/instruqt-track-deploy.yml
+    with:
+      working_directory: "instruqt-tracks/consul-basics"
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
+    secrets:
+      INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}

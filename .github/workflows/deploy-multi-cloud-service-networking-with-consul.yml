@@ -1,0 +1,20 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+name: hashicorp/field-workshops-consul/deploy-multi-cloud-service-networking-with-consul
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - ${{ vars.DEPLOY_BRANCH }}
+    paths:
+      - 'instruqt-tracks/multi-cloud-service-networking-with-consul/**'
+permissions:
+  contents: read
+jobs:
+  deploy-track:
+    uses: ./.github/workflows/instruqt-track-deploy.yml
+    with:
+      working_directory: "instruqt-tracks/multi-cloud-service-networking-with-consul"
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
+    secrets:
+      INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
