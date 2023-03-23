@@ -6,6 +6,8 @@ on:
   schedule:
   # This is UTC
   - cron: 37 4 * * *
+permissions:
+  contents: read
 env:
   # See IL-559 for information about the source of these
   # secrets and variables
@@ -15,8 +17,6 @@ env:
   HC_CONSUL_LICENSE: ${{ secrets.HC_CONSUL_LICENSE }}
   HC_VAULT_LICENSE: ${{ secrets.HC_VAULT_LICENSE }}
   INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
-permissions: {}     # We only need GITHUB_TOKEN in the common-prep job below,
-                    # default to needing none
 jobs:
   # This should be changed long term: we build a new container
   # every night even though the majority of the time nothing changes.
@@ -24,6 +24,8 @@ jobs:
   # the configuration changes
   license-cloud-client:
     runs-on: ubuntu-latest
+    if: false     # XXX remove
+    permissions: {}
     env:
       # See IL-559 for information about the setting of these
       # variables
@@ -59,51 +61,51 @@ jobs:
     - name: Push container
       id: push-container
       run: docker push gcr.io/${GOOGLE_PROJECT_ID}/consul-cloud-client:${CONSUL_TAG}
-  common-prep:
-    permissions:
-      contents: read
-    uses: ./.github/workflows/instruqt-track-common-prep.yml
-    with:
-      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
   consul-basics:
     uses: ./.github/workflows/instruqt-track-test.yml
-    needs: common-prep
     with:
       working_directory: "instruqt-tracks/consul-basics"
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
     secrets:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
   service-discovery-with-consul:
     uses: ./.github/workflows/instruqt-track-test.yml
-    needs: common-prep
+    if: false     # XXX remove
     with:
       working_directory: "instruqt-tracks/service-discovery-with-consul"
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
     secrets:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
   service-mesh-with-consul:
     uses: ./.github/workflows/instruqt-track-test.yml
-    needs: common-prep
+    if: false     # XXX remove
     with:
       working_directory: "instruqt-tracks/service-mesh-with-consul"
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
     secrets:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
   multi-cloud-consul:
     uses: ./.github/workflows/instruqt-track-test.yml
-    needs: [license-cloud-client, common-prep]
+    if: false     # XXX remove
+    needs: license-cloud-client
     with:
       working_directory: "instruqt-tracks/multi-cloud-service-networking-with-consul"
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
     secrets:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
   network-infrastructure-automation:
     uses: ./.github/workflows/instruqt-track-test.yml
-    needs: common-prep
+    if: false     # XXX remove
     with:
       working_directory: "instruqt-tracks/network-infrastructure-automation"
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
     secrets:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
   life-of-a-developer:
     uses: ./.github/workflows/instruqt-track-test.yml
-    needs: common-prep
+    if: false     # XXX remove
     with:
       working_directory: "instruqt-tracks/consul-life-of-a-developer"
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
     secrets:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
