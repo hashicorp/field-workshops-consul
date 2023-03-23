@@ -27,24 +27,24 @@ jobs:
     - name: Get Instruqt CLI
       id: get-instruqt-cli
       run: |-
-        curl -Lo instruqt.zip ${{ inputs.INSTRUQT_CLI_URI }}
+        curl -Lo instruqt.zip "${{ inputs.INSTRUQT_CLI_URI }}"
         unzip instruqt.zip
-        mkdir -p ${HOME}/.local/bin/
-        mv instruqt ${HOME}/.local/bin/
-        chmod +x ${HOME}/.local/bin/instruqt
-        echo "${HOME}/.local/bin" >> ${GITHUB_PATH}
+        mkdir -p "${HOME}/.local/bin/"
+        mv instruqt "${HOME}/.local/bin/"
+        chmod +x "${HOME}/.local/bin/instruqt"
+        echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
     - name: Instruqt Test Loop
       id: instruqt-test
       working-directory: ${{ inputs.working_directory }}
       run: |-
         n=0
         until [ $n -ge 3 ]; do
-          echo "Test ${n}"
+          echo "Test $n"
           instruqt track test --skip-fail-check && break
-          n$[$n+1]
+          n=$(( n +1 ))
           sleep 60
         done
         if [ $n -ge 3 ]; then
-          echo "Instruqt track test failed after ${n} attempts"
+          echo "Instruqt track test failed after $n attempts"
           exit 1
         fi

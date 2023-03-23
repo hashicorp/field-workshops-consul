@@ -26,12 +26,12 @@ jobs:
     - name: Get Instruqt CLI
       id: get-instruqt-cli
       run: |-
-        curl -Lo instruqt.zip ${{ inputs.INSTRUQT_CLI_URI }}
+        curl -Lo instruqt.zip "${{ inputs.INSTRUQT_CLI_URI }}"
         unzip instruqt.zip
-        mkdir -p ${HOME}/.local/bin/
-        mv instruqt ${HOME}/.local/bin/
-        chmod +x ${HOME}/.local/bin/instruqt
-        echo "${HOME}/.local/bin" >> ${GITHUB_PATH}
+        mkdir -p "${HOME}/.local/bin/"
+        mv instruqt "${HOME}/.local/bin/"
+        chmod +x "${HOME}/.local/bin/instruqt"
+        echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
     - name: Instruqt Validate
       id: instruqt-validate
       working-directory: ${{ inputs.working_directory }}
