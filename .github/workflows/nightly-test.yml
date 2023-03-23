@@ -43,6 +43,7 @@ jobs:
         repository: hashicorp/instruqt-packer
         token: ${{ secrets.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT }}
         path: instruqt-packer
+        ref: ${{ vars.CONSUL_CLOUD_CLIENT_REF }}  # The ref in the repo we are targeting
     - name: Write GCloud Key
       id: write-gcloud-key
       run: echo "${GCLOUD_SERVICE_KEY}" > "${HOME}"/gcloud.json
