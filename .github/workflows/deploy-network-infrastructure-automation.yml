@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - ${{ vars.DEPLOY_BRANCH }}
+      - 'convert-hashicorp-field-workshops-consul-to-actions-20230320-170752'
     paths:
       - 'instruqt-tracks/network-infrastructure-automation/**'
 permissions:
