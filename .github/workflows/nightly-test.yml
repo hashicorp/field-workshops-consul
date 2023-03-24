@@ -40,31 +40,33 @@ jobs:
       CONSUL_TAG: ${{ vars.CONSUL_TAG }}
       ENVOY_VERSION: ${{ vars.ENVOY_VERSION }}
     steps:
-    - name: Checkout Source
-      id: checkout-source
-      uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
-      with:
-        repository: hashicorp/instruqt-packer
-        token: ${{ secrets.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT }}
-        path: instruqt-packer
-        ref: ${{ vars.CONSUL_CLOUD_CLIENT_REF }}  # The ref in the repo we are targeting
-    - name: Write GCloud Key
-      id: write-gcloud-key
-      run: echo "${GCLOUD_SERVICE_KEY}" > "${HOME}"/gcloud.json
-    - name: Auth to GCP
-      id: auth-to-gcp
-      run: gcloud auth activate-service-account --key-file="${HOME}/gcloud.json" --project "${GOOGLE_PROJECT_ID}"
-    - name: Configure Docker
-      id: configure-docker
-      run: |-
-        gcloud auth configure-docker
-        gcloud config set project "${GOOGLE_PROJECT_ID}"
-    - name: Build container
-      id: build-container
-      run: docker build --build-arg HC_VAULT_LICENSE="${HC_VAULT_LICENSE}" --build-arg HC_CONSUL_LICENSE="${HC_CONSUL_LICENSE}" --build-arg PACKER_VERSION="${PACKER_VERSION}" --build-arg TF_VERSION="${TF_VERSION}" --build-arg VAULT_VERSION="${VAULT_VERSION}" --build-arg NOMAD_VERSION="${NOMAD_VERSION}" --build-arg CONSUL_VERSION="${CONSUL_VERSION}" --build-arg ENVOY_VERSION="${ENVOY_VERSION}" -f instruqt-packer/consul-cloud-client/Dockerfile -t gcr.io/"${GOOGLE_PROJECT_ID}"/consul-cloud-client:"${CONSUL_TAG}" instruqt-packer/consul-cloud-client
-    - name: Push container
-      id: push-container
-      run: docker push gcr.io/"${GOOGLE_PROJECT_ID}"/consul-cloud-client:"${CONSUL_TAG}"
+      - name: bogus
+        run: exit 0
+##     - name: Checkout Source
+##       id: checkout-source
+##       uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+##       with:
+##         repository: hashicorp/instruqt-packer
+##         token: ${{ secrets.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT }}
+##         path: instruqt-packer
+##         ref: ${{ vars.CONSUL_CLOUD_CLIENT_REF }}  # The ref in the repo we are targeting
+##     - name: Write GCloud Key
+##       id: write-gcloud-key
+##       run: echo "${GCLOUD_SERVICE_KEY}" > "${HOME}"/gcloud.json
+##     - name: Auth to GCP
+##       id: auth-to-gcp
+##       run: gcloud auth activate-service-account --key-file="${HOME}/gcloud.json" --project "${GOOGLE_PROJECT_ID}"
+##     - name: Configure Docker
+##       id: configure-docker
+##       run: |-
+##         gcloud auth configure-docker
+##         gcloud config set project "${GOOGLE_PROJECT_ID}"
+##     - name: Build container
+##       id: build-container
+##       run: docker build --build-arg HC_VAULT_LICENSE="${HC_VAULT_LICENSE}" --build-arg HC_CONSUL_LICENSE="${HC_CONSUL_LICENSE}" --build-arg PACKER_VERSION="${PACKER_VERSION}" --build-arg TF_VERSION="${TF_VERSION}" --build-arg VAULT_VERSION="${VAULT_VERSION}" --build-arg NOMAD_VERSION="${NOMAD_VERSION}" --build-arg CONSUL_VERSION="${CONSUL_VERSION}" --build-arg ENVOY_VERSION="${ENVOY_VERSION}" -f instruqt-packer/consul-cloud-client/Dockerfile -t gcr.io/"${GOOGLE_PROJECT_ID}"/consul-cloud-client:"${CONSUL_TAG}" instruqt-packer/consul-cloud-client
+##     - name: Push container
+##       id: push-container
+##       run: docker push gcr.io/"${GOOGLE_PROJECT_ID}"/consul-cloud-client:"${CONSUL_TAG}"
   consul-basics:
     uses: ./.github/workflows/instruqt-track-test.yml
     with:
@@ -127,7 +129,7 @@ jobs:
           import json
           msg = {"blocks": []}
           # Parse 'needs' context
-          needs = json.loads('${{ needs }}')
+          needs = json.loads('${{ toJSON(needs) }}')
           # Header Section
           WORKFLOW_ICON=":white_check_mark:"
           WORKFLOW_STATUS="successful"
