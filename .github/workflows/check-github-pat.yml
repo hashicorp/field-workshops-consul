@@ -77,7 +77,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "User is <${{ steps.build-message.outputs.user_uri }}|${{ steps.build-message.outputs.user_name}}>"
+                    "text": "The PAT is associated with <${{ steps.build-message.outputs.user_uri }}|${{ steps.build-message.outputs.user_name}}>"
                   }
                 }
               ]
