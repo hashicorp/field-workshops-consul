@@ -39,7 +39,7 @@ jobs:
           days_left = time_left.days
           print(f"PAT has {days_left} days left")
           # Set some output to trigger the Slack step
-          gho = open(os.environ.get('GITHUB_OUTPUT') 'a')
+          gho = open(os.environ.get('GITHUB_OUTPUT'), 'a')
           gho.writelines([f'days_left={days_left}\n'])
           gho.writelines([f'user_name={user_name}\n', f'user_uri={user_uri}\n'])
           if days_left <= ${{ vars.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT_MIN_REMAINING_LIFE_DAYS }}:
