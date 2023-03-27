@@ -1,0 +1,25 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+name: hashicorp/field-workshops-consul/check-github-pat
+on:
+  workflow_dispatch:
+  schedule:
+  # This is UTC
+  - cron: 37 4 * * *
+permissions: {}
+jobs:
+  check-pat:
+    runs-on: ubuntu-latest
+    steps:
+      # https://github.blog/changelog/2021-07-26-expiration-options-for-personal-access-tokens/
+      # When you make an API request with a PAT a new response header is made, with the 
+      # expiration of the PAT used to make the call, e.g.
+      # github-authentication-token-expiration: 2023-04-26 14:51:38 -0400
+      - name: Build Message
+        id: build-message
+        shell: python
+        env:
+          GITHUB_TOKEN: ${{ secrets.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT }}
+        run: |-
+          import json
+          import requests
