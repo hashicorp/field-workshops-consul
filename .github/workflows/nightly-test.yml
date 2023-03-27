@@ -130,57 +130,56 @@ jobs:
           ${{ toJSON(needs) }}
           EOF
           cat job-state.json
-##       - name: Build Message
-##         id: build-message
-##         shell: python
-##         run: |-
-##           import json
-##           msg = {"blocks": []}
-##           # Parse 'needs' context
-##           print("${{ toJSON(needs) }}")
-##           return 0
-##           needs = json.loads("${{ toJSON(needs) }}")
-##           # Header Section
-##           WORKFLOW_ICON=":white_check_mark:"
-##           WORKFLOW_STATUS="successful"
-##           for job in needs.keys():
-##             if needs[job].result != "success":
-##               WORKFLOW_ICON=":exclamation:"
-##               WORKFLOW_STATUS="*FAILED*"
-##               break
-##           msg['blocks'].append({"type": "section", "test": { "type": "mrkdwn", "text": f'{WORKFLOW_ICON} Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.repository }}/${{ github.workflow }} #${{ github.run_id }}> {WORKFLOW_STATUS}'}})
-##           msg['blocks'].append({"type": "divider"})
-## 
-##           # Per-job section
-##           for job in needs.keys():
-##             if needs[job]['result'] == "success":
-##               TEST_ICON=":white_check_mark:"
-##               TEST_STATUS="succeeded"
-##             else:
-##               TEST_ICON=":exclamation:"
-##               TEST_STATUS="*FAILED*"
-## 
-##             TEST_RUNS=needs[job]['outputs']['test_runs']
-##             if TEST_RUNS == 1:
-##               TEST_RUN_STRING="run"
-##             else:
-##               TEST_RUN_STRING="runs"
-## 
-##             job_msg = {"type": "section", "test": { "type": "mrkdwn", "text": f'{TEST_ICON} {job}: {TEST_STATUS} in {TEST_RUNS} {TEST_RUN_STRING}'}}
-##             msg['blocks'].append(job_msg)
-## 
-##           # Output
-##           # https://trstringer.com/github-actions-multiline-strings/ Option 2
-##           env = open('${{ github.env }}', mode='a')
-##           env.writelines(["SLACK_MESSAGE=<<EOF"])
-##           json.dump(msg, env)
-##           env.writelines(["EOF"])
-##           env.close()
-##       - name: Post to Slack Channel
-##         id: slack
-##         uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
-##         with:
-##           channel-id: ${{ vars.SLACK_NOTIFICATION_CHANNELS }}
-##           slack-message: ${{ env.SLACK_MESSAGE }}
-##         env:
-##           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      - name: Build Message
+        id: build-message
+        shell: python
+        run: |-
+          import json
+          msg = {"blocks": []}
+          # Parse 'needs' context
+          needs_f = open("job-state.json")
+          needs = json.load(needs_f)
+          # Header Section
+          WORKFLOW_ICON=":white_check_mark:"
+          WORKFLOW_STATUS="successful"
+          for job in needs.keys():
+            if needs[job].result != "success":
+              WORKFLOW_ICON=":exclamation:"
+              WORKFLOW_STATUS="*FAILED*"
+              break
+          msg['blocks'].append({"type": "section", "test": { "type": "mrkdwn", "text": f'{WORKFLOW_ICON} Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.repository }}/${{ github.workflow }} #${{ github.run_id }}> {WORKFLOW_STATUS}'}})
+          msg['blocks'].append({"type": "divider"})
+
+          # Per-job section
+          for job in needs.keys():
+            if needs[job]['result'] == "success":
+              TEST_ICON=":white_check_mark:"
+              TEST_STATUS="succeeded"
+            else:
+              TEST_ICON=":exclamation:"
+              TEST_STATUS="*FAILED*"
+
+            TEST_RUNS=needs[job]['outputs']['test_runs']
+            if TEST_RUNS == 1:
+              TEST_RUN_STRING="run"
+            else:
+              TEST_RUN_STRING="runs"
+
+            job_msg = {"type": "section", "test": { "type": "mrkdwn", "text": f'{TEST_ICON} {job}: {TEST_STATUS} in {TEST_RUNS} {TEST_RUN_STRING}'}}
+            msg['blocks'].append(job_msg)
+
+          # Output
+          # https://trstringer.com/github-actions-multiline-strings/ Option 2
+          env = open('${{ github.env }}', mode='a')
+          env.writelines(["SLACK_MESSAGE=<<EOF"])
+          json.dump(msg, env)
+          env.writelines(["EOF"])
+          env.close()
+      - name: Post to Slack Channel
+        id: slack
+        uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
+        with:
+          channel-id: ${{ vars.SLACK_NOTIFICATION_CHANNELS }}
+          slack-message: ${{ env.SLACK_MESSAGE }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
