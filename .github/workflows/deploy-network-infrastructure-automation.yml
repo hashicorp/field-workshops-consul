@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'convert-hashicorp-field-workshops-consul-to-actions-20230320-170752'
+      - 'master'
     paths:
       - 'instruqt-tracks/network-infrastructure-automation/**'
 permissions:
@@ -18,3 +18,4 @@ jobs:
       INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
     secrets:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
