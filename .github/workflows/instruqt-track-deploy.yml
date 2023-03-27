@@ -70,7 +70,7 @@ jobs:
         WORKFLOW_ICON=":white_check_mark:"
         WORKFLOW_STATUS="successful"
         WORKFLOW_ACTION="*UNKNOWN*"
-        msg['blocks'].append({"type": "section", "text": {"type": "mrkdwn", "text": f"{WORKFLOW_ICON} Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }} #${{ github.run_number }}> {WORKFLOW_STATUS}'}})
+        msg['blocks'].append({"type": "section", "text": {"type": "mrkdwn", "text": f'{WORKFLOW_ICON} Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }} #${{ github.run_number }}> {WORKFLOW_STATUS}'}})
         msg['blocks'].append({"type": "divider"})
         if "${{ needs.deploy-track.result }}" != "success":
           WORKFLOW_ICON=":exclamation:"
