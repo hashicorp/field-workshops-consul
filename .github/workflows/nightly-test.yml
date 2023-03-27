@@ -179,7 +179,7 @@ jobs:
           env = open('${{ github.env }}', mode='a')
           env.writelines([f'SLACK_MESSAGE<<{EOF}\n'])
           json.dump(msg, env)
-          env.writelines([f'{EOF}\n'])
+          env.writelines([f'\n{EOF}\n'])
           env.close()
       - name: Post to Slack Channel
         id: slack
