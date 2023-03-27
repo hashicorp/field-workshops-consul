@@ -13,6 +13,8 @@ on:
     secrets:
       INSTRUQT_TOKEN:
         required: true
+    outputs:
+      test_runs: ${{ jobs.instruqt-test.outputs.run }}
 env:
   # See IL-559 for information about the source of these
   # secrets and variables

@@ -125,11 +125,9 @@ jobs:
       # https://github.com/actions/runner/issues/1656#issuecomment-1030077729
       - name: Get Jobs State
         id: get-jobs-state
-        env:
-          STATE: ${{ toJSON(needs) }}
         run: |-
           cat<<EOF >> job-state.json
-          ${STATE}
+          ${{ toJSON(needs) }}
           EOF
           cat job-state.json
 ##       - name: Build Message
