@@ -18,3 +18,4 @@ jobs:
       INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
     secrets:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

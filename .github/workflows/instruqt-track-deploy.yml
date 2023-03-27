@@ -13,20 +13,14 @@ on:
     secrets:
       INSTRUQT_TOKEN:
         required: true
+      SLACK_BOT_TOKEN:
+        required: true
 env:
   # See IL-559 for information about the source of these
   # secrets and variables
   INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
 jobs:
-  dump_contexts_to_log:
-    runs-on: ubuntu-latest
-    steps:
-      - run: |-
-          echo "github:"
-          echo '${{ toJSON(github) }}'
-          echo "job:"
-          echo '${{ toJSON(job) }}'
-  test-track:
+  deploy-track:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Source
@@ -49,3 +43,60 @@ jobs:
       id: instruqt-push
       working-directory: ${{ inputs.working_directory }}
       run: instruqt track push --force
+  notify-slack:
+    runs-on: ubuntu-latest
+    needs:
+      - deploy-track
+    #Always run so we can notify in the event of an issue
+    if: ${{ always() }}
+    steps:
+    - name: Get Jobs State
+      id: get-jobs-state
+      run: |-
+        cat<<EOF >> job-state.json
+        ${{ toJSON(github) }}
+        EOF
+        cat job-state.json
+    - name: Build Message
+      id: build-message
+      shell: python
+      run: |-
+        import json
+        import secrets
+        msg = {"blocks": []}
+        # Parse github context
+        github_fp = open('job-state.json')
+        github = json.load(github_fp)
+        WORKFLOW_ICON=":white_check_mark:"
+        WORKFLOW_STATUS="successful"
+        WORKFLOW_ACTION="*UNKNOWN*"
+        msg['blocks'].append({"type": "section", "text": {"type": "mrkdwn", "text": f"{WORKFLOW_ICON} Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }} #${{ github.run_number }}> {WORKFLOW_STATUS}'}})
+        msg['blocks'].append({"type": "divider"})
+        if "${{ needs.deploy-track.result }}" != "success":
+          WORKFLOW_ICON=":exclamation:"
+          WORKFLOW_STATUS="*FAILED*"
+        if "${{ github.event_name }}" == "workflow_dispatch":
+          WORKFLOW_ACTION="manually deployed"
+        elif "${{ github.event_name }}" == "push":
+          WORKFLOW_ACTION="on push automatically deployed"
+        msg['blocks'].append({"type": "section", "text": {"type": "mrkdwn", "text": "${{ github.actor }} manually deployed ${{ inputs.working_directory }} from <${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}|${{ github.ref_type }} ${{ github.ref_name }}>"
+        # Output
+        # https://trstringer.com/github-actions-multiline-strings/ Option 2
+        # NOTE: Where we typically use 'EOF' as a heredoc delimiter, following
+        # the security advice in
+        # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
+        # we generate a random delimiter every time
+        EOF = secrets.token_hex(24)
+        env = open('${{ github.env }}', mode='a')
+        env.writelines([f'SLACK_PAYLOAD<<{EOF}\n'])
+        json.dump(msg, env)
+        env.writelines([f'\n{EOF}\n'])
+        env.close()
+    - name: Post to Slack Channel
+      id: slack
+      uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
+      with:
+        channel-id: ${{ vars.SLACK_NOTIFICATION_CHANNELS }}
+        payload: ${{ env.SLACK_PAYLOAD }}
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
