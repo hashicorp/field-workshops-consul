@@ -148,7 +148,7 @@ jobs:
               WORKFLOW_ICON=":exclamation:"
               WORKFLOW_STATUS="*FAILED*"
               break
-          msg['blocks'].append({"type": "section", "text": { "type": "mrkdwn", "text": f'{WORKFLOW_ICON} Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.repository }}/${{ github.workflow }} #${{ github.run_number }}> {WORKFLOW_STATUS}'}})
+          msg['blocks'].append({"type": "section", "text": { "type": "mrkdwn", "text": f'{WORKFLOW_ICON} Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }} #${{ github.run_number }}> {WORKFLOW_STATUS}'}})
           msg['blocks'].append({"type": "divider"})
 
           # Per-job section
@@ -160,7 +160,7 @@ jobs:
               TEST_ICON=":exclamation:"
               TEST_STATUS="*FAILED*"
 
-            TEST_RUNS=needs[job]['outputs']['test_runs']
+            TEST_RUNS=int(needs[job]['outputs']['test_runs'])
             if TEST_RUNS == 1:
               TEST_RUN_STRING="run"
             else:
