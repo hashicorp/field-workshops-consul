@@ -1,6 +1,6 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
-name: hashicorp/field-workshops-consul/nightly-test
+name: hashicorp/field-workshops-consul/check-github-pat
 on: workflow_dispatch
 jobs:
   this-is-so-stupid:
