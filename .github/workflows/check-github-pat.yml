@@ -26,8 +26,11 @@ jobs:
           import os
           import requests
           pat = os.environ.get('GITHUB_TOKEN')
-          api = requests.get(${{ github.api_url }}, headers={"Authorization", f'Bearer {pat}'})
+          api = requests.get('${{ github.api_url }}/user', headers={"Authorization", f'Bearer {pat}'})
           expiry_header = r.headers['github-authentication-token-expiration']
+          user_info = api.json()
+          user_name = user_info['login']
+          user_uri = user_info['html_url']
           # I'm going to find whomever at Github is responsible for it and smack
           # them with a copy of ISO-8601 until they feel bad for this date format
           expiry_date = datetime.datetime.strptime(expiry_header.split(' ')[0], '%Y-%m-%d')
@@ -38,6 +41,7 @@ jobs:
           # Set some output to trigger the Slack step
           gho = open(os.environ.get('GITHUB_OUTPUT', 'a')
           gho.writelines([f'days_left={days_left}\n']
+          gho.writelines([f'user_name={user_name}\n', f'user_uri={user_uri}\n'])
           if days_left <= ${{ vars.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT_MIN_REMAINING_LIFE_DAYS }}:
             gho.writelines(['do_notify=true\n']
           else:
@@ -67,6 +71,13 @@ jobs:
                   "text": {
                     "type": "mrkdwn",
                     "text": "The GitHub Personal Action Token HC_GITHUB_SOLUTIONS_ENGINEERING_PAT has ${{ steps.build-message.outputs.days_left }} days left, less than ${{ vars.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT_MIN_REMAINING_LIFE_DAYS }}. See IL-559 for information on how to renew it"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "User is <${{ steps.build-message.outputs.user_uri }}|${{ steps.build-message.outputs.user_name}}>"
                   }
                 }
               ]
