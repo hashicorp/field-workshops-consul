@@ -15,8 +15,8 @@ on:
         required: true
     outputs:
       test_runs:
-        description: "Number of runs test took",
-        value: ${{ jobs.instruqt-test.outputs.run }}
+        description: "Number of runs test took"
+        value: ${{ jobs.test-track.outputs.test_runs }}
 env:
   # See IL-559 for information about the source of these
   # secrets and variables
