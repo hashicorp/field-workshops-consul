@@ -135,6 +135,7 @@ jobs:
         shell: python
         run: |-
           import json
+          import secrets
           msg = {"blocks": []}
           # Parse 'needs' context
           needs_f = open("job-state.json")
@@ -170,10 +171,15 @@ jobs:
 
           # Output
           # https://trstringer.com/github-actions-multiline-strings/ Option 2
+          # NOTE: Where we typically use 'EOF' as a heredoc delimiter, following
+          # the security advice in
+          # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
+          # we generate a random delimiter every time
+          EOF = secrets.token_hex(24)
           env = open('${{ github.env }}', mode='a')
-          env.writelines(["SLACK_MESSAGE=<<EOF"])
+          env.writelines([f'SLACK_MESSAGE<<{EOF}'])
           json.dump(msg, env)
-          env.writelines(["EOF"])
+          env.writelines([f'{EOF}'])
           env.close()
       - name: Post to Slack Channel
         id: slack
