@@ -26,7 +26,7 @@ jobs:
           import os
           import requests
           pat = os.environ.get('GITHUB_TOKEN')
-          api = requests.get('${{ github.api_url }}/user', headers={"Authorization", f'Bearer {pat}'})
+          api = requests.get('${{ github.api_url }}/user', headers={"Authorization": f'Bearer {pat}'})
           expiry_header = r.headers['github-authentication-token-expiration']
           user_info = api.json()
           user_name = user_info['login']
