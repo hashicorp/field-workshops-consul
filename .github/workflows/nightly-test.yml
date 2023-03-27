@@ -148,7 +148,7 @@ jobs:
               WORKFLOW_ICON=":exclamation:"
               WORKFLOW_STATUS="*FAILED*"
               break
-          msg['blocks'].append({"type": "section", "text": { "type": "mrkdwn", "text": f'{WORKFLOW_ICON} Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.repository }}/${{ github.workflow }} #${{ github.run_attempt }}> {WORKFLOW_STATUS}'}})
+          msg['blocks'].append({"type": "section", "text": { "type": "mrkdwn", "text": f'{WORKFLOW_ICON} Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.repository }}/${{ github.workflow }} #${{ github.run_number }}> {WORKFLOW_STATUS}'}})
           msg['blocks'].append({"type": "divider"})
 
           # Per-job section
@@ -177,7 +177,7 @@ jobs:
           # we generate a random delimiter every time
           EOF = secrets.token_hex(24)
           env = open('${{ github.env }}', mode='a')
-          env.writelines([f'SLACK_MESSAGE<<{EOF}\n'])
+          env.writelines([f'SLACK_PAYLOAD<<{EOF}\n'])
           json.dump(msg, env)
           env.writelines([f'\n{EOF}\n'])
           env.close()
@@ -186,6 +186,6 @@ jobs:
         uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
         with:
           channel-id: ${{ vars.SLACK_NOTIFICATION_CHANNELS }}
-          slack-message: ${{ env.SLACK_MESSAGE }}
+          payload: ${{ env.SLACK_PAYLOAD }}
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
