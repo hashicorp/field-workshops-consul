@@ -14,9 +14,17 @@ on:
       INSTRUQT_TOKEN:
         required: true
 env:
-  # See IL-559 for information about the source of these # secrets and variables
+  # See IL-559 for information about the source of these
+  # secrets and variables
   INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
 jobs:
+  dump_contexts_to_log:
+    steps:
+      - run |-
+          echo "github:"
+          echo '${{ toJSON(github) }}'
+          echo "job:"
+          echo '${{ toJSON(job) }}'
   test-track:
     runs-on: ubuntu-latest
     steps:
