@@ -148,7 +148,7 @@ jobs:
               WORKFLOW_ICON=":exclamation:"
               WORKFLOW_STATUS="*FAILED*"
               break
-          msg['blocks'].append({"type": "section", "test": { "type": "mrkdwn", "text": f'{WORKFLOW_ICON} Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.repository }}/${{ github.workflow }} #${{ github.run_id }}> {WORKFLOW_STATUS}'}})
+          msg['blocks'].append({"type": "section", "text": { "type": "mrkdwn", "text": f'{WORKFLOW_ICON} Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.repository }}/${{ github.workflow }} #${{ github.run_attempt }}> {WORKFLOW_STATUS}'}})
           msg['blocks'].append({"type": "divider"})
 
           # Per-job section
@@ -166,7 +166,7 @@ jobs:
             else:
               TEST_RUN_STRING="runs"
 
-            job_msg = {"type": "section", "test": { "type": "mrkdwn", "text": f'{TEST_ICON} {job}: {TEST_STATUS} in {TEST_RUNS} {TEST_RUN_STRING}'}}
+            job_msg = {"type": "section", "text": { "type": "mrkdwn", "text": f'{TEST_ICON} {job}: {TEST_STATUS} in {TEST_RUNS} {TEST_RUN_STRING}'}}
             msg['blocks'].append(job_msg)
 
           # Output
