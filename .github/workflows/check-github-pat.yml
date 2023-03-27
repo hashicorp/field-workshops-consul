@@ -21,6 +21,55 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT }}
         run: |-
+          import datetime
           import json
+          import os
           import requests
-          import dateutil
+          pat = os.environ.get('GITHUB_TOKEN')
+          api = requests.get(${{ github.api_url }}, headers={"Authorization", f'Bearer {pat}'})
+          expiry_header = r.headers['github-authentication-token-expiration']
+          # I'm going to find whomever at Github is responsible for it and smack
+          # them with a copy of ISO-8601 until they feel bad for this date format
+          expiry_date = datetime.datetime.strptime(expiry_header.split(' ')[0], '%Y-%m-%d')
+          now = datetime.date.today()
+          time_left = expiry_date.date() - now
+          days_left = time_left.days
+          print(f"PAT has {days_left} days left")
+          # Set some output to trigger the Slack step
+          gho = open(os.environ.get('GITHUB_OUTPUT', 'a')
+          gho.writelines([f'days_left={days_left}\n']
+          if days_left <= ${{ vars.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT_MIN_REMAINING_LIFE_DAYS }}:
+            gho.writelines(['do_notify=true\n']
+          else:
+            gho.writelines(['do_notify=false\n']
+          gho.close()
+      - name: Notify Slack
+        id: notify-slack
+        if: ${{ steps.build-message.outputs.do_notify }} == "true"
+        uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
+        with:
+          channel-id: ${{ vars.SLACK_NOTIFICATION_CHANNELS }}
+          payload: |-
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":exclamation:  Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }} #${{ github.run_number }}> *ALERT*"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "The GitHub Personal Action Token HC_GITHUB_SOLUTIONS_ENGINEERING_PAT has ${{ steps.build-message.outputs.days_left }} days left, less than ${{ vars.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT_MIN_REMAINING_LIFE_DAYS }}. See IL-559 for information on how to renew it"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
