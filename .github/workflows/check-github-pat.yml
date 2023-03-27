@@ -43,9 +43,9 @@ jobs:
           gho.writelines([f'days_left={days_left}\n'])
           gho.writelines([f'user_name={user_name}\n', f'user_uri={user_uri}\n'])
           if days_left <= ${{ vars.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT_MIN_REMAINING_LIFE_DAYS }}:
-            gho.writelines(['do_notify=true\n']
+            gho.writelines(['do_notify=true\n'])
           else:
-            gho.writelines(['do_notify=false\n']
+            gho.writelines(['do_notify=false\n'])
           gho.close()
       - name: Notify Slack
         id: notify-slack
