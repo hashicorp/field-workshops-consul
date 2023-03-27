@@ -11,7 +11,11 @@ permissions:
 env:
   # See IL-559 for information about the source of these
   # secrets and variables
-  GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY }}
+  # You MUST base64 encode the GCLOUD_SERVICE_KEY json blob, otherwise
+  # GHA in being zealous about redacting secrets will turn the `needs`
+  # context json we require in the Slack notification steps will turn 
+  # curly braces into '***'
+  GCLOUD_SERVICE_KEY_JSON_BASE64: ${{ secrets.GCLOUD_SERVICE_KEY_JSON_BASE64 }}
   GOOGLE_COMPUTE_REGION: ${{ vars.GOOGLE_COMPUTE_REGION }}
   GOOGLE_PROJECT_ID: ${{ vars.GOOGLE_PROJECT_ID }}
   HC_CONSUL_LICENSE: ${{ secrets.HC_CONSUL_LICENSE }}
@@ -42,25 +46,25 @@ jobs:
     steps:
       - name: bogus
         run: exit 0
-##     - name: Checkout Source
-##       id: checkout-source
-##       uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
-##       with:
-##         repository: hashicorp/instruqt-packer
-##         token: ${{ secrets.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT }}
-##         path: instruqt-packer
-##         ref: ${{ vars.CONSUL_CLOUD_CLIENT_REF }}  # The ref in the repo we are targeting
-##     - name: Write GCloud Key
-##       id: write-gcloud-key
-##       run: echo "${GCLOUD_SERVICE_KEY}" > "${HOME}"/gcloud.json
-##     - name: Auth to GCP
-##       id: auth-to-gcp
-##       run: gcloud auth activate-service-account --key-file="${HOME}/gcloud.json" --project "${GOOGLE_PROJECT_ID}"
-##     - name: Configure Docker
-##       id: configure-docker
-##       run: |-
-##         gcloud auth configure-docker
-##         gcloud config set project "${GOOGLE_PROJECT_ID}"
+      - name: Checkout Source
+        id: checkout-source
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+        with:
+          repository: hashicorp/instruqt-packer
+          token: ${{ secrets.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT }}
+          path: instruqt-packer
+          ref: ${{ vars.CONSUL_CLOUD_CLIENT_REF }}  # The ref in the repo we are targeting
+      - name: Write GCloud Key
+        id: write-gcloud-key
+        run: echo "${GCLOUD_SERVICE_KEY_JSON_BASE64}" | base64 -d > "${HOME}"/gcloud.json
+      - name: Auth to GCP
+        id: auth-to-gcp
+        run: gcloud auth activate-service-account --key-file="${HOME}/gcloud.json" --project "${GOOGLE_PROJECT_ID}"
+      - name: Configure Docker
+        id: configure-docker
+        run: |-
+          gcloud auth configure-docker
+          gcloud config set project "${GOOGLE_PROJECT_ID}"
 ##     - name: Build container
 ##       id: build-container
 ##       run: docker build --build-arg HC_VAULT_LICENSE="${HC_VAULT_LICENSE}" --build-arg HC_CONSUL_LICENSE="${HC_CONSUL_LICENSE}" --build-arg PACKER_VERSION="${PACKER_VERSION}" --build-arg TF_VERSION="${TF_VERSION}" --build-arg VAULT_VERSION="${VAULT_VERSION}" --build-arg NOMAD_VERSION="${NOMAD_VERSION}" --build-arg CONSUL_VERSION="${CONSUL_VERSION}" --build-arg ENVOY_VERSION="${ENVOY_VERSION}" -f instruqt-packer/consul-cloud-client/Dockerfile -t gcr.io/"${GOOGLE_PROJECT_ID}"/consul-cloud-client:"${CONSUL_TAG}" instruqt-packer/consul-cloud-client
