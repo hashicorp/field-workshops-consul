@@ -79,7 +79,7 @@ jobs:
           WORKFLOW_ACTION="manually deployed"
         elif "${{ github.event_name }}" == "push":
           WORKFLOW_ACTION="on push automatically deployed"
-        msg['blocks'].append({"type": "section", "text": {"type": "mrkdwn", "text": "${{ github.actor }} manually deployed ${{ inputs.working_directory }} from <${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}|${{ github.ref_type }} ${{ github.ref_name }}>"}})
+        msg['blocks'].append({"type": "section", "text": {"type": "mrkdwn", "text": f"${{ github.actor }} {WORKFLOW_ACTION} ${{ inputs.working_directory }} from ${{ github.ref_type }} <${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}|${{ github.ref_name }}>"}})
         # Output
         # https://trstringer.com/github-actions-multiline-strings/ Option 2
         # NOTE: Where we typically use 'EOF' as a heredoc delimiter, following
