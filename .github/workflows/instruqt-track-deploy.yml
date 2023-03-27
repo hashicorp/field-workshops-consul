@@ -19,8 +19,9 @@ env:
   INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
 jobs:
   dump_contexts_to_log:
+    runs-on: ubuntu-latest
     steps:
-      - run |-
+      - run: |-
           echo "github:"
           echo '${{ toJSON(github) }}'
           echo "job:"
