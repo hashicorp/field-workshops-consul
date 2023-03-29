@@ -65,12 +65,12 @@ jobs:
         run: |-
           gcloud auth configure-docker
           gcloud config set project "${GOOGLE_PROJECT_ID}"
-##     - name: Build container
-##       id: build-container
-##       run: docker build --build-arg HC_VAULT_LICENSE="${HC_VAULT_LICENSE}" --build-arg HC_CONSUL_LICENSE="${HC_CONSUL_LICENSE}" --build-arg PACKER_VERSION="${PACKER_VERSION}" --build-arg TF_VERSION="${TF_VERSION}" --build-arg VAULT_VERSION="${VAULT_VERSION}" --build-arg NOMAD_VERSION="${NOMAD_VERSION}" --build-arg CONSUL_VERSION="${CONSUL_VERSION}" --build-arg ENVOY_VERSION="${ENVOY_VERSION}" -f instruqt-packer/consul-cloud-client/Dockerfile -t gcr.io/"${GOOGLE_PROJECT_ID}"/consul-cloud-client:"${CONSUL_TAG}" instruqt-packer/consul-cloud-client
-##     - name: Push container
-##       id: push-container
-##       run: docker push gcr.io/"${GOOGLE_PROJECT_ID}"/consul-cloud-client:"${CONSUL_TAG}"
+      - name: Build container
+        id: build-container
+        run: docker build --build-arg HC_VAULT_LICENSE="${HC_VAULT_LICENSE}" --build-arg HC_CONSUL_LICENSE="${HC_CONSUL_LICENSE}" --build-arg PACKER_VERSION="${PACKER_VERSION}" --build-arg TF_VERSION="${TF_VERSION}" --build-arg VAULT_VERSION="${VAULT_VERSION}" --build-arg NOMAD_VERSION="${NOMAD_VERSION}" --build-arg CONSUL_VERSION="${CONSUL_VERSION}" --build-arg ENVOY_VERSION="${ENVOY_VERSION}" -f instruqt-packer/consul-cloud-client/Dockerfile -t gcr.io/"${GOOGLE_PROJECT_ID}"/consul-cloud-client:"${CONSUL_TAG}" instruqt-packer/consul-cloud-client
+      - name: Push container
+        id: push-container
+        run: docker push gcr.io/"${GOOGLE_PROJECT_ID}"/consul-cloud-client:"${CONSUL_TAG}"
   consul-basics:
     uses: ./.github/workflows/instruqt-track-test.yml
     with:

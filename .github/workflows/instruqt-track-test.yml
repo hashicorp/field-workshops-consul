@@ -43,18 +43,15 @@ jobs:
       id: instruqt-test
       working-directory: ${{ inputs.working_directory }}
       run: |-
-        echo "runs=1" >> "${GITHUB_OUTPUT}"
-        exit 0
-##       run: |-
-##         n=0
-##         until [ $n -ge 3 ]; do
-##           echo "Test $n"
-##           instruqt track test --skip-fail-check && break
-##           n=$(( n +1 ))
-##           sleep 60
-##         done
-##         echo "runs=${n}" >> "${GITHUB_OUTPUT}"
-##         if [ $n -ge 3 ]; then
-##           echo "Instruqt track test failed after $n attempts"
-##           exit 1
-##         fi
+        n=0
+        until [ $n -ge 3 ]; do
+          echo "Test $n"
+          instruqt track test --skip-fail-check && break
+          n=$(( n + 1 ))
+          sleep 60
+        done
+        echo "runs=${n}" >> "${GITHUB_OUTPUT}"
+        if [ $n -ge 3 ]; then
+          echo "Instruqt track test failed after $n attempts"
+          exit 1
+        fi
