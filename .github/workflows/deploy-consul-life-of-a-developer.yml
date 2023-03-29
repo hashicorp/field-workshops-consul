@@ -1,9 +1,21 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
 name: hashicorp/field-workshops-consul/deploy-consul-life-of-a-developer
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'master'
+    paths:
+      - 'instruqt-tracks/consul-life-of-a-developer/**'
+permissions:
+  contents: read
 jobs:
-  this-is-so-stupid:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "this is so stupid"
+  deploy-track:
+    uses: ./.github/workflows/instruqt-track-deploy.yml
+    with:
+      working_directory: "instruqt-tracks/consul-life-of-a-developer"
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
+    secrets:
+      INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

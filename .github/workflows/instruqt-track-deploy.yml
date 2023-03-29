@@ -1,0 +1,102 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+name: hashicorp/field-workshops-consul/instruqt-track-deploy
+on:
+  workflow_call:
+    inputs:
+      INSTRUQT_CLI_URI:
+        required: true
+        type: string
+      working_directory:
+        required: true
+        type: string
+    secrets:
+      INSTRUQT_TOKEN:
+        required: true
+      SLACK_BOT_TOKEN:
+        required: true
+env:
+  # See IL-559 for information about the source of these
+  # secrets and variables
+  INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
+jobs:
+  deploy-track:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Source
+      id: checkout-source
+      uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
+    - name: Get Instruqt CLI
+      id: get-instruqt-cli
+      run: |-
+        curl -Lo instruqt.zip "${{ inputs.INSTRUQT_CLI_URI }}"
+        unzip instruqt.zip
+        mkdir -p "${HOME}/.local/bin/"
+        mv instruqt "${HOME}/.local/bin/"
+        chmod +x "${HOME}/.local/bin/instruqt"
+        echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
+    - name: Instruqt Validate
+      id: instruqt-validate
+      working-directory: ${{ inputs.working_directory }}
+      run: instruqt track validate
+    - name: Instruqt Push
+      id: instruqt-push
+      working-directory: ${{ inputs.working_directory }}
+      run: instruqt track push --force
+  notify-slack:
+    runs-on: ubuntu-latest
+    needs:
+      - deploy-track
+    #Always run so we can notify in the event of an issue
+    if: ${{ always() }}
+    steps:
+    - name: Get Jobs State
+      id: get-jobs-state
+      run: |-
+        cat<<EOF >> job-state.json
+        ${{ toJSON(github) }}
+        EOF
+        cat job-state.json
+    - name: Build Message
+      id: build-message
+      shell: python
+      run: |-
+        import json
+        import secrets
+        msg = {"blocks": []}
+        # Parse github context
+        github_fp = open('job-state.json')
+        github = json.load(github_fp)
+        WORKFLOW_ICON=":white_check_mark:"
+        WORKFLOW_STATUS="successful"
+        WORKFLOW_ACTION="*UNKNOWN*"
+        msg['blocks'].append({"type": "section", "text": {"type": "mrkdwn", "text": f'{WORKFLOW_ICON} Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }} #${{ github.run_number }}> {WORKFLOW_STATUS}'}})
+        msg['blocks'].append({"type": "divider"})
+        if "${{ needs.deploy-track.result }}" != "success":
+          WORKFLOW_ICON=":exclamation:"
+          WORKFLOW_STATUS="*FAILED*"
+        if "${{ github.event_name }}" == "workflow_dispatch":
+          WORKFLOW_ACTION="manually deployed"
+        elif "${{ github.event_name }}" == "push":
+          WORKFLOW_ACTION="on push automatically deployed"
+        msg['blocks'].append({"type": "section", "text": {"type": "mrkdwn", "text": f"<${{ github.event.sender.html_url }}|${{ github.actor }}> {WORKFLOW_ACTION} ${{ inputs.working_directory }} from ${{ github.ref_type }} <${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}|${{ github.ref_name }}> to Instruqt"}})
+        # Output
+        # https://trstringer.com/github-actions-multiline-strings/ Option 2
+        # NOTE: Where we typically use 'EOF' as a heredoc delimiter, following
+        # the security advice in
+        # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
+        # we generate a random delimiter every time
+        EOF = secrets.token_hex(24)
+        env = open('${{ github.env }}', mode='a')
+        env.writelines([f'SLACK_PAYLOAD<<{EOF}\n'])
+        json.dump(msg, env)
+        env.writelines([f'\n{EOF}\n'])
+        env.close()
+    - name: Post to Slack Channel
+      id: slack
+      uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
+      with:
+        channel-id: ${{ vars.SLACK_NOTIFICATION_CHANNELS }}
+        payload: ${{ env.SLACK_PAYLOAD }}
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
