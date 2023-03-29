@@ -70,8 +70,6 @@ jobs:
         WORKFLOW_ICON=":white_check_mark:"
         WORKFLOW_STATUS="successful"
         WORKFLOW_ACTION="*UNKNOWN*"
-        msg['blocks'].append({"type": "section", "text": {"type": "mrkdwn", "text": f'{WORKFLOW_ICON} Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }} #${{ github.run_number }}> {WORKFLOW_STATUS}'}})
-        msg['blocks'].append({"type": "divider"})
         if "${{ needs.deploy-track.result }}" != "success":
           WORKFLOW_ICON=":exclamation:"
           WORKFLOW_STATUS="*FAILED*"
@@ -79,7 +77,12 @@ jobs:
           WORKFLOW_ACTION="manually deployed"
         elif "${{ github.event_name }}" == "push":
           WORKFLOW_ACTION="on push automatically deployed"
-        msg['blocks'].append({"type": "section", "text": {"type": "mrkdwn", "text": f"<${{ github.event.sender.html_url }}|${{ github.actor }}> {WORKFLOW_ACTION} ${{ inputs.working_directory }} from ${{ github.ref_type }} <${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}|${{ github.ref_name }}> to Instruqt"}})
+        msg['blocks'].append({"type": "section", "text": {"type": "mrkdwn", "text": f'{WORKFLOW_ICON} Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }} #${{ github.run_number }}> {WORKFLOW_STATUS}'}})
+        msg['blocks'].append({"type": "divider"})
+        if "${{ needs.deploy-track.result }}" == "success":
+          msg['blocks'].append({"type": "section", "text": {"type": "mrkdwn", "text": f"<${{ github.event.sender.html_url }}|${{ github.actor }}> {WORKFLOW_ACTION} ${{ inputs.working_directory }} from ${{ github.ref_type }} <${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}|${{ github.ref_name }}> to Instruqt"}})
+        else:
+          msg['blocks'].append({"type": "section", "text": {"type": "mrkdwn", "text": f":exclamation: :exclamation: :exclamation: *This* *FAILED*: <${{ github.event.sender.html_url }}|${{ github.actor }}> {WORKFLOW_ACTION} ${{ inputs.working_directory }} from ${{ github.ref_type }} <${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}|${{ github.ref_name }}> to Instruqt :exclamation: :exclamation: :exclamation:"}})
         # Output
         # https://trstringer.com/github-actions-multiline-strings/ Option 2
         # NOTE: Where we typically use 'EOF' as a heredoc delimiter, following
