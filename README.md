@@ -1,7 +1,5 @@
 # HashiCorp Consul Field Workshops
 
-[![CircleCI](https://circleci.com/gh/hashicorp/field-workshops-consul.svg?style=svg&circle-token=36a4cfa68c43a5878926c8fc1b3e3f0bd5171e4d)](https://circleci.com/gh/hashicorp/field-workshops-consul)
-
 All HashiCorp field workshops focused on consul should be placed in this repository. Similar field workshop repositories exist for these HashiCorp solutions:
 * [field-workshops-nomad](https://github.com/hashicorp/field-workshops-nomad)
 * [field-workshops-terraform](https://github.com/hashicorp/field-workshops-terraform)
