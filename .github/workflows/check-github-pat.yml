@@ -49,7 +49,7 @@ jobs:
           gho.close()
       - name: Notify Slack
         id: notify-slack
-        if: ${{ steps.build-message.outputs.do_notify }} == "true"
+        if: ${{ steps.build-message.outputs.do_notify == 'true' }}
         uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
         with:
           channel-id: ${{ vars.SLACK_NOTIFICATION_CHANNELS }}
