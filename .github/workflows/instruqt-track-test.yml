@@ -43,15 +43,30 @@ jobs:
       id: instruqt-test
       working-directory: ${{ inputs.working_directory }}
       run: |-
-        n=0
-        until [ $n -ge 3 ]; do
+        # From GHA docs, "If a configuration variable has not been set,
+        # the return value of a context referencing the variable will
+        # be an empty string."
+        if [ -z "${{ vars.MAX_INSTRUQT_TEST_LOOPS }}" ]; then
+          MAX_TEST_LOOPS=4    # Legacy default
+        else
+          MAX_TEST_LOOPS="${{ vars.MAX_INSTRUQT_TEST_LOOPS }}"
+        fi
+        n=1
+        until [ $n -gt ${MAX_TEST_LOOPS} ]; do
           echo "Test $n"
           instruqt track test --skip-fail-check && break
           n=$(( n + 1 ))
           sleep 60
         done
-        echo "runs=${n}" >> "${GITHUB_OUTPUT}"
-        if [ $n -ge 3 ]; then
+        if [ $n -gt ${MAX_TEST_LOOPS} ]; then
+          # If we get here, it's because n is *one more* than
+          # MAX_TEST_LOOPS; decrement it so we report the
+          # number of times the test was actually ran
+          n=$(( n - 1 ))
+          echo "runs=${n}" >> "${GITHUB_OUTPUT}"
           echo "Instruqt track test failed after $n attempts"
           exit 1
+        else
+          echo "runs=${n}" >> "${GITHUB_OUTPUT}"
+          exit 0
         fi
