@@ -76,7 +76,7 @@ EOF
 #vault deploy
 /usr/sbin/setcap cap_ipc_lock= /usr/bin/vault
 kubectl config use-context k8s1
-/usr/local/bin/helm install vault hashicorp/vault -f /root/helm/vault-values.yaml
+/usr/local/bin/helm install vault hashicorp/vault -f /root/helm/vault-values.yaml --version $VAULT_HELM_VERSION
 sleep 60
 
 #vault config

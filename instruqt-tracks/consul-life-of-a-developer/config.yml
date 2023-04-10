@@ -9,6 +9,7 @@ containers:
   environment:
     CONSUL_VERSION: 1.11.4
     CONSUL_HELM_VERSION: v0.41.1
+    VAULT_HELM_VERSION: v0.23.0
   ports:
   - 8500
   memory: 1024
