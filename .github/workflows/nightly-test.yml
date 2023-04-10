@@ -125,6 +125,7 @@ jobs:
       - life-of-a-developer
     if: ${{ always() }}   # Always run after needs, even if they failed, so we can notify
     runs-on: ubuntu-latest
+    permissions: {}
     steps:
       # https://github.com/actions/runner/issues/1656#issuecomment-1030077729
       - name: Get Jobs State
@@ -139,6 +140,7 @@ jobs:
         shell: python
         run: |-
           import json
+          import os
           import secrets
           msg = {"blocks": []}
           # Parse 'needs' context
@@ -147,10 +149,12 @@ jobs:
           # Header Section
           WORKFLOW_ICON=":white_check_mark:"
           WORKFLOW_STATUS="successful"
+          ANY_FAILURES=False
           for job in needs.keys():
             if needs[job]['result'] != "success":
               WORKFLOW_ICON=":exclamation:"
               WORKFLOW_STATUS="*FAILED*"
+              ANY_FAILURES=True
               break
           msg['blocks'].append({"type": "section", "text": { "type": "mrkdwn", "text": f'{WORKFLOW_ICON} Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }} #${{ github.run_number }}> {WORKFLOW_STATUS}'}})
           msg['blocks'].append({"type": "divider"})
@@ -185,11 +189,29 @@ jobs:
           json.dump(msg, env)
           env.writelines([f'\n{EOF}\n'])
           env.close()
+          # And output if there have been any failures - there doesn't
+          # seem to be an equivalent github context for this, so have to
+          # read GITHUB_OUTPUT out of os.environ
+          output = open(os.environ['GITHUB_OUTPUT'], mode='a')
+          if ANY_FAILURES:
+            output.writelines(['any_failures=true\n'])
+          else:
+            output.writelines(['any_failures=false\n'])
+          output.close()
       - name: Post to Slack Channel
         id: slack
         uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
         with:
           channel-id: ${{ vars.SLACK_NOTIFICATION_CHANNELS }}
+          payload: ${{ env.SLACK_PAYLOAD }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      - name: Post to Slack Channel only on failures
+        id: slack-failures
+        if: ${{ steps.build-message.outputs.any_failures == true }}
+        uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
+        with:
+          channel-id: ${{ vars.SLACK_NOTIFICATION_CHANNELS_FAIL_ONLY }}
           payload: ${{ env.SLACK_PAYLOAD }}
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
