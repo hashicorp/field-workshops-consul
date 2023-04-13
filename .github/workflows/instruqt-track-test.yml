@@ -38,6 +38,7 @@ jobs:
         mkdir -p "${HOME}/.local/bin/"
         mv instruqt "${HOME}/.local/bin/"
         chmod +x "${HOME}/.local/bin/instruqt"
+        "${HOME}/.local/bin/instruqt" update
         echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
     - name: Instruqt Test Loop
       id: instruqt-test
