@@ -208,7 +208,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       - name: Post to Slack Channel only on failures
         id: slack-failures
-        if: ${{ steps.build-message.outputs.any_failures == true }}
+        if: ${{ steps.build-message.outputs.any_failures == 'true' }}
         uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # v1.23.0
         with:
           channel-id: ${{ vars.SLACK_NOTIFICATION_CHANNELS_FAIL_ONLY }}
