@@ -82,10 +82,13 @@ challenges:
     consul reload
     ```
 
-    You should see a failing service called `mysql-sidecar-proxy` in Consul.
-    This is expected! <br>
+    You should see `mysql` as a failing service now in the Consul UI, and if
+    you click on that service, go to the `Instances` tab, and click on the
+    one instance of `mysql`, you will see that the `Connect Sidecar Listening`
+    health check is failing. This is expected. <br>
 
-    We will start a proxy and register it with Connect in our next challenge.
+    We will fix this by starting a proxy and registering it with Connect in
+    our next challenge.
   tabs:
   - title: Consul UI
     type: service
@@ -132,7 +135,7 @@ challenges:
     nohup consul connect envoy -sidecar-for mysql > /envoy.out &
     ```
 
-    You can verify in the Consul UI or the with the Consul CLI that your proxy health check is now passing. <br>
+    You can verify in the Consul UI or the with the Consul CLI that all of the 'mysql' health checks are now passing. <br>
 
     We can now use the proxy to establish communication between our application and the database!
   tabs:
