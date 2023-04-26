@@ -2,6 +2,3 @@
 
 #create intention
 /usr/bin/consul intention create -deny * *
-
-#restart web server
-/usr/sbin/service apache2 restart
