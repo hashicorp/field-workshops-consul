@@ -36,7 +36,7 @@ resource "google_container_cluster" "shared" {
       recurrence = "FREQ=WEEKLY;WKST=SU;BYDAY=SA,SU"
     }
   }
-  # IL-495
+  # IL-613
 
   node_config {
     service_account = data.terraform_remote_state.iam.outputs.gcp_consul_service_account_email
