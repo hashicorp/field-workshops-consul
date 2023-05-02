@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euvxo pipefail
+set -euvo pipefail
 
 # Note: override these when testing from a different repo and/or branch
 #       The `-b` option to `git clone` is useful for pulling from the
@@ -55,7 +55,9 @@ apt-get --only-upgrade -y install google-cloud-sdk kubectl
 
 # Ensure we load /etc/profile.d/instruqt-env.sh
 echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
+set +v
 source /root/.bashrc
+set -euvo pipefail
 
 # Azure account setup
 az account clear
