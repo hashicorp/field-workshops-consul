@@ -2,6 +2,25 @@
 set -euvxo pipefail
 
 terraform apply -auto-approve 2>&1 | tee terraform.out
-sleep 120
+
+# IL-613 wait until product API is happy
+echo "Checking product api"
+vault login -method=userpass username=admin password=admin
+consul_token=$(vault kv get -field master_token kv/consul)
+
+n=1
+while /bin/true; do
+    echo "Product api check ${n}"
+    azure_products=$(curl -s -H "X-Consul-Token: ${consul_token}" "${CONSUL_HTTP_ADDR}/v1/health/service/product-api?dc=azure-west-us-2&ns=product&passing=true")
+    if [ "$(echo "${azure_products}" | jq '. | length')" != "1" ]; then
+        echo "Not healthy yet"
+	n=$(( n + 1 ))
+        sleep 20
+    else
+        echo "Healthy"
+        break
+    fi
+done
+# IL-613
 
 exit 0

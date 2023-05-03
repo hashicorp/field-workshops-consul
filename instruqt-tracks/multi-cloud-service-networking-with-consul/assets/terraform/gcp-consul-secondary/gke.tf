@@ -20,9 +20,9 @@ resource "google_container_cluster" "shared" {
     }
   }
 
-  # IL-495
-  min_master_version = "1.21.14-gke.8500"
-  node_version       = "1.21.14-gke.8500"
+  # IL-613
+  min_master_version = "1.21.14-gke.18100"
+  node_version       = "1.21.14-gke.18100"
   # GKE mandates at least 48hr of maintenance window in a 32 day period.
   # We don't want upgrades during a lab, so we use the below values.
   # Choose two six-hour windows on Saturday and Sunday.
@@ -36,7 +36,7 @@ resource "google_container_cluster" "shared" {
       recurrence = "FREQ=WEEKLY;WKST=SU;BYDAY=SA,SU"
     }
   }
-  # IL-495
+  # IL-613
 
   node_config {
     service_account = data.terraform_remote_state.iam.outputs.gcp_consul_service_account_email

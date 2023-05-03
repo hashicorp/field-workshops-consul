@@ -9,6 +9,34 @@ helm install nginx-ingress -f /root/helm/nginx-ingress.yml ingress-nginx/ingress
 sleep 10
 kubectl apply -f k8s/web
 
-sleep 60
+# IL-613 wait until both applications are healthy
+#creds
+vault login -method=userpass username=admin password=admin
+consul_token=$(vault kv get -field master_token kv/consul)
+
+n=0
+while /bin/true; do
+    echo "Loop ${n}"
+    gcp_frontend=$(curl -s -H "X-Consul-Token: ${consul_token}" "${CONSUL_HTTP_ADDR}/v1/health/service/web?dc=gcp-us-central-1&ns=frontend&passing=true")
+    count=$(echo "${gcp_frontend}" | jq '. | length')
+    if [ "${count}" != "2" ]; then
+      echo "GKE web app is not healthy. Expecting 2 instances, got ${count}."
+      sleep 20
+      n=$(( n + 1 ))
+      continue
+    fi
+
+    gcp_public_api=$(curl -s -H "X-Consul-Token: ${consul_token}" "${CONSUL_HTTP_ADDR}/v1/health/service/public-api?dc=gcp-us-central-1&ns=frontend&passing=true")
+    count=$(echo "${gcp_public_api}" | jq '. | length')
+    if [ "${count}" != "2" ]; then
+      echo "GKE public-api app is not healthy. Expecting 2 instances, got ${count}."
+      sleep 20
+      n=$(( n + 1 ))
+    fi
+
+    # We got here, so both are healthy, break out of loop
+    break
+done
+# IL-613
 
 exit 0
