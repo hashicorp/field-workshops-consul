@@ -3,7 +3,8 @@ set -euvxo pipefail
 
 #creds
 vault login -method=userpass username=admin password=admin
-export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+export CONSUL_HTTP_TOKEN
 
 #cts
 sgid=$(terraform output -state /root/terraform/cache-services/terraform.tfstate elasticache_sg)
@@ -14,6 +15,38 @@ consul acl policy create -name cts -rules @/root/policies/consul/cts.hcl
 vault write consul/roles/cts policies=cts
 cd /root/terraform/cts
 terraform apply -auto-approve 2>&1 | tee terraform.out
-sleep 120
 
+###
+
+#check the cts token
+vault read consul/creds/cts
+if [ $? -ne 0 ]
+then
+  echo "Error checking Consul CTS acl token"
+  exit 1
+fi
+
+n=0
+while /bin/true; do
+    aws_cts=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/cts?dc=aws-us-east-1&passing=true")
+    rc=$?
+    if [ $rc -ne 0 ]; then
+	echo "Pass ${n} curl command exited with ${rc}"
+	n=$(( n + 1 ))
+	sleep 20
+	continue
+    fi
+
+    len=$(echo "${aws_cts}" | jq '. | length')
+    if [ "${len}" != "1" ]; then
+      echo "Pass ${n} AWS CTS is not healthy, got ${len} instances"
+      n=$(( n + 1 ))
+      sleep 20
+      continue
+    fi
+
+    # If we got here, we were successful, break
+    break
+done
+###
 exit 0
