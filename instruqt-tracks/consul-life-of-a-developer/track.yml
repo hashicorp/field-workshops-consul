@@ -12,5 +12,10 @@ owner: hashicorp
 developers:
 - lance@hashicorp.com
 - jthompson@hashicorp.com
+- thomas@hashicorp.com
 show_timer: true
 skipping_enabled: true
+lab_config:
+  overlay: false
+  width: 25
+  position: right
