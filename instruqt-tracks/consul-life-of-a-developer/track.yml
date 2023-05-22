@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 slug: consul-life-of-a-developer
+type: track
 title: 'Consul: Life of a Developer'
 teaser: Build, Test, and Deploy Applications with HashiCorp Consul.
 description: Ship a new version of the HashiCups App on container runtimes.
