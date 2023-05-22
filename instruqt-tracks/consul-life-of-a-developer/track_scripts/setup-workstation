@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
 
 while [ ! -f /opt/instruqt/bootstrap/host-bootstrap-completed ]
 do
@@ -16,13 +18,18 @@ source /root/.bashrc
 #install kubectl
 export DEBIAN_FRONTEND=noninteractive
 apt update -y
-apt install -y apt-transport-https ca-certificates curl vim openssh-client git jq gnupg2 lsb-release software-properties-common
-curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+apt install -y apt-transport-https ca-certificates curl vim openssh-client git jq gnupg2 lsb-release software-properties-common file
+curl -fsSLo /usr/share/keyrings/apt-releases-hashicorp-com.gpg https://apt.releases.hashicorp.com/gpg
+file /usr/share/keyrings/apt-releases-hashicorp-com.gpg
+apt-key add /usr/share/keyrings/apt-releases-hashicorp-com.gpg
 add-apt-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" |  tee /etc/apt/sources.list.d/kubernetes.list
+curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://dl.k8s.io/apt/doc/apt-key.gpg
+file /usr/share/keyrings/kubernetes-archive-keyring.gpg
+apt-key add /usr/share/keyrings/kubernetes-archive-keyring.gpg
+echo "deb [arch=amd64] https://apt.kubernetes.io/ kubernetes-xenial main" |  tee /etc/apt/sources.list.d/kubernetes.list
 apt update -y
-apt install -y kubectl consul=$CONSUL_VERSION vault
+apt install -y kubectl
+apt install -y consul=$CONSUL_VERSION vault
 
 #assets
 git clone https://github.com/hashicorp/field-workshops-consul.git
