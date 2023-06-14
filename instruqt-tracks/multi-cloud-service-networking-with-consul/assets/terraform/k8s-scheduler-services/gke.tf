@@ -1,6 +1,12 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
 
+data "google_container_engine_versions" "k8s_schedulers" {
+  project        = var.gcp_project_id
+  location       = "us-central1-a"
+  version_prefix = "1.21.14-gke."
+}
+
 resource "google_container_cluster" "graphql" {
   provider           = google-beta
   project            = var.gcp_project_id
@@ -20,9 +26,8 @@ resource "google_container_cluster" "graphql" {
     }
   }
 
-  # IL-613
-  min_master_version = "1.21.14-gke.18100"
-  node_version       = "1.21.14-gke.18100"
+  min_master_version = data.google_container_engine_versions.k8s_schedulers.latest_master_version
+  node_version       = data.google_container_engine_versions.k8s_schedulers.latest_node_version
   # GKE mandates at least 48hr of maintenance window in a 32 day period.
   # We don't want upgrades during a lab, so we use the below values.
   # Choose two six-hour windows on Saturday and Sunday.
@@ -36,7 +41,6 @@ resource "google_container_cluster" "graphql" {
       recurrence = "FREQ=WEEKLY;WKST=SU;BYDAY=SA,SU"
     }
   }
-  # IL-613
 
   node_config {
     service_account = data.terraform_remote_state.iam.outputs.gcp_consul_service_account_email
@@ -79,9 +83,8 @@ resource "google_container_cluster" "react" {
     }
   }
 
-  # IL-613
-  min_master_version = "1.21.14-gke.18100"
-  node_version       = "1.21.14-gke.18100"
+  min_master_version = data.google_container_engine_versions.k8s_schedulers.latest_master_version
+  node_version       = data.google_container_engine_versions.k8s_schedulers.latest_node_version
   # GKE mandates at least 48hr of maintenance window in a 32 day period.
   # We don't want upgrades during a lab, so we use the below values.
   # Choose two six-hour windows on Saturday and Sunday.
@@ -95,7 +98,6 @@ resource "google_container_cluster" "react" {
       recurrence = "FREQ=WEEKLY;WKST=SU;BYDAY=SA,SU"
     }
   }
-  # IL-613
 
   node_config {
     service_account = data.terraform_remote_state.iam.outputs.gcp_consul_service_account_email
