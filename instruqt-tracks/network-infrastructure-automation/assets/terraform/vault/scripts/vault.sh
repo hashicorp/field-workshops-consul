@@ -17,7 +17,7 @@ services:
     container_name: vault
     network_mode: host
     restart: always
-    image: vault
+    image: hashicorp/vault
     environment:
       - VAULT_DEV_ROOT_TOKEN_ID=root
 EOF
