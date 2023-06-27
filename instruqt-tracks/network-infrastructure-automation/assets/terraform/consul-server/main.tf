@@ -110,12 +110,12 @@ resource "azurerm_virtual_machine" "consul-server-vm" {
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location
   resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
   network_interface_ids = [azurerm_network_interface.consul.id]
-  vm_size               = "Standard_D1_v2"
+  vm_size               = "Standard_DS1_v2"
 
   storage_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-LTS-gen2"
     version   = "latest"
   }
 
