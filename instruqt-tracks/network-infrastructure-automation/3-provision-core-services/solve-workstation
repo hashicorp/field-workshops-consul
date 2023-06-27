@@ -30,6 +30,69 @@ echo ">>---------------------------------------<<"
 echo ">> Core Services: Consul Server Deployed <<"
 echo ">>---------------------------------------<<"
 
-sleep 60
+# Wait until all of the provisioned services are up so the check script
+# passes, instead of blindly waiting 60 seconds
+
+#get rg
+echo "Getting resource group"
+while /bin/true; do
+    rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+    if [ $? -ne 0 ]; then
+	sleep 10
+	continue
+    fi
+
+    if [ -z "${rg}" ]; then
+	sleep 10
+	continue
+    fi
+
+    # If we're here, we're good
+    break
+done
+
+#check vault
+echo "Checking Vault..."
+while /bin/true; do
+    status=$(az vm show -g "${rg}" --name vault-vm | jq -r '.provisioningState')
+    if [ "${status}" != "Creating" ] && [ "${status}" != "Updating" ] && [ "${status}" != "Succeeded" ] ; then
+	echo "Vault is not provisioning/provisioned, current state is: ${status}"
+	sleep 10
+	continue
+    fi
+
+    vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate vault_lb)
+    vault_api=$(curl -s -o /dev/null -w "%{http_code}" "http://${vault_lb}/v1/sys/health")
+    if [ "${vault_api}" != "200" ]; then
+	echo "Vault service did not return a 200, returned ${vault_api}"
+	sleep 10
+	continue
+    fi
+
+    # If we're here, we're good to go
+    break
+done
+
+#check consul
+echo "Checking Consul Server..."
+while /bin/true; do
+    status=$(az vm show -g "${rg}" --name consul-server-vm | jq -r '.provisioningState')
+    if [ "${status}" != "Creating" ] && [ "${status}" != "Updating" ] && [ "${status}" != "Succeeded" ] ; then
+	echo "Consul is not provisioning/provisioned, current state is: ${status}"
+	sleep 10
+	continue
+    fi
+
+    consul_lb=$(terraform output -state /root/terraform/consul-server/terraform.tfstate consul_external_ip)
+    consul_api=$(curl -s -o /dev/null -w "%{http_code}" "http://${consul_lb}/v1/status/leader")
+    if [ "${consul_api}" != "200" ]; then
+	fail-message "Consul service did not return a 200, returned ${consul_api}"
+	sleep 10
+	continue
+    fi
+
+    # If we're here, we're good to go
+    break
+done
 
 exit 0
