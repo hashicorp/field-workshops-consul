@@ -131,10 +131,9 @@ jobs:
       - name: Get Jobs State
         id: get-jobs-state
         run: |-
-          cat<<EOF >> job-state.json
+          cat<<"EOF" >> job-state.json
           ${{ toJSON(needs) }}
           EOF
-          cat job-state.json
       - name: Build Message
         id: build-message
         shell: python
