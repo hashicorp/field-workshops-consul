@@ -10,10 +10,23 @@ ASSET_REPO_FETCH_OPTIONS=""
 
 # END OPTIONS
 
+while [ ! -f /opt/instruqt/bootstrap/host-bootstrap-completed ]
+do
+    echo "Waiting for Instruqt to finish booting the virtual machine"
+    sleep 1
+done
+
 echo "##### INSTRUQT PARTICIPANT ID ${INSTRUQT_PARTICIPANT_ID}"
 
 #make vault run in instruqt container
 setcap cap_ipc_lock= /usr/bin/vault
+
+# Override licenses from those in Instruqt Secrets
+# This trick with awk keeps the contents of the secret
+# environment variables from being logged
+echo "Writing license files from instruqt secrets"
+awk 'BEGIN {print ENVIRON["HC_CONSUL_LICENSE"]}' > /etc/consul.hclic < /dev/null
+awk 'BEGIN {print ENVIRON["HC_VAULT_LICENSE"]}' > /etc/vault.hclic < /dev/null
 
 #check licenses
 echo "checking licenses..."

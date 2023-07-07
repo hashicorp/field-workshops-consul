@@ -4,7 +4,7 @@
 version: "3"
 containers:
 - name: cloud-client
-  image: gcr.io/instruqt-hashicorp/consul-cloud-client:v1.10.2
+  image: gcr.io/instruqt-hashicorp/consul-cloud-client-no-license:v1.10.2
   shell: /bin/bash
   environment:
     PACKER_VERSION: 1.7.0
@@ -36,3 +36,6 @@ azure_subscriptions:
 - name: consul
   roles:
   - Owner
+secrets:
+  - name: HC_CONSUL_LICENSE
+  - name: HC_VAULT_LICENSE
