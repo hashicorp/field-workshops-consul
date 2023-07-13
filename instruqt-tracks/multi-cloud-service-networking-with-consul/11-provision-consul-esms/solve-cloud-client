@@ -11,6 +11,56 @@ vault write consul/roles/esm policies=consul-esm
 
 #tf
 terraform apply -auto-approve 2>&1 | tee terraform.out
-sleep 300
+
+# Wait until all of our resources are healthy before leaving
+
+#check the esm token
+while /bin/true; do
+    vault read consul/creds/esm
+    if [ $? -ne 0 ]
+    then
+      echo "Error checking Consul ESM acl token"
+      sleep 15
+      continue
+    fi
+    # If we got here, we're successful
+    break
+done
+
+#aws
+while /bin/true; do
+    aws_esm=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/consul-esm?dc=aws-us-east-1&passing=true")
+    if [ "$(echo "${aws_esm}" | jq '. | length')" -lt "1" ]; then
+      echo "AWS ESM is not healthy"
+      sleep 15
+      continue
+    fi
+    # If we got here, we're successful
+    break
+done
+
+#azure
+while /bin/true; do
+    azure_esm=$(curl -s -H "X-Consul-Token: $(vault kv get -field master_token kv/consul)" "${CONSUL_HTTP_ADDR}/v1/health/service/consul-esm?dc=azure-west-us-2&passing=true")
+    if [ "$(echo "${azure_esm}" | jq '. | length')" -lt "1" ] ; then
+      echo "AZURE ESM is not healthy"
+      sleep 15
+      continue
+    fi
+    # If we got here, we're successful
+    break
+done
+
+#cts
+while /bin/true; do
+    cts_sg=$(aws ec2 describe-security-groups --filter Name="group-id",Values="$(terraform output -state /root/terraform/cache-services/terraform.tfstate elasticache_sg)" | jq '.SecurityGroups[0].IpPermissions[0].IpRanges | length')
+    if [ "${cts_sg}" != "1" ]; then
+      echo "CTS did not work. Expecting 1 SG rule."
+      sleep 15
+      continue
+    fi
+    # If we go there, we're successful
+    break
+done
 
 exit 0
