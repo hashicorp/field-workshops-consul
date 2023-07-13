@@ -18,15 +18,13 @@ env:
   GCLOUD_SERVICE_KEY_JSON_BASE64: ${{ secrets.GCLOUD_SERVICE_KEY_JSON_BASE64 }}
   GOOGLE_COMPUTE_REGION: ${{ vars.GOOGLE_COMPUTE_REGION }}
   GOOGLE_PROJECT_ID: ${{ vars.GOOGLE_PROJECT_ID }}
-  HC_CONSUL_LICENSE: ${{ secrets.HC_CONSUL_LICENSE }}
-  HC_VAULT_LICENSE: ${{ secrets.HC_VAULT_LICENSE }}
   INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
 jobs:
   # This should be changed long term: we build a new container
   # every night even though the majority of the time nothing changes.
   # Figure out a way to trigger only when the source changes, or
   # the configuration changes
-  license-cloud-client:
+  update-cloud-client:
     runs-on: ubuntu-latest
     permissions: {}
     # We add this output and set it to 1 to match all the other
@@ -67,10 +65,10 @@ jobs:
           gcloud config set project "${GOOGLE_PROJECT_ID}"
       - name: Build container
         id: build-container
-        run: docker build --build-arg HC_VAULT_LICENSE="${HC_VAULT_LICENSE}" --build-arg HC_CONSUL_LICENSE="${HC_CONSUL_LICENSE}" --build-arg PACKER_VERSION="${PACKER_VERSION}" --build-arg TF_VERSION="${TF_VERSION}" --build-arg VAULT_VERSION="${VAULT_VERSION}" --build-arg NOMAD_VERSION="${NOMAD_VERSION}" --build-arg CONSUL_VERSION="${CONSUL_VERSION}" --build-arg ENVOY_VERSION="${ENVOY_VERSION}" -f instruqt-packer/consul-cloud-client/Dockerfile -t gcr.io/"${GOOGLE_PROJECT_ID}"/consul-cloud-client:"${CONSUL_TAG}" instruqt-packer/consul-cloud-client
+        run: docker build --build-arg HC_VAULT_LICENSE="${HC_VAULT_LICENSE}" --build-arg HC_CONSUL_LICENSE="${HC_CONSUL_LICENSE}" --build-arg PACKER_VERSION="${PACKER_VERSION}" --build-arg TF_VERSION="${TF_VERSION}" --build-arg VAULT_VERSION="${VAULT_VERSION}" --build-arg NOMAD_VERSION="${NOMAD_VERSION}" --build-arg CONSUL_VERSION="${CONSUL_VERSION}" --build-arg ENVOY_VERSION="${ENVOY_VERSION}" -f instruqt-packer/consul-cloud-client/Dockerfile -t gcr.io/"${GOOGLE_PROJECT_ID}"/consul-cloud-client:"${CONSUL_TAG}" instruqt-packer/consul-cloud-client-no-license
       - name: Push container
         id: push-container
-        run: docker push gcr.io/"${GOOGLE_PROJECT_ID}"/consul-cloud-client:"${CONSUL_TAG}"
+        run: docker push gcr.io/"${GOOGLE_PROJECT_ID}"/consul-cloud-client-no-license:"${CONSUL_TAG}"
   consul-basics:
     uses: ./.github/workflows/instruqt-track-test.yml
     with:
@@ -94,7 +92,7 @@ jobs:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
   multi-cloud-consul:
     uses: ./.github/workflows/instruqt-track-test.yml
-    needs: license-cloud-client
+    needs: update-cloud-client
     with:
       working_directory: "instruqt-tracks/multi-cloud-service-networking-with-consul"
       INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
