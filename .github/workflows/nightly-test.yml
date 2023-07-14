@@ -114,7 +114,7 @@ jobs:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
   notify-slack:
     needs:
-      - license-cloud-client
+      - update-cloud-client
       - consul-basics
       - service-discovery-with-consul
       - service-mesh-with-consul
