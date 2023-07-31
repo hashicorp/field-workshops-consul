@@ -25,8 +25,12 @@ resource "google_container_cluster" "shared" {
     }
   }
 
+  # IL-798 At creation the node_version must be set to the same as
+  # min_master_version, so use the same setting for both instead of
+  # `latest_node_version` from the data source
   min_master_version = data.google_container_engine_versions.shared.latest_master_version
-  node_version       = data.google_container_engine_versions.shared.latest_node_version
+  node_version       = data.google_container_engine_versions.shared.latest_master_version
+
   # GKE mandates at least 48hr of maintenance window in a 32 day period.
   # We don't want upgrades during a lab, so we use the below values.
   # Choose two six-hour windows on Saturday and Sunday.
