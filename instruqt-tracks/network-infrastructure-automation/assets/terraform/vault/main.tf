@@ -117,6 +117,10 @@ resource "azurerm_virtual_machine" "vault" {
   tags = {
     environment = "staging"
   }
+
+  timeouts {
+    read = "60m"
+  }
 }
 
 resource "azurerm_network_security_group" "vault" {

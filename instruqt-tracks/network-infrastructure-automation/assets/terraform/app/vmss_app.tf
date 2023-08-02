@@ -62,6 +62,11 @@ resource "azurerm_virtual_machine_scale_set" "app_vmss" {
       primary   = true
     }
   }
+
+  timeouts {
+    read = "60m"
+  }
+
 }
 
 resource "azurerm_network_security_group" "app-sg" {

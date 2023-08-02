@@ -140,6 +140,10 @@ resource "azurerm_virtual_machine" "consul-server-vm" {
     }
 
   }
+  
+  timeouts {
+    read = "60m"
+  }
 
 }
 

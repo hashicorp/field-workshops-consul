@@ -191,4 +191,9 @@ resource "azurerm_virtual_machine" "PAN_FW_FW" {
   os_profile_linux_config {
     disable_password_authentication = false
   }
+  
+  timeouts {
+    read = "60m"
+  }
+
 }
