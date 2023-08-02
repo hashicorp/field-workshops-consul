@@ -105,6 +105,11 @@ resource "azurerm_virtual_machine" "bastion" {
   tags = {
     environment = "staging"
   }
+  
+  timeouts {
+    read = "60m"
+  }
+
 }
 
 resource "azurerm_network_security_group" "bastion" {

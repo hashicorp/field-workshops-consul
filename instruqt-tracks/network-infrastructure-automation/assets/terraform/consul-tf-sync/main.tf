@@ -68,6 +68,10 @@ resource "azurerm_virtual_machine" "consul-terraform-sync" {
 
   }
 
+  timeouts {
+    read = "60m"
+  }
+
 }
 
 resource "azurerm_network_interface_security_group_association" "cts" {
