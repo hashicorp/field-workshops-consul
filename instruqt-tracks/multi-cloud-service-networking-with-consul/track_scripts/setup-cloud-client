@@ -355,7 +355,7 @@ fi
 n=0
 until [ $n -ge 5 ]; do
     vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
-    echo "Vault Load balancer is: ${vault_lb}"
+    echo "AWS Vault Load balancer is: ${vault_lb}"
     if [ -z "${vault_lb}" ]; then
       fail-message "AWS Vault is not provisioned yet"
       n=$[$n+1]
@@ -363,6 +363,14 @@ until [ $n -ge 5 ]; do
       continue
     fi
     vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://${vault_lb}:8200/v1/sys/health)
+    ec=$?
+    if [ $ec -ne 0 ]; then
+      fail-message "Checking AWS Vault LB failed with $ec"
+      n=$[$n+1]
+      sleep 60
+      continue
+    fi
+
     if [ "${vault_api}" != "501" ]; then
       fail-message "AWS Vault service did not return a 501. Please wait a few moments and try again."
       n=$[$n+1]
@@ -380,7 +388,7 @@ fi
 n=0
 until [ $n -ge 5 ]; do
     vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate azure_vault_ip)
-    echo "Vault Load balancer is: ${vault_lb}"
+    echo "Azure Vault Load balancer is: ${vault_lb}"
     if [ -z "${vault_lb}" ]; then
       fail-message "Azure Vault is not provisioned yet"
       n=$[$n+1]
@@ -388,6 +396,14 @@ until [ $n -ge 5 ]; do
       continue
     fi
     vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://${vault_lb}:8200/v1/sys/health)
+    ec=$?
+    if [ $ec -ne 0 ]; then
+      fail-message "Checking Azure Vault LB failed with $ec"
+      n=$[$n+1]
+      sleep 60
+      continue
+    fi
+
     if [ "${vault_api}" != "501" ]; then
       fail-message "Azure Vault service did not return a 501. Please wait a few moments and try again."
       n=$[$n+1]
