@@ -4,7 +4,7 @@
 data "google_container_engine_versions" "shared" {
   project        = var.gcp_project_id
   location       = "us-central1-a"
-  version_prefix = "1.21.14-gke."
+  version_prefix = "1.23.17-gke."
 }
 
 resource "google_container_cluster" "shared" {
