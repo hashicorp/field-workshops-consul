@@ -43,7 +43,7 @@ sleep 5
 
 #license & helm install
 kubectl create secret generic consul-ent-license --from-literal="key=$(cat /etc/consul.hclic)"
-helm install hashicorp hashicorp/consul -f /root/helm/gke-consul-values.yaml --debug --wait --version 0.33.0
+helm install hashicorp hashicorp/consul -f /root/helm/gke-consul-values.yaml --debug --wait --version 0.35.0
 sleep 60
 
 exit 0
