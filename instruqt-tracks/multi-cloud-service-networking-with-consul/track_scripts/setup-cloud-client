@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euvo pipefail
+set -euvxo pipefail
 
 # Note: override these when testing from a different repo and/or branch
 #       The `-b` option to `git clone` is useful for pulling from the
@@ -8,6 +8,7 @@ set -euvo pipefail
 ASSET_REPO="https://github.com/hashicorp/field-workshops-consul.git"
 ASSET_REPO_FETCH_OPTIONS=""
 
+AWS_DEFAULT_REGION="us-east-1"
 # END OPTIONS
 
 while [ ! -f /opt/instruqt/bootstrap/host-bootstrap-completed ]
@@ -88,8 +89,16 @@ if [ $n -ge 5 ]; then
 fi
 
 #aws setup
-aws configure set default.region us-east-1
-aws ec2 create-default-vpc
+aws configure set default.region ${AWS_DEFAULT_REGION}
+# IL-802 we may get AWS accounts with default VPCs already in there, so
+# check before we do this
+aws ec2 describe-vpcs
+if [ "$(aws ec2 describe-vpcs --region ${AWS_DEFAULT_REGION} | jq '[.Vpcs[]|select (.IsDefault == true)]|length')" != "1" ]; then
+    echo "Creating default vpc"
+    aws ec2 create-default-vpc
+else
+    echo "Default vpc already exists in AWS ${AWS_DEFAULT_REGION}"
+fi
 
 #azure packer setup
 echo "azure packer setup"
@@ -256,10 +265,24 @@ echo "Running pre-flight checks..."
 
 #aws vpc
 echo "Checking AWS VPCs"
-aws_vpc=$(aws ec2 describe-vpcs | jq '[.. |."State"? | select(. == "available")] | length')
-if [ "${aws_vpc}" != "3" ]; then
-  fail-message "AWS VPCs did not provision successful."
-  exit 1
+aws ec2 describe-vpcs
+
+n=0
+until [ $n -ge 5 ]; do
+    aws_vpc_count=$(aws ec2 describe-vpcs | jq '[.. |."State"? | select(. == "available")] | length')
+    echo "aws_vpc_count is ${aws_vpc_count}"
+    # 3 = 2 created + 1 default
+    if [ "${aws_vpc_count}" != "3" ]; then
+	fail-message "Not enough aws VPCs"
+	sleep 60
+	n=$[$n+1]
+	continue
+    fi
+    break
+done
+if [ $n -ge 5 ]; then
+    fail-message "AWS VPC check failed"
+    exit 1
 fi
 
 #azure vpc
