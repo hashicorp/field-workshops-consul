@@ -75,7 +75,10 @@ resource "azurerm_linux_virtual_machine" "f5bigip" {
   #source_image_id = var.image_id
 
   os_disk {
-    name                 = "bigip-disk"
+    # IMPORTANT: IL-843 the os disk name must be
+    # "<tf resource name>-disk" for our Azure cleanup script to
+    # work
+    name                 = "f5bigip-disk"
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
     disk_size_gb         = "100"

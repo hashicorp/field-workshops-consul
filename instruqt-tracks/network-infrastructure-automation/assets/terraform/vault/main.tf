@@ -98,6 +98,9 @@ resource "azurerm_virtual_machine" "vault" {
     version   = "latest"
   }
   storage_os_disk {
+    # IMPORTANT: IL-843 the os disk name must be
+    # "<tf resource name>-disk" for our Azure cleanup script to
+    # work
     name              = "vault-disk"
     caching           = "ReadWrite"
     create_option     = "FromImage"

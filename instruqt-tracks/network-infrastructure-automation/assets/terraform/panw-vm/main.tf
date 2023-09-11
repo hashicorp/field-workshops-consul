@@ -172,7 +172,10 @@ resource "azurerm_virtual_machine" "PAN_FW_FW" {
   }
 
   storage_os_disk {
-    name          = join("", list("vmPANW-${random_id.suffix.dec}", "-osDisk"))
+    # IMPORTANT: IL-843 the os disk name must be
+    # "<tf resource name>-disk" for our Azure cleanup script to
+    # work
+    name          = "PAN_FW_FW-disk"
     vhd_uri       = "${azurerm_storage_account.PAN_FW_STG_AC.primary_blob_endpoint}vhds/vmPANW-${random_id.suffix.dec}-${var.fwOffer}-${var.fwSku}.vhd"
     caching       = "ReadWrite"
     create_option = "FromImage"

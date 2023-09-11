@@ -123,7 +123,10 @@ resource "azurerm_virtual_machine" "consul-server-vm" {
   }
 
   storage_os_disk {
-    name              = "consulserverDisk"
+    # IMPORTANT: IL-843 the os disk name must be
+    # "<tf resource name>-disk" for our Azure cleanup script to
+    # work
+    name              = "consul-server-vm-disk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
