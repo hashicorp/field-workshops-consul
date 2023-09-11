@@ -79,7 +79,10 @@ resource "azurerm_lb_rule" "vault" {
 }
 
 resource "azurerm_virtual_machine" "vault" {
-  name                  = "vault-vm"
+  # IMPORTANT: IL-843 the Terraform resource name and the Azure
+  # VM name must match for our track setup script to clean up
+  # when Azure fails to make a VM
+  name                  = "vault"
   location              = data.terraform_remote_state.vnet.outputs.resource_group_location
   resource_group_name   = data.terraform_remote_state.vnet.outputs.resource_group_name
   network_interface_ids = [azurerm_network_interface.vault.id]

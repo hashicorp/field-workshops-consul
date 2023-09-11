@@ -40,7 +40,10 @@ resource "azurerm_marketplace_agreement" "f5" {
 
 # Create F5 BIGIP VMs
 resource "azurerm_linux_virtual_machine" "f5bigip" {
-  name = "bigip"
+  # IMPORTANT: IL-843 the Terraform resource name and the Azure
+  # VM name must match for our track setup script to clean up
+  # when Azure fails to make a VM
+  name = "f5bigip"
   depends_on = [azurerm_marketplace_agreement.f5]
 
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location

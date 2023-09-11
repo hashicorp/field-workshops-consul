@@ -105,6 +105,9 @@ resource "azurerm_lb_rule" "consul" {
 
 
 resource "azurerm_virtual_machine" "consul-server-vm" {
+  # IMPORTANT: IL-843 the Terraform resource name and the Azure
+  # VM name must match for our track setup script to clean up
+  # when Azure fails to make a VM
   name = "consul-server-vm"
 
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location
