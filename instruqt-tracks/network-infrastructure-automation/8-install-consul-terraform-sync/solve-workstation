@@ -10,7 +10,8 @@ terraform apply -auto-approve > /root/terraform/consul-tf-sync/terraform.out
 
 # Wait until things are actually set up
 n=0
-until [ $n -ge 20 ]; do
+while /bin/true; do
+    n=$((n+1))
     echo "Try ${n}"
     rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
     echo "Checking consul-terraform-sync instance in resource group $rg:"
@@ -19,8 +20,7 @@ until [ $n -ge 20 ]; do
 
     if [ "${status}" != "Creating" ] && [ "${status}" != "Updating" ] && [ "${status}" != "Succeeded" ] ; then
       echo "consul-terraform-sync instance is not provisioned, current state is: ${status}. Sleeping and retrying."
-      sleep 60
-      n=$[$n+1]
+      sleep 20
       continue
     fi
 
@@ -28,8 +28,7 @@ until [ $n -ge 20 ]; do
     app=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080)
     if [ "${app}" != "200" ]; then
       echo "App did not return a 200, returned ${app}. Sleeping and retrying."
-      n=$[$n+1]
-      sleep 60
+      sleep 20
       continue
     fi
 
