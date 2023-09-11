@@ -146,7 +146,7 @@ resource "azurerm_virtual_machine" "PAN_FW_FW" {
   # IMPORTANT: IL-843 the Terraform resource name and the Azure
   # VM name must match for our track setup script to clean up
   # when Azure fails to make a VM
-  name                = "PAN_FW_FW""
+  name                = "PAN_FW_FW"
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location
   resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
   vm_size             = "Standard_D3_v2"
