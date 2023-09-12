@@ -10,7 +10,7 @@ az vm image terms accept --urn paloaltonetworks:vmseries1:bundle1:latest
 */
 
 provider "azurerm" {
-  version = "=2.13.0"
+  version = "=3.72.0"
   features {}
 }
 
@@ -199,7 +199,9 @@ resource "azurerm_virtual_machine" "PAN_FW_FW" {
   }
   
   timeouts {
-    read = "60m"
+    create = "60m"
+    read   = "60m"
+    update = "60m"
+    delete = "60m"
   }
-
 }

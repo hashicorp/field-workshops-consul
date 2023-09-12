@@ -51,7 +51,6 @@ resource "azurerm_linux_virtual_machine" "f5bigip" {
 
   network_interface_ids = [azurerm_network_interface.dmz-nic.id]
   size                  = var.instance_type
-  //   zone                            = element(local.azs,count.index % length(local.azs))
   admin_username                  = var.admin_username
   admin_password                  = random_password.bigippassword.result
   disable_password_authentication = false
@@ -91,6 +90,13 @@ resource "azurerm_linux_virtual_machine" "f5bigip" {
     environment = "instruqt"
     workload    = "ltm"
   }
+
+  timeouts {
+    create = "60m"
+    read   = "60m"
+    update = "60m"
+    delete = "60m"
+  }
 }
 
 resource "azurerm_public_ip" "sip_public_ip" {
@@ -122,6 +128,13 @@ resource "azurerm_network_interface" "dmz-nic" {
 
   tags = {
     environment = "instruqt"
+  }
+  
+  timeouts {
+    create = "60m"
+    read   = "60m"
+    update = "60m"
+    delete = "60m"
   }
 }
 

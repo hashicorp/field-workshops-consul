@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 provider "azurerm" {
-  version = "=2.0.0"
+  version = "=3.72.0"
   features {}
 }
 
@@ -29,9 +29,16 @@ resource "azurerm_network_interface" "cts-nic" {
     tags = {
         environment = "Instruqt"
     }
+  
+  timeouts {
+    create = "60m"
+    read   = "60m"
+    update = "60m"
+    delete = "60m"
+  }
 }
 
-resource "azurerm_virtual_machine" "consul-terraform-sync" {
+resource "azurerm_linux_virtual_machine" "consul-terraform-sync" {
   name = "consul-terraform-sync"
 
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location
@@ -39,37 +46,36 @@ resource "azurerm_virtual_machine" "consul-terraform-sync" {
   network_interface_ids = [azurerm_network_interface.cts-nic.id]
   vm_size               = "Standard_DS1_v2"
 
-  storage_image_reference {
+  source_image_reference {
     publisher = "Canonical"
     offer     = "0001-com-ubuntu-server-jammy"
     sku       = "22_04-LTS-gen2"
     version   = "latest"
   }
 
-  storage_os_disk {
+  os_disk {
     name              = "ctsDisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
 
-  os_profile {
-    computer_name = "consul-terraform-sync"
-    admin_username       = "azure-user"
-    custom_data          = base64encode(templatefile("./scripts/consul-tf-sync.sh", { vault_token = var.vault_token, vault_addr = var.vault_addr, consul_server_ip = var.consul_server_ip, bigip_mgmt_addr = var.bigip_mgmt_addr, bigip_admin_user = var.bigip_admin_user, panos_mgmt_addr = var.panos_mgmt_addr, panos_username = var.panos_username }))
-  }
+  computer_name        = "consul-terraform-sync"
+  admin_username       = "azure-user"
+  custom_data          = base64encode(templatefile("./scripts/consul-tf-sync.sh", { vault_token = var.vault_token, vault_addr = var.vault_addr, consul_server_ip = var.consul_server_ip, bigip_mgmt_addr = var.bigip_mgmt_addr, bigip_admin_user = var.bigip_admin_user, panos_mgmt_addr = var.panos_mgmt_addr, panos_username = var.panos_username }))
 
-  os_profile_linux_config {
-    disable_password_authentication = true
-    ssh_keys {
-      path     = "/home/azure-user/.ssh/authorized_keys"
-      key_data = var.ssh_public_key
-    }
+  disable_password_authentication = true
 
+  admin_ssh_key {
+    username = "azure-user"
+    key_data = var.ssh_public_key
   }
 
   timeouts {
-    read = "60m"
+    create = "60m"
+    read   = "60m"
+    update = "60m"
+    delete = "60m"
   }
 
 }

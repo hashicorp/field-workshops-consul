@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 provider "azurerm" {
-  version = "=2.0.0"
+  version = "=3.72.0"
   features {}
 }
 
@@ -38,6 +38,13 @@ resource "azurerm_network_interface" "consul" {
     tags = {
         environment = "Instruqt"
     }
+  
+  timeouts {
+    create = "60m"
+    read   = "60m"
+    update = "60m"
+    delete = "60m"
+  }
 }
 
 resource "azurerm_lb" "consul" {
@@ -50,6 +57,13 @@ resource "azurerm_lb" "consul" {
   frontend_ip_configuration {
     name                 = "consulserverNicconfiguration"
     public_ip_address_id = azurerm_public_ip.consul.id
+  }
+  
+  timeouts {
+    create = "60m"
+    read   = "60m"
+    update = "60m"
+    delete = "60m"
   }
 }
 
@@ -104,7 +118,7 @@ resource "azurerm_lb_rule" "consul" {
 }
 
 
-resource "azurerm_virtual_machine" "consul-server-vm" {
+resource "azurerm_linux_virtual_machine" "consul-server-vm" {
   # IMPORTANT: IL-843 the Terraform resource name and the Azure
   # VM name must match for our track setup script to clean up
   # when Azure fails to make a VM
@@ -115,14 +129,14 @@ resource "azurerm_virtual_machine" "consul-server-vm" {
   network_interface_ids = [azurerm_network_interface.consul.id]
   vm_size               = "Standard_DS1_v2"
 
-  storage_image_reference {
+  source_image_reference {
     publisher = "Canonical"
     offer     = "0001-com-ubuntu-server-jammy"
     sku       = "22_04-LTS-gen2"
     version   = "latest"
   }
 
-  storage_os_disk {
+  os_disk {
     # IMPORTANT: IL-843 the os disk name must be
     # "<tf resource name>-disk" for our Azure cleanup script to
     # work
@@ -131,26 +145,24 @@ resource "azurerm_virtual_machine" "consul-server-vm" {
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
-
-  os_profile {
-    computer_name = "consul-server-vm"
-    admin_username       = "azure-user"
-    custom_data          = file("./scripts/consul-server.sh")
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = true
-    ssh_keys {
-      path     = "/home/azure-user/.ssh/authorized_keys"
-      key_data = var.ssh_public_key
-    }
-
-  }
   
-  timeouts {
-    read = "60m"
+  computer_name        = "consul-server-vm"
+  admin_username       = "azure-user"
+  custom_data          = file("./scripts/consul-server.sh")
+ 
+  disable_password_authentication = true
+
+  admin_ssh_key {
+    username = "azure-user"
+    key_data = var.ssh_public_key
   }
 
+  timeouts {
+    create = "60m"
+    read   = "60m"
+    update = "60m"
+    delete = "60m"
+  }
 }
 
 resource "azurerm_network_interface_security_group_association" "consul" {

@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 
-resource "azurerm_virtual_machine_scale_set" "web_vmss" {
+resource "azurerm_linux_virtual_machine_scale_set" "web_vmss" {
   name = "web-vmss"
 
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location
@@ -17,42 +17,37 @@ resource "azurerm_virtual_machine_scale_set" "web_vmss" {
     capacity = var.web_count
   }
 
-  storage_profile_image_reference {
+  source_image_reference {
     publisher = "Canonical"
     offer     = "0001-com-ubuntu-server-jammy"
     sku       = "22_04-LTS-gen2"
     version   = "latest"
   }
 
-  storage_profile_os_disk {
-    name              = ""
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
   }
 
-  storage_profile_data_disk {
-    lun           = 0
-    caching       = "ReadWrite"
-    create_option = "Empty"
-    disk_size_gb  = 10
+  data_disk {
+    lun                  = 0
+    caching              = "ReadWrite"
+    create_option        = "Empty"
+    disk_size_gb         = 10
+    storage_account_type = "Standard_LRS"
   }
 
-  os_profile {
-    computer_name_prefix = "web-vm-"
-    admin_username       = "azure-user"
-    custom_data          = base64encode(templatefile("./templates/web_server.sh", { consul_server_ip = var.consul_server_ip, bigip_mgmt_addr = var.bigip_mgmt_addr, vip_internal_address = var.vip_internal_address }))
+  computer_name_prefix = "web-vm-"
+  custom_data          = base64encode(templatefile("./templates/web_server.sh", { consul_server_ip = var.consul_server_ip, bigip_mgmt_addr = var.bigip_mgmt_addr, vip_internal_address = var.vip_internal_address }))
+
+  disable_password_authentication = true
+
+  admin_ssh_key {
+    username   = "azure-uzer"
+    public_key = var.ssh_public_key
   }
 
-  os_profile_linux_config {
-    disable_password_authentication = true
-    ssh_keys {
-      path     = "/home/azure-user/.ssh/authorized_keys"
-      key_data = var.ssh_public_key
-    }
-  }
-
-  network_profile {
+  network_interface {
     name                      = "web-vms-netprofile"
     primary                   = true
     network_security_group_id = azurerm_network_security_group.webserver-sg.id
@@ -64,9 +59,11 @@ resource "azurerm_virtual_machine_scale_set" "web_vmss" {
   }
   
   timeouts {
-    read = "60m"
+    create = "60m"
+    read   = "60m"
+    update = "60m"
+    delete = "60m"
   }
-
 }
 
 resource "azurerm_network_security_group" "webserver-sg" {
