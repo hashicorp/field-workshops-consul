@@ -1,5 +1,5 @@
 ---
-slug: 6-validate-vault
+slug: validate-vault
 id: l6orpveiedpr
 type: challenge
 title: Validate Vault & Consul

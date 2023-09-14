@@ -1,5 +1,5 @@
 ---
-slug: 1-review-lab-objectives
+slug: review-lab-objectives
 id: xuq4qb0mo9v1
 type: challenge
 title: Review Lab Objectives

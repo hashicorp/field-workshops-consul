@@ -1,5 +1,5 @@
 ---
-slug: 9-scale-the-application
+slug: scale-the-application
 id: 7ffmbpmxzn1p
 type: challenge
 title: Scale the application

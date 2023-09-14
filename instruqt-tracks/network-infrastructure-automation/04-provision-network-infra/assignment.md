@@ -1,5 +1,5 @@
 ---
-slug: 4-provision-network-infra
+slug: provision-network-infra
 id: qm7eoyy10e00
 type: challenge
 title: Provision F5 BIG-IP & Palo Alto Firewall

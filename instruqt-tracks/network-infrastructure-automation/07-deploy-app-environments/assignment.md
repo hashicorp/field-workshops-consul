@@ -1,5 +1,5 @@
 ---
-slug: 7-deploy-app-environments
+slug: deploy-app-environments
 id: wvgbbfknw4fz
 type: challenge
 title: Deploy App environments

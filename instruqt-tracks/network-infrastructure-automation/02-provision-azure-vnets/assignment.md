@@ -1,5 +1,5 @@
 ---
-slug: 2-provision-azure-vnets
+slug: provision-azure-vnets
 id: dwo2s5mw6ona
 type: challenge
 title: Provision Azure VNETs

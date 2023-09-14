@@ -1,5 +1,5 @@
 ---
-slug: 3-provision-core-services
+slug: provision-core-services
 id: dlsjgdoiu2ua
 type: challenge
 title: Provision Core Services

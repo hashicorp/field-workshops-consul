@@ -1,5 +1,5 @@
 ---
-slug: 8-install-consul-terraform-sync
+slug: install-consul-terraform-sync
 id: 4pa4nyish9os
 type: challenge
 title: Deploy 'Consul Terraform Sync'

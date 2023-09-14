@@ -1,5 +1,5 @@
 ---
-slug: 5-configure-palo-alto-firewall
+slug: configure-palo-alto-firewall
 id: 7vltkulroiy8
 type: challenge
 title: Configure Palo Alto Firewall
