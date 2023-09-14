@@ -54,7 +54,7 @@ done
 #check vault
 echo "Checking Vault..."
 while /bin/true; do
-    status=$(az vm show -g "${rg}" --name vault-vm | jq -r '.provisioningState')
+    status=$(az vm show -g "${rg}" --name vault | jq -r '.provisioningState')
     if [ "${status}" != "Creating" ] && [ "${status}" != "Updating" ] && [ "${status}" != "Succeeded" ] ; then
 	echo "Vault is not provisioning/provisioned, current state is: ${status}"
 	sleep 10
