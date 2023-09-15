@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 provider "azurerm" {
-  version = "=2.0.0"
+  version = "=3.72.0"
   features {}
 }
 
@@ -48,7 +48,6 @@ resource "azurerm_lb" "vault" {
 }
 
 resource "azurerm_lb_backend_address_pool" "vault" {
-  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
   loadbalancer_id     = azurerm_lb.vault.id
   name                = "BackEndAddressPool"
 }
@@ -60,14 +59,12 @@ resource "azurerm_network_interface_backend_address_pool_association" "vault" {
 }
 
 resource "azurerm_lb_probe" "vault" {
-  resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
   loadbalancer_id     = azurerm_lb.vault.id
   name                = "vault-http"
   port                = 8200
 }
 
 resource "azurerm_lb_rule" "vault" {
-  resource_group_name            = data.terraform_remote_state.vnet.outputs.resource_group_name
   loadbalancer_id                = azurerm_lb.vault.id
   name                           = "vault"
   protocol                       = "Tcp"
@@ -75,43 +72,44 @@ resource "azurerm_lb_rule" "vault" {
   backend_port                   = 8200
   frontend_ip_configuration_name = "configuration"
   probe_id                       = azurerm_lb_probe.vault.id
-  backend_address_pool_id        = azurerm_lb_backend_address_pool.vault.id
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.vault.id]
 }
 
-resource "azurerm_virtual_machine" "vault" {
-  name                  = "vault-vm"
+resource "azurerm_linux_virtual_machine" "vault" {
+  # IMPORTANT: IL-843 the Terraform resource name and the Azure
+  # VM name must match for our track setup script to clean up
+  # when Azure fails to make a VM
+  name                  = "vault"
   location              = data.terraform_remote_state.vnet.outputs.resource_group_location
   resource_group_name   = data.terraform_remote_state.vnet.outputs.resource_group_name
   network_interface_ids = [azurerm_network_interface.vault.id]
-  vm_size               = "Standard_DS1_v2"
+  size                  = "Standard_DS1_v2"
 
-  delete_os_disk_on_termination    = true
-  delete_data_disks_on_termination = true
-
-  storage_image_reference {
+  source_image_reference {
     publisher = "Canonical"
     offer     = "0001-com-ubuntu-server-jammy"
     sku       = "22_04-LTS-gen2"
     version   = "latest"
   }
-  storage_os_disk {
-    name              = "vault-disk"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
-  os_profile {
-    computer_name  = "vault"
-    admin_username = "azure-user"
-    custom_data    = file("${path.module}/scripts/vault.sh")
+  
+  os_disk {
+    # IMPORTANT: IL-843 the os disk name must be
+    # "<tf resource name>-disk" for our Azure cleanup script to
+    # work
+    name                 = "vault-disk"
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
   }
 
-  os_profile_linux_config {
-    disable_password_authentication = true
-    ssh_keys {
-      path     = "/home/azure-user/.ssh/authorized_keys"
-      key_data = var.ssh_public_key
-    }
+  computer_name  = "vault"
+  admin_username = "azure-user"
+  custom_data    = base64encode(file("${path.module}/scripts/vault.sh"))
+
+  disable_password_authentication = true
+
+  admin_ssh_key {
+    username   = "azure-user"
+    public_key = var.ssh_public_key
   }
 
   tags = {
@@ -119,7 +117,10 @@ resource "azurerm_virtual_machine" "vault" {
   }
 
   timeouts {
-    read = "60m"
+    create = "60m"
+    read   = "60m"
+    update = "60m"
+    delete = "60m"
   }
 }
 

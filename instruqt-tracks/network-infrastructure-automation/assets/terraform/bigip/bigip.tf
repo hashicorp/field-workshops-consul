@@ -40,7 +40,10 @@ resource "azurerm_marketplace_agreement" "f5" {
 
 # Create F5 BIGIP VMs
 resource "azurerm_linux_virtual_machine" "f5bigip" {
-  name = "bigip"
+  # IMPORTANT: IL-843 the Terraform resource name and the Azure
+  # VM name must match for our track setup script to clean up
+  # when Azure fails to make a VM
+  name = "f5bigip"
   depends_on = [azurerm_marketplace_agreement.f5]
 
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location
@@ -48,7 +51,6 @@ resource "azurerm_linux_virtual_machine" "f5bigip" {
 
   network_interface_ids = [azurerm_network_interface.dmz-nic.id]
   size                  = var.instance_type
-  //   zone                            = element(local.azs,count.index % length(local.azs))
   admin_username                  = var.admin_username
   admin_password                  = random_password.bigippassword.result
   disable_password_authentication = false
@@ -72,7 +74,10 @@ resource "azurerm_linux_virtual_machine" "f5bigip" {
   #source_image_id = var.image_id
 
   os_disk {
-    name                 = "bigip-disk"
+    # IMPORTANT: IL-843 the os disk name must be
+    # "<tf resource name>-disk" for our Azure cleanup script to
+    # work
+    name                 = "f5bigip-disk"
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
     disk_size_gb         = "100"
@@ -84,6 +89,13 @@ resource "azurerm_linux_virtual_machine" "f5bigip" {
     Name        = "bigip"
     environment = "instruqt"
     workload    = "ltm"
+  }
+
+  timeouts {
+    create = "60m"
+    read   = "60m"
+    update = "60m"
+    delete = "60m"
   }
 }
 
@@ -116,6 +128,13 @@ resource "azurerm_network_interface" "dmz-nic" {
 
   tags = {
     environment = "instruqt"
+  }
+  
+  timeouts {
+    create = "60m"
+    read   = "60m"
+    update = "60m"
+    delete = "60m"
   }
 }
 
