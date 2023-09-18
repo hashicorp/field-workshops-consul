@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MPL-2.0
 
 slug: service-mesh-with-consul-hybrid
-id: akamvplbrcry
 title: Service Mesh with Consul Hybrid
 teaser: Connect disparate platforms across datacenters.
 description: In this track you leverage Mesh Gateways to connect applications and

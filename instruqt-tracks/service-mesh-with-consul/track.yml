@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MPL-2.0
 
 slug: service-mesh-with-consul
-id: bok4pw0xdfdr
 type: track
 title: Service Mesh with Consul
 teaser: Evolve from service discovery to service mesh. No more mapping IP addresses
@@ -22,7 +21,6 @@ show_timer: true
 skipping_enabled: true
 challenges:
 - slug: 01-sidecar-services
-  id: 4zvgi4rkfawl
   type: challenge
   title: "Get Into My Sidecar \U0001F697"
   teaser: Create a sidecar service definition for your application proxy
@@ -104,7 +102,6 @@ challenges:
   difficulty: basic
   timelimit: 900
 - slug: 02-sidecar-proxies
-  id: l8hfdudhif7b
   type: challenge
   title: "Introducing the Envoy Proxy \U0001F5A7"
   teaser: Run your first Connect sidecar proxy with Envoy
@@ -153,7 +150,6 @@ challenges:
   difficulty: basic
   timelimit: 900
 - slug: 03-sidecar-upstreams
-  id: 7vynj1nfnnan
   type: challenge
   title: "Connect Upstream with Envoy \U0001F517"
   teaser: Add an upstream definition for our Envoy app proxy
@@ -238,7 +234,6 @@ challenges:
   difficulty: basic
   timelimit: 900
 - slug: 04-enable-localhost-proxy
-  id: tymg5yhlxjgb
   type: challenge
   title: "Enter the Meshtrix \U0001F469\U0001F3FB‍\U0001F4BB"
   teaser: Use Consul and Envoy to connect our application to a backend database
@@ -274,7 +269,6 @@ challenges:
   difficulty: basic
   timelimit: 900
 - slug: 05-open-and-close-the-gates
-  id: d3mqrfaegmle
   type: challenge
   title: "Open and Close the Gates \U0001F511\U0001F6AA"
   teaser: Use Consul intentions to allow or deny proxy traffic based on application
@@ -326,7 +320,6 @@ challenges:
   difficulty: basic
   timelimit: 900
 - slug: 06-sidecar-envoy
-  id: ntf48xx67xaz
   type: challenge
   title: Pop Open the Hood ⚙️
   teaser: Peek inside and learn some Envoy & Consul magic
