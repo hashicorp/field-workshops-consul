@@ -1,5 +1,5 @@
 ---
-slug: 01-meet-consul
+slug: meet-consul
 type: challenge
 title: Get to Know Consul
 teaser: My First Consul cluster

@@ -1,5 +1,5 @@
 ---
-slug: 03-consul-api
+slug: consul-api
 type: challenge
 title: Consul API
 teaser: Use the Consul API

@@ -1,5 +1,5 @@
 ---
-slug: 06-consul-acls
+slug: consul-acls
 type: challenge
 title: Consul ACLs
 teaser: Set up basic Consul ACLs

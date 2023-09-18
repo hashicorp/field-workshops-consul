@@ -1,5 +1,5 @@
 ---
-slug: 05-consul-ha
+slug: consul-ha
 type: challenge
 title: Consul High Availability
 teaser: Test Consul's High Availability Capabilities
