@@ -4,13 +4,16 @@
 # Variables which should be set on the command line
 jira := ""
 
-.PHONEY: help check_preqs new_test_track
+.PHONEY: help check_prereqs clean_id_and_checksums alternate_track
 
-help: check_preqs
+help: check_prereqs
 	${REPO_TOP}/common/bin/mk_help
 
-check_preqs:
+check_prereqs:
 	${REPO_TOP}/common/bin/check-make-prereqs
 
-new_test_track: check_preqs
-	${REPO_TOP}/common/bin/new_test_track $(jira)
+clean_id_and_checksums: check_prereqs
+	${REPO_TOP}/common/bin/clean_id_and_checksums
+
+alternate_track: clean_id_and_checksums
+	${REPO_TOP}/common/bin/alternative_track $(jira)
