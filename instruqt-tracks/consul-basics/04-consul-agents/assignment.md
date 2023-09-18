@@ -1,5 +1,5 @@
 ---
-slug: 04-consul-agents
+slug: consul-agents
 type: challenge
 title: Add an Agent
 teaser: Add a Consul client agent to your Consul cluster.
