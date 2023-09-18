@@ -34,7 +34,9 @@ version of the track.
    to test your track
 1. When it becomes time to merge, change the track slug and title 
    to remove the `wip-il-99999-` and `WIP IL-99999 - ` prefixes. If there
-   are any 
+   are any track or challenge 'id:' fields, or any track 'checksum:' fields
+   you should remove them; `make clean_id_and_checksums` will do that for
+   you
 
 *Note* it is our convention that all commit messages start with the
 jira ticket number, e.g.:
