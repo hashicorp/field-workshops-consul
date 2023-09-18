@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MPL-2.0
 
 slug: multi-cloud-service-networking-with-consul
-id: iklbsgjpisau
 type: track
 title: Multi Cloud Service Networking with Consul
 teaser: Deploy a multi-cloud service mesh solution with Consul
@@ -24,4 +23,3 @@ private: true
 published: true
 show_timer: true
 skipping_enabled: true
-checksum: "6744805371485992291"

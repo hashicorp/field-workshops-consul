@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MPL-2.0
 
 slug: hcs-on-azure
-id: ztymj0qpq0vy
 version: 0.0.1
 type: track
 title: 'DEPRECATED: HCS on Azure'
@@ -24,7 +23,6 @@ show_timer: true
 skipping_enabled: true
 challenges:
 - slug: provision-azure-virtual-networks
-  id: bsyydcckaasv
   type: challenge
   title: 'Infrastructure: Provision Azure Virtual Networks'
   teaser: Create basic networking in Azure
@@ -108,7 +106,6 @@ challenges:
   difficulty: basic
   timelimit: 3600
 - slug: provision-core-services
-  id: cmp9zoq1joar
   type: challenge
   title: 'Infrastructure: Provision Core Services'
   teaser: Provision core application shared services
@@ -167,7 +164,6 @@ challenges:
   difficulty: basic
   timelimit: 3600
 - slug: provision-hcs
-  id: ufjqo5xsryqp
   type: challenge
   title: 'Infrastructure: Provision HCS'
   teaser: Create an HCS cluster with Terraform
@@ -202,7 +198,6 @@ challenges:
   difficulty: basic
   timelimit: 3600
 - slug: centralize-consul-secrets
-  id: 7lfblywioxsc
   type: challenge
   title: 'Security: Centralize Consul Secrets'
   teaser: Secure credentials for Consul
@@ -340,7 +335,6 @@ challenges:
   difficulty: basic
   timelimit: 3600
 - slug: validate-aks-clusters
-  id: olvgj2uu5trf
   type: challenge
   title: 'Infrastructure: Validate AKS Clusters'
   teaser: Check status of AKS worker nodes
@@ -394,7 +388,6 @@ challenges:
   difficulty: basic
   timelimit: 3600
 - slug: create-namespaces-and-policies
-  id: zklbwtiaci0u
   type: challenge
   title: 'Operations: Create Namespaces and Policies'
   teaser: Create tenancy for self-service
@@ -479,7 +472,6 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: create-consul-roles
-  id: vx2qbphc6qgi
   type: challenge
   title: 'Security: Create Consul Roles'
   teaser: Enable least privilege access for operators
@@ -538,7 +530,6 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: configure-aks-cluster-secrets
-  id: gekjc0ubhf5q
   type: challenge
   title: 'Operations: Configure AKS Cluster Secrets'
   teaser: Provide bootstrap credentials
@@ -615,7 +606,6 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: deploy-consul-in-aks
-  id: qwpzslmpsjrf
   type: challenge
   title: 'Operations: Deploy Consul in AKS'
   teaser: Run Consul as a DaemonSet in AKS
@@ -682,7 +672,6 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: configure-k8s-consul-authentication
-  id: pizuaunrknfk
   type: challenge
   title: 'Security: Configure K8s Consul Authentication'
   teaser: Create trust between AKS and Consul
@@ -749,7 +738,6 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: deploy-applications-in-aks
-  id: aayejvgkybat
   type: challenge
   title: 'Developer: Deploy Applications in AKS'
   teaser: Run containerized workloads
@@ -810,7 +798,6 @@ challenges:
   difficulty: basic
   timelimit: 500
 - slug: configure-vm-consul-authentication
-  id: nuxxip25vfap
   type: challenge
   title: 'Security: Configure VM Authentication with Consul'
   teaser: Create trust between Azure MSI & Consul
@@ -906,7 +893,6 @@ challenges:
   difficulty: basic
   timelimit: 500
 - slug: deploy-applications-in-vms
-  id: wkplyhw7h0oo
   type: challenge
   title: 'Developer: Deploy Applications on VMs'
   teaser: Deploy VM workloads
@@ -965,7 +951,6 @@ challenges:
   difficulty: basic
   timelimit: 500
 - slug: validate-virtual-gateway-and-peering
-  id: hufkoyrn9f12
   type: challenge
   title: 'Network: Validate Virtual Gateway & Peering'
   teaser: Enable virtual gateway for hub and spoke routing
@@ -1028,7 +1013,6 @@ challenges:
   difficulty: basic
   timelimit: 3600
 - slug: create-remote-gateways
-  id: ug6c6cq6fyxd
   type: challenge
   title: 'Network: Create Remote Gateways'
   teaser: Connect spoke VNets to the Hub
@@ -1096,7 +1080,6 @@ challenges:
   difficulty: basic
   timelimit: 3600
 - slug: update-intentions
-  id: t11vsafayxq1
   type: challenge
   title: 'Developer: Update Intentions'
   teaser: Apply mTLS rules
@@ -1167,7 +1150,6 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: test-application
-  id: kpys2gyuzhal
   type: challenge
   title: 'Developer: Test Application'
   teaser: Hello World from HCS & Azure
@@ -1220,4 +1202,3 @@ challenges:
     port: 9090
   difficulty: basic
   timelimit: 300
-checksum: "5459383659083362718"

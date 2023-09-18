@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MPL-2.0
 
 slug: service-mesh-with-consul-k8s
-id: ygz7z7sj3nyn
 type: track
 title: 'DEPRECATED: Service mesh with Consul K8s'
 teaser: 'See link for new track: https://play.instruqt.com/hashicorp/tracks/consul-life-of-a-developer'
@@ -22,7 +21,6 @@ show_timer: true
 skipping_enabled: true
 challenges:
 - slug: 01-deploy-connect
-  id: iyea2sohruxq
   type: challenge
   title: Deploy Connect
   teaser: Your first Consul cluster on K8s
@@ -105,7 +103,6 @@ challenges:
   difficulty: basic
   timelimit: 600
 - slug: 02-deploy-application
-  id: 71ekxt1ehjg5
   type: challenge
   title: Deploy the Application
   teaser: Bring our application to the world.
@@ -203,7 +200,6 @@ challenges:
   difficulty: basic
   timelimit: 600
 - slug: 03-use-the-application
-  id: ibdhfvn7xzbo
   type: challenge
   title: Use the Application
   teaser: You get an emoji, and you get an emoji, and you get an emoji.
@@ -270,7 +266,6 @@ challenges:
   difficulty: basic
   timelimit: 600
 - slug: 04-scale-the-app
-  id: r2vgop1q59ix
   type: challenge
   title: Scale the Application
   teaser: Handle increased demand
@@ -334,7 +329,6 @@ challenges:
   difficulty: basic
   timelimit: 600
 - slug: 05-get-metrics
-  id: hwu25pwhbljf
   type: challenge
   title: Get Metrics
   teaser: Please observe
@@ -419,7 +413,6 @@ challenges:
   difficulty: basic
   timelimit: 600
 - slug: 06-ship-a-new-feature
-  id: w95srj56cyzm
   type: challenge
   title: Ship a New Feature
   teaser: Selectively bring users to a new version of the application.
@@ -572,7 +565,6 @@ challenges:
   difficulty: basic
   timelimit: 900
 - slug: 07-tracing
-  id: 8cnsp3ybcrlc
   type: challenge
   title: Tracing Distributed Errors
   teaser: Down the rabbit hole we go.
@@ -690,7 +682,6 @@ challenges:
   difficulty: basic
   timelimit: 900
 - slug: 08-ingress
-  id: ydjcyyarz7ef
   type: challenge
   title: Ingress
   teaser: Use advanced ingress capabilities.
@@ -754,7 +745,6 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: 09-summary
-  id: neancacl0syl
   type: challenge
   title: Summary
   teaser: Sandbox mode
@@ -789,4 +779,3 @@ challenges:
     path: /root/dashboard-token.txt
   difficulty: basic
   timelimit: 5400
-checksum: "14518901622021488032"

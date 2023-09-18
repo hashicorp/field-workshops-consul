@@ -1,6 +1,5 @@
 ---
 slug: deploy-services-in-eks-prod
-id: fyzi1u3wljsx
 type: challenge
 title: Deploy Services in EKS for the Prod Deployment
 teaser: Let's deploy some microservices on EKS for the production deployment!

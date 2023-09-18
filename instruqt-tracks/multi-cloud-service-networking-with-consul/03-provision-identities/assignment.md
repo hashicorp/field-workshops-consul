@@ -1,6 +1,5 @@
 ---
 slug: provision-identities
-id: yebkxnxfihde
 type: challenge
 title: Provision Service & Workload Identities
 teaser: Create workload identities for secure introduction

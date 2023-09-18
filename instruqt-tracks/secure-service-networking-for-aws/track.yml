@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MPL-2.0
 
 slug: secure-service-networking-for-aws
-id: 2oz9glafbqxw
 title: Secure Service Networking for AWS
 teaser: Implement 'Secure by Default' Service Networking for AWS platforms.
 description: Securing micro-services is extremely complex. Traditional security technologies
@@ -18,4 +17,3 @@ developers:
 - ppresto@hashicorp.com
 private: true
 published: true
-checksum: "2177321281944792197"

@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MPL-2.0
 
 slug: consul-enterprise-on-aws
-id: stkflr7xh9ud
 type: track
 title: 'DEPRECATED: Consul on AWS'
 teaser: 'See link for new track: https://play.instruqt.com/hashicorp/tracks/multi-cloud-service-networking-with-consul'
@@ -20,7 +19,6 @@ show_timer: true
 skipping_enabled: true
 challenges:
 - slug: provision-vpcs
-  id: ujbryneafql8
   type: challenge
   title: 'Infrastructure: Provision VPCs'
   teaser: Create VPCs for Consul shared service and Development teams
@@ -82,7 +80,6 @@ challenges:
   difficulty: basic
   timelimit: 1200
 - slug: provision-core-services
-  id: ixv5ankwmiwf
   type: challenge
   title: 'Infrastructure: Provision Core Services'
   teaser: A short description of the challenge.
@@ -137,7 +134,6 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: build-consul-image
-  id: x3xlgqyvidby
   type: challenge
   title: 'Operations: Build Consul Image'
   teaser: Create a Consul immutable image
@@ -188,7 +184,6 @@ challenges:
   difficulty: basic
   timelimit: 1200
 - slug: provision-consul
-  id: jhvf5b2rlhmk
   type: challenge
   title: 'Operations: Provision Consul'
   teaser: Provision Consul severs in an ASG
@@ -248,7 +243,6 @@ challenges:
   difficulty: basic
   timelimit: 1200
 - slug: bootstrap-consul
-  id: 7mefmboypk7h
   type: challenge
   title: 'Operations: Bootstrap Consul'
   teaser: Bootstrap Consul with an immutable migration
@@ -311,7 +305,6 @@ challenges:
   difficulty: basic
   timelimit: 1200
 - slug: validate-load-balancers
-  id: yxgcduonarhs
   type: challenge
   title: 'Operations: Validate Load Balancers'
   teaser: A short description of the challenge.
@@ -369,7 +362,6 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: centralize-consul-secrets
-  id: 8whoxkkzchx0
   type: challenge
   title: 'Security: Centralize Consul Secrets'
   teaser: Use Vault to store Consul secrets
@@ -492,7 +484,6 @@ challenges:
   difficulty: basic
   timelimit: 1200
 - slug: validate-backup-agent
-  id: iq5nherggpo9
   type: challenge
   title: 'Operations: Validate Backup Agent'
   teaser: Automatically Backup Consul to S3
@@ -596,7 +587,6 @@ challenges:
   difficulty: basic
   timelimit: 1200
 - slug: platform-quiz
-  id: yreyomgnhyt9
   type: quiz
   title: 'Quiz: Platform'
   teaser: Platform Review
@@ -617,7 +607,6 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: create-vpc-peering
-  id: suzx6ufcymhe
   type: challenge
   title: 'Network: Create Transitive Peering'
   teaser: Add connectivity to the Consul shared service
@@ -678,7 +667,6 @@ challenges:
   difficulty: basic
   timelimit: 1200
 - slug: validate-eks-clusters
-  id: oxwep1bahgcl
   type: challenge
   title: 'Infrastructure: Validate EKS clusters'
   teaser: Validate EKS clusters for development teams
@@ -749,7 +737,6 @@ challenges:
   difficulty: basic
   timelimit: 1200
 - slug: configure-eks-cluster-segments
-  id: xrckckfdqgj9
   type: challenge
   title: 'Operations: Configure EKS cluster segments'
   teaser: Add Consul network segments for hub and spoke connectivity
@@ -809,7 +796,6 @@ challenges:
   difficulty: basic
   timelimit: 1200
 - slug: gvrs-quiz
-  id: kjjm5qjzltq0
   type: quiz
   title: 'Quiz: GVRS'
   teaser: Visibility, Routing, and Scale Review
@@ -829,7 +815,6 @@ challenges:
   difficulty: basic
   timelimit: 300
 - slug: create-namespaces-and-policies
-  id: g7hylnrby0x9
   type: challenge
   title: 'Operations: Create Namespaces and Policies'
   teaser: Configure self-service access
@@ -919,7 +904,6 @@ challenges:
   difficulty: basic
   timelimit: 1200
 - slug: create-consul-roles
-  id: r0oxqx8ait5u
   type: challenge
   title: 'Security: Create Consul Roles'
   teaser: Create Dynamic Consul roles in Vault
@@ -983,7 +967,6 @@ challenges:
   difficulty: basic
   timelimit: 1200
 - slug: configure-eks-cluster-secrets
-  id: ld9gbmuj5jnr
   type: challenge
   title: 'Operations: Configure EKS cluster secrets'
   teaser: Create K8s secrets for Consul
@@ -1062,7 +1045,6 @@ challenges:
   difficulty: basic
   timelimit: 1200
 - slug: deploy-consul-in-eks
-  id: 3ewjpnxsjsmh
   type: challenge
   title: 'Operations: Deploy Consul in EKS'
   teaser: Deploy Consul in EKS with Helm
@@ -1134,7 +1116,6 @@ challenges:
   difficulty: basic
   timelimit: 1200
 - slug: configure-k8s-consul-authentication
-  id: tnkxgigifkbu
   type: challenge
   title: 'Security: Configure K8s Consul Authentication'
   teaser: Create trust between K8s clusters and Consul
@@ -1204,7 +1185,6 @@ challenges:
   difficulty: basic
   timelimit: 1200
 - slug: deploy-applications
-  id: dslh2b4hvc4t
   type: challenge
   title: 'Developer: Deploy Applications'
   teaser: Deploy application workloads across K8s environments
@@ -1266,7 +1246,6 @@ challenges:
   difficulty: basic
   timelimit: 1200
 - slug: update-intentions
-  id: apxx5zldywqm
   type: challenge
   title: 'Developer: Update Intentions'
   teaser: Routing as a service
@@ -1354,7 +1333,6 @@ challenges:
   difficulty: basic
   timelimit: 1200
 - slug: test-application
-  id: jllgtf6nz3hz
   type: challenge
   title: 'Developer: Test Application'
   teaser: Put it all together
@@ -1415,7 +1393,6 @@ challenges:
   difficulty: basic
   timelimit: 1200
 - slug: governance-and-policy-quiz
-  id: i8yzbimnbcd7
   type: quiz
   title: 'Quiz: Governance & Policy'
   teaser: Governance & Policy Review
@@ -1434,4 +1411,3 @@ challenges:
   - 1
   difficulty: basic
   timelimit: 300
-checksum: "8785023972842365072"

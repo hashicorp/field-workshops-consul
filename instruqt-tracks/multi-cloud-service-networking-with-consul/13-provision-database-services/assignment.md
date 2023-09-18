@@ -1,6 +1,5 @@
 ---
 slug: provision-database-services
-id: fl8zngavri4k
 type: challenge
 title: Provision Database Services
 teaser: Deploy managed DB instances

@@ -1,6 +1,5 @@
 ---
 slug: provision-k8s-scheduler-services
-id: abf0py1yysbv
 type: challenge
 title: Provision K8s Scheduler Services
 teaser: Deploy K8s workload infrastructure
