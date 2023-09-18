@@ -1,6 +1,5 @@
 ---
 slug: validate-vault
-id: l6orpveiedpr
 type: challenge
 title: Validate Vault & Consul
 teaser: Verify Vault, and Consul are operational

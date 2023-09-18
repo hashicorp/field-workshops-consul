@@ -1,6 +1,5 @@
 ---
 slug: 02-consul-cli
-id: ur5wsyiizlac
 type: challenge
 title: Consul CLI
 teaser: Take the Consul CLI for a spin

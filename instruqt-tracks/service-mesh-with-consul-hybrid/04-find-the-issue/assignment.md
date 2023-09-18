@@ -1,6 +1,5 @@
 ---
 slug: find-the-issue
-id: xeiyeagxgrqr
 type: challenge
 title: Find the Issue
 teaser: Something is not quite right...

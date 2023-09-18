@@ -1,6 +1,5 @@
 ---
 slug: 06-consul-acls
-id: qlfdatwayytc
 type: challenge
 title: Consul ACLs
 teaser: Set up basic Consul ACLs

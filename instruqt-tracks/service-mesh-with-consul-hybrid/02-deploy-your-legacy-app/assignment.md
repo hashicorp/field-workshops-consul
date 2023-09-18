@@ -1,6 +1,5 @@
 ---
 slug: deploy-your-legacy-app
-id: tllzuoxgzfbe
 type: challenge
 title: Deploy your Legacy App
 teaser: Deploy legacy services to your on-prem datacenter.

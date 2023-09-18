@@ -1,6 +1,5 @@
 ---
 slug: add-the-legacy-sidecar
-id: rtl3rsmtneic
 type: challenge
 title: Add the Legacy Sidecar
 teaser: Bring our legacy service into the mesh

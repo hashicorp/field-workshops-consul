@@ -1,6 +1,5 @@
 ---
 slug: failover-the-app
-id: 9zu9yzfvwsbh
 type: challenge
 title: Test a Failover
 teaser: Migrate a legacy app with DC failover

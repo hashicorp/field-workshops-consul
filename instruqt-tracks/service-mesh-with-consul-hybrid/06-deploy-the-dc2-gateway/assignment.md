@@ -1,6 +1,5 @@
 ---
 slug: deploy-the-dc2-gateway
-id: gl8vtewtwevq
 type: challenge
 title: Deploy the DC2 Gateway
 teaser: Connect our Gateway to our legacy app

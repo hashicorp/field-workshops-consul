@@ -1,6 +1,5 @@
 ---
 slug: deploy-the-dc1-gateway
-id: ilvgq6nayfv6
 type: challenge
 title: Deploy the DC1 Gateway
 teaser: Establish gateway connectivity across datacenters

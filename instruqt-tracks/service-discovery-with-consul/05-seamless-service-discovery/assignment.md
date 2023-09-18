@@ -1,6 +1,5 @@
 ---
 slug: seamless-service-discovery
-id: icwdlsw0pseb
 type: challenge
 title: "Seamless Service Discovery with Consul DNS \U0001F5A7"
 teaser: Consul can provide seamless access to all nodes and services in the catalog,

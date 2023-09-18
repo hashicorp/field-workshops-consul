@@ -1,6 +1,5 @@
 ---
 slug: scale-the-application
-id: 7ffmbpmxzn1p
 type: challenge
 title: Scale the application
 teaser: Let Consul take care of routine adds/moves/changes of services instances.

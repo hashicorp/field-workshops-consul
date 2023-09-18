@@ -1,6 +1,5 @@
 ---
 slug: bring-it-all-together
-id: z1mn5uy8ougt
 type: challenge
 title: Bring it all Together
 teaser: You're first multi-dc mesh

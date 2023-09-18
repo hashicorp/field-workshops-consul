@@ -1,6 +1,5 @@
 ---
 slug: install-consul-terraform-sync
-id: 4pa4nyish9os
 type: challenge
 title: Deploy 'Consul Terraform Sync'
 teaser: Now we are going install Consul Terraform Sync and bring dynamic service discovery

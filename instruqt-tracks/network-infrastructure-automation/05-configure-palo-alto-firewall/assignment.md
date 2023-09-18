@@ -1,6 +1,5 @@
 ---
 slug: configure-palo-alto-firewall
-id: 7vltkulroiy8
 type: challenge
 title: Configure Palo Alto Firewall
 teaser: Provision a Palo Alto VM-Series Firewall using Terraform.

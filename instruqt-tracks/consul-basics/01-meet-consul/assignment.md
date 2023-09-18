@@ -1,6 +1,5 @@
 ---
 slug: 01-meet-consul
-id: bgfx8nbzqnjv
 type: challenge
 title: Get to Know Consul
 teaser: My First Consul cluster

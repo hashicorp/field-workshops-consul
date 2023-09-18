@@ -1,6 +1,5 @@
 ---
 slug: review-lab-objectives
-id: xuq4qb0mo9v1
 type: challenge
 title: Review Lab Objectives
 teaser: Before we begin, lets quickly review the architecture.

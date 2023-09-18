@@ -1,6 +1,5 @@
 ---
 slug: register-service-check-db
-id: qy8zgg6pz8mv
 type: challenge
 title: Register a Service Check for the Database ✔️
 teaser: In this challenge you'll attach a health check to the database service so

@@ -1,6 +1,5 @@
 ---
 slug: 03-consul-api
-id: 6mh7z4axuiix
 type: challenge
 title: Consul API
 teaser: Use the Consul API

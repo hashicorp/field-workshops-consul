@@ -1,6 +1,5 @@
 ---
 slug: centralize-secrets-in-vault
-id: 5zmdtyk1bnqs
 type: challenge
 title: Centralize Secrets in Vault
 teaser: Create trust and seed bootstrap credentials.

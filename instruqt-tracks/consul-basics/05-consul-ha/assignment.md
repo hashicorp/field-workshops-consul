@@ -1,6 +1,5 @@
 ---
 slug: 05-consul-ha
-id: twklmkkkdxlb
 type: challenge
 title: Consul High Availability
 teaser: Test Consul's High Availability Capabilities

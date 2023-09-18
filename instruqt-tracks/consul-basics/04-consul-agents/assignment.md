@@ -1,6 +1,5 @@
 ---
 slug: 04-consul-agents
-id: unxdsxuwburk
 type: challenge
 title: Add an Agent
 teaser: Add a Consul client agent to your Consul cluster.

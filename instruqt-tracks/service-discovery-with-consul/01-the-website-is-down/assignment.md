@@ -1,6 +1,5 @@
 ---
 slug: the-website-is-down
-id: lxxrrq17fcxz
 type: challenge
 title: "The website is DOWN! \U0001F631"
 teaser: |

@@ -1,6 +1,5 @@
 ---
 slug: automate-your-job
-id: m99lb94yn3ac
 type: challenge
 title: "Automate Your Job with Consul Template\U0001F916"
 teaser: Now that you have the website back up and running, it's time to automate this

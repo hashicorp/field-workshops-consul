@@ -1,6 +1,5 @@
 ---
 slug: provision-core-services
-id: dlsjgdoiu2ua
 type: challenge
 title: Provision Core Services
 teaser: Provision Vault and Consul using Terraform

@@ -1,6 +1,5 @@
 ---
 slug: deploy-the-modern-app
-id: 4ivf5ahd7jwv
 type: challenge
 title: Deploy the Modern App
 teaser: Deploy our application on K8s.

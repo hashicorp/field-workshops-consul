@@ -1,6 +1,5 @@
 ---
 slug: deploy-app-environments
-id: wvgbbfknw4fz
 type: challenge
 title: Deploy App environments
 teaser: Deploy a 2-tier VM based application to the cloud.

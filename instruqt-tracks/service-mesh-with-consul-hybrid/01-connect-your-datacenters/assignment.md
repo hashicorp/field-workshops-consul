@@ -1,6 +1,5 @@
 ---
 slug: connect-your-datacenters
-id: i8yrscsmhmjx
 type: challenge
 title: Connect your Datacenters
 teaser: Connect two DCs across a WAN network.

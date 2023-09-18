@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MPL-2.0
 
 slug: service-discovery-with-consul
-id: nyzxxfyzce4a
 title: Service Discovery with Consul
 teaser: Tired of manually updating IP addresses in config files? Is your network CMDB
   or spreadsheet woefully out of date? Learn how Consul can automatically keep your
@@ -26,4 +25,3 @@ lab_config:
   overlay: false
   width: 0
   position: ""
-checksum: "12769099385139066651"

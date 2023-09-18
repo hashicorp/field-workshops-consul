@@ -1,6 +1,5 @@
 ---
 slug: provision-azure-vnets
-id: dwo2s5mw6ona
 type: challenge
 title: Provision Azure VNETs
 teaser: Deploy basic network infrastructure using Terraform

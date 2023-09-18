@@ -1,6 +1,5 @@
 ---
 slug: register-service-check-app
-id: rxiqqury4hcw
 type: challenge
 title: Register a Service Check for the Application ✔️
 teaser: In this challenge you'll attach a health check to the application so we can
