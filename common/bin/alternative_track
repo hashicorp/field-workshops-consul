@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
+# NOTE: So, `yq` likes to `prettify` output if you use its
+#       `-i` option to update a file in-place, which causes
+#       excessivly complicated diffs to review. So we use
+#       `yq` to query things out of yaml files, but edit
+#       with things like sed or awk
+
+# Our standard process for creating test or alternative versions
+# of a track:
+#
+# 1. Change title to start with "WIP $(jira ticket number) - "
+# 2. Change track slug to start with "wip-$(jira ticket number)-"
+# 3. Remove 'id:' field from 'track.yml' and all 'assignment.md' files
+# 4. Remove 'checksum:' field from 'track.yml'
+# 
+# This allows us to easily identify alternative versions of a track
+# by both the name and slug, keeps the "production" version of the track 
+# easily identifiable, and does the right thing with the 'id' and
+# 'checksum' fields so Instruqt doesn't get confused. Having things start
+# with 'WIP' or 'wip' also tends to push them later in the listing.
+#
+# You must supply a JIRA ticket number, it's our standard system for
+# recording work progress and history, so it's the best identifier for
+# the job.
+#
+# Steps 3 and 4 are handled by `clean_id_and_checksums` in the standard
+# track Makefile
+
+# Assumes being ran from make, in a track directory
+
+if [ ! -f track.yml ] || [ ! -f config.yml ]; then
+    echo "This assumes it is being ran from a Makefile in the track directory"
+    echo "You do not appear to be so"
+    exit 1
+fi
+
+# First argument is Jira ticket number
+JIRA_TICKET=$1
+JIRA_TICKET_LOWER=$(echo "${JIRA_TICKET}" | tr '[A-Z]' '[a-z'] | tr '[:blank:]' '-')
+
+if [ -z "${JIRA_TICKET}" ]; then
+    echo "Usage: $0 <jira_ticket_number>"
+    exit 1
+fi
+
+# Edit 'track.yml'
+# 1. change title to start with "WIP $(jira) - "
+# 2. change track slug to start with "wip-$(jira)-"
+
+OLD_TITLE=$(yq '.title' track.yml)
+OLD_SLUG=$(yq '.slug' track.yml)
+sed -i '' \
+    -e 's/^title: .*/title: WIP '"${JIRA_TICKET} - ${OLD_TITLE}"'/' \
+    -e 's/^slug: .*/slug: wip-'"${JIRA_TICKET_LOWER}-${OLD_SLUG}"'/' \
+    track.yml

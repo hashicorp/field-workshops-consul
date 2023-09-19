@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
+# When you upload a track to Instruqt, it 'helpfully' adds an
+# 'id:' and 'checksum:' field to your 'track.yml', and adds
+# 'id:' to all of your 'assignment.md' files, which it appears
+# to use internally to associate things. If you attempt to make
+# a test or alternate version of a track and leave these in,
+# Instruqt can get confused, ranging from complaining at you to
+# overwriting parts of the original track. But you can safely
+# delete these lines from those files, which is how we get around
+# this in general
+
+# Assumes being ran from make, in a track directory
+
+if [ ! -f track.yml ] || [ ! -f config.yml ]; then
+    echo "This assumes it is being ran from a Makefile in the track directory"
+    echo "You do not appear to be so"
+    exit 1
+fi
+
+# Remove from 'track.yml'
+sed -i '' \
+    -e '/^id: .*/d' \
+    -e '/^checksum: .*/d' \
+    track.yml
+
+# For each 'assignment.md' in a sub-directory
+# 1. delete challenge id
+
+for f in */assignment.md; do
+    sed -i '' \
+	-e '/^id: .*/d' \
+	"${f}"
+done

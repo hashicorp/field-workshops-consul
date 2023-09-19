@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
+cat <<EOF 
+
+
+Available commands:
+
+* \`make jira=<jira-ticket-number> alternate_track\`
+
+  In the directory for a given track, do the right thing to prepare
+  the track to be a alternate version: remove track and challenge IDs,
+  and track checksum, so Instruqt doesn't get confused, and change the
+  track title and slug so it is easy to distinguish it from production
+  versions of tracks.
+
+  Running this command and then performing an \`instruqt track push\`
+  should Just Do The Right Thing(TM)
+
+
+* \`make clean_id_and_checksums\`
+
+  In the directory for a given track, remove track and challenge IDs
+  and track checksum. Useful for tidying before creating a PR to merge
+  changes back in. Automatically done by \`alternate_track\`
+
+
+EOF
