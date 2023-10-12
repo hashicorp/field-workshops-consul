@@ -21,7 +21,7 @@ version of the track.
    `origin` (e.g. `git pull origin master`)
 1. Create a branch for this work, e.g. `git checkout -b IL-99999`
 1. In the track directory, run the command
-   `make jira=IL-99999 new_test_track`
+   `make jira=IL-99999 alternate_track`
    - This removes the `track.yml` id and checksum fields, and all
      of the `assignment.md` id fields
    - It also changes the track slug so it starts with 
