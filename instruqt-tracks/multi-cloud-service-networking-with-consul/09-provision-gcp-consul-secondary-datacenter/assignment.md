@@ -1,5 +1,6 @@
 ---
 slug: provision-gcp-consul-secondary-datacenter
+id: qa9echabcwoi
 type: challenge
 title: Provision GCP Consul Secondary Datacenter
 teaser: Run Consul in GKE

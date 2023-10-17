@@ -1,5 +1,6 @@
 ---
 slug: provision-cache-services
+id: z1xejoxfyyvm
 type: challenge
 title: Provision Cache Services
 teaser: Deploy managed Cache instances

@@ -1,5 +1,6 @@
 ---
 slug: deploy-product-applications
+id: 3ujfdb5ixnt2
 type: challenge
 title: Deploy Product Tier
 teaser: Run Product workloads

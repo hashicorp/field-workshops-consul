@@ -1,25 +1,26 @@
-# Copyright (c) HashiCorp, Inc.
-# SPDX-License-Identifier: MPL-2.0
-
-slug: multi-cloud-service-networking-with-consul
-type: track
-title: Multi Cloud Service Networking with Consul
+slug: wip-il-887-multi-cloud-service-networking-with-consul
+id: wr9k9hlmh9in
+title: WIP IL-887 - Multi Cloud Service Networking with Consul
 teaser: Deploy a multi-cloud service mesh solution with Consul
 description: Run a shared Consul service across multiple clouds and enable self-service
   for application teams.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags:
-- consul
 - vault
-- terraform
 - k8s
 - nomad
+- terraform
+- consul
 owner: hashicorp
 developers:
 - lance@hashicorp.com
 - hari@hashicorp.com
 - thomas@hashicorp.com
-private: true
-published: true
+- syed.quadri@hashicorp.com
 show_timer: true
 skipping_enabled: true
+lab_config:
+  overlay: false
+  width: 25
+  position: right
+checksum: "6573714931612557866"

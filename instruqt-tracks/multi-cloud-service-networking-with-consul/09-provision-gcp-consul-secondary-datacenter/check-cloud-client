@@ -1,10 +1,30 @@
 #!/bin/bash
 set -euvxo pipefail
 
-kubectl config use-context shared
-status=$(helm status hashicorp --output json | jq -r '.info.status')
-if [ "${status}" != "deployed" ]; then
-  fail-message "Helm chart is not deployed"
+# kubectl config use-context shared
+# status=$(helm status hashicorp --output json | jq -r '.info.status')
+# if [ "${status}" != "deployed" ]; then
+#   fail-message "Helm chart is not deployed"
+#   exit 1
+# fi
+
+#gcp - server
+consul_lb=$(terraform output -state /root/terraform/gcp-consul-secondary/terraform.tfstate gcp_consul_public_ip)
+echo "consul Load balancer is: $consul_lb"
+if [ -z "${consul_lb}" ]; then
+  fail-message "AWS consul server is not provisioned yet"
+  exit 1
+fi
+consul_api=$(curl -s -o /dev/null -w "%{http_code}" http://{$consul_lb}:8500/v1/status/leader)
+if [ "${consul_api}" != "200" ]; then
+  fail-message "GCP consul server service did not return a 200. Please wait a few moments and try again."
+  exit 1
+fi
+
+#azure - mgw
+mgw_api=$(curl -s http://{$consul_lb}:8500/v1/health/service/mesh-gateway?passing=true)
+if [ "$(echo "${mgw_api}" | jq '. | length')" != "1" ]; then
+  fail-message "Azure MGW not healthy"
   exit 1
 fi
 

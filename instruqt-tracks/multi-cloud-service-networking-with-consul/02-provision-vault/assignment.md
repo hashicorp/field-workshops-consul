@@ -1,5 +1,6 @@
 ---
 slug: provision-vault
+id: h7dy88whfefd
 type: challenge
 title: Provision Vault Infrastructure
 teaser: Set up Vault Infrastructure and Enable Replication

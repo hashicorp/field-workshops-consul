@@ -1,5 +1,6 @@
 ---
 slug: review-application-deployment
+id: ngk9cdw5zs0h
 type: challenge
 title: Review Application Deployment
 teaser: Validate workload configuration
