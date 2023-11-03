@@ -14,10 +14,9 @@ vault write consul/config/access \
     token=$(consul acl token create -description 'vault mgmt' -policy-name=global-management -format=json | jq -r '.SecretID')
 vault write consul/roles/operator policies=operator ttl=30m
 
-#create the replication policy & token
-consul acl policy create -name replication -rules @/root/policies/consul/replication.hcl
-#consul acl token create -policy-name replication -secret=$(vault kv get -field replication_token kv/consul)
-vault write consul/roles/replication policies=replication
+# Adding this to exactly mimic the instructions given in the lab
+export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
+consul acl token read -self
 
 #create the agent policy & vault role
 consul acl policy create -name agent -rules @/root/policies/consul/agent.hcl
@@ -26,6 +25,11 @@ vault write consul/roles/agent policies=agent
 #create the mgw policy & vault role
 consul acl policy create -name mesh-gateway -rules @/root/policies/consul/mesh-gateway.hcl
 vault write consul/roles/mgw policies=mesh-gateway
+sleep 60
+
+#create the replication policy & token
+consul acl policy create -name replication -rules @/root/policies/consul/replication.hcl
+vault write consul/roles/replication policies=replication
 
 #create the vault policy for Vault SD registration
 consul acl policy create -name vault -rules @/root/policies/consul/vault.hcl
@@ -33,20 +37,6 @@ vault write consul/roles/vault policies=vault
 
 #mesh defaults
 consul config write proxy-defaults.hcl
-
-#cat << EOF > /root/terraform/aws-consul-primary/ca.json
-#{
-#  "Provider": "vault",
-#  "Config": {
-#    "Address": "${VAULT_ADDR}",
-#    "Token": "$(vault token create -field token -policy connect -period 8h)",
-#    "RootPKIPath": "connect-root/",
-#    "IntermediatePKIPath": "connect-intermediate/"
-#  },
-#  "ForceWithoutCrossSigning": true
-#
-#EOF
-#onsul connect ca set-config -config-file ca.json
 
 sleep 120
 

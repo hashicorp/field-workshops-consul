@@ -4,7 +4,7 @@
 global:
   enabled: false
   name: consul-react
-  image: 'hashicorp/consul-enterprise:1.10.2-ent'
+  image: 'hashicorp/consul-enterprise:1.13.9-ent'
   datacenter: gcp-us-central-1
   acls:
       manageSystemACLs: true
@@ -13,16 +13,18 @@ global:
         secretKey: token
   tls:
     enabled: true
-    enableAutoEncrypt: true
+    enableAutoEncrypt: false
     caCert:
       secretName: hashicorp-consul-ca-cert
       secretKey: tls.crt
+    verify: false
   gossipEncryption:
     secretName: hashicorp-consul-gossip-key
     secretKey: key
   enableConsulNamespaces: true
 client:
   enabled: true
+  exposeGossipPorts: true
   join:
     - "provider=gce zone_pattern=us-central1-a tag_value=consul-server"
 externalServers:

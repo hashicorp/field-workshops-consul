@@ -107,6 +107,7 @@ cat <<EOF> /etc/consul.d/server.json
   "server": true,
   "bootstrap_expect": 1,
   "advertise_addr": "$${local_ipv4}",
+  "retry_join": ["$${local_ipv4}"],
   "data_dir": "/opt/consul/data",
   "client_addr": "0.0.0.0",
   "log_level": "INFO",

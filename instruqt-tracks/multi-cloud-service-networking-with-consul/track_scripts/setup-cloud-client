@@ -62,9 +62,6 @@ echo 'for kubevar in $(env | awk -F=  '"'"'/^KUBERNETES_/ { print $1;};'"'"'); d
 
 # IL-522 - Fix GKE auth in Multi-Cloud Workshop
 echo 'export USE_GKE_GCLOUD_AUTH_PLUGIN=True' >> /root/.bashrc
-apt update -y
-apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
-apt-get --only-upgrade -y install google-cloud-sdk kubectl
 # END IL-522
 
 # Ensure we load /etc/profile.d/instruqt-env.sh
@@ -116,19 +113,6 @@ if [ $n -ge 5 ]; then
     fail-message "azure packer setup failed"
     exit 1
 fi
-
-
-#cloud client packages - already on machine now with packer
-#apt update -y
-#apt install software-properties-common -y
-#curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
-#apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-#apt update -y
-#apt install terraform=0.13.5 packer=1.7.0 consul-enterprise=1.10.0+ent vault-enterprise=1.7.1+ent nomad-enterprise=1.0.4+ent libcap-dev jq redis-server -y
-
-#jwt validation - already on machine now with packer
-#apt install npm -y
-#npm install -g jwt-cli
 
 #tf creds
 echo 'export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)' >> /root/.bashrc
@@ -194,7 +178,6 @@ nohup terraform apply -auto-approve 2>&1 | tee nohup.out &
 echo "Provisoning AWS ElastiCache..."
 cd /root/terraform/cache-services
 terraform init
-AWS_CONSUL_IP=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip)
 cat << EOF > /root/terraform/cache-services/terraform.tfvars
 consul_http_addr="http://127.0.0.1:8500"
 EOF
@@ -204,14 +187,13 @@ nohup terraform apply -target=aws_elasticache_cluster.redis -auto-approve 2>&1 |
 echo "Provisoning Azure PostgreSQL..."
 cd /root/terraform/database-services
 terraform init
-AZURE_CONSUL_IP=$(terraform output -state /root/terraform/azure-consul-secondary/terraform.tfstate azure_consul_public_ip)
 cat << EOF > /root/terraform/database-services/terraform.tfvars
 consul_http_addr="http://127.0.0.1:8500"
 EOF
 nohup terraform apply -target=azurerm_postgresql_flexible_server.postgres -auto-approve 2>&1 | tee nohup.out &
 
 #wait for packer images
-
+wait
 #aws
 echo "Checking AWS Images"
 n=0

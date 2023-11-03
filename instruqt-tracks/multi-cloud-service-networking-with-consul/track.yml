@@ -19,6 +19,7 @@ developers:
 - lance@hashicorp.com
 - hari@hashicorp.com
 - thomas@hashicorp.com
+- adam.sumner@hashicorp.com
 private: true
 published: true
 show_timer: true
