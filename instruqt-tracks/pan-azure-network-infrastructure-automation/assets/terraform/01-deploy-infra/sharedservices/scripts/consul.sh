@@ -16,7 +16,7 @@ sudo apt-get update && sudo apt-get install terraform
 
 
 #Download Consul
-CONSUL_VERSION="1.12.2"
+CONSUL_VERSION="1.16.3"
 curl --silent --remote-name https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip
 
 #Install Consul
@@ -28,7 +28,7 @@ complete -C /usr/local/bin/consul consul
 
 #Install Consul Terraform Sync
 
-export CTS_CONSUL_VERSION="0.6.0-beta1"
+export CTS_CONSUL_VERSION="0.7.1"
 export CONSUL_URL="https://releases.hashicorp.com/consul-terraform-sync"
 
 
