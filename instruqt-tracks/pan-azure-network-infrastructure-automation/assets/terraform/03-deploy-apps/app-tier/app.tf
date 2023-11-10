@@ -8,7 +8,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "app" {
   admin_password                  = "P@ssw0rd!123123"
   custom_data                     = base64encode(templatefile("${path.module}/scripts/fakeservice.sh", { 
     consul_server_ip = var.consul_server_ip,
-    CONSUL_VERSION = "1.12.2" 
+    CONSUL_VERSION = "1.16.3" 
   }))
 
   disable_password_authentication = false
