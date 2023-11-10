@@ -69,6 +69,11 @@ resource "azurerm_lb_rule" "logging" {
 
 
 resource "azurerm_linux_virtual_machine" "logging" {
+  depends_on = [ 
+    azurerm_linux_virtual_machine.bastion,
+    azurerm_linux_virtual_machine.vault,
+    azurerm_linux_virtual_machine.consul
+  ]
   name                  = "logging-vm"
   location              = var.location
   resource_group_name   = var.resource_group_name

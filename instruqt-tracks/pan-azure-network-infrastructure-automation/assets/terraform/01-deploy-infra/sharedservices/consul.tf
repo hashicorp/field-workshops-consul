@@ -69,6 +69,10 @@ resource "azurerm_lb_rule" "consul" {
 
 
 resource "azurerm_linux_virtual_machine" "consul" {
+  depends_on = [ 
+    azurerm_linux_virtual_machine.bastion,
+    azurerm_linux_virtual_machine.vault
+  ]
   name                  = "consul-vm"
   location              = var.location
   resource_group_name   = var.resource_group_name

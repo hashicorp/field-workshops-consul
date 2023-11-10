@@ -46,6 +46,6 @@ services:
       - "8200:8200"
 EOF
 
-/usr/local/bin/docker-compose up -d
+docker-compose up -d
 
 

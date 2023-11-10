@@ -68,6 +68,7 @@ resource "azurerm_lb_rule" "vault" {
 
 
 resource "azurerm_linux_virtual_machine" "vault" {
+  depends_on = [ azurerm_linux_virtual_machine.bastion ]
   name                  = "vault-vm"
   location              = var.location
   resource_group_name   = var.resource_group_name
