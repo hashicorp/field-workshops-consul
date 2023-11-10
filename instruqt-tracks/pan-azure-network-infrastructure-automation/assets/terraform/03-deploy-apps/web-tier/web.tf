@@ -7,7 +7,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "web" {
   admin_username                  = "adminuser"
   custom_data                     = base64encode(templatefile("${path.module}/scripts/fakeservice.sh", { 
     consul_server_ip = var.consul_server_ip,
-    CONSUL_VERSION = "1.12.2",
+    CONSUL_VERSION = "1.16.3",
     app-lb = var.app-lb
   }))
 
