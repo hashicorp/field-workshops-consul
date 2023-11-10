@@ -20,9 +20,11 @@ services:
     container_name: vault
     network_mode: host
     restart: always
-    image: vault
+    image: hashicorp/vault
     environment:
       - VAULT_DEV_ROOT_TOKEN_ID=root
+    ports:
+      - "8200:8200"
 EOF
 
 /usr/local/bin/docker-compose up -d
