@@ -7,7 +7,7 @@ sudo apt-get update
 sudo apt-get install software-properties-common
 sudo add-apt-repository universe
 sudo apt-get update
-sudo apt-get jq
+sudo apt-get install jq
 sudo apt-get install curl gnupg lsb-release
 sudo curl --fail --silent --show-error --location https://apt.releases.hashicorp.com/gpg | \
       gpg --dearmor | \
@@ -31,7 +31,7 @@ apt update -y
 sudo apt install vault terraform unzip -y
 
 #Download Consul
-export CONSUL_VERSION="1.12.2"
+export CONSUL_VERSION="1.16.3"
 curl --silent --remote-name https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip
 
 #Install Consul
@@ -206,6 +206,8 @@ EOF
 
 #Enable the services
 sudo systemctl enable consul
+# In case of not known updates
+sudo systemctl daemon-reload
 sudo service consul start
 sudo service consul status
 sudo systemctl enable consul-tf-sync
