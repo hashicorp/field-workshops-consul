@@ -8,7 +8,7 @@ sudo apt-get update
 sudo apt-get install software-properties-common
 sudo add-apt-repository universe
 sudo apt-get update
-sudo apt-get jq
+sudo apt-get install jq
 
 
 
@@ -19,7 +19,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 
 #Download Consul
-CONSUL_VERSION="1.12.2"
+CONSUL_VERSION="1.16.3"
 curl --silent --remote-name https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip
 
 #Install Consul
@@ -91,6 +91,7 @@ EOF
 
 
 #Enable the service
+sudo systemctl daemon-reload
 sudo systemctl restart consul
 sudo service consul start
 sudo service consul status
