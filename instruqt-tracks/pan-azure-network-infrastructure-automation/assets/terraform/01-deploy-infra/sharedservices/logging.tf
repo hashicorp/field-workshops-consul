@@ -88,7 +88,7 @@ resource "azurerm_linux_virtual_machine" "logging" {
   }
   custom_data = base64encode(templatefile("${path.module}/scripts/logging.sh", { 
     consul_server_ip = azurerm_network_interface.consul.private_ip_address,
-    CONSUL_VERSION = "1.12.2" 
+    CONSUL_VERSION = "1.16.3" 
   }))
 
   computer_name                   = "logging-vm"
