@@ -118,8 +118,8 @@ resource "azurerm_linux_virtual_machine" "consul-terraform-sync" {
   custom_data          = base64encode(templatefile("./scripts/consul-tf-sync.sh", { 
     vault_token = "root", 
     vault_addr = data.terraform_remote_state.environment.outputs.vault_lb2, 
-    CONSUL_VERSION = "1.12.2",
-    CTS_CONSUL_VERSION = "0.6.0",
+    CONSUL_VERSION = "1.16.3",
+    CTS_CONSUL_VERSION = "0.7.1",
     CONSUL_URL = "https://releases.hashicorp.com/consul-terraform-sync",
     consul_server_ip = data.terraform_remote_state.environment.outputs.consul_ip,
     panos_mgmt_addr = data.terraform_remote_state.environment.outputs.paloalto_mgmt_ip,
