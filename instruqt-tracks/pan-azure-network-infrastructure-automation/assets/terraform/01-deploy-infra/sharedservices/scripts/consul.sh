@@ -2,13 +2,12 @@
 local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
 
 #Utils
-sudo apt-get install unzip
-sudo apt-get install unzip
+sudo apt-get install -y unzip
 sudo apt-get update
-sudo apt-get install software-properties-common
+sudo apt-get install -y software-properties-common
 sudo add-apt-repository universe
 sudo apt-get update
-sudo apt-get jq
+sudo apt-get install -y jq
 sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
 curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
 sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"

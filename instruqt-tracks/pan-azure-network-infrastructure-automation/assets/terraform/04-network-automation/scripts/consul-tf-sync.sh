@@ -2,13 +2,13 @@
 local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
 
 #Utils
-sudo apt-get install unzip
+sudo apt-get install -y unzip
 sudo apt-get update
-sudo apt-get install software-properties-common
+sudo apt-get install -y software-properties-common
 sudo add-apt-repository universe
 sudo apt-get update
-sudo apt-get install jq
-sudo apt-get install curl gnupg lsb-release
+sudo apt-get install -y jq
+sudo apt-get install -y curl gnupg lsb-release
 sudo curl --fail --silent --show-error --location https://apt.releases.hashicorp.com/gpg | \
       gpg --dearmor | \
       sudo dd of=/usr/share/keyrings/hashicorp-archive-keyring.gpg
@@ -18,7 +18,7 @@ sudo echo "deb [arch=amd64 signed-by=/usr/share/keyrings/hashicorp-archive-keyri
 
 sudo apt-get update
 
-sudo apt-get install consul-terraform-sync
+sudo apt-get -y install consul-terraform-sync
 
 #vault env
 export VAULT_ADDR="http://${vault_addr}"

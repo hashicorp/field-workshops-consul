@@ -2,13 +2,12 @@
 local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
 
 #Utils
-sudo apt-get install unzip
-sudo apt-get install unzip
+sudo apt-get install -y unzip
 sudo apt-get update
-sudo apt-get install software-properties-common
+sudo apt-get install -y software-properties-common
 sudo add-apt-repository universe
 sudo apt-get update
-sudo apt-get install jq
+sudo apt-get install -y jq
 
 
 #Download Consul
