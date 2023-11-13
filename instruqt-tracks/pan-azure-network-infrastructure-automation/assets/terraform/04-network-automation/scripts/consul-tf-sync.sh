@@ -194,7 +194,7 @@ terraform_provider "panos" {
 task {
   name = "Dynamic_Address_Group_PaloAlto_FW"
   description = "Automate population of dynamic address group"
-  module = "github.com/maniak-academy/panos-nia-dag"
+  module = "PaloAltoNetworks/dag-nia/panos"
   providers = ["panos.panos1"]
   condition "services" {
     names = ["web", "api", "db", "logging"]
