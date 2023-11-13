@@ -90,5 +90,5 @@ output "db-id" {
   value = module.loadbalancer.db-id
 }
 output "default_hop" {
-  value = module.network.default_hop[2]
+  value = module.network.default_hop
 }

@@ -5,7 +5,8 @@ module "secure-network" {
   resource_group_name = var.resource_group_name
   vnet_name           = "secure-network"
   address_space       = "10.1.0.0/16"
-  subnet_prefixes     = ["10.1.0.0/24", "10.1.1.0/24","10.1.2.0/24"]
+  # subnet_prefixes     = ["10.1.0.0/24", "10.1.1.0/24","10.1.2.0/24"]
+  subnet_prefixes     = [var.public_prefix, var.private_prefix, var.mgmt_prefix]
   subnet_names        = ["Public", "Private", "Mgmt"]
   use_for_each = true
   tags = {
