@@ -23,7 +23,8 @@ resource "panos_static_route_ipv4" "default_route" {
   name           = "default"
   virtual_router = panos_virtual_router.vr1.name
   destination    = "0.0.0.0/0"
-  next_hop       = "10.1.0.1"
+  # next_hop       = "10.1.2.1"
+  next_hop       = cidrhost(var.default_hop,1)
   interface      = panos_ethernet_interface.ethernet1_1.name
 }
 

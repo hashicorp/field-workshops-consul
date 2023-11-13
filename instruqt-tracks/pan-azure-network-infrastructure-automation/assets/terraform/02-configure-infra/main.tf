@@ -24,6 +24,7 @@ provider "panos" {
 
 module "pan-config" {
   source = "./pan-config"
+  default_hop = data.terraform_remote_state.environment.outputs.default_hop
 }
 
 module "vault" {

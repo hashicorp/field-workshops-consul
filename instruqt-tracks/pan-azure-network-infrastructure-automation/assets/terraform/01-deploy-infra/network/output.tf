@@ -62,3 +62,6 @@ output "app_network_app_subnet" {
 output "app_network_db_subnet" {
   value = module.app-network.vnet_subnets[2]
 }
+output "default_hop" {
+  value = module.secure-network.subnet_prefixes
+}
