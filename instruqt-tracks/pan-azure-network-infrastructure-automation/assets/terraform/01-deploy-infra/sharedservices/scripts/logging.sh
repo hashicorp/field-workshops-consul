@@ -1,5 +1,7 @@
 #!/bin/bash
-local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
+# local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
+PRIVATE_IP="$(curl -s -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/privateIpAddress?api-version=2019-06-04&format=text")"
+PUBLIC_IP="$(curl -s -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/publicIpAddress?api-version=2019-06-04&format=text")"
 
 #Utils
 sudo apt-get install -y unzip
