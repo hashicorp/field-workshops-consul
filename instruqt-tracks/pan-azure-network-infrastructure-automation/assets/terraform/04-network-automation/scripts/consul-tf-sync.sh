@@ -166,6 +166,7 @@ vault {
 driver "terraform" {
   log = true
   path = "/opt/consul-tf-sync.d/"
+  version = "1.6.2"
   required_providers {
     panos = {
       source = "PaloAltoNetworks/panos"
