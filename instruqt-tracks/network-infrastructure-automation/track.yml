@@ -19,6 +19,7 @@ developers:
 - npearce@hashicorp.com
 - raj@hashicorp.com
 - thomas@hashicorp.com
+- syed.quadri@hashicorp.com
 show_timer: true
 skipping_enabled: true
 lab_config:

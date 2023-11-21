@@ -6,7 +6,45 @@ echo ">> Installing Consul Terraform Sync"
 echo ">>"
 
 cd /root/terraform/consul-tf-sync
-terraform apply -auto-approve > /root/terraform/consul-tf-sync/terraform.out
+
+# Run terraform apply until it is successful
+n=0
+while /bin/true; do
+    n=$((n+1))
+    rm -f /root/terraform/consul-tf-sync/terraform.out
+    
+    echo "Terraform apply attempt $n"
+    terraform apply -auto-approve > /root/terraform/consul-tf-sync/terraform.out 2>&1
+    rc=$?
+    if [ "$rc" != "0" ]; then
+        echo "terraform apply failed with return code $rc"
+        echo "Output follows:"
+        cat /root/terraform/consul-tf-sync/terraform.out
+        echo "END OF OUTPUT"
+
+        # Does VM exist?
+        terraform state list "${RESOURCE_ADDR}"
+        ec=$?
+        if [ $ec -ne 0 ]; then
+            echo "${RESOURCE_ADDR} doesn't exist after Terraform is finished"
+            # Delete the half-created VM
+            az vm delete -g "${RG}" -n "${RESOURCE_NAME}" --yes
+            az disk delete -g "${RG}" -n "${RESOURCE_NAME}-disk" --yes
+            sleep 185	# THIS VALUE IS IMPORTANT, see IL-843
+            terraform destroy -auto-approve
+            TRY=$((TRY+1))
+            # we've already waited 185 seconds at least, so no need to sleep
+        else
+            echo "${RESOURCE_ADDR} provisioned"
+            break
+        fi
+
+        continue
+    fi
+    # If we got here, we're good
+    break
+done
+
 
 # Wait until things are actually set up
 n=0
@@ -28,12 +66,16 @@ while /bin/true; do
     app=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080)
     if [ "${app}" != "200" ]; then
       echo "App did not return a 200, returned ${app}. Sleeping and retrying."
-      sleep 20
+        if [ "${app}" == "504" ]; then
+            /root/terraform/panos_commit/panos-commit -config /root/terraform/panos_commit/panos-commit.json -force
+            sleep 20
+            break
+        fi
+        sleep 20
       continue
     fi
 
     break
 done
-
 
 exit 0
