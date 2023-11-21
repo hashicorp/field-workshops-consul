@@ -19,7 +19,7 @@ tabs:
 - title: Vault Setup Script
   type: code
   hostname: cloud-client
-  path: /root/terraform/vault/setup_vault.sh
+  path: /root/scripts/setup_vault.sh
 - title: Vault
   type: service
   hostname: cloud-client

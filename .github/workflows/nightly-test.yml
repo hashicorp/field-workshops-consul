@@ -91,6 +91,7 @@ jobs:
     secrets:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
   multi-cloud-consul:
+    if: false # VCDL-126: disabling testing this workshop until we can fix it
     uses: ./.github/workflows/instruqt-track-test.yml
     needs: update-cloud-client
     with:
@@ -118,9 +119,9 @@ jobs:
       - consul-basics
       - service-discovery-with-consul
       - service-mesh-with-consul
-      - multi-cloud-consul
       - network-infrastructure-automation
       - life-of-a-developer
+      # VCDL-126: disabling reporting on this workshop until we can fix it - multi-cloud-consul
     if: ${{ always() }}   # Always run after needs, even if they failed, so we can notify
     runs-on: ubuntu-latest
     permissions: {}

@@ -4,7 +4,7 @@
 global:
   name: consul
   datacenter: gcp-us-central-1
-  image: 'hashicorp/consul-enterprise:1.10.2-ent'
+  image: 'hashicorp/consul-enterprise:1.13.9-ent'
   tls:
     enabled: true
     caCert:
@@ -13,7 +13,7 @@ global:
     caKey:
       secretName: consul-federation
       secretKey: caKey
-    enableAutoEncrypt: true
+    verify: false
   gossipEncryption:
     secretName: consul-federation
     secretKey: gossipEncryptionKey
@@ -24,6 +24,11 @@ global:
       secretKey: replicationToken
   federation:
     enabled: true
+    primaryDatacenter: aws-us-east-1
+    k8sAuthMethodHost: "REPLACE ME!"
+  enterpriseLicense:
+      secretName: 'consul-ent-license'
+      secretKey: 'key'
 ui:
   enabled: true
   service:
@@ -48,9 +53,6 @@ server:
   ports:
     serflan:
       port: 9301
-  enterpriseLicense:
-      secretName: 'consul-ent-license'
-      secretKey: 'key'
 client:
   enabled: true
   exposeGossipPorts: true

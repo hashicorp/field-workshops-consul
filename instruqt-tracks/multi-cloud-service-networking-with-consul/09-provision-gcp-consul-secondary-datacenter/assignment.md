@@ -51,10 +51,16 @@ terraform plan
 terraform apply -auto-approve
 ```
 
-Check the worker nodes are available for the cluster. <br>
+Export the K8s API server URL. <br>
 
 ```
 gcloud container clusters get-credentials $(terraform output gcp_gke_cluster_shared_name) --region us-central1-a
+export KUBE_API_SERVER_CONSUL=$(kubectl config view -o jsonpath="{.clusters[?(@.name == \"$(kubectl config current-context)\")].cluster.server}")
+```
+
+Rename the K8s context to be human friendly and inspect nodes. <br>
+
+```
 kubectl config rename-context $(kubectl config current-context) shared
 kubectl config use-context shared
 kubectl get nodes
@@ -89,7 +95,7 @@ Next, deploy the Consul servers. You can review the configuration in the code ed
 
 ```
 kubectl create secret generic consul-ent-license --from-literal="key=$(cat /etc/consul.hclic)"
-helm install hashicorp hashicorp/consul -f /root/helm/gke-consul-values.yaml --debug --wait --version 0.33.0
+helm install hashicorp hashicorp/consul -f /root/helm/gke-consul-values.yaml --set global.federation.k8sAuthMethodHost=$KUBE_API_SERVER_CONSUL --debug --wait --version 0.49.8
 ```
 
 Check that all three clusters are federated.
