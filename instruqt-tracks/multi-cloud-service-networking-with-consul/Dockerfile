@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # This dockerfile isn't managed via CI because we don't have a system currently setup in this
 # repo. I(asumner) built and pushed it to our GCP project manually, and pointed our config.yml
 # file to use it. Currently I've named it: gcr.io/instruqt-hashicorp/asumner-test-consul-cloud-client-no-license
