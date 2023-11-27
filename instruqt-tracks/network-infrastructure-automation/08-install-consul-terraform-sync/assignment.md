@@ -87,6 +87,8 @@ service consul-tf-sync status
 
 Look over the Palo Alto & BIG-IP configurations again, per the steps above. Note that their configurations have been updated!
 
+If you don't see the changes in the Palo Alto configuration you may need to commit your changes by clicking on the commit button near the top right.
+
 Next, navigate to the `App` tab. The application is now available through the Firewall and is Load-balanced. You may need to refresh the tab.
 
 Lastly, navigate back to the 'Current Lab Setup' tab and marvel at the beauty of Network Infrastructure Automation. You did this!
