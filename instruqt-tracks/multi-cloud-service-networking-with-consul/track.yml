@@ -25,3 +25,11 @@ published: true
 show_timer: true
 skipping_enabled: true
 maintenance: true
+
+lab_config:
+  overlay: false
+  width: 33
+  position: right
+  sidebar_enabled: true
+  feedback_recap_enabled: true
+  loadingMessages: false
