@@ -5,7 +5,7 @@ slug: multi-cloud-service-networking-with-consul
 type: track
 title: Multi Cloud Service Networking with Consul
 teaser: Deploy a multi-cloud service mesh solution with Consul
-description: <!TRACK UNDER MAINTENANCE!> Run a shared Consul service across multiple clouds and enable self-service
+description: TRACK UNDER MAINTENANCE! Run a shared Consul service across multiple clouds and enable self-service
   for application teams.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags:
