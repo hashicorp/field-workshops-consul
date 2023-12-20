@@ -21,9 +21,9 @@ Consul 기본 아키텍처 - 살펴보기
 -------------------------
 .center[![:scale 100%](images/multi-datacenter-federation.png)]
 
-* Consul 클러스터는 "데이터 센터"로 불려짐
+* Consul 클러스터는 "Data Center"로 불려짐
 * Consul 데이터 센터는 서버 노드와 클라이언트 노드로 구성
-* 데이터 센터 당 3 개 또는 5 개의 서버 노드로 구성
+* 데이터 센터 당 3 개 또는 5 개 정도의 홀수개 서버 노드로 구성
 * 100 ~ 10,000 개의 클라이언트 노드 커버
 
 ???
@@ -38,8 +38,8 @@ Consul 기본 아키텍처 - Gossip
 
 * 모든 에이전트 통신은 Gossip 프로토콜을 통해 이루어짐
 * Consul 에이전트에 대한 자동 구성 및 데이터 센터 검색
-* 에이전트 실패는 서버 기준이 아닌 집합된 에이전트 수준에서 수행
-* Gossip을 사용하면 기존 하트 비트 방식에 비해 높은 확장 성이 가능
+* 에이전트의 실패는 서버 기준이 아닌 에이전트 수준에서 감지
+* Gossip을 사용하면 기존 Heart beat 방식에 비해 높은 확장 성이 가능
 * 노드 실패는 에이전트 실패로 유추
 
 ???
@@ -52,7 +52,7 @@ Consul 기본 아키텍처 - Consensus
 -------------------------
 .center[![:scale 100%](images/multi-datacenter-federation.png)]
 
-* 모든 Consul 데이터 센터에는 연결된 에이전트를 관리하기 위해 함께 작동하는 서버 노드 그룹이 있음
+* 모든 Consul DC(클러스터)에는 연결된 에이전트를 관리하기 위해 함께 작동하는 "서버 노드" 그룹이 있음
 * Raft를 사용하여 서버 노드가 리더를 선택
 * 리더는 모든 쿼리를 처리하고 KV 스토어에 대한 쓰기 권한을 가짐
 * 트랜잭션 복제 담당
@@ -69,12 +69,13 @@ Consul 기본 아키텍처 - Multi-DC
 .center[![:scale 100%](images/multi-datacenter-federation.png)]
 
 * WAN 연결을 통한 가십도 가능
+* 더 긴 인터넷 대기 시간에 최적화
 * 한 데이터 센터의 요청을 다른 데이터 센터로 전달
 * 서비스 수준 DR을 허용
-* 지리적 서비스 요청 처리가 가능
+* 지리적인 서비스 요청 처리가 가능
 
 ???
-The server agents also operate as part of a WAN gossip pool. This pool is different from the LAN pool as it is optimized for the higher latency of the internet and is expected to contain only other Consul server agents. The purpose of this pool is to allow datacenters to discover each other in a low-touch manner. When a server receives a request for a different datacenter, it forwards it to a random server in the correct datacenter. That server may then forward to the local leader, so cross-datacenter requests are relatively fast and reliable.
+서버 에이전트는 또한 WAN 가십 풀의 일부로 작동합니다. 이 풀은 더 긴 인터넷 대기 시간에 최적화되어 있고 다른 Consul 서버 에이전트 만 포함 할 것으로 예상되므로 LAN 풀과 다릅니다. 이 풀의 목적은 데이터 센터가 낮은 터치 방식으로 서로를 검색 할 수 있도록하는 것입니다. 서버가 다른 데이터 센터에 대한 요청을 수신하면 올바른 데이터 센터의 임의 서버로 전달합니다. 그러면 해당 서버가 로컬 리더에게 전달할 수 있으므로 데이터 센터 간 요청이 비교적 빠르고 안정적입니다.
 
 ---
 name: Introduction-to-Consul-Protocols

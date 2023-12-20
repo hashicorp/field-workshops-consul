@@ -10,6 +10,8 @@ Service Discovery - Intro
 -------------------------
 .center[![:scale 100%](images/service_registration_catalog.png)]
 
+용도
+
 * DNS 및 API 인터페이스
 * 상태 체크
 * Load Balancer 통합
@@ -28,8 +30,8 @@ Service Discovery - Servers
 -------------------------
 .center[![:scale 100%](images/consul_dataflow_lan.png)]
 
-* Service catalog
-* Replication via Raft
+* Service catalog 구성
+* Raft 알고리즘을 이용한 복제
 
 ???
 Consul's service discovery is backed by a service catalog. The catalog maintains the high-level view of the cluster and is used to expose this information via the various interfaces Consul provides, including DNS and HTTP.
@@ -43,7 +45,7 @@ Service Discovery - Clients
 -------------------------
 .center[![:scale 100%](images/consul_health_checks.png)]
 
-* 클라이언트는 로컬의 서비스를 확인
+* 클라이언트는 등록된 로컬의 서비스를 확인
 * Gossip을 통해 노드 상태 확인
 * 상태 변경에 대한 정보 만 서버로 전송
 * 상태에 대한 서비스 검색 필터
@@ -121,6 +123,7 @@ Integrations - DNS
 * Zero-touch
 * Round robin load balancing
 * 비정상 인스턴스의 자동 필터링
+* https://www.consul.io/docs/discovery/dns
 
 ???
 Using DNS is a simple way to integrate Consul into an existing infrastructure without any high-touch integration.
@@ -128,12 +131,13 @@ Using DNS is a simple way to integrate Consul into an existing infrastructure wi
 ---
 name: Service-Registry-Integration-Native
 class: img-right compact
+
 Integrations - API/Native
 -------------------------
 .center[![:scale 100%](images/consul_ecosystem_diagram.png)]
 
 * SDKs
-* Load balancers
+* Load balancers (https://www.hashicorp.com/blog/load-balancing-strategies-for-consul)
 * Proxies
 * API gateways
 * Monitoring tools

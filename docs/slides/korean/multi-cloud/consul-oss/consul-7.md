@@ -12,11 +12,12 @@ class: title
 
 name: Introduction-to-Consensus
 class: compact
+
 Introduction to Consensus
 -------------------------
 
 Consul은 일관성을 제공하기 위해 Consensus 프로토콜을 사용합니다.
-Consensus를 자세히 이해할 필요는 없지만 아래는 Consul에 대해 배울 때 유용한 몇 가지 용어입니다.
+다음은 Consensus를 자세히 이해하는데에 꼭 필요하지는 않으나, Consul에 대해 배울 때 유용한 몇 가지 용어입니다.
 
 * **Log** - Raft 시스템의 기본 작업 단위는 `Log` 항목입니다.
 * **FSM (Finite State Machine)** - `FSM`은 상태 동기화 사이에 변경이있는 특정 상태 모음을 의미 합니다.
@@ -108,7 +109,7 @@ Introduction to Gossip - LAN Pool
 * LAN 풀의 멤버십은 다음을 용이하게합니다.
    * 자동 서버 검색
    * 분산 실패 감지
-   * 안정적이고 빠른 이벤트 방송
+   * 안정적이고 빠른 이벤트 확산
 
 ???
 Each datacenter Consul operates in has a LAN gossip pool containing all members of the datacenter, both clients and servers. The LAN pool is used for a few purposes. Membership information allows clients to automatically discover servers, reducing the amount of configuration needed. The distributed failure detection allows the work of failure detection to be shared by the entire cluster instead of concentrated on a few servers. Lastly, the gossip pool allows for reliable and fast event broadcasts.
@@ -121,9 +122,10 @@ Introduction to Gossip - WAN Pool
 * Consul의 서버 노드만 WAN 풀에 참여합니다.
 * 정보는 데이터 센터 간 요청을 허용하는 Consul 서버간에 공유됩니다.
 * LAN 풀과 마찬가지로 WAN 풀은 전체 데이터 센터의 정상적인 손실을 허용합니다.
+  →  센터단위로 처리합니다.
 
 ???
-The WAN pool is globally unique, as all servers should participate in the WAN pool regardless of datacenter. Membership information provided by the WAN pool allows servers to perform cross datacenter requests. The integrated failure detection allows Consul to gracefully handle an entire datacenter losing connectivity, or just a single server in a remote datacenter.
+WAN 풀은 데이터 센터에 관계없이 모든 서버가 WAN 풀에 참여해야하므로 전역 적으로 고유합니다. WAN 풀에서 제공하는 멤버십 정보를 통해 서버는 데이터 센터 간 요청을 수행 할 수 있습니다. 통합 장애 감지를 통해 Consul은 연결이 끊어진 전체 데이터 센터 또는 원격 데이터 센터의 단일 서버를 정상적으로 처리 할 수 있습니다.
 
 ---
 name: Introduction-to-Gossip-Visualization-50-Node
@@ -155,7 +157,7 @@ Introduction to Gossip - Convergence
 .center[![:scale 80%](images/convergence_10k.png)]
 .center[10,000개 노드, ~2초내로 수렴] <br>
 
-위의 그래프는 10k 노드 클러스터를 기반으로 다양한 컨버전스 상태에 도달하는 예상 시간을 보여줍니다. 단 2 초 만에 거의 100 %의 노드에 수렴 할 수 있습니다!
+위의 그래프는 10k 노드 클러스터를 기반으로 상태 수려에 도달하는 예상 시간을 보여줍니다. 단 2 초 만에 거의 100 %의 노드에 수렴 할 수 있습니다.
 
 ???
 All the agents that are in a datacenter participate in a gossip protocol. This means there is a gossip pool that contains all the agents for a given datacenter. This serves a few purposes: first, there is no need to configure clients with the addresses of servers; discovery is done automatically. Second, the work of detecting agent failures is not placed on the servers but is distributed. This makes failure detection much more scalable than naive heartbeating schemes. It also provides failure detection for the nodes; if the agent is not reachable, then the node may have experienced a failure.

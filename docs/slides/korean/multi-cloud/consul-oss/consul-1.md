@@ -26,9 +26,9 @@ name: The-Shift
 정적인 환경에서 동적인 환경으로의 이동
 -------------------------
 .center[![:scale 50%](images/static_to_dynamic.png)]
-.center[물리적 서버가 가상화, 컨테이너로...]
+.center[물리적 서버 →  가상화 → 컨테이너]
 
-애플리케이션이 모놀리식에서 마이크로 서비스 아키텍쳐로 변화함에 따라 네트워킹 환경도 크게 변화했습니다. 이런 변화의 역사와 Consul이 이런 상황에서의 문제를 어떻게 해결하고 도울 수 있는지 간략하게 살펴보겠습니다.
+애플리케이션이 모놀리식에서 마이크로 서비스 아키텍쳐로 변화하고 있고, 이에 따라 네트워킹 환경도 크게 변화했습니다. 이런 변화의 흐름을 확인해보고, Consul이 이런 상황에서의 과제를 어떻게 해결하고 도울 수 있는지 간략하게 살펴보겠습니다.
 
 ???
 Our traditional approach to networking has always had its challenges. But even more so today with the dynamic nature of cloud computing and software delivery. And with the move from monolithic applications to microservices, even more demand is put on the networking infrastructure.
@@ -46,8 +46,8 @@ class: img-right
 * 서버 당 단일 애플리케이션
 * 앱 이동성 없음
 * IP에 매핑 된 보안
-* 앱의 수평 적 스케일이 거의 없음
-* 높은 신뢰 영역 및 경계
+* 앱의 수평적인 Scale In/Out이 거의 없음
+* 높은 네트워크 신뢰 영역 및 경계
 
 ???
 The Client-Server model was a pretty big shift back in the day, and many didn't think it would survive. The traditional mainframes didn't require near the network demand that the Client/Server model did, and as you can imagine, it was very expensive to upgrade network equipment to support Client/Server. But the pros outweighed the cons, so companies made the investments.
@@ -64,12 +64,13 @@ VM 환경에서의 특징
 .center[![:scale 100%](images/vm_flow.png)]
 
 <br><br>
-* 더 나은 HW 활용
-* 하이퍼 바이저의 기본 네트워킹
-* VM 이동성
-* 일부 수평 확장
-* Load Balancer 환용
-* 스패닝 트리 (하나로 부터 분산되는 형태)
+* 성능이 향상된 HW 환경
+* 하이퍼 바이저 네트워킹
+* VM 활용으로 이동성 확보
+* 일부 수평적 Scale In/Out 가능
+* Load Balancer 활용
+* 스패닝 트리 구조
+  (하나로부터 분산되는 형태)
 
 ???
 Fortunately, a relic from the distant past was found, dusted off, restored, vastly improved, and delivered as a new, shiny toy: the Virtual Machine. This gave us better resource utilization of our servers. VMs images could be moved from host to host, which meant horizontal scaling was a little easier to achieve. Virtual computing environments also gave way to broader adoption of load balancing tools, which is still an integral part of servicing applications today.
@@ -102,8 +103,8 @@ class: img-right
 * 높은 유지관리와 테스트는 기본
 * 느슨한 결합
 * 독립적으로 배포 가능
-* 비즈니스 역량을 중심으로 구성
-* 소규모 팀이 운영하고 소유함
+* 비즈니스적 역할을 중심으로 구성
+* 소규모 팀이 운영하고 관리 가능
 
 ???
 At the same time networking capacity was growing, development teams' frustration was growing with their monolithic application model. Teams were completely dependent on one another, so the slowest team was as fast as your software could be delivered. So they started breaking up portions of their application into smaller, single-purpose services. It was still used by the main application, but it was now decoupled and could be released independent of any other application or service. This meant smaller teams and higher efficiencies.
@@ -116,9 +117,10 @@ SDN
 .center[![:scale 100%](images/sdn_flow.png)]
 
 <br><br>
-* Network automation
+* 네트워크 자동화
 * Self-Service
-* 업무분담 - 누가 SDN을 운영해야 하죠?
+* 업무분담 문제
+  (누가 SDN을 운영해야 하죠?)
 * 네트워크 관리자에게 부담이 되는 낮은 가시성
 
 ???
@@ -132,7 +134,7 @@ class: img-right
 .center[![:scale 100%](images/hybrid_cloud_flow.png)]
 
 <br><br>
-* 내 애플리케이션 서비스는 대체 어디에?
+* 내 애플리케이션은 대체 어디에?
 
 ???
 Cloud computing brought us new solutions to old problems, like auto-scaling, managed services, and network security. But connecting our private cloud to a public clouds introduced new challenges. For instance, how does your cloud app connect to your on-premise database? Or how do two different networks communicate when they are both using the same RFC 1918 ip address space?
@@ -140,14 +142,14 @@ Cloud computing brought us new solutions to old problems, like auto-scaling, man
 ---
 name: Introduction-of-the-Multi-Cloud-K8s
 class: img-right
-쿠버네티스 같은 컨테이너 환경은?
+컨테이너 환경
 -------------------------
 .center[![:scale 100%](images/hybrid_k8s_flow.png)]
 
 <br><br>
 * K8s src IP
 * K8s networking - NAT / Calico / Flannel
-* Access to K8S service - K8S Ingress et al
+* Access to K8S service - K8S Ingress
 
 ???
 Kubernetes brought us yet another layer of network abstraction. It has its own network interface for internal networking, and yet it still needs to be able with communicate to the outside world. How does an external service communicate with a service running inside a Kubernetes cluster?

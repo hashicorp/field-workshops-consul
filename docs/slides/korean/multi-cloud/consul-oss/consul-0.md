@@ -2,9 +2,8 @@ name: Consul-OSS-Workshop
 class: Korea, APAC
 count: false
 ![:scale 30%](images/consul_logo.svg)
-.titletext[
-Consul OSS Workshop]
-모든 플랫폼상의 서비스를 안전하게 연결
+.titletext[Consul OSS Workshop]
+모듯 곳의 모든 서비스를 안전하고 빠르게 연결
 
 ???
 Consul OSS 초보자 가이드에 오신 것을 환영합니다. 이 슬라이드덱과 함께 제공되는 실습은 강사 주도식 또는 자가지도식 워크샵으로 제공 될 수 있습니다. 이 콘텐츠는 3-4 시간이 소요됩니다.
@@ -17,7 +16,7 @@ The Slide Deck
 .center[
 링크를 클릭하여 각 환경에서 슬라이드를 확인할 수 있습니다.:
 
-### [https://hashicorp.github.io/field-workshops-consul/slides/korean/multi-cloud/consul-oss](https://hashicorp.github.io/field-workshops-consul/slides/korean/multi-cloud/consul-oss)
+### https://git.io/JnLml
 ]
 
 ???

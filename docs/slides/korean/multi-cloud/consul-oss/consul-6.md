@@ -6,7 +6,8 @@ class: title
 ---
 name: Segmentation-Intro-Routing
 class: img-right compact
-Service Segmentation - Intro
+
+Service Segmentation - Intro 1
 -------------------------
 .center[![:scale 100%](images/consul_segmentation_intro.png)]
 
@@ -25,7 +26,7 @@ This allows critical functionality like naming, segmentation and authorization, 
 ---
 name: Segmentation-Intro-Security
 class: img-right compact
-Service Segmentation - Intro
+Service Segmentation - Intro 2
 -------------------------
 .center[![:scale 100%](images/consul_segmentation_intro.png)]
 
@@ -69,7 +70,7 @@ Service Mesh Architecture - Data Plane
 
 * 애플리케이션 요청 관리
 * 높은 처리량, 낮은 지연시간
-* 고급 L7 기능
+* L7 기능 지원
 
 ???
 The Data Plane provides the ability to forward requests from the applications, including more sophisticated features like health checking, load balancing, circuit breaking, authentication, and authorization.
@@ -123,8 +124,14 @@ Service Mesh - Advanced Routing
 .center[![:scale 100%](images/consul_L7_routing.png)]
 
 * 카나리 테스트
+
 * A/B 테스트
+
 * Blue/Green 배포
+
+  
+
+* Rolling 배포는? > 오케스트레이터의 영역
 
 ???
 Layer 7 traffic management allows operators to divide L7 traffic between different subsets of service instances when using Connect.
@@ -156,7 +163,7 @@ name: Segmentation-Lab
 .blocklist[
 이 실습에서는 다음을 수행합니다.:
 
-* 사이드가 배포
+* 사이드카 배포
 * Envoy Proxy에 대해 배우기
 * Proxy에 대한 배포와 설정
 * Consul을 활용한 트래픽 연결과 보안
