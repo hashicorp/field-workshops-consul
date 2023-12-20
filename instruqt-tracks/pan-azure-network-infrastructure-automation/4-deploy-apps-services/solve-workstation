@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#panw
+cd /root/terraform/03-deploy-apps
+terraform apply -auto-approve 2>&1 | tee /root/terraform/03-deploy-apps/terraform.out
+
+exit 0
