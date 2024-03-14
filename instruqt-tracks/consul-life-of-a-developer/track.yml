@@ -1,8 +1,4 @@
-# Copyright (c) HashiCorp, Inc.
-# SPDX-License-Identifier: MPL-2.0
-
 slug: consul-life-of-a-developer
-type: track
 title: 'Consul: Life of a Developer'
 teaser: Build, Test, and Deploy Applications with HashiCorp Consul.
 description: Ship a new version of the HashiCups App on container runtimes.
@@ -13,9 +9,15 @@ developers:
 - lance@hashicorp.com
 - jthompson@hashicorp.com
 - thomas@hashicorp.com
+- syed.quadri@hashicorp.com
 show_timer: true
 skipping_enabled: true
+idle_timeout: 300
+timelimit: 7200
 lab_config:
   overlay: false
   width: 25
   position: right
+  sidebar_enabled: true
+  feedback_recap_enabled: true
+  loadingMessages: true

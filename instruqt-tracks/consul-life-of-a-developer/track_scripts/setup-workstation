@@ -2,17 +2,18 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
 
-while [ ! -f /opt/instruqt/bootstrap/host-bootstrap-completed ]
-do
-    echo "Waiting for Instruqt to finish booting the virtual machine"
-    sleep 1
+set -e
+
+while [ ! -f /opt/instruqt/bootstrap/host-bootstrap-completed ]; do
+  echo "Waiting for Instruqt to finish booting the virtual machine"
+  sleep 1
 done
 
 #fix path
-echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
+echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >>~/.bashrc
 
 #fix kubevars
-echo "unset -v \$(compgen -e | grep KUBERNETES)" >> /root/.bashrc
+echo "unset -v \$(compgen -e | grep KUBERNETES)" >>/root/.bashrc
 source /root/.bashrc
 
 #install kubectl
@@ -20,16 +21,16 @@ export DEBIAN_FRONTEND=noninteractive
 apt update -y
 apt install -y apt-transport-https ca-certificates curl vim openssh-client git jq gnupg2 lsb-release software-properties-common file
 curl -fsSLo /usr/share/keyrings/apt-releases-hashicorp-com.gpg https://apt.releases.hashicorp.com/gpg
-file /usr/share/keyrings/apt-releases-hashicorp-com.gpg
 apt-key add /usr/share/keyrings/apt-releases-hashicorp-com.gpg
 add-apt-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://dl.k8s.io/apt/doc/apt-key.gpg
-file /usr/share/keyrings/kubernetes-archive-keyring.gpg
-apt-key add /usr/share/keyrings/kubernetes-archive-keyring.gpg
-echo "deb [arch=amd64] https://apt.kubernetes.io/ kubernetes-xenial main" |  tee /etc/apt/sources.list.d/kubernetes.list
-apt update -y
-apt install -y kubectl
 apt install -y consul=$CONSUL_VERSION vault
+
+mkdir /etc/apt/keyrings
+apt-get install gnupg -y
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list
+apt-get update
+apt-get install -y kubectl
 
 #assets
 git clone https://github.com/hashicorp/field-workshops-consul.git
@@ -38,14 +39,14 @@ cp -r field-workshops-consul/instruqt-tracks/consul-life-of-a-developer/assets/h
 rm -rf /root/field-workshops-consul
 
 #disable host checks
-cat << EOF > ~/.ssh/config
+cat <<EOF >~/.ssh/config
 Host *
     StrictHostKeyChecking no
 EOF
 
 #get the kube configs
-ssh k8s1 'cat ~/.kube/config' > /tmp/k8s1_kube_config.yaml
-ssh k8s2 'cat ~/.kube/config' > /tmp/k8s2_kube_config.yaml
+ssh k8s1 'cat ~/.kube/config' >/tmp/k8s1_kube_config.yaml
+ssh k8s2 'cat ~/.kube/config' >/tmp/k8s2_kube_config.yaml
 
 #name them - k8s1
 sed -i 's/default/k8s1/g' /tmp/k8s1_kube_config.yaml
@@ -56,7 +57,7 @@ sed -i 's/127.0.0.1/k8s2/g' /tmp/k8s2_kube_config.yaml
 
 #merge them & set the context
 mkdir -p ~/.kube/
-KUBECONFIG=/tmp/k8s1_kube_config.yaml:/tmp/k8s2_kube_config.yaml kubectl config view --merge --flatten > ~/.kube/config
+KUBECONFIG=/tmp/k8s1_kube_config.yaml:/tmp/k8s2_kube_config.yaml kubectl config view --merge --flatten >~/.kube/config
 chmod 600 ~/.kube/config
 kubectl config use-context k8s1
 
@@ -68,7 +69,7 @@ curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bas
 export DEBIAN_FRONTEND=noninteractive
 apt update -y
 apt install -y nginx
-cat << EOF > /etc/nginx/conf.d/consul.conf
+cat <<EOF >/etc/nginx/conf.d/consul.conf
 server {
   listen 8500;
   location / {
@@ -93,25 +94,25 @@ export VAULT_ADDR=http://k8s1:8200
 /usr/bin/vault write -f transit/keys/payments
 /usr/bin/vault auth enable kubernetes
 secret=$(kubectl get sa vault -o json | jq -r .secrets[0].name)
-kubectl get secret ${secret} -o json | jq -r '.data."ca.crt"' | base64 -d > /tmp/ca.pem
+kubectl get secret ${secret} -o json | jq -r '.data."ca.crt"' | base64 -d >/tmp/ca.pem
 /usr/bin/vault write auth/kubernetes/config \
-    token_reviewer_jwt="$(kubectl get secret ${secret} -o json | jq -r .data.token | base64 -d)" \
-    kubernetes_host="https://$(kubectl get svc kubernetes -o json | jq -r .spec.clusterIP):443" \
-    kubernetes_ca_cert=@/tmp/ca.pem
+  token_reviewer_jwt="$(kubectl get secret ${secret} -o json | jq -r .data.token | base64 -d)" \
+  kubernetes_host="https://$(kubectl get svc kubernetes -o json | jq -r .spec.clusterIP):443" \
+  kubernetes_ca_cert=@/tmp/ca.pem
 /usr/bin/vault policy write payments-api - <<EOF
 path "transit/encrypt/payments" {
   capabilities = ["update"]
 }
 EOF
 /usr/bin/vault write auth/kubernetes/role/payments-api \
-    bound_service_account_names=payments-api \
-    bound_service_account_namespaces=default \
-    policies=payments-api \
-    ttl=24h
+  bound_service_account_names=payments-api \
+  bound_service_account_namespaces=default \
+  policies=payments-api \
+  ttl=24h
 
 #grafana
 kubectl config use-context k8s1
-cat <<-EOF > /root/grafana-values.yaml
+cat <<-EOF >/root/grafana-values.yaml
 persistence:
   enabled: false
 datasources:
@@ -143,7 +144,7 @@ EOF
 helm repo add grafana https://grafana.github.io/helm-charts
 helm install grafana grafana/grafana -f /root/grafana-values.yaml --wait --debug
 sleep 15
-kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode > /tmp/grafana-pass.txt
+kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode >/tmp/grafana-pass.txt
 
 #tracing
 kubectl config use-context k8s1
@@ -216,19 +217,19 @@ kubectl delete svc traefik -n kube-system
 echo "Deploying Consul..."
 #k8s1
 kubectl config use-context k8s1
-helm install -f /root/helm/k8s1-consul-values.yaml consul hashicorp/consul  --version $CONSUL_HELM_VERSION --wait --debug
-kubectl get secret consul-federation -o yaml > consul-federation-secret.yaml
+helm install -f /root/helm/k8s1-consul-values.yaml consul hashicorp/consul --version $CONSUL_HELM_VERSION --wait --debug
+kubectl get secret consul-federation -o yaml >consul-federation-secret.yaml
 #k8s2
 kubectl config use-context k8s2
 kubectl apply -f consul-federation-secret.yaml
-helm install -f /root/helm/k8s2-consul-values.yaml consul hashicorp/consul  --version $CONSUL_HELM_VERSION --wait --debug
+helm install -f /root/helm/k8s2-consul-values.yaml consul hashicorp/consul --version $CONSUL_HELM_VERSION --wait --debug
 
 #creating dashboard tokens
 echo "Creating Dashboard Tokens..."
 kubectl config use-context k8s1
-kubectl get secret -n kubernetes-dashboard $(kubectl get sa -n kubernetes-dashboard admin-user -o json | jq -r .secrets[0].name) -o json | jq -r .data.token | base64 -d > /root/k8s1-dashboard-token.txt
+kubectl get secret -n kubernetes-dashboard $(kubectl get sa -n kubernetes-dashboard admin-user -o json | jq -r .secrets[0].name) -o json | jq -r .data.token | base64 -d >/root/k8s1-dashboard-token.txt
 kubectl config use-context k8s2
-kubectl get secret -n kubernetes-dashboard $(kubectl get sa -n kubernetes-dashboard admin-user -o json | jq -r .secrets[0].name) -o json | jq -r .data.token | base64 -d > /root/k8s2-dashboard-token.txt
+kubectl get secret -n kubernetes-dashboard $(kubectl get sa -n kubernetes-dashboard admin-user -o json | jq -r .secrets[0].name) -o json | jq -r .data.token | base64 -d >/root/k8s2-dashboard-token.txt
 
 #pre-flight checks
 echo "Running pre-flight checks..."
