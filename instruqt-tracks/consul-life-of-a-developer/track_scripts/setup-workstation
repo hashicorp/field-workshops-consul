@@ -2,6 +2,8 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
 
+set -e
+
 while [ ! -f /opt/instruqt/bootstrap/host-bootstrap-completed ]
 do
     echo "Waiting for Instruqt to finish booting the virtual machine"
@@ -20,16 +22,25 @@ export DEBIAN_FRONTEND=noninteractive
 apt update -y
 apt install -y apt-transport-https ca-certificates curl vim openssh-client git jq gnupg2 lsb-release software-properties-common file
 curl -fsSLo /usr/share/keyrings/apt-releases-hashicorp-com.gpg https://apt.releases.hashicorp.com/gpg
-file /usr/share/keyrings/apt-releases-hashicorp-com.gpg
+# file /usr/share/keyrings/apt-releases-hashicorp-com.gpg
 apt-key add /usr/share/keyrings/apt-releases-hashicorp-com.gpg
 add-apt-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://dl.k8s.io/apt/doc/apt-key.gpg
-file /usr/share/keyrings/kubernetes-archive-keyring.gpg
-apt-key add /usr/share/keyrings/kubernetes-archive-keyring.gpg
-echo "deb [arch=amd64] https://apt.kubernetes.io/ kubernetes-xenial main" |  tee /etc/apt/sources.list.d/kubernetes.list
-apt update -y
-apt install -y kubectl
+# curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://dl.k8s.io/apt/doc/apt-key.gpg
+# file /usr/share/keyrings/kubernetes-archive-keyring.gpg
+# apt-key add /usr/share/keyrings/kubernetes-archive-keyring.gpg
+# echo "deb [arch=amd64] https://apt.kubernetes.io/ kubernetes-xenial main" |  tee /etc/apt/sources.list.d/kubernetes.list
+# apt update -y
+# apt install -y kubectl
 apt install -y consul=$CONSUL_VERSION vault
+
+mkdir /etc/apt/keyrings 
+# apt-get update
+# apt-get install -y apt-transport-https ca-certificates curl
+apt-get install gnupg -y
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list
+apt-get update
+apt-get install -y kubectl
 
 #assets
 git clone https://github.com/hashicorp/field-workshops-consul.git
@@ -144,6 +155,7 @@ helm repo add grafana https://grafana.github.io/helm-charts
 helm install grafana grafana/grafana -f /root/grafana-values.yaml --wait --debug
 sleep 15
 kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode > /tmp/grafana-pass.txt
+
 
 #tracing
 kubectl config use-context k8s1

@@ -4,7 +4,7 @@
 version: "3"
 containers:
 - name: workstation
-  image: ubuntu
+  image: ubuntu:20.04
   shell: /bin/bash
   environment:
     CONSUL_VERSION: 1.11.4

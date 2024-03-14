@@ -1,5 +1,6 @@
 ---
 slug: traffic-management-ingress
+id: jkyi5jdadgwy
 type: challenge
 title: 'Traffic Management: Ingress'
 teaser: Bring traffic into your mesh
