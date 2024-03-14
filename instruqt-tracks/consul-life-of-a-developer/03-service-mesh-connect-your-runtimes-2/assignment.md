@@ -1,6 +1,5 @@
 ---
 slug: service-mesh-connect-your-runtimes-2
-id: gohebeq90jxq
 type: challenge
 title: Service Mesh - Connect Your Runtimes - Part 2s
 teaser: Connect Stateful K8s Cluster

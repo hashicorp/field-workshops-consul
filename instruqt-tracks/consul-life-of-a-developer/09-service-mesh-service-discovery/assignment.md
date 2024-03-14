@@ -1,6 +1,5 @@
 ---
 slug: service-mesh-service-discovery
-id: ottonfv42lmt
 type: challenge
 title: 'Service Mesh: Service Discovery'
 teaser: Scale up & Scale Down

@@ -1,6 +1,5 @@
 ---
 slug: security-tcp
-id: we4afkvscjej
 type: challenge
 title: 'Security: TCP Traffic'
 teaser: Apply Layer 4 Intentions

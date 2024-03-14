@@ -1,6 +1,5 @@
 ---
 slug: security-http
-id: ivaovjfndkmp
 type: challenge
 title: 'Security: HTTP Traffic'
 teaser: Apply Layer 7 Intentions
