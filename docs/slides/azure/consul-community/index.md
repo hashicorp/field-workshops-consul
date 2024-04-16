@@ -9,7 +9,7 @@ count: false
 ![:scale 15%](https://hashicorp.github.io/field-workshops-assets/assets/logos/logo_consul.png)
 
 ???
-This workshop introduces students to the open-source version of Consul.
+This workshop introduces students to the community edition version of Consul.
 
 It is focused on Azure.
 
