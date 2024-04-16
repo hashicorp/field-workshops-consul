@@ -32,11 +32,11 @@ When creating slides for a new workshop, you will need to do the following:
       ]
     ```
 
-Whether you create a single-part or multi-part slide show, users will be able to access all of your slides with a URL like https://hashicorp.github.io/field-workshops-consul/slides/multi-cloud/consul-oss/index.html, but they can leave off `index.html`.
+Whether you create a single-part or multi-part slide show, users will be able to access all of your slides with a URL like https://hashicorp.github.io/field-workshops-consul/slides/multi-cloud/consul-community/index.html, but they can leave off `index.html`.
 
 If you create a multi-part slide show, users will also be able to access each part of your slide show separately at URLs like these:
-* https://hashicorp.github.io/field-workshops-consul/slides/multi-cloud/consul-oss/consul-1.html
-* https://hashicorp.github.io/field-workshops-consul/slides/multi-cloud/consul-oss/consul-2.html
+* https://hashicorp.github.io/field-workshops-consul/slides/multi-cloud/consul-community/consul-1.html
+* https://hashicorp.github.io/field-workshops-consul/slides/multi-cloud/consul-community/consul-2.html
 
 Each workshop should give the full link (or links) to that workshop's slides in one of its first few slides.
 

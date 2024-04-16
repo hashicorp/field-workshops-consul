@@ -35,7 +35,7 @@ name: consul-workshops
 ### This repository contains Consul workshops.
 * They are organized by cloud.
 * Workshops for each cloud are organized by type:
-  1. Consul OSS
+  1. Consul Community Edition
   1. Consul Enterprise
 
 ???
@@ -55,7 +55,7 @@ You can also indent one kind of list under another as done in this slide.  To ma
 name:workshop-slides
 # Viewing Workshop Slides
 #### You can view workshop slides with URLs like this:
-* https://hashicorp.github.io/field-workshops-consul/slides/multi-cloud/consul-oss/index.html
+* https://hashicorp.github.io/field-workshops-consul/slides/multi-cloud/consul-community/index.html
 * https://hashicorp.github.io/field-workshops-consul/slides/multi-cloud/consul-enterprise/index.html
 
 
