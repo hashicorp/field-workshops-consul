@@ -25,7 +25,7 @@ name: consul-workshops-slides
 # Consul GCP Workshop Slides
 ### This directory contains slides for Consul workshops intended for use with GCP.
 ### Workshops for each cloud are organized by type:
-  1. Consul OSS
+  1. Consul Community Edition
   1. Consul Enterprise
 
 ???
