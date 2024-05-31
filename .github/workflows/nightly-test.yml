@@ -20,55 +20,6 @@ env:
   GOOGLE_PROJECT_ID: ${{ vars.GOOGLE_PROJECT_ID }}
   INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
 jobs:
-  # This should be changed long term: we build a new container
-  # every night even though the majority of the time nothing changes.
-  # Figure out a way to trigger only when the source changes, or
-  # the configuration changes
-  update-cloud-client:
-    runs-on: ubuntu-latest
-    permissions: {}
-    # We add this output and set it to 1 to match all the other
-    # tests, so we don't have to special case this job
-    outputs:
-      test_runs: 1
-    env:
-      # See IL-559 for information about the setting of these
-      # variables
-      PACKER_VERSION: ${{ vars.PACKER_VERSION }}
-      TF_VERSION: ${{ vars.TF_VERSION }}
-      VAULT_VERSION: ${{ vars.VAULT_VERSION }}
-      NOMAD_VERSION: ${{ vars.NOMAD_VERSION }}
-      CONSUL_VERSION: ${{ vars.CONSUL_VERSION }}
-      CONSUL_TAG: ${{ vars.CONSUL_TAG }}
-      ENVOY_VERSION: ${{ vars.ENVOY_VERSION }}
-    steps:
-      - name: bogus
-        run: exit 0
-      - name: Checkout Source
-        id: checkout-source
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
-        with:
-          repository: hashicorp/instruqt-packer
-          token: ${{ secrets.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT }}
-          path: instruqt-packer
-          ref: ${{ vars.CONSUL_CLOUD_CLIENT_REF }}  # The ref in the repo we are targeting
-      - name: Write GCloud Key
-        id: write-gcloud-key
-        run: echo "${GCLOUD_SERVICE_KEY_JSON_BASE64}" | base64 -d > "${HOME}"/gcloud.json
-      - name: Auth to GCP
-        id: auth-to-gcp
-        run: gcloud auth activate-service-account --key-file="${HOME}/gcloud.json" --project "${GOOGLE_PROJECT_ID}"
-      - name: Configure Docker
-        id: configure-docker
-        run: |-
-          gcloud auth configure-docker
-          gcloud config set project "${GOOGLE_PROJECT_ID}"
-      - name: Build container
-        id: build-container
-        run: docker build --build-arg PACKER_VERSION="${PACKER_VERSION}" --build-arg TF_VERSION="${TF_VERSION}" --build-arg VAULT_VERSION="${VAULT_VERSION}" --build-arg NOMAD_VERSION="${NOMAD_VERSION}" --build-arg CONSUL_VERSION="${CONSUL_VERSION}" --build-arg ENVOY_VERSION="${ENVOY_VERSION}" -f instruqt-packer/consul-cloud-client-no-license/Dockerfile -t gcr.io/"${GOOGLE_PROJECT_ID}"/consul-cloud-client-no-license:"${CONSUL_TAG}" instruqt-packer/consul-cloud-client-no-license
-      - name: Push container
-        id: push-container
-        run: docker push gcr.io/"${GOOGLE_PROJECT_ID}"/consul-cloud-client-no-license:"${CONSUL_TAG}"
   consul-basics:
     uses: ./.github/workflows/instruqt-track-test.yml
     with:
@@ -93,7 +44,6 @@ jobs:
   multi-cloud-consul:
     if: false # VCDL-126: disabling testing this workshop until we can fix it
     uses: ./.github/workflows/instruqt-track-test.yml
-    needs: update-cloud-client
     with:
       working_directory: "instruqt-tracks/multi-cloud-service-networking-with-consul"
       INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
@@ -108,7 +58,6 @@ jobs:
       INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
   notify-slack:
     needs:
-      - update-cloud-client
       - consul-basics
       - service-discovery-with-consul
       - service-mesh-with-consul
