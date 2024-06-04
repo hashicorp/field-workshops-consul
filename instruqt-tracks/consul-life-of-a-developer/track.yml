@@ -16,7 +16,7 @@ developers:
 show_timer: true
 skipping_enabled: true
 idle_timeout: 3000
-timelimit: 7200
+timelimit: 14400
 lab_config:
   overlay: false
   width: 25
