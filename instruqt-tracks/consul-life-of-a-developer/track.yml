@@ -15,7 +15,7 @@ developers:
 - syed.quadri@hashicorp.com
 show_timer: true
 skipping_enabled: true
-idle_timeout: 300
+idle_timeout: 3000
 timelimit: 7200
 lab_config:
   overlay: false

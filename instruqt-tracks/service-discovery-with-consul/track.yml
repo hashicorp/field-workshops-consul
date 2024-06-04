@@ -19,6 +19,8 @@ tags:
 owner: hashicorp
 developers:
 - lance@hashicorp.com
+idle_timeout: 3000
+timelimit: 7200
 show_timer: true
 skipping_enabled: true
 lab_config:
