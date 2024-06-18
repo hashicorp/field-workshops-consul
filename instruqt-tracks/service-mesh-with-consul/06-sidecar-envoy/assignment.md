@@ -1,6 +1,5 @@
 ---
 slug: sidecar-envoy
-id: ksfkmryoazhy
 type: challenge
 title: Pop Open the Hood ⚙️
 teaser: Peek inside and learn some Envoy & Consul magic

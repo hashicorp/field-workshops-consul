@@ -1,5 +1,4 @@
-slug: wip-vcdl-943-service-mesh-with-consul
-id: teslvkeav9mx
+slug: service-mesh-with-consul
 title: Service Mesh with Consul
 teaser: Evolve from service discovery to service mesh. No more mapping IP addresses
   and ports across load balancers and firewalls. Consul Connect ensures secure connections
@@ -9,7 +8,7 @@ description: |-
   We'll dive into mesh fundamentals and use an Envoy proxy to connect our application to its database.
 icon: https://storage.googleapis.com/instruqt-frontend/assets/hashicorp/tracks/consul.png
 tags: []
-owner: hashicorp-field-ops
+owner: hashicorp
 developers:
 - lance@hashicorp.com
 - syed.quadri@hashicorp.com
@@ -25,4 +24,3 @@ lab_config:
   feedback_recap_enabled: true
   loadingMessages: true
   hideStopButton: false
-checksum: "5411679201035927917"

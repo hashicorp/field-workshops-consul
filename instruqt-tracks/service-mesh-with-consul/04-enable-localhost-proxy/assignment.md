@@ -1,6 +1,5 @@
 ---
 slug: enable-localhost-proxy
-id: jx7mcbybb3yh
 type: challenge
 title: "Enter the Meshtrix \U0001F469\U0001F3FB‍\U0001F4BB"
 teaser: Use Consul and Envoy to connect our application to a backend database

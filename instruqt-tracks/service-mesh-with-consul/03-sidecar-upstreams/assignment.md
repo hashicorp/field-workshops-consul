@@ -1,6 +1,5 @@
 ---
 slug: sidecar-upstreams
-id: lnuchprfqt2m
 type: challenge
 title: "Connect Upstream with Envoy \U0001F517"
 teaser: Add an upstream definition for our Envoy app proxy

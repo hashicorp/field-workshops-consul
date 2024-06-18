@@ -1,6 +1,5 @@
 ---
 slug: sidecar-proxies
-id: x2ewo3wqycql
 type: challenge
 title: "Introducing the Envoy Proxy \U0001F5A7"
 teaser: Run your first Connect sidecar proxy with Envoy

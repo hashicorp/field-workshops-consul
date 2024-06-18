@@ -1,6 +1,5 @@
 ---
 slug: open-and-close-the-gates
-id: xg6ebflzynha
 type: challenge
 title: "Open and Close the Gates \U0001F511\U0001F6AA"
 teaser: Use Consul intentions to allow or deny proxy traffic based on application

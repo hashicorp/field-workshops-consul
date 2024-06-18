@@ -1,6 +1,5 @@
 ---
 slug: sidecar-services
-id: 86vo82xjqig5
 type: challenge
 title: "Get Into My Sidecar \U0001F697"
 teaser: Create a sidecar service definition for your application proxy
