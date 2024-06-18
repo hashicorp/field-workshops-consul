@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 /*
 Using the AzCLI, accept the offer terms prior to deployment. This only
 need to be done once per subscription
@@ -7,7 +10,7 @@ az vm image terms accept --urn paloaltonetworks:vmseries1:bundle1:latest
 */
 
 provider "azurerm" {
-  version = "=2.13.0"
+  version = "=3.72.0"
   features {}
 }
 
@@ -71,7 +74,7 @@ resource "azurerm_network_interface" "VNIC0" {
   ip_configuration {
     name                          = join("", list("ipconfig", "0"))
     subnet_id                     = data.terraform_remote_state.vnet.outputs.mgmt_subnet
-    private_ip_address_allocation = "static"
+    private_ip_address_allocation = "Static"
     private_ip_address            = var.IPAddressMgmtNetwork
     public_ip_address_id          = azurerm_public_ip.PublicIP_0.id
   }
@@ -91,7 +94,7 @@ resource "azurerm_network_interface" "VNIC1" {
   ip_configuration {
     name                          = join("", list("ipconfig", "1"))
     subnet_id                     = data.terraform_remote_state.vnet.outputs.internet_subnet
-    private_ip_address_allocation = "static"
+    private_ip_address_allocation = "Static"
     private_ip_address            = var.IPAddressInternetNetwork
     public_ip_address_id          = azurerm_public_ip.PublicIP_1.id
   }
@@ -111,7 +114,7 @@ resource "azurerm_network_interface" "VNIC2" {
   ip_configuration {
     name                          = join("", list("ipconfig", "2"))
     subnet_id                     = data.terraform_remote_state.vnet.outputs.dmz_subnet
-    private_ip_address_allocation = "static"
+    private_ip_address_allocation = "Static"
     private_ip_address            = var.IPAddressDmzNetwork
   }
 
@@ -130,7 +133,7 @@ resource "azurerm_network_interface" "VNIC3" {
   ip_configuration {
     name                          = join("", list("ipconfig", "3"))
     subnet_id                     = data.terraform_remote_state.vnet.outputs.app_subnet
-    private_ip_address_allocation = "static"
+    private_ip_address_allocation = "Static"
     private_ip_address            = var.IPAddressAppNetwork
   }
 
@@ -140,7 +143,10 @@ resource "azurerm_network_interface" "VNIC3" {
 }
 
 resource "azurerm_virtual_machine" "PAN_FW_FW" {
-  name                = "vmPANW-${random_id.suffix.dec}"
+  # IMPORTANT: IL-843 the Terraform resource name and the Azure
+  # VM name must match for our track setup script to clean up
+  # when Azure fails to make a VM
+  name                = "PAN_FW_FW"
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location
   resource_group_name = data.terraform_remote_state.vnet.outputs.resource_group_name
   vm_size             = "Standard_D3_v2"
@@ -166,7 +172,10 @@ resource "azurerm_virtual_machine" "PAN_FW_FW" {
   }
 
   storage_os_disk {
-    name          = join("", list("vmPANW-${random_id.suffix.dec}", "-osDisk"))
+    # IMPORTANT: IL-843 the os disk name must be
+    # "<tf resource name>-disk" for our Azure cleanup script to
+    # work
+    name          = "PAN_FW_FW-disk"
     vhd_uri       = "${azurerm_storage_account.PAN_FW_STG_AC.primary_blob_endpoint}vhds/vmPANW-${random_id.suffix.dec}-${var.fwOffer}-${var.fwSku}.vhd"
     caching       = "ReadWrite"
     create_option = "FromImage"
@@ -187,5 +196,12 @@ resource "azurerm_virtual_machine" "PAN_FW_FW" {
 
   os_profile_linux_config {
     disable_password_authentication = false
+  }
+  
+  timeouts {
+    create = "60m"
+    read   = "60m"
+    update = "60m"
+    delete = "60m"
   }
 }

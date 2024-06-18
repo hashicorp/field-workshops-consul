@@ -1,5 +1,7 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 slug: f5-hashicorp-app-mod-tf-consul
-id: mi8hobhrlh96
 version: 0.0.1
 type: track
 title: 'DEPRECATED: F5 & HashiCorp - App Modernization with Terraform & Consul'
@@ -18,7 +20,6 @@ show_timer: true
 skipping_enabled: true
 challenges:
 - slug: provision-azure-vnets
-  id: tmsnsut54k9f
   type: challenge
   title: Provision Azure VNETs
   teaser: Deploy basic network infrastructure using Terraform
@@ -66,7 +67,6 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: provision-core-services
-  id: gipovssxptby
   type: challenge
   title: Provision Core Services
   teaser: Provision Vault, HCS, and AKS using Terraform
@@ -125,7 +125,6 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: provision-f5
-  id: tddd2tm78rzu
   type: challenge
   title: Provision F5
   teaser: Provision an F5 BIG-IP VE using Terraform
@@ -179,7 +178,6 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: validate-hcs
-  id: zkxpyr3mokid
   type: challenge
   title: Validate HCS
   teaser: Verify Vault, HCS, and Consul are operational
@@ -295,7 +293,6 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: deploy-legacy-environments
-  id: pp5dlxxhxsxu
   type: challenge
   title: Deploy Legacy environments
   teaser: Migrate an existing VM based application to the cloud.
@@ -383,7 +380,6 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: review-legacy-environment
-  id: uduxezyej08m
   type: challenge
   title: Review legacy environment
   teaser: Review the components of the legacy application
@@ -533,7 +529,6 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: scale-the-application
-  id: xlknkvvmbhdz
   type: challenge
   title: Scale the application
   teaser: Let Consul take care of routine adds/moves/changes of services instances.
@@ -639,7 +634,6 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: deploy-consul-in-aks
-  id: kl3g4mrevbng
   type: challenge
   title: Deploy Consul in AKS
   teaser: Installing Consul in Kubernetes based environments is easy!
@@ -735,7 +729,6 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: deploy-app-in-k8s
-  id: 6jjypzuphebv
   type: challenge
   title: Deploy App in k8s
   teaser: Deploy a microservices based application into the service mesh.
@@ -841,7 +834,6 @@ challenges:
   difficulty: basic
   timelimit: 3000
 - slug: test-app-in-k8s
-  id: z9j7j1geznsv
   type: challenge
   title: Test App in k8s
   teaser: Access your Consul service mesh with BIG-IP
@@ -915,4 +907,3 @@ challenges:
     url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/master/instruqt-tracks/f5-hashicorp-app-mod-tf-consul/assets/diagrams/final-architecture.html
   difficulty: basic
   timelimit: 3000
-checksum: "525297045720659159"

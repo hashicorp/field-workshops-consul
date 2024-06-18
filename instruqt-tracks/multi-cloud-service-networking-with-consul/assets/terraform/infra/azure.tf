@@ -1,10 +1,14 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "azurerm_resource_group" "instruqt" {
   name     = "instruqt-${random_string.env.result}"
-  location = "West US 2"
+  location = "West US 3"
 }
 
 module "azure-shared-svcs-network" {
   source              = "Azure/network/azurerm"
+  version             = "3.5.0"
   vnet_name           = "shared-svcs-vnet"
   resource_group_name = azurerm_resource_group.instruqt.name
   address_space       = "10.1.0.0/16"
@@ -18,6 +22,7 @@ module "azure-shared-svcs-network" {
 
 module "azure-app-network" {
   source              = "Azure/network/azurerm"
+  version             = "3.5.0"
   resource_group_name = azurerm_resource_group.instruqt.name
   vnet_name           = "app-vnet"
   address_space       = "10.2.0.0/16"

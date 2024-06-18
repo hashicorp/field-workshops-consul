@@ -1,20 +1,25 @@
 #!/bin/bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
+set -eo pipefail
+
 
 #wait for box
 sleep 30
 
 #hashicorp packages
 curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 
 #azure packages
 curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo apt-key add -
 AZ_REPO=$(lsb_release -cs)
-sudo apt-add-repository "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main"
+sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main"
 
 #install packages
 sudo apt update -y
-sudo apt install azure-cli consul-enterprise=1.10.2+ent vault-enterprise=1.8.0+ent nomad-enterprise=1.0.4+ent docker.io jq unzip -y
+sudo apt install azure-cli consul-enterprise=$CONSUL_VERSION vault-enterprise=$VAULT_VERSION nomad-enterprise=$NOMAD_VERSION docker.io jq unzip -y
 
 #pgk checks
 #azure cli

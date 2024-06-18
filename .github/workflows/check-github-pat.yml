@@ -1,0 +1,86 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+name: hashicorp/field-workshops-consul/check-github-pat
+on:
+  workflow_dispatch:
+  schedule:
+  # This is UTC
+  - cron: 37 4 * * *
+permissions: {}
+jobs:
+  check-pat:
+    runs-on: ubuntu-latest
+    steps:
+      # https://github.blog/changelog/2021-07-26-expiration-options-for-personal-access-tokens/
+      # When you make an API request with a PAT a new response header is made, with the 
+      # expiration of the PAT used to make the call, e.g.
+      # github-authentication-token-expiration: 2023-04-26 14:51:38 -0400
+      - name: Build Message
+        id: build-message
+        shell: python
+        env:
+          GITHUB_TOKEN: ${{ secrets.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT }}
+        run: |-
+          import datetime
+          import json
+          import os
+          import requests
+          pat = os.environ.get('GITHUB_TOKEN')
+          api = requests.get('${{ github.api_url }}/user', headers={"Authorization": f'Bearer {pat}'})
+          expiry_header = api.headers['github-authentication-token-expiration']
+          user_info = api.json()
+          user_name = user_info['login']
+          user_uri = user_info['html_url']
+          # I'm going to find whomever at Github is responsible for it and smack
+          # them with a copy of ISO-8601 until they feel bad for this date format
+          expiry_date = datetime.datetime.strptime(expiry_header.split(' ')[0], '%Y-%m-%d')
+          now = datetime.date.today()
+          time_left = expiry_date.date() - now
+          days_left = time_left.days
+          print(f"PAT has {days_left} days left")
+          # Set some output to trigger the Slack step
+          gho = open(os.environ.get('GITHUB_OUTPUT'), 'a')
+          gho.writelines([f'days_left={days_left}\n'])
+          gho.writelines([f'user_name={user_name}\n', f'user_uri={user_uri}\n'])
+          if days_left <= ${{ vars.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT_MIN_REMAINING_LIFE_DAYS }}:
+            gho.writelines(['do_notify=true\n'])
+          else:
+            gho.writelines(['do_notify=false\n'])
+          gho.close()
+      - name: Notify Slack
+        id: notify-slack
+        if: ${{ steps.build-message.outputs.do_notify == 'true' }}
+        uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
+        with:
+          channel-id: ${{ vars.SLACK_NOTIFICATION_CHANNELS }}
+          payload: |-
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":exclamation:  Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }} #${{ github.run_number }}> *ALERT*"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "The GitHub Personal Action Token HC_GITHUB_SOLUTIONS_ENGINEERING_PAT has ${{ steps.build-message.outputs.days_left }} days left, less than ${{ vars.HC_GITHUB_SOLUTIONS_ENGINEERING_PAT_MIN_REMAINING_LIFE_DAYS }}. See IL-559 for information on how to renew it"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "The PAT is associated with <${{ steps.build-message.outputs.user_uri }}|${{ steps.build-message.outputs.user_name}}>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

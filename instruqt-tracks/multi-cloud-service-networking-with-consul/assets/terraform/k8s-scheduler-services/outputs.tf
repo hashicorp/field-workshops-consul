@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "gcp_gke_cluster_react_name" {
   value = google_container_cluster.react.name
 }

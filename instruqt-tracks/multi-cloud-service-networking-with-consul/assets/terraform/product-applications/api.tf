@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 data "azurerm_image" "ubuntu" {
   name_regex          = "hashistack-*"
   resource_group_name = "packer"

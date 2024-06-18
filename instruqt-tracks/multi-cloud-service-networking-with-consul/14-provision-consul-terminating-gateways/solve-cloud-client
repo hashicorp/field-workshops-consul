@@ -1,19 +1,9 @@
 #!/bin/bash
+set -euvxo pipefail
 
 #creds
 vault login -method=userpass username=admin password=admin
 export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
-
-#cts
-sgid=$(terraform output -state /root/terraform/cache-services/terraform.tfstate elasticache_sg)
-cat << EOF > /root/terraform/tgw/security_input.tfvars
-security_group_id="${sgid}"
-EOF
-consul acl policy create -name cts -rules @/root/policies/consul/cts.hcl
-vault write consul/roles/cts policies=cts
-cd /root/terraform/cts
-terraform apply -auto-approve 2>&1 | tee terraform.out
-sleep 120
 
 #tgw
 consul acl policy create -name aws-terminating-gateway -rules @/root/policies/consul/aws-tgw.hcl
@@ -22,6 +12,91 @@ consul acl policy create -name azure-terminating-gateway -rules @/root/policies/
 vault write consul/roles/azure-tgw policies=azure-terminating-gateway
 cd /root/terraform/tgw
 terraform apply -auto-approve 2>&1 | tee terraform.out
-sleep 120
+
+# IL-613
+# Wait until services are up and running
+
+n=1
+while /bin/true; do
+    echo "Checking aws tgw token, loop ${n}"
+    output=$(vault read consul/creds/aws-tgw 2>&1)
+    rc=$?
+    if [ $rc -ne 0 ]
+    then
+      echo "Error checking Consul AWS TGW acl token, return code ${rc}: ${output}"
+      sleep 10
+      n=$(( n + 1 ))
+    else
+      # If we get here, we were successful
+      break
+    fi
+done
+
+
+n=1
+while /bin/true; do
+    echo "Checking azure tgw token, loop ${n}"
+    output=$(vault read consul/creds/azure-tgw 2>&1)
+    rc=$?
+    if [ $rc -ne 0 ]
+    then
+      echo "Error checking Consul Azure TGW acl token, return code ${rc}: ${output}"
+      sleep 10
+      n=$(( n + 1 ))
+    else
+      # If we're here, we were successful
+      break
+    fi
+done
+
+CONSUL_TOKEN=$(vault kv get -field master_token kv/consul)
+
+#aws
+n=1
+while /bin/true; do
+    echo "Checking AWS TGW, loop ${n}"
+    aws_tgw=$(curl -s -H "X-Consul-Token: ${CONSUL_TOKEN}" "${CONSUL_HTTP_ADDR}/v1/health/service/aws-us-east-1-terminating-gateway?dc=aws-us-east-1&passing=true")
+    count=$(echo "${aws_tgw}" | jq '. | length')
+    if [ "${count}" != "1" ]; then
+      echo "AWS TGW is not healthy, got ${count}"
+      sleep 10
+      n=$(( n + 1 ))
+    else
+      # If we got here, we were successful
+      break
+    fi
+done
+
+#azure
+n=1
+while /bin/true; do
+    echo "Checking Azure TGW, loop ${n}"
+    azure_tgw=$(curl -s -H "X-Consul-Token: ${CONSUL_TOKEN}" "${CONSUL_HTTP_ADDR}/v1/health/service/azure-west-us-2-terminating-gateway?dc=azure-west-us-2&passing=true")
+    count=$(echo "${azure_tgw}" | jq '. | length')
+    if [ "${count}" != "1" ]; then
+      echo "Azure TGW is not healthy, got ${count}"
+      sleep 10
+      n=$(( n + 1 ))
+    else
+      # If we got here, we were successful
+      break
+    fi
+done
+
+#cts
+n=1
+while /bin/true; do
+    echo "cts sg check, loop ${n}"
+    cts_sg=$(aws ec2 describe-security-groups --filter Name="group-id",Values="$(terraform output -state /root/terraform/cache-services/terraform.tfstate elasticache_sg)" | jq '.SecurityGroups[0].IpPermissions[0].IpRanges | length')
+    if [ "${cts_sg}" != "2" ]; then
+      echo "CTS did not work. Expecting 2 SG rules, got ${cts_sg}."
+      sleep 10
+      n=$(( n + 1 ))
+    else
+      # If we got here, we were successful
+      break
+    fi
+done
+# IL-613
 
 exit 0

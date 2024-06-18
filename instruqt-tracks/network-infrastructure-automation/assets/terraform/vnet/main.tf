@@ -1,13 +1,16 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 provider "azurerm" {
-  version = "=2.13.0"
+  version = "=3.72.0"
   features {}
 }
 
 resource "random_string" "participant" {
-  length  = 4
-  special = false
-  upper   = false
-  number  = false
+  length   = 4
+  special  = false
+  upper    = false
+  numeric  = false
 }
 
 resource "azurerm_resource_group" "instruqt" {
@@ -17,6 +20,7 @@ resource "azurerm_resource_group" "instruqt" {
 
 module "shared-svcs-network" {
   source              = "Azure/network/azurerm"
+  version             = "3.5.0"
   vnet_name           = "shared-svcs-vnet"
   resource_group_name = azurerm_resource_group.instruqt.name
   address_space       = "10.2.0.0/16"
@@ -30,6 +34,7 @@ module "shared-svcs-network" {
 
 module "app-network" {
   source              = "Azure/network/azurerm"
+  version             = "3.5.0"
   resource_group_name = azurerm_resource_group.instruqt.name
   vnet_name           = "app-vnet"
   address_space       = "10.3.0.0/16"
@@ -62,44 +67,47 @@ resource "azurerm_network_interface" "bastion" {
   }
 }
 
-resource "azurerm_virtual_machine" "bastion" {
+resource "azurerm_linux_virtual_machine" "bastion" {
   name                  = "bastion-vm"
   location              = azurerm_resource_group.instruqt.location
   resource_group_name   = azurerm_resource_group.instruqt.name
   network_interface_ids = [azurerm_network_interface.bastion.id]
-  vm_size               = "Standard_D1_v2"
+  size                  = "Standard_DS1_v2"
 
-  delete_os_disk_on_termination    = true
-  delete_data_disks_on_termination = true
-
-  storage_image_reference {
+  source_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-LTS-gen2"
     version   = "latest"
   }
-  storage_os_disk {
-    name              = "bastion-disk"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
-  os_profile {
-    computer_name  = "bastion"
-    admin_username = "azure-user"
+
+  os_disk {
+    name                 = "bastion-disk"
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
   }
 
-  os_profile_linux_config {
-    disable_password_authentication = true
-    ssh_keys {
-      path     = "/home/azure-user/.ssh/authorized_keys"
-      key_data = var.ssh_public_key
-    }
+  computer_name  = "bastion"
+  admin_username = "azure-user"
+  
+  disable_password_authentication = true
+
+  admin_ssh_key {
+    username   = "azure-user"
+    public_key = var.ssh_public_key
   }
 
   tags = {
     environment = "staging"
   }
+  
+  timeouts {
+    create = "60m"
+    read   = "60m"
+    update = "60m"
+    delete = "60m"
+  }
+
 }
 
 resource "azurerm_network_security_group" "bastion" {

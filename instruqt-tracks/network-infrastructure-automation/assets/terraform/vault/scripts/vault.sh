@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 apt-get update -y
 apt-get install -y docker.io
@@ -14,7 +17,7 @@ services:
     container_name: vault
     network_mode: host
     restart: always
-    image: vault
+    image: hashicorp/vault
     environment:
       - VAULT_DEV_ROOT_TOKEN_ID=root
 EOF

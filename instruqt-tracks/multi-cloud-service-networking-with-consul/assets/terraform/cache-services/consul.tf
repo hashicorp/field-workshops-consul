@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "consul_node" "aws-elastic-cache" {
   name    = "aws-elastic-cache"
   address = aws_elasticache_cluster.redis.cache_nodes.0.address

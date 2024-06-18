@@ -1,6 +1,5 @@
 ---
 slug: provision-consul-esms
-id: 9qiusk38hnuv
 type: challenge
 title: Provision Consul ESMs
 teaser: Create health checks for external services
@@ -29,11 +28,11 @@ tabs:
   port: 8500
 - title: Lab Architecture
   type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/blob/master/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
 difficulty: basic
 timelimit: 300
 ---
-In this assignment you will provision Consul External Services Monitors (ESMs) to health check services that do not run Consul agents. <br>
+In this assignment you will provision Consul External Services Monitors (ESMs) to health check services that do not run Consul agents. And control AWS SGs with Consul CTS. <br>
 
 Cloud managed services are common targets for external services monitoring. <br>
 
@@ -56,7 +55,7 @@ consul acl policy create -name consul-esm -rules @/root/policies/consul/consul-e
 vault write consul/roles/esm policies=consul-esm
 ```
 
-Inspect the Terraform code and provision the external monitoring.
+Inspect the Terraform code and provision the external monitoring. <br>
 
 ```
 terraform plan
@@ -73,6 +72,13 @@ ESM services are now available in your Consul datacenters. <br>
 ```
 consul catalog services -datacenter=aws-us-east-1
 consul catalog services -datacenter=azure-west-us-2
+```
+Finally, remember that we setup CTS in the previous assignment? This is so once ESM is deployed, its info is automatically added to the service's 'ingress' security groups rules so it can monitor its health etc. <br>
+
+Run the following command to check if the private IP of ESM that terraform outputed is now in the security group <br>
+
+```
+aws ec2 describe-security-groups --filter Name="group-id",Values="$(terraform output -state /root/terraform/cache-services/terraform.tfstate elasticache_sg)"
 ```
 
 In the next assignments you will provision cloud managed services and configure them for Consul ESM monitoring.

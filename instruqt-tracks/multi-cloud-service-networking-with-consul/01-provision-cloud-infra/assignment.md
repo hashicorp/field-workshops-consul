@@ -1,6 +1,5 @@
 ---
 slug: provision-cloud-infra
-id: ccwufsr2wdfz
 type: challenge
 title: Provision Cloud Infrastructure
 teaser: Create cloud VPCs
@@ -28,7 +27,7 @@ tabs:
   path: /root/packer
 - title: Lab Architecture
   type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/blob/master/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
 difficulty: basic
 timelimit: 300
 ---

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_security_group" "consul" {
   name        = "${random_id.environment_name.hex}-consul-sg"
   description = "Consul servers"

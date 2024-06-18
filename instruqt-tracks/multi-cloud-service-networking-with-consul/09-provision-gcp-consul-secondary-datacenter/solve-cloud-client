@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euvxo pipefail
 
 #provision K8s clusters
 export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)
@@ -6,10 +7,15 @@ terraform apply -auto-approve 2>&1 | tee terraform.out
 
 sleep 15
 
+# IL-378
+for kubevar in $(env | awk -F=  '/^KUBERNETES_/ { print $1;};'); do unset $kubevar; done
+
 #helm config
 gcloud container clusters get-credentials \
   $(terraform output -state /root/terraform/gcp-consul-secondary/terraform.tfstate gcp_gke_cluster_shared_name) \
   --region us-central1-a
+# extract kubernetes API server address for helm deployment before renaming the context to be human friendly
+export KUBE_API_SERVER_CONSUL=$(kubectl config view -o jsonpath="{.clusters[?(@.name == \"$(kubectl config current-context)\")].cluster.server}")
 kubectl config rename-context $(kubectl config current-context) shared
 kubectl config use-context shared
 
@@ -39,7 +45,7 @@ sleep 5
 
 #license & helm install
 kubectl create secret generic consul-ent-license --from-literal="key=$(cat /etc/consul.hclic)"
-helm install hashicorp hashicorp/consul -f /root/helm/gke-consul-values.yaml --debug --wait --version 0.33.0
+helm install hashicorp hashicorp/consul -f /root/helm/gke-consul-values.yaml --set global.federation.k8sAuthMethodHost=$KUBE_API_SERVER_CONSUL --debug --wait --version 0.49.8
 sleep 60
 
 exit 0

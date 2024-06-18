@@ -1,20 +1,27 @@
-version: "2"
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
+version: "3"
 containers:
 - name: workstation
-  image: ubuntu
+  image: ubuntu:20.04
   shell: /bin/bash
+  environment:
+    CONSUL_VERSION: 1.11.4
+    CONSUL_HELM_VERSION: v0.41.1
+    VAULT_HELM_VERSION: v0.23.0
   ports:
   - 8500
   memory: 1024
 virtualmachines:
 - name: k8s2
-  image: instruqt/k3s-v1-20-4
+  image: instruqt/k3s-v1-21-1
   shell: /bin/bash
   environment:
     CONSUL_HTTP_ADDR: http://127.0.0.1:30085
   machine_type: n1-standard-4
 - name: k8s1
-  image: instruqt/k3s-v1-20-4
+  image: instruqt/k3s-v1-21-1
   shell: /bin/bash
   environment:
     CONSUL_HTTP_ADDR: http://127.0.0.1:30085

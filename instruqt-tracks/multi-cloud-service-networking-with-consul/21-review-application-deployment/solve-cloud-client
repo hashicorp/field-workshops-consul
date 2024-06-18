@@ -1,16 +1,35 @@
 #!/bin/bash
+set -euvxo pipefail
 
 #check db
-export PGPASSWORD=$(terraform output -state /root/terraform/database-services/terraform.tfstate postgres_password)
-psql -U postgres@$(terraform output -state /root/terraform/infra/terraform.tfstate env) \
-  -d postgres \
-  -h $(terraform output -state /root/terraform/database-services/terraform.tfstate postgres_fqdn) \
-  -c 'SELECT * FROM coffees' \
-  -a
+n=0
+until [ $n -ge 5 ]; do
+    export PGPASSWORD=$(terraform output -state /root/terraform/database-services/terraform.tfstate postgres_password)
+    psql -U postgres \
+      -d postgres \
+      -h $(terraform output -state /root/terraform/database-services/terraform.tfstate postgres_fqdn) \
+      -c 'SELECT * FROM coffees' \
+      -a && break
+    n=$[$n+1]
+    sleep 20
+done
+if [ $n -ge 5 ]; then
+    echo "Postgres fails"
+    exit 1
+fi
 
 #check queue
-ssh -i ~/.ssh/id_rsa ubuntu@$(terraform output -state /root/terraform/infra/terraform.tfstate aws_bastion_ip) \
-  "redis-cli -h \
-  $(terraform output -state /root/terraform/cache-services/terraform.tfstate -json aws_elasticache_cache_nodes | jq -r .[0].address) -p 6379 keys '*'"
+n=0
+until [ $n -ge 5 ]; do
+    ssh -i ~/.ssh/id_rsa ubuntu@$(terraform output -state /root/terraform/tgw/terraform.tfstate aws_tgw_public_ip) \
+      "redis-cli -h \
+      $(terraform output -state /root/terraform/cache-services/terraform.tfstate -json aws_elasticache_cache_nodes | jq -r .[0].address) -p 6379 keys '*'" && break
+    n=$[$n+1]
+    sleep 20
+done
+if [ $n -ge 5 ]; then
+    echo "queue check fails"
+    exit 1
+fi
 
 exit 0

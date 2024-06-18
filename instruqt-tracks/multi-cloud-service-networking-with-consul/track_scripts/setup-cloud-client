@@ -1,8 +1,53 @@
 #!/bin/bash
+set -euvxo pipefail
+
+# Note: override these when testing from a different repo and/or branch
+#       The `-b` option to `git clone` is useful for pulling from the
+#       non-default branch
+
+ASSET_REPO="https://github.com/hashicorp/field-workshops-consul.git"
+ASSET_REPO_FETCH_OPTIONS=""
+
+AWS_DEFAULT_REGION="us-east-1"
+# END OPTIONS
+
+while [ ! -f /opt/instruqt/bootstrap/host-bootstrap-completed ]
+do
+    echo "Waiting for Instruqt to finish booting the virtual machine"
+    sleep 1
+done
+
+echo "##### INSTRUQT PARTICIPANT ID ${INSTRUQT_PARTICIPANT_ID}"
+
+#make vault run in instruqt container
+setcap cap_ipc_lock= /usr/bin/vault
+
+# Override licenses from those in Instruqt Secrets
+# This trick with awk keeps the contents of the secret
+# environment variables from being logged
+echo "Writing license files from instruqt secrets"
+awk 'BEGIN {print ENVIRON["HC_CONSUL_LICENSE"]}' > /etc/consul.hclic < /dev/null
+awk 'BEGIN {print ENVIRON["HC_VAULT_LICENSE"]}' > /etc/vault.hclic < /dev/null
+
+#check licenses
+echo "checking licenses..."
+vault license inspect /etc/vault.hclic
+if [ $? -ne 0 ]
+then
+  fail-message "Vault license is not valid."
+  exit 1
+fi
+consul license inspect /etc/consul.hclic
+if [ $? -ne 0 ]
+then
+  fail-message "Consul license is not valid."
+  exit 1
+fi
 
 #get assets
 echo "cloning assets..."
-git clone -b f-add-cts https://github.com/hashicorp/field-workshops-consul.git
+echo "git clone ${ASSET_REPO_FETCH_OPTIONS} ${ASSET_REPO}"
+git clone ${ASSET_REPO_FETCH_OPTIONS} ${ASSET_REPO}
 cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/terraform .
 cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/packer .
 cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/apps .
@@ -11,12 +56,21 @@ cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with
 cp -r field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/scripts .
 rm -rf field-workshops-consul
 
+# IL-378
+# This looks weird Because Quoting(TM)
+echo 'for kubevar in $(env | awk -F=  '"'"'/^KUBERNETES_/ { print $1;};'"'"'); do unset $kubevar; done' >> /root/.bashrc
+
+# IL-522 - Fix GKE auth in Multi-Cloud Workshop
+echo 'export USE_GKE_GCLOUD_AUTH_PLUGIN=True' >> /root/.bashrc
+# END IL-522
+
 # Ensure we load /etc/profile.d/instruqt-env.sh
 echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
+set +v
 source /root/.bashrc
+set -euvo pipefail
 
-#wait at least five minutes for Azure User to propagate
-#az upgrade -y
+# Azure account setup
 az account clear
 echo "Logging in with Azure SPN..."
 n=0
@@ -31,28 +85,34 @@ if [ $n -ge 5 ]; then
   exit 1
 fi
 
-#wait more because Azure
-echo "Waiting extra for Azure..."
-sleep 180
-
 #aws setup
-aws configure set default.region us-east-1
-aws ec2 create-default-vpc
+aws configure set default.region ${AWS_DEFAULT_REGION}
+# IL-802 we may get AWS accounts with default VPCs already in there, so
+# check before we do this
+aws ec2 describe-vpcs
+if [ "$(aws ec2 describe-vpcs --region ${AWS_DEFAULT_REGION} | jq '[.Vpcs[]|select (.IsDefault == true)]|length')" != "1" ]; then
+    echo "Creating default vpc"
+    aws ec2 create-default-vpc
+else
+    echo "Default vpc already exists in AWS ${AWS_DEFAULT_REGION}"
+fi
 
 #azure packer setup
-az group create -l westus2 -n packer
-
-#cloud client packages - already on machine now with packer
-#apt update -y
-#apt install software-properties-common -y
-#curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
-#apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-#apt update -y
-#apt install terraform=0.13.5 packer=1.7.0 consul-enterprise=1.10.0+ent vault-enterprise=1.7.1+ent nomad-enterprise=1.0.4+ent libcap-dev jq redis-server -y
-
-#jwt validation
-apt install npm -y
-npm install -g jwt-cli
+echo "azure packer setup"
+n=0
+until [ $n -ge 5 ]; do
+    az group create -l westus3 -n packer
+    if [ $? -ne 0 ]; then
+	n=$[$n+1]
+	sleep 60
+    else
+	break
+    fi
+done
+if [ $n -ge 5 ]; then
+    fail-message "azure packer setup failed"
+    exit 1
+fi
 
 #tf creds
 echo 'export GOOGLE_CREDENTIALS=$(echo $INSTRUQT_GCP_PROJECT_CONSUL_SERVICE_ACCOUNT_KEY | base64 -d)' >> /root/.bashrc
@@ -65,9 +125,6 @@ cat << EOF > ~/.ssh/config
 Host *
     StrictHostKeyChecking no
 EOF
-
-#make vault run in instruqt container
-setcap cap_ipc_lock= /usr/bin/vault
 
 #optimistic provisioning
 
@@ -121,7 +178,6 @@ nohup terraform apply -auto-approve 2>&1 | tee nohup.out &
 echo "Provisoning AWS ElastiCache..."
 cd /root/terraform/cache-services
 terraform init
-AWS_CONSUL_IP=$(terraform output -state /root/terraform/aws-consul-primary/terraform.tfstate aws_consul_public_ip)
 cat << EOF > /root/terraform/cache-services/terraform.tfvars
 consul_http_addr="http://127.0.0.1:8500"
 EOF
@@ -131,14 +187,13 @@ nohup terraform apply -target=aws_elasticache_cluster.redis -auto-approve 2>&1 |
 echo "Provisoning Azure PostgreSQL..."
 cd /root/terraform/database-services
 terraform init
-AZURE_CONSUL_IP=$(terraform output -state /root/terraform/azure-consul-secondary/terraform.tfstate azure_consul_public_ip)
 cat << EOF > /root/terraform/database-services/terraform.tfvars
 consul_http_addr="http://127.0.0.1:8500"
 EOF
 nohup terraform apply -target=azurerm_postgresql_flexible_server.postgres -auto-approve 2>&1 | tee nohup.out &
 
 #wait for packer images
-
+wait
 #aws
 echo "Checking AWS Images"
 n=0
@@ -162,8 +217,10 @@ n=0
 until [ $n -ge 5 ]; do
   echo "Fetching Azure Image..."
   azure_vm=$(az image list -g packer | jq -r .[0].tags.name)
-  if [ "${azure_vm}" = "Hashistack" ]; then
-    break
+  if [ $? -eq 0 ]; then
+      if [ "${azure_vm}" = "Hashistack" ]; then
+	break
+      fi
   fi
   n=$[$n+1]
   sleep 60
@@ -182,8 +239,6 @@ cat << EOF > /root/terraform/vault/terraform.tfvars
 ssh_public_key="${pubkey}"
 EOF
 terraform apply -auto-approve 2>&1 | tee terraform.out
-echo "Waiting for Vault..."
-sleep 300
 
 #run pre-flight checks
 echo "Running pre-flight checks..."
@@ -192,23 +247,49 @@ echo "Running pre-flight checks..."
 
 #aws vpc
 echo "Checking AWS VPCs"
-aws_vpc=$(aws ec2 describe-vpcs | jq '[.. |."State"? | select(. == "available")] | length')
-if [ "${aws_vpc}" != "3" ]; then
-  fail-message "AWS VPCs did not provision successful."
-  exit 1
+aws ec2 describe-vpcs
+
+n=0
+until [ $n -ge 5 ]; do
+    aws_vpc_count=$(aws ec2 describe-vpcs | jq '[.. |."State"? | select(. == "available")] | length')
+    echo "aws_vpc_count is ${aws_vpc_count}"
+    # 3 = 2 created + 1 default
+    if [ "${aws_vpc_count}" != "3" ]; then
+	fail-message "Not enough aws VPCs"
+	sleep 60
+	n=$[$n+1]
+	continue
+    fi
+    break
+done
+if [ $n -ge 5 ]; then
+    fail-message "AWS VPC check failed"
+    exit 1
 fi
 
 #azure vpc
 echo "Verifying Azure VNETs"
-rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
-vnet_count=$(az network vnet list -g "${rg}" | jq '. | length')
-if [ -z "$vnet_count" ]; then
-      fail-message "Could not get Azure VNets. Check your Terraform."
-      exit 1
-fi
-if [ "$vnet_count" != "2" ]; then
-  fail-message "Azure VNETs did not provision successful."
-  exit 1
+n=0
+until [ $n -ge 5 ]; do
+    rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
+    vnet_count=$(az network vnet list -g "${rg}" | jq '. | length')
+    if [ -z "$vnet_count" ]; then
+	fail-message "Could not get Azure VNets. Check your Terraform."
+	sleep 60
+	n=$[$n+1]
+	continue
+    fi
+    if [ "$vnet_count" != "2" ]; then
+      fail-message "Azure VNETs did not provision successful."
+      sleep 60
+      n=$[$n+1]
+      continue
+    fi
+    break
+done
+if [ $n -ge 5 ]; then
+    fail-message "Azure VNET check failed"
+    exit 1
 fi
 
 #gcp vpc
@@ -235,23 +316,35 @@ then
 fi
 
 #check azure roles
-rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
-az identity show \
-  --name consul-$(terraform output -state /root/terraform/infra/terraform.tfstate env) \
-  --resource-group "${rg}"
-if [ $? -ne 0 ]
-then
-  fail-message "Error getting Azure Consul IAM role"
-  exit 1
-fi
-rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
-az identity show \
-  --name product-api-$(terraform output -state /root/terraform/infra/terraform.tfstate env) \
-  --resource-group "${rg}"
-if [ $? -ne 0 ]
-then
-  fail-message "Error getting Azure Consul IAM role"
-  exit 1
+n=0
+until [ $n -ge 5 ]; do
+    rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
+    az identity show \
+      --name consul-$(terraform output -state /root/terraform/infra/terraform.tfstate env) \
+      --resource-group "${rg}"
+    if [ $? -ne 0 ]
+    then
+      fail-message "Error getting Azure Consul IAM role"
+      n=$[$n+1]
+      sleep 60
+      continue
+    fi
+    rg=$(terraform output -state /root/terraform/infra/terraform.tfstate azure_rg_name)
+    az identity show \
+      --name product-api-$(terraform output -state /root/terraform/infra/terraform.tfstate env) \
+      --resource-group "${rg}"
+    if [ $? -ne 0 ]
+    then
+      fail-message "Error getting Azure Consul IAM role"
+      n=$[$n+1]
+      sleep 60
+      continue
+    fi
+    break
+done
+if [ $n -ge 5 ]; then
+    fail-message "Azure role check failed"
+    exit 1
 fi
 
 #check gcp roles
@@ -264,29 +357,69 @@ fi
 
 #vault
 #aws
-vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
-echo "Vault Load balancer is: ${vault_lb}"
-if [ -z "${vault_lb}" ]; then
-  fail-message "AWS Vault is not provisioned yet"
-  exit 1
-fi
-vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://${vault_lb}:8200/v1/sys/health)
-if [ "${vault_api}" != "501" ]; then
-  fail-message "AWS Vault service did not return a 501. Please wait a few moments and try again."
-  exit 1
+n=0
+until [ $n -ge 5 ]; do
+    vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate aws_vault_ip)
+    echo "AWS Vault Load balancer is: ${vault_lb}"
+    if [ -z "${vault_lb}" ]; then
+      fail-message "AWS Vault is not provisioned yet"
+      n=$[$n+1]
+      sleep 60
+      continue
+    fi
+    vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://${vault_lb}:8200/v1/sys/health)
+    ec=$?
+    if [ $ec -ne 0 ]; then
+      fail-message "Checking AWS Vault LB failed with $ec"
+      n=$[$n+1]
+      sleep 60
+      continue
+    fi
+
+    if [ "${vault_api}" != "501" ]; then
+      fail-message "AWS Vault service did not return a 501. Please wait a few moments and try again."
+      n=$[$n+1]
+      sleep 60
+      continue
+    fi
+    break
+done
+if [ $n -ge 5 ]; then
+    fail-message "AWS Vault check failed"
+    exit 1
 fi
 
 #azure
-vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate azure_vault_ip)
-echo "Vault Load balancer is: ${vault_lb}"
-if [ -z "${vault_lb}" ]; then
-  fail-message "Azure Vault is not provisioned yet"
-  exit 1
-fi
-vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://${vault_lb}:8200/v1/sys/health)
-if [ "${vault_api}" != "501" ]; then
-  fail-message "Azure Vault service did not return a 501. Please wait a few moments and try again."
-  exit 1
+n=0
+until [ $n -ge 5 ]; do
+    vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate azure_vault_ip)
+    echo "Azure Vault Load balancer is: ${vault_lb}"
+    if [ -z "${vault_lb}" ]; then
+      fail-message "Azure Vault is not provisioned yet"
+      n=$[$n+1]
+      sleep 60
+      continue
+    fi
+    vault_api=$(curl -s -o /dev/null -w "%{http_code}" http://${vault_lb}:8200/v1/sys/health)
+    ec=$?
+    if [ $ec -ne 0 ]; then
+      fail-message "Checking Azure Vault LB failed with $ec"
+      n=$[$n+1]
+      sleep 60
+      continue
+    fi
+
+    if [ "${vault_api}" != "501" ]; then
+      fail-message "Azure Vault service did not return a 501. Please wait a few moments and try again."
+      n=$[$n+1]
+      sleep 60
+      continue
+    fi
+    break
+done
+if [ $n -ge 5 ]; then
+    fail-message "Azure vault check failed"
+    exit 1
 fi
 
 exit 0

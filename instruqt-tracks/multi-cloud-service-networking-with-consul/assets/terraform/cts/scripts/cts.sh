@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 #metadata
 local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
@@ -56,8 +59,8 @@ consul {
 task {
   name           = "security-group-demo-task"
   description    = "allow all redis TCP traffic from specific source to a security group"
-  source         = "github.com/ramramhariram/sg-nia-mc"
-  services       = ["aws-us-east-1-terminating-gateway"]
+  source         = "github.com/hashicorp/field-workshops-consul/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/terraform/cts/ctsmodule"
+  services       = ["consul-esm", "aws-us-east-1-terminating-gateway"]
   variable_files = ["/home/ubuntu/security_input.tfvars"]
 }
 driver "terraform" {

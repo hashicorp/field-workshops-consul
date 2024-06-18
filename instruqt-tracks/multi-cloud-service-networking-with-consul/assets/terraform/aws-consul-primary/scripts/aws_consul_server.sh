@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 #metadata
 local_ipv4="$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)"
@@ -150,6 +153,7 @@ cat <<EOF> /etc/consul.d/server.json
   "server": true,
   "bootstrap_expect": 1,
   "advertise_addr": "$${local_ipv4}",
+  "retry_join": ["$${local_ipv4}"],
   "data_dir": "/opt/consul/data",
   "client_addr": "0.0.0.0",
   "log_level": "INFO",

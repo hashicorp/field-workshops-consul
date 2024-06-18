@@ -1,0 +1,156 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+name: hashicorp/field-workshops-consul/nightly-test
+on:
+  workflow_dispatch:
+  schedule:
+  # This is UTC
+  - cron: 37 4 * * *
+permissions:
+  contents: read
+env:
+  # See IL-559 for information about the source of these
+  # secrets and variables
+  # You MUST base64 encode the GCLOUD_SERVICE_KEY json blob, otherwise
+  # GHA in being zealous about redacting secrets will turn the `needs`
+  # context json we require in the Slack notification steps will turn 
+  # curly braces into '***'
+  GCLOUD_SERVICE_KEY_JSON_BASE64: ${{ secrets.GCLOUD_SERVICE_KEY_JSON_BASE64 }}
+  GOOGLE_COMPUTE_REGION: ${{ vars.GOOGLE_COMPUTE_REGION }}
+  GOOGLE_PROJECT_ID: ${{ vars.GOOGLE_PROJECT_ID }}
+  INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
+jobs:
+  consul-basics:
+    uses: ./.github/workflows/instruqt-track-test.yml
+    with:
+      working_directory: "instruqt-tracks/consul-basics"
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
+    secrets:
+      INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
+  service-discovery-with-consul:
+    uses: ./.github/workflows/instruqt-track-test.yml
+    with:
+      working_directory: "instruqt-tracks/service-discovery-with-consul"
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
+    secrets:
+      INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
+  service-mesh-with-consul:
+    uses: ./.github/workflows/instruqt-track-test.yml
+    with:
+      working_directory: "instruqt-tracks/service-mesh-with-consul"
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
+    secrets:
+      INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
+  multi-cloud-consul:
+    if: false # VCDL-126: disabling testing this workshop until we can fix it
+    uses: ./.github/workflows/instruqt-track-test.yml
+    with:
+      working_directory: "instruqt-tracks/multi-cloud-service-networking-with-consul"
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
+    secrets:
+      INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
+  network-infrastructure-automation:
+    uses: ./.github/workflows/instruqt-track-test.yml
+    with:
+      working_directory: "instruqt-tracks/network-infrastructure-automation"
+      INSTRUQT_CLI_URI: ${{ vars.INSTRUQT_CLI_URI }}
+    secrets:
+      INSTRUQT_TOKEN: ${{ secrets.INSTRUQT_TOKEN }}
+  notify-slack:
+    needs:
+      - consul-basics
+      - service-discovery-with-consul
+      - service-mesh-with-consul
+      - network-infrastructure-automation
+      # VCDL-126: disabling reporting on this workshop until we can fix it - multi-cloud-consul
+    if: ${{ always() }}   # Always run after needs, even if they failed, so we can notify
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      # https://github.com/actions/runner/issues/1656#issuecomment-1030077729
+      - name: Get Jobs State
+        id: get-jobs-state
+        run: |-
+          cat<<"EOF" >> job-state.json
+          ${{ toJSON(needs) }}
+          EOF
+      - name: Build Message
+        id: build-message
+        shell: python
+        run: |-
+          import json
+          import os
+          import secrets
+          msg = {"blocks": []}
+          # Parse 'needs' context
+          needs_f = open("job-state.json")
+          needs = json.load(needs_f)
+          # Header Section
+          WORKFLOW_ICON=":white_check_mark:"
+          WORKFLOW_STATUS="successful"
+          ANY_FAILURES=False
+          for job in needs.keys():
+            if needs[job]['result'] != "success":
+              WORKFLOW_ICON=":exclamation:"
+              WORKFLOW_STATUS="*FAILED*"
+              ANY_FAILURES=True
+              break
+          msg['blocks'].append({"type": "section", "text": { "type": "mrkdwn", "text": f'{WORKFLOW_ICON} Workflow <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }} #${{ github.run_number }}> {WORKFLOW_STATUS}'}})
+          msg['blocks'].append({"type": "divider"})
+
+          # Per-job section
+          for job in needs.keys():
+            if needs[job]['result'] == "success":
+              TEST_ICON=":white_check_mark:"
+              TEST_STATUS="succeeded"
+            else:
+              TEST_ICON=":exclamation:"
+              TEST_STATUS="*FAILED*"
+
+            TEST_RUNS=int(needs[job]['outputs']['test_runs'])
+            if TEST_RUNS == 1:
+              TEST_RUN_STRING="run"
+            else:
+              TEST_RUN_STRING="runs"
+
+            job_msg = {"type": "section", "text": { "type": "mrkdwn", "text": f'{TEST_ICON} {job}: {TEST_STATUS} in {TEST_RUNS} {TEST_RUN_STRING}'}}
+            msg['blocks'].append(job_msg)
+
+          # Output
+          # https://trstringer.com/github-actions-multiline-strings/ Option 2
+          # NOTE: Where we typically use 'EOF' as a heredoc delimiter, following
+          # the security advice in
+          # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
+          # we generate a random delimiter every time
+          EOF = secrets.token_hex(24)
+          env = open('${{ github.env }}', mode='a')
+          env.writelines([f'SLACK_PAYLOAD<<{EOF}\n'])
+          json.dump(msg, env)
+          env.writelines([f'\n{EOF}\n'])
+          env.close()
+          # And output if there have been any failures - there doesn't
+          # seem to be an equivalent github context for this, so have to
+          # read GITHUB_OUTPUT out of os.environ
+          output = open(os.environ['GITHUB_OUTPUT'], mode='a')
+          if ANY_FAILURES:
+            output.writelines(['any_failures=true\n'])
+          else:
+            output.writelines(['any_failures=false\n'])
+          output.close()
+      - name: Post to Slack Channel
+        id: slack
+        uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
+        with:
+          channel-id: ${{ vars.SLACK_NOTIFICATION_CHANNELS }}
+          payload: ${{ env.SLACK_PAYLOAD }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      - name: Post to Slack Channel only on failures
+        id: slack-failures
+        if: ${{ steps.build-message.outputs.any_failures == 'true' }}
+        uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117 # v1.24.0
+        with:
+          channel-id: ${{ vars.SLACK_NOTIFICATION_CHANNELS_FAIL_ONLY }}
+          payload: ${{ env.SLACK_PAYLOAD }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

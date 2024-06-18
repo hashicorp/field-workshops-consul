@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 module "vpc-shared-svcs" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> v2.0"

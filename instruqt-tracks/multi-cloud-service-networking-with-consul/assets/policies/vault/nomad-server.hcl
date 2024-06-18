@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 path "auth/token/create/nomad-cluster" {
   capabilities = ["update"]
 }

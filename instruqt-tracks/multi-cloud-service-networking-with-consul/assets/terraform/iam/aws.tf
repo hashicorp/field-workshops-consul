@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_iam_instance_profile" "consul" {
   name = "consul-${data.terraform_remote_state.infra.outputs.env}"
   role = aws_iam_role.consul.name

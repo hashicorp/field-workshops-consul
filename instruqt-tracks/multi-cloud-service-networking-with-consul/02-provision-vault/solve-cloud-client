@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euvxo pipefail
 
 #tf
 terraform apply -auto-approve 2>&1 | tee terraform.out

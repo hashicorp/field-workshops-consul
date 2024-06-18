@@ -1,0 +1,60 @@
+#!/bin/bash
+
+#context
+kubectl config use-context k8s1
+
+#prometheus
+cat <<-EOF > /root/prometheus-values.yaml
+server:
+  persistentVolume:
+    enabled: false
+  global:
+    scrape_interval: 10s
+nodeExporter:
+  enabled: false
+pushgateway:
+  enabled: false
+alertmanager:
+  enabled: false
+extraScrapeConfigs: |
+  - job_name: 'consul'
+    metrics_path: "/v1/agent/metrics"
+    bearer_token: "$(kubectl get secret consul-bootstrap-acl-token -o json | jq -r .data.token | base64 -d)"
+    params:
+      format: ['prometheus']
+    scheme: https
+    tls_config:
+       insecure_skip_verify: true
+    kubernetes_sd_configs:
+    - role: pod
+    relabel_configs:
+    - source_labels: [__meta_kubernetes_pod_label_app]
+      regex: consul
+      action: keep
+    - source_labels: [__meta_kubernetes_pod_label_component]
+      regex: server|client
+      action: keep
+    - source_labels: [__meta_kubernetes_pod_container_port_number]
+      regex: 8501
+      action: keep
+EOF
+cat <<EOF | kubectl apply -f -
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: prometheus
+  ports:
+  - name: http
+    protocol: TCP
+    port: 9090
+    targetPort: 9090
+EOF
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm install prometheus prometheus-community/prometheus -f /root/prometheus-values.yaml --version 15.4.0 --wait --debug
+
+exit 0

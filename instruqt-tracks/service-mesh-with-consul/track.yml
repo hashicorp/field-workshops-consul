@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 slug: service-mesh-with-consul
 title: Service Mesh with Consul
 teaser: Evolve from service discovery to service mesh. No more mapping IP addresses

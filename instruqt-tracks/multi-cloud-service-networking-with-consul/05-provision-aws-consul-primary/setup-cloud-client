@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euvxo pipefail
 
 cd /root/terraform/aws-consul-primary
 terraform init

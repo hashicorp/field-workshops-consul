@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "azurerm_public_ip" "bastion" {
   name                = "bastion-ip"
   location            = azurerm_resource_group.instruqt.location

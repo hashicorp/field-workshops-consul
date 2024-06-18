@@ -1,6 +1,5 @@
 ---
 slug: centralize-secrets-in-vault
-id: bsuospzbuecl
 type: challenge
 title: Centralize Secrets in Vault
 teaser: Create trust and seed bootstrap credentials.
@@ -20,7 +19,7 @@ tabs:
 - title: Vault Setup Script
   type: code
   hostname: cloud-client
-  path: /root/terraform/vault/setup_vault.sh
+  path: /root/scripts/setup_vault.sh
 - title: Vault
   type: service
   hostname: cloud-client
@@ -28,7 +27,7 @@ tabs:
   port: 8200
 - title: Lab Architecture
   type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/blob/master/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
 difficulty: basic
 timelimit: 300
 ---

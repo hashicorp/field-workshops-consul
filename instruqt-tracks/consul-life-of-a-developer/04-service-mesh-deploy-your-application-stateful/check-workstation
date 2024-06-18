@@ -1,0 +1,20 @@
+#!/bin/bash
+
+#context
+kubectl config use-context k8s2
+
+#pods
+kubectl wait pod --for=condition=Ready --selector=app=payments-queue --timeout=30s
+if [ $? -ne 0 ]
+then
+  fail-message "Payment Queue pod not deployed."
+  exit 1
+fi
+kubectl wait pod --for=condition=Ready --selector=app=product-db --timeout=30s
+if [ $? -ne 0 ]
+then
+  fail-message "Product DB pod not deployed."
+  exit 1
+fi
+
+exit 0

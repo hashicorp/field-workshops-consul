@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 service "aws-us-east-1-terminating-gateway" {
    policy = "write"
 }

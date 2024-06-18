@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "random_password" "pg" {
   length           = 20
   special          = true
@@ -16,6 +19,12 @@ resource "azurerm_postgresql_flexible_server" "postgres" {
 
   storage_mb = 32768
   sku_name   = "B_Standard_B1ms"
+}
+
+resource "azurerm_postgresql_flexible_server_configuration" "extensions" {
+  name      = "azure.extensions"
+  server_id = azurerm_postgresql_flexible_server.postgres.id
+  value     = "PGCRYPTO"
 }
 
 resource "azurerm_postgresql_flexible_server_firewall_rule" "postgres" {

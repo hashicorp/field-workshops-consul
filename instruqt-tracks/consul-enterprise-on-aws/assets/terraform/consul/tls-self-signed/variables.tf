@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 variable "ca_validity" {
   type        = number
   description = "Duration, in hours, during which the CA certificate will remain valid"

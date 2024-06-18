@@ -1,6 +1,5 @@
 ---
 slug: provision-nomad-scheduler-services
-id: 7jg38ndrb2rq
 type: challenge
 title: Provision Nomad Scheduler Services
 teaser: Deploy Nomad workload infrastructure
@@ -20,7 +19,7 @@ tabs:
   port: 8500
 - title: Lab Architecture
   type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/blob/master/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
 - title: Terraform
   type: code
   hostname: cloud-client

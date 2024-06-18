@@ -1,6 +1,5 @@
 ---
 slug: provision-vault
-id: m2f1hxkhu9nc
 type: challenge
 title: Provision Vault Infrastructure
 teaser: Set up Vault Infrastructure and Enable Replication
@@ -15,7 +14,7 @@ tabs:
   port: 80
 - title: Lab Architecture
   type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/blob/master/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
 - title: Terraform
   type: code
   hostname: cloud-client

@@ -1,8 +1,15 @@
 #!/bin/bash
+set -euvxo pipefail
 
+#creds
 vault login -method=userpass username=admin password=admin
 export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/operator)
 
+#tf
+terraform apply -auto-approve 2>&1 | tee terraform.out
+sleep 120
+
+#run the TF twice as this step is failing CI intermediately
 terraform apply -auto-approve 2>&1 | tee terraform.out
 sleep 120
 

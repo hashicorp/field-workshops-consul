@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euvxo pipefail
 
 #azure - server
 consul_lb=$(terraform output -state /root/terraform/azure-consul-secondary/terraform.tfstate azure_consul_public_ip)

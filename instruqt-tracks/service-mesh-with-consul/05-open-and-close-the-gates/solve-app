@@ -2,9 +2,6 @@
 
 #create intention
 /usr/bin/consul intention create -allow wordpress mysql
-
-#restart web server
-/usr/sbin/service apache2 restart
-sleep 60
+sleep 10	# Allow intention to propagate
 
 exit 0

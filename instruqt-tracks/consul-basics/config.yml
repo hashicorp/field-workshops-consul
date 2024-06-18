@@ -1,7 +1,10 @@
-version: "2"
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
+version: "3"
 containers:
 - name: consul-server-0
-  image: consul:latest
+  image: hashicorp/consul:latest
   ports:
   - 8300
   - 8301
@@ -12,7 +15,7 @@ containers:
     CONSUL_HTTP_ADDR: http://127.0.0.1:8500
   memory: 128
 - name: consul-server-2
-  image: consul:latest
+  image: hashicorp/consul:latest
   ports:
   - 8300
   - 8301
@@ -23,7 +26,7 @@ containers:
     CONSUL_HTTP_ADDR: http://127.0.0.1:8500
   memory: 128
 - name: consul-server-1
-  image: consul:latest
+  image: hashicorp/consul:latest
   ports:
   - 8300
   - 8301
@@ -34,7 +37,7 @@ containers:
     CONSUL_HTTP_ADDR: http://127.0.0.1:8500
   memory: 128
 - name: consul-agent-0
-  image: consul:latest
+  image: hashicorp/consul:latest
   ports:
   - 8300
   - 8301

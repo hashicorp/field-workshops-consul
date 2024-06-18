@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 #metadata
 local_ipv4="$(curl -s -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/privateIpAddress?api-version=2017-08-01&format=text")"
@@ -174,7 +177,7 @@ sudo systemctl enable envoy.service
 sudo systemctl start envoy.service
 
 #install the application
-wget https://github.com/hashicorp-demoapp/product-api-go/releases/download/v0.0.19/product_api_go_linux_amd64.zip -O product_api_go_linux_amd64.zip
+wget https://github.com/hashicorp-demoapp/product-api-go/releases/download/v0.0.20/product_api_go_linux_amd64.zip -O product_api_go_linux_amd64.zip
 unzip product_api_go_linux_amd64.zip
 chmod +x /product-api
 cat <<EOF > /conf.json

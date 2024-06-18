@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
+err=0
+
+which yq >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "You must install the 'yq' tool"
+    echo "See https://mikefarah.gitbook.io/yq/"
+    err=1
+fi
+
+if [ "${err}" -ne 0 ]; then
+    exit 1
+fi

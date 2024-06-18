@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "azurerm_network_security_group" "cts-sg" {
   name                = "cts-security-group"
   location            = data.terraform_remote_state.vnet.outputs.resource_group_location

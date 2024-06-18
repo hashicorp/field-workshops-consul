@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euvxo pipefail
 
 #check aws roles
 aws iam get-role --role-name consul-$(terraform output -state /root/terraform/infra/terraform.tfstate env)

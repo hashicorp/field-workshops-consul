@@ -1,7 +1,10 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 global:
   name: consul
   datacenter: k8s1
-  image: 'hashicorp/consul:1.10.0'
+  image: 'hashicorp/consul:1.11.4'
   tls:
     enabled: true
     enableAutoEncrypt: true

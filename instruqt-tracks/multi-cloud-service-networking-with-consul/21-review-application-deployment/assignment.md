@@ -1,6 +1,5 @@
 ---
 slug: review-application-deployment
-id: ywhkjacumlrd
 type: challenge
 title: Review Application Deployment
 teaser: Validate workload configuration
@@ -29,7 +28,7 @@ tabs:
   port: 8200
 - title: Lab Architecture
   type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/blob/master/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
 difficulty: basic
 timelimit: 300
 ---
@@ -49,7 +48,7 @@ psql -U postgres \
 Check the queue for payments (there will be zero keys). <br>
 
 ```
-ssh -i ~/.ssh/id_rsa ubuntu@$(terraform output -state /root/terraform/infra/terraform.tfstate aws_bastion_ip) \
+ssh -i ~/.ssh/id_rsa ubuntu@$(terraform output -state /root/terraform/tgw/terraform.tfstate aws_tgw_public_ip) \
   "redis-cli -h \
   $(terraform output -state /root/terraform/cache-services/terraform.tfstate -json aws_elasticache_cache_nodes | jq -r .[0].address) -p 6379 keys '*'"
 ```

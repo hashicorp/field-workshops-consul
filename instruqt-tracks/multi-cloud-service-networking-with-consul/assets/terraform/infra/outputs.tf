@@ -1,13 +1,12 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "env" {
   value = random_string.env.result
 }
 
 output "aws_ssh_key_name" {
   value = aws_key_pair.demo.key_name
-}
-
-output "aws_bastion_ip" {
-  value = aws_instance.bastion-shared-svcs.public_ip
 }
 
 output "aws_shared_svcs_vpc" {

@@ -1,6 +1,5 @@
 ---
 slug: provision-cache-services
-id: moaktzhz3oec
 type: challenge
 title: Provision Cache Services
 teaser: Deploy managed Cache instances
@@ -12,7 +11,7 @@ tabs:
   port: 80
 - title: Lab Architecture
   type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/blob/master/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
 - title: Shell
   type: terminal
   hostname: cloud-client

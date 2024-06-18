@@ -1,4 +1,7 @@
 #!/bin/bash -xe
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 #dir
 echo "Starting Vault setup..."
@@ -57,7 +60,6 @@ vault policy write product-api product-api.hcl
 vault policy write payments-developer payments-developer.hcl
 vault policy write product-developer product-developer.hcl
 vault policy write frontend-developer frontend-developer.hcl
-curl  https://nomadproject.io/data/vault/nomad-cluster-role.json -O -s -L
 vault write /auth/token/roles/nomad-cluster @nomad-cluster-role.json
 
 #vault users - not for production

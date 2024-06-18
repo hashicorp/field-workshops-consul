@@ -1,6 +1,5 @@
 ---
 slug: observe-application-deployment
-id: 4uw4tqxdgnr7
 type: challenge
 title: Observe Application Deployment
 teaser: Collect metrics and traces across clouds.
@@ -35,14 +34,13 @@ tabs:
   hostname: cloud-client
   path: /
   port: 8500
+- title: Web App
+  type: code
+  hostname: cloud-client
+  path: /root/app.txt
 - title: Lab Architecture
   type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
-- title: Web App
-  type: service
-  hostname: cloud-client
-  path: /
-  port: 8080
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/blob/master/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
 difficulty: basic
 timelimit: 300
 ---

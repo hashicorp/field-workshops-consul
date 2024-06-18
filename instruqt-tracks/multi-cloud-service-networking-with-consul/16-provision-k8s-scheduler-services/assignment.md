@@ -1,6 +1,5 @@
 ---
 slug: provision-k8s-scheduler-services
-id: qfdvo24fihk7
 type: challenge
 title: Provision K8s Scheduler Services
 teaser: Deploy K8s workload infrastructure
@@ -29,7 +28,7 @@ tabs:
   port: 8500
 - title: Lab Architecture
   type: website
-  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/add-consul-multi-cloud/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
+  url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/blob/master/instruqt-tracks/multi-cloud-service-networking-with-consul/assets/diagrams/diagrams.html
 - title: Helm
   type: code
   hostname: cloud-client
@@ -65,7 +64,7 @@ kubectl config use-context react
 kubectl create secret generic hashicorp-consul-ca-cert --from-literal="tls.crt=$(vault read -field certificate pki/cert/ca)"
 kubectl create secret generic hashicorp-consul-gossip-key --from-literal="key=$(vault kv get -field=gossip_key kv/consul)"
 kubectl create secret generic bootstrap-token --from-literal="token=$(vault read -field token consul/creds/operator)"
-helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f /root/helm/react-consul-values.yaml --debug --wait --timeout 10m --version 0.33.0
+helm install consul hashicorp/consul --set externalServers.k8sAuthMethodHost="https://$(terraform output gcp_gke_cluster_react_endpoint)" -f /root/helm/react-consul-values.yaml --debug --wait --timeout 10m --version 0.49.8
 helm list -a
 ```
 

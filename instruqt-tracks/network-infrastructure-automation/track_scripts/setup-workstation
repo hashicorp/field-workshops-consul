@@ -1,5 +1,16 @@
 #!/bin/bash
 
+set -euvxo pipefail
+
+# Note: override these when testing from a different repo and/or branch
+#       The `-b` option to `git clone` is useful for pulling from the
+#       non-default branch
+
+ASSET_REPO="https://github.com/hashicorp/field-workshops-consul.git"
+ASSET_REPO_FETCH_OPTIONS=""
+
+# END OPTIONS
+
 #azure creds
 sleep 30
 
@@ -32,7 +43,7 @@ until [ $n -ge 5 ]; do
   az login \
   --username "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_USERNAME}" \
   --password "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_PASSWORD}" && break
-  n=$[$n+1]
+    n=$((n+1))
   sleep 60
 done
 if [ $n -ge 5 ]; then
@@ -41,7 +52,12 @@ fi
 
 #get assets
 echo "cloning assets..."
-git clone https://github.com/hashicorp/field-workshops-consul.git
+echo "git clone ${ASSET_REPO_FETCH_OPTIONS} ${ASSET_REPO}"
+if [ -n "${ASSET_REPO_FETCH_OPTIONS}" ]; then
+    git clone ${ASSET_REPO_FETCH_OPTIONS} ${ASSET_REPO}
+else
+    git clone ${ASSET_REPO}
+fi
 cp -r field-workshops-consul/instruqt-tracks/network-infrastructure-automation/assets/terraform /root/terraform
 rm -rf field-workshops-consul
 
@@ -50,7 +66,7 @@ cat << EOF > ~/.ssh/config
 Host *
     StrictHostKeyChecking no
 EOF
-eval $(ssh-agent)
+eval "$(ssh-agent)"
 ssh-add ~/.ssh/id_rsa
 
 #seeing if this fixes the internittent 'subscription not recognized error'
@@ -60,10 +76,12 @@ az account set --subscription "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SUBSCRIPTION
 az provider register --namespace 'Microsoft.Solutions' --subscription "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SUBSCRIPTION_ID}"
 az vm image terms accept --urn paloaltonetworks:vmseries1:bundle1:latest
 
+
 #optimistic provisioning
 echo "starting optimistic provisioning..."
 
 #vnets
+echo "vnets"
 cd /root/terraform/vnet
 /usr/bin/terraform init
 cat << EOF > /root/terraform/vnet/terraform.tfvars
@@ -71,39 +89,192 @@ ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
 EOF
 terraform apply -auto-approve 2>&1 | tee terraform.out
 
+# Please see IL-843 for more details; in short
+#
+# 1. In this script, we pre-provision resources to the actual challenges
+#    can go quickly
+# 2. Azure sometimes fails to create a VM, and leaves in Azure a half-created
+#    VM which isn't actually up, but for which Azure believes is sorta there.
+#    When this happens via TF, TF sees it take longer than ~10m to create a
+#    resource, and TF gives up. Terraform *does not* put any information about
+#    the VM in the state, because as far as TF knows, the thing doesn't yet
+#    exist. But Azure has it half-created
+# 3. In the challenge, when the student tries to run `terraform play` or
+#    `terraform apply`, they get told they need to create the VM, because
+#    as far as TF knows it doesn't exist. *However*, when TF tries to create
+#    it, it runs into the half-created VM state in Azure, and Azure goes
+#    "That already exists, you can't create it again.
+#
+# So we have to check for that. The fix is, in a loop:
+#
+# 1. `terraform apply -auto-approve`
+# 2. When done, `terraform state list` and see if the VM is there. If it
+#    is, exit, life is good
+# 3. If not, `az vm delete -g <resource group> -n <vm name>`
+# 4. And also `az disk delete -g <resource group> -n <disk name>`
+# 5. But a azurerm_virtual_machine in TF includes things like a managed
+#    disk, a NIC, etc, but those are separate entities in Azure. So if
+#    you tried to create the VM again, it would complain that the disk
+#    or NIC or whatever still exists. So we would `terraform destroy`
+#    here, *but* Azure won't let you delete a NIC which has been attached
+#    to a VM for less than 3 minutes, so sleep 181 seconds
+# 6. `terraform destroy -auto-approve`
+# 7. Goto step 1
+#
+# :sigh:
+#
+
+# helper function
+provision_resource() {
+    RESOURCE_NAME=$1
+    shift
+    RESOURCE_ADDR=$1
+    shift
+    RG=$(terraform output -state=/root/terraform/vnet/terraform.tfstate resource_group_name)
+
+    if [ -z "${RESOURCE_NAME}" ] || [ -z "${RESOURCE_ADDR}" ]; then
+	echo "ERROR call as provision_resource <RESOURCE_NAME> <RESOURCE_ADDR>"
+	exit 1
+    fi
+
+    TRY=1
+    while /bin/true; do
+	echo "Provisioning ${RESOURCE_ADDR} in $(pwd), try ${TRY}"
+	# Provision in a loop until the VM is created, Because Azure(TM)
+
+	# Provision
+	nohup terraform apply -auto-approve 2>&1 | tee nohup.out
+
+	# Does VM exist?
+	terraform state list "${RESOURCE_ADDR}"
+	ec=$?
+	if [ $ec -ne 0 ]; then
+	    echo "${RESOURCE_ADDR} doesn't exist after Terraform is finished"
+	    # Delete the half-created VM
+	    az vm delete -g "${RG}" -n "${RESOURCE_NAME}" --yes
+	    az disk delete -g "${RG}" -n "${RESOURCE_NAME}-disk" --yes
+	    sleep 185	# THIS VALUE IS IMPORTANT, see IL-843 before you change it
+	    terraform destroy -auto-approve
+	    TRY=$((TRY+1))
+	    # we've already waited 185 seconds at least, so no need to sleep
+	else
+	    echo "${RESOURCE_ADDR} provisioned"
+	    touch .provisioned
+	    break
+	fi
+    done
+    echo "Successfully created ${RESOURCE_ADDR} in $(pwd) on try ${TRY}"
+}
+
+
 #consul
-cd /root/terraform/consul-server
-terraform init
-cat << EOF > /root/terraform/consul-server/terraform.tfvars
+provision_consul() {
+    # We set +e here because commands may fail and we
+    # want to clean up
+    set +e
+
+    # Get resource group in case we need it later on
+    cd /root/terraform/vnet
+    RG=$(terraform output resource_group_name)
+
+    cd /root/terraform/consul-server
+    terraform init
+    cat << EOF > /root/terraform/consul-server/terraform.tfvars
 ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
 EOF
-nohup terraform apply -auto-approve 2>&1 | tee nohup.out &
+    RESOURCE_NAME="consul-server-vm"
+    RESOURCE_ADDR="azurerm_linux_virtual_machine.${RESOURCE_NAME}"
+    provision_resource "${RESOURCE_NAME}" "${RESOURCE_ADDR}"
+}
 
 #vault
-cd /root/terraform/vault
-terraform init
-cat << EOF > /root/terraform/vault/terraform.tfvars
+provision_vault() {
+    # We set +e here because commands may fail and we
+    # want to clean up
+    set +e
+
+    cd /root/terraform/vault
+    terraform init
+    cat << EOF > /root/terraform/vault/terraform.tfvars
 ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
 EOF
-nohup terraform apply -auto-approve 2>&1 | tee nohup.out &
+    RESOURCE_NAME="vault"
+    RESOURCE_ADDR="azurerm_linux_virtual_machine.${RESOURCE_NAME}"
+    provision_resource "${RESOURCE_NAME}" "${RESOURCE_ADDR}"
+}
 
 #f5
-cd /root/terraform/bigip
-terraform init
-terraform import azurerm_marketplace_agreement.f5 "/subscriptions/${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SUBSCRIPTION_ID}/providers/Microsoft.MarketplaceOrdering/agreements/f5-networks/offers/f5-big-ip-good/plans/f5-bigip-virtual-edition-25m-good-hourly"
-nohup terraform apply -auto-approve 2>&1 | tee nohup.out &
+provision_f5() {
+    # We set +e here because commands may fail and we
+    # want to clean up
+    set +e
+
+    cd /root/terraform/bigip
+    terraform init
+    terraform import azurerm_marketplace_agreement.f5 "/subscriptions/${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SUBSCRIPTION_ID}/providers/Microsoft.MarketplaceOrdering/agreements/f5-networks/offers/f5-big-ip-good/plans/f5-bigip-virtual-edition-25m-good-hourly"
+
+    RESOURCE_NAME="f5bigip"
+    RESOURCE_ADDR="azurerm_linux_virtual_machine.${RESOURCE_NAME}"
+    provision_resource "${RESOURCE_NAME}" "${RESOURCE_ADDR}"
+}
 
 #panw
-cd /root/terraform/panw-vm
-terraform init
-nohup terraform apply -auto-approve 2>&1 | tee nohup.out &
+provision_panw(){
+    # We set +e here because commands may fail and we
+    # want to clean up
+    set +e
 
-#wait for f5 & panw
-echo "Waiting for network devices..."
-sleep 600
+    cd /root/terraform/panw-vm
+    terraform init
+    RESOURCE_NAME="PAN_FW_FW"
+    RESOURCE_ADDR="azurerm_virtual_machine.${RESOURCE_NAME}"
+    provision_resource "${RESOURCE_NAME}" "${RESOURCE_ADDR}"
+}
+
+provision_consul &
+provision_vault &
+provision_f5 &
+provision_panw &
+
+# Wait for all resources to be provisioned
+while /bin/true; do
+    echo "Checking on provisioning"
+    SUCCESS=0
+    if [ -f /root/terraform/consul-server/.provisioned ]; then
+	echo "Consul done"
+	SUCCESS=$((SUCCESS+1))
+    fi
+
+    if [ -f /root/terraform/vault/.provisioned ]; then
+	echo "Vault done"
+	SUCCESS=$((SUCCESS+1))
+    fi
+
+    if [ -f /root/terraform/bigip/.provisioned ]; then
+	echo "BigIP done"
+	SUCCESS=$((SUCCESS+1))
+    fi
+
+    if [ -f /root/terraform/panw-vm/.provisioned ]; then
+	echo "Panw-VM done"
+	SUCCESS=$((SUCCESS+1))
+    fi
+
+    if [ "$SUCCESS" == "4" ]; then
+	echo "All done"
+	break
+    else
+	echo "Not all resources complete, sleeping and re-checking"
+	sleep 30
+    fi
+done
 
 #check devices
 echo "Running pre-flight checks..."
+
+# We're going to run checks that will fail past here, so turn
+# off -e
+set +e
 
 #f5
 echo "Checking PANW FW"
@@ -113,10 +284,11 @@ until [ $n -ge 10 ]; do
   firewall_ip=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate FirewallIP)
   pa_username=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_username)
   pa_password=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_password)
-  if [ "$(curl -sk -o /dev/null  -u ${pa_username}:${pa_password} -w ''%{http_code}'' https://${firewall_ip}/restapi/v9.1/Device/VirtualSystems)" = "200" ]; then
+  http_code=$(curl -sk -o /dev/null  -u "${pa_username}:${pa_password}" -w "%{http_code}" https://"${firewall_ip}/restapi/v9.1/Device/VirtualSystems")
+  if [ "${http_code}" = "200" ]; then
       break
   fi
-  n=$[$n+1]
+  n=$((n+1))
   sleep 60
 done
 if [ $n -ge 10 ]; then
@@ -136,16 +308,12 @@ until [ $n -ge 5 ]; do
   if [ "${f5_status}" = "200" ]; then
     break
   fi
-  n=$[$n+1]
+  n=$((n+1))
   sleep 60
 done
 if [ $n -ge 5 ]; then
   fail-message "Could not check BIG-IP."
   exit 1
 fi
-
-#wait for network device boot up
-echo "Network Devices up! Waiting for init processes..."
-sleep 300
 
 exit 0

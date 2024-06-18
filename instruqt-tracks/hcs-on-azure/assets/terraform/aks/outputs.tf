@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "frontend_client_certificate" {
   value = azurerm_kubernetes_cluster.frontend.kube_config.0.client_certificate
 }

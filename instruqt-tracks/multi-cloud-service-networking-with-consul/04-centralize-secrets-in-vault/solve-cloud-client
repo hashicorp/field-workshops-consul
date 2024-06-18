@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euvxo pipefail
 
 #login
 vault login -method=userpass username=admin password=admin

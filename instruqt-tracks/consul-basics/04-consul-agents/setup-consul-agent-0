@@ -8,7 +8,7 @@ cat <<-EOF > /consul/config/client.json
   "bind_addr": "0.0.0.0",
   "client_addr": "0.0.0.0",
   "data_dir": "/consul/data",
-  "node_name": "Application",
+  "node_name": "App",
   "retry_join": [
     "consul-server-0:8301",
     "consul-server-1:8301",

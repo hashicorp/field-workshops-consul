@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 variable "resource_group_name" {
   default = "vvrg12"
 }
@@ -69,7 +72,7 @@ variable "db-vm-name" {
 }
 
 variable "gvmSize" {
-  default = "Standard_A1"
+  default = "Standard_DS1_v2"
 }
 
 variable "imagePublisher" {
@@ -77,9 +80,9 @@ variable "imagePublisher" {
 }
 
 variable "imageOffer" {
-  default = "UbuntuServer"
+  default = "0001-com-ubuntu-server-jammy"
 }
 
 variable "ubuntuOSVersion" {
-  default = "16.04-LTS"
+  default = "22_04-LTS-gen2"
 }

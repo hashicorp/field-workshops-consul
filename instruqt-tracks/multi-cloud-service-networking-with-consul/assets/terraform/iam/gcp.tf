@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "google_service_account" "consul" {
   account_id   = "consul-${data.terraform_remote_state.infra.outputs.env}"
   display_name = "consul"

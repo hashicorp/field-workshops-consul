@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 provider "aws" {
   version = "~> 3.0"
   region  = "us-east-1"
@@ -21,13 +24,5 @@ data "terraform_remote_state" "iam" {
 
   config = {
     path = "../iam/terraform.tfstate"
-  }
-}
-
-data "terraform_remote_state" "esm" {
-  backend = "local"
-
-  config = {
-    path = "../esm/terraform.tfstate"
   }
 }
