@@ -1,4 +1,4 @@
-version: "2"
+version: "3"
 containers:
 - name: consul-server-0
   image: consul:1.10.0
