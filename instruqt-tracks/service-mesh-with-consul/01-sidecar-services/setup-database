@@ -18,13 +18,18 @@ envoy --version
 
 #consul
 rm -f /usr/local/bin/consul
-curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
-apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-apt-get update -y && apt-get install -y consul=1.10.0
-rm -f /etc/consul.d/consul.hcl
+
+apt install -y unzip
+wget https://releases.hashicorp.com/consul/1.10.0/consul_1.10.0_linux_amd64.zip
+unzip consul_1.10.0_linux_amd64.zip
+chmod +x consul
+mv consul /usr/bin/consul
+consul version
+
+mkdir -p /etc/consul.d
 
 # Creating the Consul client config
-cat <<-EOF > /etc/consul.d/client.json
+cat <<-EOF >/etc/consul.d/client.json
 {
   "datacenter": "dc1",
   "bind_addr": "0.0.0.0",
@@ -45,7 +50,7 @@ cat <<-EOF > /etc/consul.d/client.json
 }
 EOF
 
-cat <<-EOF > /etc/consul.d/database_service.json
+cat <<-EOF >/etc/consul.d/database_service.json
 {
   "service": {
     "name": "mysql",
@@ -69,7 +74,7 @@ echo "Killing the currently running Consul agent..."
 pkill consul
 
 echo "Creating Consul startup script..."
-cat <<-EOF > /bin/start_consul.sh
+cat <<-EOF >/bin/start_consul.sh
 #!/bin/sh
 echo "Starting HashiCorp Consul in client Mode..."
 sleep 1
@@ -84,3 +89,4 @@ chmod +x /bin/start_consul.sh
 /bin/start_consul.sh
 
 exit 0
+
