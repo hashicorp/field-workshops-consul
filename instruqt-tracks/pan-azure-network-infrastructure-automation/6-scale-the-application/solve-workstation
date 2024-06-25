@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo ""
+echo ">>"
+echo ">> Scaling down app. Have a nice day! :)"
+echo ">>"
+
+terraform apply -var app_count=1 -var web_count=1 -auto-approve
+
+sleep 30
+
+exit 0

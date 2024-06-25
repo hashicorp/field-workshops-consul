@@ -1,0 +1,14 @@
+#!/bin/bash
+# This is the setup script for the workstation container. Use it to set the stage for your terraform training, demo, or lab.
+# set -e
+
+# # Allow instruqt time to do its thing
+# sleep 10
+
+# web_server=$(curl -s $CONSUL_HTTP_ADDR/v1/catalog/service/web | jq -r '.[0].Address')
+# echo "export web_server=${web_server}" >> ~/.bashrc
+
+set-workdir /root/terraform/03-deploy-apps
+
+
+exit 0

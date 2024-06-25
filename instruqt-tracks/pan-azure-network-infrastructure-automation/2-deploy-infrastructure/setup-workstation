@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#assignment
+set-workdir /root/terraform/01-deploy-infra
+
+exit 0

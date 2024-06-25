@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#check azure vnets
+terraform apply -auto-approve 2>&1 | tee terraform.out
+
+exit 0

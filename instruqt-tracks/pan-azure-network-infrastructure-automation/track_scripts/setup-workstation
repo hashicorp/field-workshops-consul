@@ -1,0 +1,131 @@
+#!/bin/bash
+
+#azure creds
+sleep 30
+
+#fix path
+echo "export PATH=/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> ~/.bashrc
+
+#cloud client packages
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+apt update -y
+apt install software-properties-common -y
+apt update -y
+curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+apt update -y
+apt install terraform=1.2.7 consul=1.12.2 vault -y
+
+#make vault run in container
+/sbin/setcap cap_ipc_lock= /usr/bin/vault
+
+# Ensure we load /etc/profile.d/instruqt-env.sh
+echo "source /etc/profile.d/instruqt-env.sh" >> /root/.bashrc
+source /root/.bashrc
+
+#wait at least five minutes for Azure User to propagate
+#az upgrade -y
+az account clear
+echo "Logging in with Azure SPN..."
+n=0
+until [ $n -ge 5 ]; do
+  az login \
+  --username "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_USERNAME}" \
+  --password "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_PASSWORD}" && break
+  n=$[$n+1]
+  sleep 60
+done
+if [ $n -ge 5 ]; then
+  exit 1
+fi
+
+#get assets
+echo "cloning assets..."
+git clone --branch pan-azure-nia https://github.com/hashicorp/field-workshops-consul.git
+cp -r field-workshops-consul/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/terraform /root/terraform
+rm -rf field-workshops-consul
+
+#ssh agent
+cat << EOF > ~/.ssh/config
+Host *
+    StrictHostKeyChecking no
+EOF
+eval $(ssh-agent)
+ssh-add ~/.ssh/id_rsa
+
+#seeing if this fixes the internittent 'subscription not recognized error'
+az account set --subscription "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SUBSCRIPTION_ID}"
+
+#enable marketplace
+az provider register --namespace 'Microsoft.Solutions' --subscription "${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SUBSCRIPTION_ID}"
+az vm image terms accept --urn paloaltonetworks:vmseries-flex:bundle1:latest
+
+#optimistic provisioning
+echo "starting optimistic provisioning..."
+
+#vnets
+cd /root/terraform/01-deploy-infra
+/usr/bin/terraform init
+# cat << EOF > /root/terraform/01-deploy-infra/terraform.tfvars
+# ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
+# EOF
+terraform apply -auto-approve 2>&1 | tee terraform.out
+
+# #consul
+# cd /root/terraform/consul-server
+# terraform init
+# cat << EOF > /root/terraform/consul-server/terraform.tfvars
+# ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
+# EOF
+# nohup terraform apply -auto-approve 2>&1 | tee nohup.out &
+
+# #vault
+# cd /root/terraform/vault
+# terraform init
+# cat << EOF > /root/terraform/vault/terraform.tfvars
+# ssh_public_key = "$(cat ~/.ssh/id_rsa.pub)"
+# EOF
+# nohup terraform apply -auto-approve 2>&1 | tee nohup.out &
+
+# #f5
+# cd /root/terraform/bigip
+# terraform init
+# terraform import azurerm_marketplace_agreement.f5 "/subscriptions/${INSTRUQT_AZURE_SUBSCRIPTION_CONSUL_SUBSCRIPTION_ID}/providers/Microsoft.MarketplaceOrdering/agreements/f5-networks/offers/f5-big-ip-good/plans/f5-bigip-virtual-edition-25m-good-hourly"
+# nohup terraform apply -auto-approve 2>&1 | tee nohup.out &
+
+# #panw
+# cd /root/terraform/02-configure-infra
+# terraform init
+# nohup terraform apply -auto-approve 2>&1 | tee nohup.out &
+
+# #wait for f5 & panw
+# echo "Waiting for network devices..."
+# sleep 300
+
+# #check devices
+# echo "Running pre-flight checks..."
+
+# #pan
+# echo "Checking PANW FW"
+# n=0
+# until [ $n -ge 10 ]; do
+#   echo "Fetching PANW..."
+#   firewall_ip=$(terraform output -state /root/terraform/01-deploy-infra/terraform.tfstate FirewallIP)
+#   pa_username=$(terraform output -state /root/terraform/01-deploy-infra/terraform.tfstate pa_username)
+#   pa_password=$(terraform output -state /root/terraform/01-deploy-infra/terraform.tfstate pa_password)
+#   if [ "$(curl -sk -o /dev/null  -u ${pa_username}:${pa_password} -w ''%{http_code}'' https://${firewall_ip}/restapi/v10.1.1/Device/VirtualSystems)" = "200" ]; then
+#       break
+#   fi
+#   n=$[$n+1]
+#   sleep 60
+# done
+# if [ $n -ge 10 ]; then
+#   fail-message "Could not check PANW."
+#   exit 1
+# fi
+
+# #wait for network device boot up
+# echo "Network Devices up! Waiting for init processes..."
+# sleep 300
+
+exit 0
