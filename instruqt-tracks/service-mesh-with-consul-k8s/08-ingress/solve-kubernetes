@@ -1,9 +1,0 @@
-#!/bin/bash
-
-kubectl apply -f /root/fake-web-ingress-intention.yaml
-consul config write /root/fake-web-ingress-gateway.hcl
-consul config write /root/fake-service/fake-web-ingress-router.hcl
-
-sleep 60
-
-exit 0

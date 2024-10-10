@@ -1,9 +1,0 @@
-#!/bin/bash
-
-vault login -method=userpass username=operations password=Password1
-export CONSUL_HTTP_TOKEN=$(vault read -field token consul/creds/ops)
-
-/usr/local/bin/setup-k8s-consul-auth frontend
-/usr/local/bin/setup-k8s-consul-auth backend
-
-exit 0

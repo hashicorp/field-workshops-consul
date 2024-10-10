@@ -1,9 +1,0 @@
-#!/bin/bash
-
-#sleep for creds
-sleep 120
-
-cd /root/terraform/vpc
-terraform apply -auto-approve
-
-exit 0

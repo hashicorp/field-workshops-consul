@@ -1,9 +1,0 @@
-#!/bin/bash
-
-#simulate a user
-sleep 120
-
-cd /root/terraform/vnet
-terraform apply -auto-approve > /root/terraform/vnet/terraform.out
-
-exit 0
