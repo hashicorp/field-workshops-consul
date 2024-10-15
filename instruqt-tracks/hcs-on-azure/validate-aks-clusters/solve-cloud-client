@@ -1,8 +1,0 @@
-#!/bin/bash
-
-cd /root/terraform/aks
-terraform output frontend_kube_config > kubeconfig_frontend
-terraform output backend_kube_config > kubeconfig_backend
-KUBECONFIG=kubeconfig_frontend:kubeconfig_backend kubectl config view --merge --flatten > ~/.kube/config
-
-exit 0

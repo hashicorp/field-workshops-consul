@@ -1,6 +1,0 @@
-#!/bin/bash
-
-cd /root/terraform/tgw
-terraform apply -auto-approve
-
-exit 0

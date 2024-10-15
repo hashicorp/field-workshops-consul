@@ -1,9 +1,0 @@
-#!/bin/bash
-
-#wait for zipin trace propgation from timeouts
-sleep  15
-
-#nmap for debug
-apt install nmap -y
-
-exit 0
