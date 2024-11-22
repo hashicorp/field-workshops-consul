@@ -1,0 +1,77 @@
+#!/bin/sh
+#
+
+# echo ""
+# echo ""
+# echo ">>-----------------------------<<"
+# echo ">> Starting PANOS Config Setup <<"
+# echo ">>-----------------------------<<"
+
+set-workdir /root/terraform/04-network-automation
+
+#cd /root/terraform/bigip
+#terraform output > /info.txt
+#
+#cd /root/terraform/panw-vm
+#terraform output >> /info.txt
+
+# bastion_ip=$(terraform output -state /root/terraform/vnet/terraform.tfstate bastion_ip)
+# firewall_ip=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate FirewallIP)
+# firewall_mgmt_ip=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate FirewallIPURL)
+# pa_username=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_username)
+# pa_password=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_password)
+
+# bigip_mgmt_url=$(terraform output -state /root/terraform/bigip/terraform.tfstate mgmt_url)
+# f5_username=$(terraform output -state /root/terraform/bigip/terraform.tfstate f5_username)
+# f5_password=$(terraform output -state /root/terraform/bigip/terraform.tfstate f5_password)
+
+# app_fqdn=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate WebFQDN)
+# app_ip=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate WebIP)
+
+# cat <<EOF > /access.md
+# Access Information
+
+# Use the following information to access the virtual appliances in this workshop.
+
+## Palo Alto Firewall
+
+# * Palo Alto Firewall Management Address: ${firewall_mgmt_ip}
+# * Palo Alto Firewall Management Username: ${pa_username}
+# * Palo Alto Firewall Management Password: ${pa_password}
+
+## F5 BIG-IP:
+
+# * BIG-IP Management Address: ${bigip_mgmt_url}
+# * BIG-IP Management Username: ${f5_username}
+# * BIG-IP Management Password: ${f5_password}
+
+# ## App Access
+
+# * Web Application FQDN = ${app_fqdn}
+# * Web Application IP = ${app_ip}
+
+# EOF
+
+
+# cd /root/terraform/panw-config
+# terraform init
+
+# echo "export bastion_ip=${bastion_ip}" >> ~/.bashrc
+# echo "export firewall_ip=${firewall_ip}" >> ~/.bashrc
+
+# cat << EOF > /root/terraform/panos_commit/panos-commit.json
+# {
+#     "hostname": "${firewall_ip}",
+#     "username": "${pa_username}",
+#     "password": "${pa_password}",
+#     "sleep": 60
+# }
+# EOF
+
+# echo ""
+# echo ""
+# echo ">>-----------------------------<<"
+# echo ">> PANOS Config Setup Complete <<"
+# echo ">>-----------------------------<<"
+
+# exit 0

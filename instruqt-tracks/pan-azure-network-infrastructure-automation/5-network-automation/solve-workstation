@@ -1,0 +1,19 @@
+#!/bin/sh
+
+echo ""
+echo ">>"
+echo ">> Configuring Palo Alto Firewall"
+echo ">>"
+
+# Applying Config
+cd /root/terraform/panw-config
+terraform apply -refresh=false -auto-approve > /root/terraform/panw-config/terraform.out
+
+echo ""
+echo ">>"
+echo ">> Terraform Apply executed after API started responding..."
+echo ">>"
+echo ">> Running panos-commit now"
+echo ">>"
+
+exit 0
