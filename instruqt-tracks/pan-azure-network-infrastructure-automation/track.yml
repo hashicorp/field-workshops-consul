@@ -1,0 +1,439 @@
+slug: pan-azure-network-infrastructure-automation
+
+version: 0.0.1
+type: track
+title: Palo Alto Firewall Network Infrastructure Automation with Consul-Terraform-Sync Workshop
+teaser: Palo Alto Networks Next Generation Firewalls and Consul-Terraform-Sync Workshop
+description: In this workshop you'll learn how to automate the provisioning and management
+  of traditional network infrastructure using Terraform, Vault Consul, and Consul Terraform
+  Sync. Eliminate exposure to operational overhead and security risk while accelerating
+  the deployment and scaling of applications and services.
+icon: https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/network-infrastructure-automation/assets/images/mainimage.png
+tags:
+- consul
+- NIA
+- cts
+- terraform
+owner: hashicorp
+developers:
+- sebastian.maniak@hashicorp.com
+private: true
+published: true
+show_timer: true
+skipping_enabled: false
+challenges:
+- slug: 1-review-lab-objectives
+
+  type: challenge
+  title: Workshop Overview
+  teaser: Before we begin, lets quickly review the architecture and understand what we are trying to accomplish.
+  notes:
+  - type: text
+    contents: |-
+      Every journey begins with a single step!
+
+      Setting up your environment... Your Azure account will be ready in ~5 minutes.
+      
+      Objective: 
+        * Review the environment you will build in Azure using Terraform, and manage Palo Alto Firewall Security Policies and Address Groups using Consul Terraform Sync.
+  assignment: |
+    "In this workshop, we will build the infrastructure depicted in the 'NIA - Traffic Flow' tab on the left, but before we do, let's quickly review the operational challenges we are going to address.
+    
+    ## Navigate to the "NetOps - Operational Pattern" tab.
+
+    In this diagram we have a two-tier application running on virtual machines that use Consul for Service Discovery. New virtual machines are frequently added and removed to handle scaling requirements. The overworked NetOps and SecOps teams have to frequently reconfigure the load balancers and firewalls.
+
+    The long hours and lengthy job queues result in deployment errors and, potentially security issues.
+
+    ## Navigate to the "NIA - Operational Pattern" tab.
+
+    `Consul` monitors application state changes in real-time (IP Addresses and App meta-data). `Consul Terraform Sync` uses this information to automatically configure the various network infrastructure, eliminating the need for NetOps teams to be involved after the initial configuration.
+
+    ## Navigate to the "NIA - Traffic Flow" tab.
+
+    In this diagram you can see the Traffic Flow of the infrastructure we are going to build in this workshop.
+
+    NOTE: Consul Terraform Sync automates the management of policy address groups on the Palo Alto Firewalls. This facilitates having fine-grained policies without increasing operational overhead.
+
+    In the next few challenges we are going to build this cloud environment, enabling you to see this workflow in operation."
+  tabs:
+  - title: NetOps - Operational Pattern
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/appflow.html
+  - title: NIA - Operational Pattern
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/build3.html
+  - title: NIA - Traffic Flow
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/mainimage.html
+  difficulty: basic
+  timelimit: 300
+- slug: 2-deploy-infrastructure
+
+  type: challenge
+  title: Day-0 Deploy the Infrastructure
+  teaser: 
+  notes:
+  - type: text
+    contents: |
+      Setting up your environment... Your Azure account will be ready in ~5 minutes.
+      Keep an eye on the bottom right corner to know when you can get started.
+  assignment: |-
+    In this assignment you will start by installing Terraform
+
+    In the `Shell` tab, execute the following command to install Terraform:
+
+    ```
+    apt-get install terraform
+    ``` 
+    
+    The "Terraform Code" tab contains all of the Infrastructure as Code (IaC) templates used by Terraform to build the Infrastructure. Feel free to look over the code!
+    
+    In the `Shell` tab, deploy the Azure Infrastructure by running the following commands:
+
+    ```
+    terraform init
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    The following will be deployed: 
+  
+    * Azure VNets/Subnets/Routing
+    * Palo Alto Firewall in it's own VNET
+    * Vault - Secrets Management
+    * Consul - Service Registry and Discovery (Source of truth)
+    * Bastion Server
+    * Logging Server
+
+    This is part of our Day 0 deployment in an Infrastructure as Code World.
+
+    NOTE: Palo Alto takes about 6+ mins to deploy in azure
+
+    To get specific outputs, In the `Shell` tab, execute the following commands:
+
+    Consul IP
+
+    ```
+    terraform output consul_lb
+    ```
+    
+    Vault Management IP
+
+    ```
+    terraform output vault_lb
+    ```
+
+    Vault Management IP
+
+    ```
+    terraform output vault_lb
+    ```
+
+    Palo Alto Management IP
+    
+    ```
+    terraform output https_paloalto_mgmt_ip
+    ```
+
+    Continue to configuring the PAN Firewall
+
+
+  tabs:
+  - title: Current Lab Setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/mainimage.html
+  - title: Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/01-deploy-infra
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
+  difficulty: basic
+  timelimit: 600
+- slug: 3-configure-infra
+
+  type: challenge
+  title: Configure the Network Infrastructure
+  teaser: Configure the Palo Alto Firewall with appropriate IPs, NATs, Security Policies, Rules..etc
+  notes:
+  - type: text
+    contents: |
+      Terraform allows you to document, share, and deploy environments in one workflow by using Infrastructure as Code!
+
+      The following challange will configure Palo Alto Security policies, Objects, IPs, Vlans, NATs, Address Groups ...etc
+  assignment: |
+    Next objective is to configure the Palo Alto Firewall and HashiCorp Vault
+
+    In the `Shell` tab, configure the PAN OS by running the following commands:
+
+    ```
+    terraform init
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    When Terraform finishes the output will provide links to access the following: 
+    1. Vault - Store the PAN username and Password
+    2. Palo Alto Management IP
+    3. Consul MGMT IP
+
+    Next Explore Vault: Explore Vault and Retrieve PAN Password
+    1. Log into your VAULT server with the "root" token
+    2. Take some time to explore VAULT
+    3. Find the PAN crendetials in the Secrets Engine called "net_infra" 
+    4. In the net_infra secrets engine select "paloalto"
+    5. This will provide you Palo Alot username and password
+
+    Next Explore Pan and Commit changes:
+    1. Log into the Palo Alto Management IP using the credenitals from your VAULT server
+    2. Once, your logged in (note.. you might need to dismiss some popups)
+    3. Click on the "COMMIT" button in the top right corner.. this will show you the changes deployed using Terraform
+    4. Click on Commit 
+
+    Note: To view Address Groups in your PAN
+    * You can view these under Policies -> Security, and Objects -> Access Groups
+
+    Note: You have 2 options with Terraform and PAN.. you can automatically push configs using a commit script made by Palo Alto or you can use the method we just did. 
+
+    Explore the Palo Alto:
+    You will notice that we built many security policies and create 4 dynamic address groups:
+    * cts-addr-grp-api
+    * cts-addr-grp-logging
+    * cts-addr-grp-web
+    * cts-addr-grp-db
+
+    To view outputs. In the `Shell` tab, configure the PAN OS by running the following commands:
+    ```
+    terraform output
+    ```
+
+    Note: There are no IP address in these dynamic address groups, they will be populated once we deploy our network infrastructure automation service.
+
+    Each of these Dynamic Address groups belogs to a security policy that is being managed by our security team using Terraform with an Infrastrucure as Code framework.
+
+  tabs:
+  - title: VNets lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/build2.html
+  - title: Core Infra Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/02-configure-infra
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
+  difficulty: basic
+  timelimit: 3000
+- slug: 4-deploy-apps-services
+
+  type: challenge
+  title: Deploy our applications and services
+  teaser: Next we will deploy the following services web, api and db.
+  notes:
+  - type: text
+    contents: |
+      With the Network Infrastructure Ready, its time to deploy our apps, api, and databases.
+
+      Let's go and deploy our apps!
+  assignment: |
+    In the `Shell` tab, deploy our services by running the following commands:
+
+    ```
+    terraform init
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    The following terraform code will deploy the following:
+    * WEB Servers
+    * API Servers
+    * DB Servers
+
+    Log into the Consul server GUI/HTTPS and verify that you have nodes and services online. 
+    NOTE: It will take 1-2 minutes to get all the apps online.
+    Once all services are green try to access the web site that deployed to ensure everything is working.
+
+    Note: If you need to see the consul http url type in the 'Shell'
+    ```
+    terraform output
+    ```
+
+    All of the services/apps will be registerd with Consul. Consul will be our source of truth, our service registry that shows what is online and offline.
+
+    **Next** 
+
+    Now, we have our entire infrastructure online, let's eleavate this and deploy identity based workflow/automation using Consul Terraform Sync.
+    
+
+    **Troubleshooting Tips:
+    * If you didn't commit your PAN configurations.. the apps will not start
+    * 
+  tabs:
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/appflow.html
+  - title: App Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/03-deploy-apps
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
+  difficulty: basic
+  timelimit: 3000
+- slug: 5-network-automation
+
+  type: challenge
+  title: Deploy Consul Terraform Sync
+  teaser: Elevate your automation with Identity based workflows.
+  notes:
+  - type: text
+    contents: Now we elevate your network infrastructure automation by deploying Consul Terraform Sync to focus on Day 2 network operations.
+  assignment: |-
+    Let's deploy Consul-Terraform-Sync service. Things happen quickly!! 
+
+    Once CTS is deployed and registered with Consul, it will automatically update the Dynamic Address Groups in the PAN.
+    
+    In the `Shell` tab, deploy CTS by running the following commands:
+
+    ```
+    terraform init
+    terraform plan
+    terraform apply -auto-approve
+    ```
+
+    When its complete, you can SSH into the Consul-Terraform-Server. The Terraform output will give you the command to log into the server.
+
+    example..  (IP will be different for fall) 
+    ```
+    ssh -i cts.pem azureuser@$x.x.x.x
+    ```
+
+    Inside the consul-terraform-server you can execute the following commands to see consul-terraform-sync logs 
+    ```
+    sudo journalctl -u consul-tf-sync.service -f
+    ```
+
+    Log into your Consul server GUI/HTTP to validate that Consul-Terraform-Sync was registered with cosnul
+
+    Next..let's see if the magic worked... 
+    
+    Log into the Palo Alto Firewall and take a look in the "Objects" tab and click on "Address Group". Select any address group and click on the "more.." button. 
+    What do you see?
+
+    You will notice that Consul-Terraform-Sync has automatically add the IPs of the nodes that are registered in Consul.
+
+    
+  tabs:
+  - title: Provision CTS
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/build3.html
+  - title: Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/04-network-automation
+  - title: Shell
+    type: terminal
+    hostname: workstation
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
+  difficulty: basic
+  timelimit: 300
+- slug: 6-scale-the-application
+
+  type: challenge
+  title: Day 2 
+  teaser: Let's see the CTS magic in action
+  notes:
+  - type: text
+    contents: |
+      We are heading into the prime time for our application and we will need to scale up the app to ensure we can handle to load during this busy period.
+  assignment: |
+    The application team has been asked to increase the app and web servers. 
+    
+    Using Terraform the application sets the app_count and web_count to 3. Let's see this live in action.
+    
+    In the `Shell 1` tab, log into the consul-terraform-sync server to run logs: 
+
+    ```
+    cd /root/terraform/04-network-automation
+    terraform output
+    ```
+    
+    SSH into your cconsul-terraform-sync server using the output from above. Once your logged in run the following command, this will show us the magic.
+
+    ```
+    sudo journalctl -u consul-tf-sync.service -f
+    ```
+
+    
+    Jump into `Shell 2` tab, to change scale your application. Execute the following command.
+
+    ```
+    terraform apply -var app_count=3 -var web_count=2 -var db_count=2 -auto-approve
+    ```
+
+    Jump back to `Shell 1' to see consul-terraform-sync in action
+
+    You can also monitor the status of the applictions inside Consul GUI/HTTP. 
+
+    Validate that CTS added those servers to there specific Address Groups by logging into your palo alto firewall.
+    * log into the PAN FW using the GUI/HTTPS, select OBJECTS > Address Groups 
+    * look at the _web or _api address group by click "more.." and you will see the new IPs deployed.
+
+
+    Explore: 
+    Change the count and add more or less db to be deployed. Watch Consule Terraform Sync in action.
+
+    ```
+    terraform apply -var app_count=2 -var web_count=4 -var db_count=3 -auto-approve
+    ```
+
+    The resources for this lab will self-destruct in 8 hours, but to save a little money, **please scale the application back down.**
+
+    Re-run Terraform, and monitor the various integration points once again. We'll do so in the background so that you can move on whenever you're ready.
+
+    This concludes the final step in the Network Infrastructure Automation workshop.
+
+  tabs:
+  - title: Current lab setup
+    type: website
+    url: https://htmlpreview.github.io/?https://raw.githubusercontent.com/hashicorp/field-workshops-consul/pan-azure-nia/instruqt-tracks/pan-azure-network-infrastructure-automation/assets/images/build3.html
+  - title: Shell 1
+    type: terminal
+    hostname: workstation
+  - title: Shell 2
+    type: terminal
+    hostname: workstation
+  - title: Terraform Code
+    type: code
+    hostname: workstation
+    path: /root/terraform/03-deploy-apps
+  - title: Cloud Consoles
+    type: service
+    hostname: workstation
+    path: /
+    port: 80
+  difficulty: basic
+  timelimit: 1000
+checksum: "14590901449097205310"

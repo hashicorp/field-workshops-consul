@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# #get rg
+# sleep 10
+# rg=$(terraform output -state /root/terraform/vnet/terraform.tfstate resource_group_name)
+
+# #check vault
+# echo "Checking Vault..."
+# status=$(az vm show -g "${rg}" --name vault-vm | jq -r '.provisioningState')
+# if [ "${status}" != "Creating" ] && [ "${status}" != "Updating" ] && [ "${status}" != "Succeeded" ] ; then
+#   fail-message "Vault is not provisioning/provisioned. Wait a few moments and try again. Current state is: ${status}"
+#   exit 1
+# fi
+# vault_lb=$(terraform output -state /root/terraform/vault/terraform.tfstate vault_lb)
+# vault_api=$(curl -s -o /dev/null -w "%{http_code}" "http://${vault_lb}/v1/sys/health")
+# if [ "${vault_api}" != "200" ]; then
+#   fail-message "Vault service did not return a 200. Please wait a few moments and try again."
+#   exit 1
+# fi
+
+# #check consul
+# echo "Checking Consul Server..."
+# status=$(az vm show -g "${rg}" --name consul-server-vm | jq -r '.provisioningState')
+# if [ "${status}" != "Creating" ] && [ "${status}" != "Updating" ] && [ "${status}" != "Succeeded" ] ; then
+#   fail-message "Consul is not provisioning/provisioned. Wait a few moments and try again. Current state is: ${status}"
+#   exit 1
+# fi
+# consul_lb=$(terraform output -state /root/terraform/consul-server/terraform.tfstate consul_external_ip)
+# consul_api=$(curl -s -o /dev/null -w "%{http_code}" "http://${consul_lb}/v1/status/leader")
+# if [ "${consul_api}" != "200" ]; then
+#   fail-message "Consul service did not return a 200. Please wait a few moments and try again."
+#   exit 1
+# fi
+
+# exit 0

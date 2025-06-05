@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# #F5 BIG-IP
+# f5_url=$(terraform output -state /root/terraform/bigip/terraform.tfstate mgmt_url)
+# echo "F5 Management URL is: $f5_url"
+# if [ -z "${f5_url}" ] || [ "${f5_url}" = "null" ]; then
+#   fail-message "BIG-IP is not provisoned yet"
+#   exit 1
+# fi
+
+# #PANW FW
+# pa_url=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate FirewallIPURL)
+# echo "PANW URL is: $pa_url"
+# if [ -z "${pa_url}" ] || [ "${pa_url}" = "null" ]; then
+#   fail-message "PA Firewall is not provisoned yet"
+#   exit 1
+# fi
+
+# #check PANW is up
+# firewall_ip=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate FirewallIP)
+# pa_username=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_username)
+# pa_password=$(terraform output -state /root/terraform/panw-vm/terraform.tfstate pa_password)
+# if [ "$(curl -sk -o /dev/null  -u ${pa_username}:${pa_password} -w ''%{http_code}'' https://${firewall_ip}/restapi/v9.1/Device/VirtualSystems)" != "200" ]; then
+#   fail-message "Could not get 200 status from PANW."
+#   exit 1
+# fi
+
+# #check BIG-IP is up
+# f5_username=$(terraform output -state /root/terraform/bigip/terraform.tfstate f5_username)
+# f5_password=$(terraform output -state /root/terraform/bigip/terraform.tfstate f5_password)
+# f5_status=$(curl -s -k -u "${f5_username}:${f5_password}" -H "Content-Type: application/json" -o /dev/null -w "%{http_code}" "${f5_url}/mgmt/tm/cm/device/")
+# if [ "${f5_status}" != "200" ]; then
+#   fail-message "Could not get 200 status from F5 BIG-IP API."
+#   exit 1
+# fi
+
+# exit 0
